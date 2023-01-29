@@ -1,0 +1,3 @@
+[submodule "Libraries/BRS_Python_Libraries"]
+	path = Libraries/BRS_Python_Libraries
+	url = https://github.com/LyamBRS/BRS_Python_Libraries.git

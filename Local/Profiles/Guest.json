@@ -6,7 +6,8 @@
     "Generic" : {
         "Username" : "Guest",
         "Password" : "",
-        "Icon" : ""
+        "IconType" : "Kivy",
+        "IconPath" : "account-outline"
     },
     "Theme" : {
         "Style" : "Light",

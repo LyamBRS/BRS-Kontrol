@@ -17,7 +17,8 @@ profileStructure = {
     "Generic" : {
         "Username" : "Username",
         "Password" : "",
-        "Icon" : ""
+        "IconType" : "Kivy",
+        "IconPath" : "account-outline"
     },
     "Theme" : {
         "Style" : "Light",
@@ -32,7 +33,14 @@ profileStructure = {
 #====================================================================#
 # Functions
 #====================================================================#
+Profiles: FilesFinder = None
+"""
+    Loaded profiles by the application. This is globally accessible to all
+    screens and menus.
 
+    This is built at the very start of the application loading, and stores
+    all the available profile files.
+"""
 #====================================================================#
 # Classes
 #====================================================================#

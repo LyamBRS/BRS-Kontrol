@@ -7,6 +7,8 @@ print("ProfileMenu.py")
 #====================================================================#
 # Imports
 #====================================================================#
+import os
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
@@ -21,16 +23,18 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.card import MDCard
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
+from kivymd.uix.boxlayout import MDBoxLayout
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
 from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.buttons import Get_RaisedButton,TextButton
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.ValueDisplay import OutlineDial, LineGraph
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard
 from Libraries.BRS_Python_Libraries.BRS.Utilities.states import StatesColors,States
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from kivymd.uix.boxlayout import MDBoxLayout
+# -------------------------------------------------------------------
+from ..Local.FileHandler import Profiles
 #====================================================================#
 # Functions
 #====================================================================#
@@ -67,11 +71,6 @@ class ProfileMenu(Screen):
         self.Layout.ProfilesLayout.profileBox = MDBoxLayout(orientation='horizontal', spacing=25, padding = (0,50,0,25), size_hint_x=None)
         self.Layout.ProfilesLayout.profileBox.bind(minimum_width = self.Layout.ProfilesLayout.profileBox.setter('width'))
 
-        # Create 10 MDCards and add them to the box layout
-        for i in range(50):
-            card = WidgetCard(size = (300, 500), size_hint_x = None)
-            self.Layout.ProfilesLayout.profileBox.add_widget(card)
-
         # Create the scroll view and add the box layout to it
         self.Layout.ProfilesLayout.scroll = MDScrollView(scroll_type=['bars','content'])
         self.Layout.ProfilesLayout.scroll.smooth_scroll_end = 10
@@ -87,6 +86,15 @@ class ProfileMenu(Screen):
     def on_pre_enter(self, *args):
         """ Load the JSONs available, and sets what profiles are available """
         # Load all the available files at the profile location.
+        path = os.getcwd()
+        jsonPath = path + "/Local/Profiles"
+        Profiles = FilesFinder(".json",path + "/Local/Profiles")
+
+        # Add all available profiles as cards in the scrollview:
+        for profile in Profiles.fileList:
+            card = ProfileCard(jsonPath, profile, size = (300, 500), size_hint_x = None)
+            self.Layout.ProfilesLayout.profileBox.add_widget(card)
+
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
         print("on_enter")
@@ -103,11 +111,11 @@ class ProfileMenu(Screen):
     def _Animating(self, *args):
         self.Layout.TitleLayout.Title.opacity = self.progress
 
-        if(self.progress == 1):
+        # if(self.progress == 1):
             # Lift the cards upwards
-            self.Layout.ProfilesLayout.CardA.animated = True
-            self.Layout.ProfilesLayout.CardB.animated = True
-            self.Layout.ProfilesLayout.CardC.animated = True
-            self.Layout.ProfilesLayout.CardA.SetAttributes(elevation=Shadow.Elevation.default, shadowSoftness=Shadow.Smoothness.default)
-            self.Layout.ProfilesLayout.CardB.SetAttributes(elevation=Shadow.Elevation.default, shadowSoftness=Shadow.Smoothness.default)
-            self.Layout.ProfilesLayout.CardC.SetAttributes(elevation=Shadow.Elevation.default, shadowSoftness=Shadow.Smoothness.default)
+            # self.Layout.ProfilesLayout.CardA.animated = True
+            # self.Layout.ProfilesLayout.CardB.animated = True
+            # self.Layout.ProfilesLayout.CardC.animated = True
+            # self.Layout.ProfilesLayout.CardA.SetAttributes(elevation=Shadow.Elevation.default, shadowSoftness=Shadow.Smoothness.default)
+            # self.Layout.ProfilesLayout.CardB.SetAttributes(elevation=Shadow.Elevation.default, shadowSoftness=Shadow.Smoothness.default)
+            # self.Layout.ProfilesLayout.CardC.SetAttributes(elevation=Shadow.Elevation.default, shadowSoftness=Shadow.Smoothness.default)

@@ -1,0 +1,21 @@
+{
+    "ProfileConfig": {
+        "CanDelete" : false,
+        "Type" : "Admin"
+    },
+    "Generic" : {
+        "Username" : "Admin",
+        "Password" : "",
+        "IconType" : "Kivy",
+        "IconPath" : "shield-account-outline"
+    },
+    "Theme" : {
+        "Style" : "Dark",
+        "Primary" : "Purple",
+        "Accent" : "Teal",
+        "Duration" : 0.5
+    },
+    "Settings" : {
+        "TO DO":null
+    }
+}

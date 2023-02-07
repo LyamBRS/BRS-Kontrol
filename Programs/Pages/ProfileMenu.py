@@ -92,7 +92,8 @@ class ProfileMenu(Screen):
 
         # Add all available profiles as cards in the scrollview:
         for profile in Profiles.fileList:
-            card = ProfileCard(jsonPath, profile, size = (300, 500), size_hint_x = None)
+            print(" ---- " + profile)
+            card = ProfileCard(jsonPath, profile, size = (200, 400), size_hint_x = None)
             self.Layout.ProfilesLayout.profileBox.add_widget(card)
 
 # ------------------------------------------------------------------------

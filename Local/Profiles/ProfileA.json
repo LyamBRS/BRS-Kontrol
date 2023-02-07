@@ -1,0 +1,21 @@
+{
+    "ProfileConfig": {
+        "CanDelete" : false,
+        "Type" : "Normal"
+    },
+    "Generic" : {
+        "Username" : "Guest",
+        "Password" : "",
+        "IconType" : "Kivy",
+        "IconPath" : "account-outline"
+    },
+    "Theme" : {
+        "Style" : "Light",
+        "Primary" : "Purple",
+        "Accent" : "Teal",
+        "Duration" : 0.5
+    },
+    "Settings" : {
+        "TO DO":null
+    }
+}

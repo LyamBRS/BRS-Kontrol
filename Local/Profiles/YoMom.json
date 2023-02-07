@@ -1,0 +1,21 @@
+{
+    "ProfileConfig": {
+        "CanDelete" : false,
+        "Type" : "Normal"
+    },
+    "Generic" : {
+        "Username" : "YoMom",
+        "Password" : "",
+        "IconType" : "Kivy",
+        "IconPath" : "weight-kilogram"
+    },
+    "Theme" : {
+        "Style" : "Dark",
+        "Primary" : "Purple",
+        "Accent" : "Teal",
+        "Duration" : 0.5
+    },
+    "Settings" : {
+        "TO DO":null
+    }
+}

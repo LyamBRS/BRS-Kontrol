@@ -1,0 +1,21 @@
+{
+    "ProfileConfig": {
+        "CanDelete" : false,
+        "Type" : "Normal"
+    },
+    "Generic" : {
+        "Username" : "Lyam",
+        "Password" : "",
+        "IconType" : "Kivy",
+        "IconPath" : "desktop-tower-monitor"
+    },
+    "Theme" : {
+        "Style" : "Light",
+        "Primary" : "Purple",
+        "Accent" : "Teal",
+        "Duration" : 0.5
+    },
+    "Settings" : {
+        "TO DO":null
+    }
+}

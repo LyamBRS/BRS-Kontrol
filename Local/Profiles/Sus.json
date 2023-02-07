@@ -1,0 +1,21 @@
+{
+    "ProfileConfig": {
+        "CanDelete" : false,
+        "Type" : "Normal"
+    },
+    "Generic" : {
+        "Username" : "Sus",
+        "Password" : "",
+        "IconType" : "Kivy",
+        "IconPath" : "language-cpp"
+    },
+    "Theme" : {
+        "Style" : "Light",
+        "Primary" : "Purple",
+        "Accent" : "Teal",
+        "Duration" : 0.5
+    },
+    "Settings" : {
+        "TO DO":null
+    }
+}

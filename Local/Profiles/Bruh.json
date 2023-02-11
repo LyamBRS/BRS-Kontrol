@@ -7,11 +7,11 @@
         "Username" : "Submarine",
         "Password" : "",
         "IconType" : "Kivy",
-        "IconPath" : "submarine"
+        "IconPath" : "account"
     },
     "Theme" : {
         "Style" : "Light",
-        "Primary" : "Purple",
+        "Primary" : "LightBlue",
         "Accent" : "Teal",
         "Duration" : 0.5
     },

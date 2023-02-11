@@ -67,8 +67,9 @@ class ProfileMenu(Screen):
         self.Layout.TitleLayout.Title.opacity = 0
         self.Layout.TitleLayout.Title.size_hint = (1,1)
 
-        # Create a horizontal box layout
-        self.Layout.ProfilesLayout.profileBox = MDBoxLayout(orientation='horizontal', spacing=25, padding = (0,50,0,25), size_hint_x=None)
+        # Create a horizontal box layout offset by half the screen to center the first profile in view.
+        windowWidth = Window.width/2
+        self.Layout.ProfilesLayout.profileBox = MDBoxLayout(orientation='horizontal', spacing="50sp", padding = (windowWidth,"100sp",windowWidth,"50sp"), size_hint_x=None)
         self.Layout.ProfilesLayout.profileBox.bind(minimum_width = self.Layout.ProfilesLayout.profileBox.setter('width'))
 
         # Create the scroll view and add the box layout to it
@@ -93,7 +94,7 @@ class ProfileMenu(Screen):
         # Add all available profiles as cards in the scrollview:
         for profile in Profiles.fileList:
             print(" ---- " + profile)
-            card = ProfileCard(jsonPath, profile, size = (200, 400), size_hint_x = None)
+            card = ProfileCard(jsonPath, profile, size = ("200sp","300sp"), size_hint_x = None)
             self.Layout.ProfilesLayout.profileBox.add_widget(card)
 
 # ------------------------------------------------------------------------

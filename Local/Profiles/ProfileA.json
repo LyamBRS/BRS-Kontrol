@@ -4,14 +4,14 @@
         "Type" : "Normal"
     },
     "Generic" : {
-        "Username" : "Guest",
+        "Username" : "Cancel",
         "Password" : "",
         "IconType" : "Kivy",
-        "IconPath" : "account-outline"
+        "IconPath" : "account-cancel-outline"
     },
     "Theme" : {
         "Style" : "Light",
-        "Primary" : "Purple",
+        "Primary" : "Lime",
         "Accent" : "Teal",
         "Duration" : 0.5
     },

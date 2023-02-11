@@ -7,11 +7,11 @@
         "Username" : "Guest",
         "Password" : "",
         "IconType" : "Kivy",
-        "IconPath" : "account-outline"
+        "IconPath" : "account-check-outline"
     },
     "Theme" : {
-        "Style" : "Light",
-        "Primary" : "Purple",
+        "Style" : "Dark",
+        "Primary" : "Yellow",
         "Accent" : "Teal",
         "Duration" : 0.5
     },

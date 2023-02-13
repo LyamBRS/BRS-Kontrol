@@ -5,7 +5,7 @@
     },
     "Generic" : {
         "Username" : "Admin",
-        "Password" : "",
+        "Password" : "1234",
         "IconType" : "Kivy",
         "IconPath" : "shield-account-outline"
     },

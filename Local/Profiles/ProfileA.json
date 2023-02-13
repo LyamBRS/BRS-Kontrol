@@ -5,7 +5,7 @@
     },
     "Generic" : {
         "Username" : "Cancel",
-        "Password" : "",
+        "Password" : "Delete",
         "IconType" : "Kivy",
         "IconPath" : "account-cancel-outline"
     },

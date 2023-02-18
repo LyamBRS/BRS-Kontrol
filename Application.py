@@ -65,11 +65,11 @@ class Application(MDApp):
         self.theme_cls.theme_style_switch_animation = True
         self.theme_cls.theme_style_switch_animation_duration = 0
 
-        # Window.borderless = True
-        # Window.resizable = True
-        # Window.left = -1024
-        # Window.top = 600
-        # Window.fullscreen = 'auto'
+        Window.borderless = True
+        Window.resizable = True
+        Window.left = -1024
+        Window.top = 600
+        Window.fullscreen = 'auto'
 
         AppManager.manager = ScreenManager()
         AppManager.manager.transition.duration = 0.5

@@ -67,7 +67,9 @@ class ProfileLogin(Screen):
 # ------------------------------------------------------------------------
     def on_pre_enter(self, *args):
         """
-            Sets all widgets to be animated.
+            Builds the login screen entirely.
+            The login screen consists of a "Login" message as well as
+            a card containing a username and password textfields.
         """
         self.padding = 25
         self.spacing = 25
@@ -77,9 +79,11 @@ class ProfileLogin(Screen):
         self.Card = MDCard(
                             elevation = Shadow.Elevation.default,
                             shadow_softness = Shadow.Smoothness.default,
-                            radius=Rounding.default, padding = 25,
+                            radius=Rounding.default,
+                            padding = 25,
                             orientation = "vertical"
                             )
+        
         self.UsernameTitle = MDLabel(text="Username:")
         self.PasswordTitle = MDLabel(text="Password:")
         self.Username = MDTextField(text=LoadedProfile.rawJson.jsonData["Generic"]["Username"])

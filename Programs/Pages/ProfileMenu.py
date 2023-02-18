@@ -18,11 +18,8 @@ from kivy.uix.slider import Slider
 from kivy.core.window import Window
 from kivy.animation import Animation
 # -------------------------------------------------------------------
-from kivymd.app import MDApp
-from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.label import MDLabel
 from kivymd.uix.scrollview import MDScrollView
-from kivymd.uix.card import MDCard
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 from kivymd.uix.boxlayout import MDBoxLayout
 # -------------------------------------------------------------------
@@ -30,11 +27,10 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
 from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.buttons import Get_RaisedButton,TextButton
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.ValueDisplay import OutlineDial, LineGraph
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard
-from Libraries.BRS_Python_Libraries.BRS.Utilities.states import StatesColors,States
+from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard,CreateCard
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile
+from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogin
 from ..Local.FileHandler import Profiles
@@ -100,7 +96,7 @@ class ProfileMenu(Screen):
             Load the JSONs available, and create 1 profile card
             per available profiles.
         """
-        print("Menu: Building")
+        Debug.Start("ProfileMenu.py: on_pre_enter")
 
         self.padding = 25
         self.spacing = 25
@@ -136,7 +132,6 @@ class ProfileMenu(Screen):
         self.Layout.add_widget(self.Layout.ProfilesLayout)
         self.add_widget(self.Layout)
 
-
         # Load all the available files at the profile location.
         path = os.getcwd()
         jsonPath = path + "/Local/Profiles"
@@ -145,10 +140,17 @@ class ProfileMenu(Screen):
         # Add all available profiles as cards in the scrollview:
         for profile in Profiles.fileList:
             print(" ---- " + profile)
-            card = ProfileCard(jsonPath, profile, size = ("200sp","300sp"), size_hint_x = None)
+            card = ProfileCard(jsonPath, profile, CheckIntegrity, size = ("200sp","300sp"), size_hint_x = None)
             card.SetAttributes(elevation=0)
             card.PressedEnd = self.ProfilesClicked
             self.Layout.ProfilesLayout.profileBox.add_widget(card)
+
+        # Add the create new profile card at the end of the list
+        card = CreateCard(size = ("200sp","300sp"), size_hint_x = None)
+        card.PressedEnd = self.ProfilesClicked
+        self.Layout.ProfilesLayout.profileBox.add_widget(card)
+
+        Debug.End()
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
         """

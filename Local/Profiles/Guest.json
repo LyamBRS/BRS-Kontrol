@@ -1,7 +1,8 @@
 {
     "ProfileConfig": {
         "CanDelete" : false,
-        "Type" : "Guest"
+        "Type" : "Guest",
+	"Version" : 1.0
     },
     "Generic" : {
         "Username" : "Guest",

@@ -1,11 +1,12 @@
 {
     "ProfileConfig": {
         "CanDelete" : false,
-        "Type" : "Normal"
+        "Type" : "Normal",
+	"Version" : 0.9
     },
     "Generic" : {
-        "Username" : "Imposter",
-        "Password" : "sus",
+        "Username" : "OhNo!",
+        "Password" : "error",
         "IconType" : "Kivy",
         "IconPath" : "github"
     },

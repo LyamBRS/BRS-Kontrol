@@ -94,28 +94,39 @@
 
 # MainApp().run()
 
-from kivymd.app import MDApp
-from kivymd.uix.button import MDIconButton
-from kivymd.uix.screen import MDScreen
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.floatlayout import MDFloatLayout
+
+# from kivymd.app import MDApp
+# from kivymd.uix.button import MDIconButton
+# from kivymd.uix.screen import MDScreen
+# from kivymd.uix.boxlayout import MDBoxLayout
+# from kivymd.uix.floatlayout import MDFloatLayout
 
 
-class Example(MDApp):
-    def build(self):
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Orange"
+# class Example(MDApp):
+#     def build(self):
+#         self.theme_cls.theme_style = "Dark"
+#         self.theme_cls.primary_palette = "Orange"
 
-        return (
-            MDScreen(
-                MDFloatLayout(
-                    MDIconButton(
-                        icon="language-python",
-                        pos_hint={"center_x": 0.5, "center_y": 0.5},
-                    )
-                )
-            )
-        )
+#         return (
+#             MDScreen(
+#                 MDFloatLayout(
+#                     MDIconButton(
+#                         icon="language-python",
+#                         pos_hint={"center_x": 0.5, "center_y": 0.5},
+#                     )
+#                 )
+#             )
+#         )
 
 
-Example().run()
+# Example().run()
+import gettext
+import os
+
+path = os.getcwd() + "\\Local\\Languages\\"
+print(path)
+gettext.bindtextdomain('myapplication', path)
+gettext.textdomain('myapplication')
+_ = gettext.gettext
+# ...
+print(_('This is a translatable string.'))

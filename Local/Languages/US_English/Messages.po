@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-02-15 12:00+0000\n"
+"PO-Revision-Date: 2023-02-15 12:00+0000\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Singular word for Account
+msgid "Account"
+msgstr "Account"
+
+#: Singular word for the accent palette of the UI.
+msgid "Accent"
+msgstr "Accent"
+
+#: Singular word for an administrator
+msgid "Admin"
+msgstr "Admin"
+
+#: Singular word which means selecting something."
+msgid "Cancel"
+msgstr "Cancel"
+
+#: Singular word representing a titled color.
+msgid "Color"
+msgstr "Color"
+
+#: Singular word which means confirming something. Usually paired with Cancel"
+msgid "Confirm"
+msgstr "Confirm"
+
+#: Singular word to represent the connection status is connected
+msgid "Connected"
+msgstr "Connected"
+
+#: Singular word used to title something as corrupted."
+msgid "Corrupted"
+msgstr "Corrupted"
+
+#: Singular word to represent the connection status is no more.
+msgid "Disconnected"
+msgstr "Disconnected"
+
+#: Singular word for an error. Mostly used prior to error strings. "Error; error description"
+msgid "Error"
+msgstr "Error"
+
+#: Singular word representing the image displayed on an account. Keep it short.
+msgid "Icon"
+msgstr "Icon"
+
+#: Singular word for a UI theme.
+msgid "Theme"
+msgstr "Theme"
+
+#: Singular word for a locked device/item
+msgid "Locked"
+msgstr "Locked"
+
+#: Singular word for password
+msgid "Password"
+msgstr "Password"
+
+#: Singular word for an unlocked device/item
+msgid "Unlocked"
+msgstr "Unlocked"
+
+#: Singular word for Username
+msgid "Username"
+msgstr "Username"
+
+#: Singular word which means selecting something."
+msgid "Selecting"
+msgstr "Selecting"
+
+#: Singular Welcome message.
+msgid "Welcome"
+msgstr "Welcome"

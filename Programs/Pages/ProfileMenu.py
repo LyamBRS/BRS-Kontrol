@@ -34,6 +34,7 @@ from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogin
+from .ProfileCreation import ProfileCreation_Step1
 from ..Local.FileHandler import Profiles
 #====================================================================#
 # Functions
@@ -149,7 +150,7 @@ class ProfileMenu(Screen):
 
         # Add the create new profile card at the end of the list
         card = CreateCard(size = ("200sp","300sp"), size_hint_x = None)
-        card.PressedEnd = self.ProfilesClicked
+        card.PressedEnd = self.CreateProfileClicked
         card._MDCard.Title.text = _("Create")
         self.Layout.ProfilesLayout.profileBox.add_widget(card)
 
@@ -205,9 +206,9 @@ class ProfileMenu(Screen):
 
         # Go to profile login screen
         if(self.progress == 0 and self.Loaded):
-            AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
-            AppManager.manager.transition.direction = "up"
-            AppManager.manager.current = "ProfileLogin"
+            # AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
+            # AppManager.manager.transition.direction = "up"
+            # AppManager.manager.current = "ProfileLogin"
             self.Loaded = False
 # ------------------------------------------------------------------------
     def ProfilesClicked(self, card:ProfileCard):
@@ -228,5 +229,21 @@ class ProfileMenu(Screen):
         self.animation = Animation(progress = 0, duration = 0.5)
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
-        # AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
-        # AppManager.manager.current = "ProfileLogin"
+        AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
+        AppManager.manager.transition.direction = "up"
+        AppManager.manager.current = "ProfileLogin"
+# ------------------------------------------------------------------------
+    def CreateProfileClicked(self, card:ProfileCard):
+        """
+            Called when the card allowing the user to create a new profile
+            was clicked.
+        """
+
+        #Slowly make welcome fade off
+        self.animation.stop_all(self)
+        self.animation = Animation(progress = 0, duration = 0.5)
+        self.animation.bind(on_progress = self._Animating)
+        self.animation.start(self)
+        AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
+        AppManager.manager.transition.direction = "up"
+        AppManager.manager.current = "ProfileCreation_Step1"

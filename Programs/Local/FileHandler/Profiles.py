@@ -36,6 +36,31 @@ profileStructure = {
         "TO DO":None
     }
 }
+
+Temporary = {
+    "ProfileConfig":{
+        "CanDelete" : True,  # False, True
+        "Type" : "Normal", #"Guest", "Normal", "Temporary"
+        "Version" : 1.1 # the profile version.
+    },
+    "Generic" :{
+        "Username" : "",
+        "Password" : "",
+        "IconType" : "Kivy",    # Kivy or Path
+        "IconPath" : "account-outline",
+        "Language" : "US_English"
+    },
+    "Theme" :{
+        "Style" : "Light",
+        "Primary" : "Purple",
+        "Accent" : "Teal",
+        "Duration" : 0.5,
+    },
+    "Settings" :{
+        "TO DO":None
+    }
+}
+"""Used to store profile data when creating a new profile"""
 #====================================================================#
 # Global variables imported by other scripts
 #====================================================================#

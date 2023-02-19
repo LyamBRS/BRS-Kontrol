@@ -120,25 +120,66 @@
 
 
 # Example().run()
-# # import gettext
-# # import os
-
-# # path = os.getcwd() + "\\Local\\Languages\\"
-# # print(path)
-# # gettext.bindtextdomain('myapplication', path)
-# # gettext.textdomain('myapplication')
-# # _ = gettext.gettext
-# # # ...
-# # print(_('This is a translatable string.'))
 
 
-import gettext
 
-# Load the translation for the 'messages' domain
-trans = gettext.translation('Messages', localedir='C:\\Users\\cous5\\Desktop\\Projects\\Repositories\\BRS_Kontrol\\BRS_Kontrol\\BRS Kontrol\\Local\\Languages\\locale', languages=["US_English"])
-trans.add_fallback(gettext.translation('LoadingScreen', localedir='C:\\Users\\cous5\\Desktop\\Projects\\Repositories\\BRS_Kontrol\\BRS_Kontrol\\BRS Kontrol\\Local\\Languages\\locale', languages=["US_English"]))
-# Get the translation function for the 'messages' domain
-_ = trans.gettext
 
-# Use the translation function to translate a string
-print(_('Hello, world!'))
+from kivy.lang import Builder
+from kivy.metrics import dp
+from kivy.properties import StringProperty
+
+from kivymd.uix.list import OneLineIconListItem, IconLeftWidget
+from kivymd.app import MDApp
+from kivymd.uix.menu import MDDropdownMenu
+
+KV = '''
+MDScreen
+
+    MDDropDownItem:
+        id: drop_item
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        text: 'Item 0'
+        on_release: app.menu.open()
+'''
+
+
+class IconListItem(OneLineIconListItem):
+    icon = StringProperty()
+    def __init__(self, **kwargs):
+        super(IconListItem, self).__init__(**kwargs)
+        self.orientation = 'horizontal'
+        self.add_widget(IconLeftWidget())
+
+class Test(MDApp):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.screen = Builder.load_string(KV)
+        menu_items = [
+            {
+                "viewclass": "IconListItem",
+                "icon": "git",
+                "text": f"Item {i}",
+                "height": dp(56),
+                "on_release": lambda x=f"Item {i}": self.set_item(x),
+            } for i in range(5)
+        ]
+        print("Menu items created")
+        self.menu = MDDropdownMenu(
+            caller=self.screen.ids.drop_item,
+            items=menu_items,
+            position="center",
+            width_mult=4,
+        )
+        print("Menu created")
+        self.menu.bind()
+
+    def set_item(self, text_item):
+        print("Set items")
+        self.screen.ids.drop_item.set_item(text_item)
+        self.menu.dismiss()
+
+    def build(self):
+        return self.screen
+
+
+Test().run()

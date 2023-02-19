@@ -57,7 +57,7 @@ class Application(MDApp):
 
             Last, the current screen is set as one of them.
         """
-        # Debug.enableConsole = True
+        Debug.enableConsole = True
 
         self.theme_cls.material_style = 'M3'
         self.theme_cls.primary_palette = "Purple"

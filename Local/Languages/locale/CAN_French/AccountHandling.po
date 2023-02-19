@@ -23,3 +23,7 @@ msgstr "Adresse email invalide"
 #: Message shown to the user when the GitHub API is out of requests
 msgid "GitHub API's 60 requests depleted. Wait an hour."
 msgstr "API GitHub a épuisé ses 60 requêtes. Attendez une heure."
+
+#: Message prompting the user to select a language while creating a profile or editing their profiles
+msgid "Select a language"
+msgstr "Selectionnez une langue"

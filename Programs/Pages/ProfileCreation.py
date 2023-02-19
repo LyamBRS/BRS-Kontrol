@@ -130,7 +130,7 @@ class ProfileCreation_Step1(Screen):
         self.Previous.on_release = self.GoBack
         #endregion
         # Page title
-        self.PageTitle = MDLabel(text=_("Select a Language"), 
+        self.PageTitle = MDLabel(text=_("Select a language"), 
                                  font_style = "H2", 
                                  halign = "center")
 

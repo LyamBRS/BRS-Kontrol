@@ -89,6 +89,10 @@ msgstr "Déverrouillé"
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
+#: Singular word which means to select a thing
+msgid "Select"
+msgstr "Choisir"
+
 #: Singular word which means selecting something.
 msgid "Selecting"
 msgstr "Sélection"

@@ -11,8 +11,8 @@ msgstr ""
 
 #: app.py:10
 msgid "Hello, world!"
-msgstr "Bonjour, monde !"
+msgstr "Hello, world!"
 
 #: app.py:11
 msgid "Goodbye, world!"
-msgstr "Au revoir, monde !"
+msgstr "Goodbye, world!"

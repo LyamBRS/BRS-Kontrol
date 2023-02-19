@@ -17,13 +17,14 @@ profileStructure = {
     "ProfileConfig":{
         "CanDelete" : True,  # False, True
         "Type" : "Guest", #"Guest", "Normal", "Temporary"
-        "Version" : 1.0 # the profile version.
+        "Version" : 1.1 # the profile version.
     },
     "Generic" :{
         "Username" : "Username",
         "Password" : "",
         "IconType" : "Kivy",    # Kivy or Path
-        "IconPath" : "account-outline"
+        "IconPath" : "account-outline",
+        "Language" : "US_English"
     },
     "Theme" :{
         "Style" : "Light",

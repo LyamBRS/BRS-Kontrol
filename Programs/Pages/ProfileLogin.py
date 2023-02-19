@@ -37,6 +37,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,P
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.states import StatesColors,States
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import LoadedProfile
 # from Programs.Pages.ProfileMenu import ProfileMenu
@@ -83,16 +84,16 @@ class ProfileLogin(Screen):
                             padding = 25,
                             orientation = "vertical"
                             )
-        
-        self.UsernameTitle = MDLabel(text="Username:")
-        self.PasswordTitle = MDLabel(text="Password:")
+
+        self.UsernameTitle = MDLabel(text=_("Username") + ":")
+        self.PasswordTitle = MDLabel(text=_("Password") + ":")
         self.Username = MDTextField(text=LoadedProfile.rawJson.jsonData["Generic"]["Username"])
         self.Password = MDTextField()
         self.PasswordTitle.font_style = "H5"
         self.UsernameTitle.font_style = "H5"
 
         # Page title
-        self.LoginTitle = MDLabel(text="Login", font_style = "H1", halign = "center", size_hint_y = 0.25)
+        self.LoginTitle = MDLabel(text=_("Login"), font_style = "H1", halign = "center", size_hint_y = 0.25)
 
         # Button Layout
         self.ButtonLayout = MDBoxLayout(spacing=20)

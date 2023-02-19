@@ -25,6 +25,7 @@ from kivymd.theming import ThemeManager
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.font import Font
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 # -------------------------------------------------------------------
 from Programs.Pages.ProfileMenu import ProfileMenu
@@ -56,7 +57,7 @@ class Application(MDApp):
 
             Last, the current screen is set as one of them.
         """
-        # Debug.enableConsole = True
+        Debug.enableConsole = True
 
         self.theme_cls.material_style = 'M3'
         self.theme_cls.primary_palette = "Purple"
@@ -64,6 +65,9 @@ class Application(MDApp):
         self.theme_cls.theme_style = "Light"
         self.theme_cls.theme_style_switch_animation = True
         self.theme_cls.theme_style_switch_animation_duration = 0
+
+        # Load available languages
+        AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "CAN_French")
 
         Window.borderless = True
         Window.resizable = True

@@ -14,3 +14,4 @@ The following is a quick list of this folder's directories. If you want a descri
 - **Local**
     - **Drivers** - Drivers downloaded by BrSpand cards that connected to Kontrol.
     - **Profiles** - User profiles and their associated settings and configurations for the cards they connected while using their profiles
+    - **Languages** - folders containing language files used by the application to display various texts. Has US_English and CAN_French by default. Adding a language to the list is fairly simple. Copy and paste one of the folders, rename it with COUNTRY_Language, edit the .po files in the new folder, run _Compiler.py and you should have a new language available for use. If some words are missing, they default to english.

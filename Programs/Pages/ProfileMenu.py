@@ -31,6 +31,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,P
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogin
 from ..Local.FileHandler import Profiles
@@ -102,14 +103,14 @@ class ProfileMenu(Screen):
         self.spacing = 25
 
         self.Layout = MDBoxLayout(spacing=25, padding=(0,50,0,0), orientation="vertical")
-
         self.Layout.TitleLayout = MDBoxLayout(orientation="horizontal")
-        self.Layout.TitleLayout.size_hint_y = 0.25
         self.Layout.ProfilesLayout = MDBoxLayout(spacing = "10sp", padding = "0sp")
+        self.Layout.TitleLayout.Title = MDLabel(text = _("Welcome"))
+
+        self.Layout.TitleLayout.size_hint_y = 0.25
         self.Layout.ProfilesLayout.size_hint_y = 1
 
         # Creating the "Welcome" title shown at the top of the profile screen.
-        self.Layout.TitleLayout.Title = MDLabel(text = "Welcome")
         self.Layout.TitleLayout.Title.font_style = "H1"
         self.Layout.TitleLayout.Title.halign = "center"
         self.Layout.TitleLayout.Title.opacity = 0
@@ -138,16 +139,18 @@ class ProfileMenu(Screen):
         Profiles = FilesFinder(".json",path + "/Local/Profiles")
 
         # Add all available profiles as cards in the scrollview:
+        Debug.Log("Creating profile cards...")
         for profile in Profiles.fileList:
-            print(" ---- " + profile)
             card = ProfileCard(jsonPath, profile, CheckIntegrity, size = ("200sp","300sp"), size_hint_x = None)
             card.SetAttributes(elevation=0)
             card.PressedEnd = self.ProfilesClicked
             self.Layout.ProfilesLayout.profileBox.add_widget(card)
+        Debug.Log("All profile cards created")
 
         # Add the create new profile card at the end of the list
         card = CreateCard(size = ("200sp","300sp"), size_hint_x = None)
         card.PressedEnd = self.ProfilesClicked
+        card._MDCard.Title.text = _("Create")
         self.Layout.ProfilesLayout.profileBox.add_widget(card)
 
         Debug.End()

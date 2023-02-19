@@ -3,10 +3,11 @@
 #====================================================================#
 import os
 import sys
+from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+LoadingLog.Start("Application.py")
 
 path = os.getcwd()
 BRSpath = path + "\Libraries\BRS_Python_Libraries\BRS"
-print("Application.py")
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1,path)
@@ -87,3 +88,4 @@ class Application(MDApp):
 # ------------------------------------------------------------------------
 
 Application().run()
+LoadingLog.End("Application.py")

@@ -3,7 +3,8 @@
 #====================================================================#
 
 #====================================================================#
-print("ProfileCreation.py")
+from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+LoadingLog.Start("ProfileCreation.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -88,8 +89,8 @@ class ProfileCreation_Step1(Screen):
         self.CardTop = MDBoxLayout(spacing=10, padding=("10sp","10sp","10sp","10sp"), orientation="vertical")
         self.CardBottom = MDBoxLayout(spacing=10, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
         #region ---- Top Of Card
-        self.HelloWorld = MDLabel(text=_("Hello World"), 
-                                 font_style = "H2", 
+        self.HelloWorld = MDLabel(text=_("Hello World"),
+                                 font_style = "H2",
                                  halign = "center")
         #endregion
         #region ---- DropDown
@@ -130,8 +131,8 @@ class ProfileCreation_Step1(Screen):
         self.Previous.on_release = self.GoBack
         #endregion
         # Page title
-        self.PageTitle = MDLabel(text=_("Select a language"), 
-                                 font_style = "H2", 
+        self.PageTitle = MDLabel(text=_("Select a language"),
+                                 font_style = "H2",
                                  halign = "center")
 
         # Bottom layout widgets
@@ -142,6 +143,7 @@ class ProfileCreation_Step1(Screen):
         # Button on_release binding
 
         # Add widgets
+        self.CardTop.add_widget(self.HelloWorld)
         self.CardBottom.add_widget(self.SelectButton)
         self.Card.add_widget(self.CardTop)
         self.Card.add_widget(self.CardBottom)
@@ -201,8 +203,16 @@ class ProfileCreation_Step1(Screen):
             Callback function of the dropdown allowing it to
             set a new language.
         """
+        Debug.Start("SetNewLanguage")
+        Debug.Log(f"Loading new selected language: {language}")
         AppLanguage.LoadLanguage(language)
 
         # - Update the application's displayed text
+        Debug.Log("Retranslating page's elements")
         self.PageTitle.text = _(self.PageTitle.text)
+
+        Debug.Log("Closing dropdown menu")
         self.menu.dismiss()
+        Debug.End()
+
+LoadingLog.End("ProfileCreation.py")

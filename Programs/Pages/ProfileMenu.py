@@ -3,7 +3,8 @@
 #====================================================================#
 
 #====================================================================#
-print("ProfileMenu.py")
+from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+LoadingLog.Start("ProfileMenu.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -247,3 +248,5 @@ class ProfileMenu(Screen):
         AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
         AppManager.manager.transition.direction = "up"
         AppManager.manager.current = "ProfileCreation_Step1"
+
+LoadingLog.End("ProfileMenu.py")

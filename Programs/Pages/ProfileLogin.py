@@ -3,7 +3,8 @@
 #====================================================================#
 
 #====================================================================#
-print("ProfileLogin.py")
+from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+LoadingLog.Start("ProfileLogin.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -185,3 +186,5 @@ class ProfileLogin(Screen):
 
         if(password != self.Password.text):
             self.Password.error = True
+
+LoadingLog.End("ProfileLogin.py")

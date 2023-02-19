@@ -5,6 +5,9 @@
 #====================================================================#
 # Imports
 #====================================================================#
+from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+LoadingLog.Start("Profiles.py")
+
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder
 from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
@@ -251,3 +254,5 @@ class LoadedProfile:
     #endregion
     #endregion
     #endregion
+
+LoadingLog.End("Profiles.py")

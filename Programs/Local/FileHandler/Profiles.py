@@ -44,11 +44,12 @@ Temporary = {
     "ProfileConfig":{
         "CanDelete" : True,  # False, True
         "Type" : "Normal", #"Guest", "Normal", "Temporary"
-        "Version" : 1.1 # the profile version.
+        "Version" : 1.2 # the profile version.
     },
     "Generic" :{
-        "Username" : "",
-        "Password" : "",
+        "Username" : "Username",
+        "Password" : "Password",
+        "Biography" : "Biography",
         "IconType" : "Kivy",    # Kivy or Path
         "IconPath" : "account-outline",
         "Language" : "US_English"

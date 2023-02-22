@@ -56,12 +56,98 @@ class CustomOneLineIconListItem(OneLineIconListItem):
     icon = StringProperty()
 
 
+DefaultIconBannedWords = {
+    "abjad",
+    "access",
+    "align",
+    "alert",
+    "alphabet",
+    "archive",
+    "arrow",
+    "arrange",
+    "axis",
+    "border",
+    "battery",
+    "lock",
+    "progress",
+    "chat",
+    "form",
+    "crop",
+    "cursor",
+    "drag",
+    "outline",
+    "chevron",
+    "chart",
+    "cancel",
+    "calendar",
+    "circle",
+    "cog",
+    "edit",
+    "off",
+    "remove",
+    "settings",
+    "plus",
+    "minus",
+    "check",
+    "clock",
+    "box",
+    "search",
+    "comment",
+    "refresh",
+    "decimal",
+    "delete",
+    "sync",
+    "marker",
+    "distribute",
+    "dock",
+    "download",
+    "flip",
+    "folder",
+    "format",
+    "gesture",
+    "menu",
+    "message",
+    "strength",
+    "order",
+    "page",
+    "pan",
+    "relation",
+    "rewind",
+    "rotate",
+    "selection",
+    "signal",
+    "sort",
+    "select",
+    "step",
+    "surround",
+    "view",
+    "source",
+    "text",
+    "call",
+    "unfold",
+    "vector",
+    "share",
+    "filter",
+    "block",
+}
+
 class PreviousMDIcons(Screen):
 
     def set_list_md_icons(self, text="", search=False):
         '''Builds a list of icons for the screen MDIcons.'''
 
         def add_icon_item(name_icon):
+            name_icon_list = name_icon.split("-")
+
+            print(name_icon_list)
+
+            banned_word_detected = False
+            for word in name_icon_list:
+                for banned in DefaultIconBannedWords:
+                    if word==banned:
+                        banned_word_detected = True
+                        return
+
             self.ids.rv.data.append(
                 {
                     "viewclass": "CustomOneLineIconListItem",

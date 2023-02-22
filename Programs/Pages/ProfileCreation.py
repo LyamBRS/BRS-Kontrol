@@ -18,6 +18,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTr
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.textfield import MDTextField,MDTextFieldRect
 from kivymd.uix.dropdownitem import MDDropDownItem
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
@@ -33,6 +34,83 @@ from kivy.utils import get_color_from_hex
 from ..Local.FileHandler import Profiles
 from kivy.properties import StringProperty
 from kivymd.uix.list import OneLineIconListItem,IconLeftWidget
+#====================================================================#
+# Variables
+#====================================================================#
+DefaultIconBannedWords = {
+    "abjad",
+    "access",
+    "align",
+    "alert",
+    "alphabet",
+    "archive",
+    "arrow",
+    "arrange",
+    "axis",
+    "border",
+    "battery",
+    "lock",
+    "progress",
+    "chat",
+    "form",
+    "crop",
+    "cursor",
+    "drag",
+    "outline",
+    "chevron",
+    "chart",
+    "cancel",
+    "calendar",
+    "circle",
+    "cog",
+    "edit",
+    "off",
+    "remove",
+    "settings",
+    "plus",
+    "minus",
+    "check",
+    "clock",
+    "box",
+    "search",
+    "comment",
+    "refresh",
+    "decimal",
+    "delete",
+    "sync",
+    "marker",
+    "distribute",
+    "dock",
+    "download",
+    "flip",
+    "folder",
+    "format",
+    "gesture",
+    "menu",
+    "message",
+    "strength",
+    "order",
+    "page",
+    "pan",
+    "relation",
+    "rewind",
+    "rotate",
+    "selection",
+    "signal",
+    "sort",
+    "select",
+    "step",
+    "surround",
+    "view",
+    "source",
+    "text",
+    "call",
+    "unfold",
+    "vector",
+    "share",
+    "filter",
+    "block",
+}
 #====================================================================#
 # Functions
 #====================================================================#
@@ -500,15 +578,89 @@ class ProfileCreation_Step3(Screen):
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
         # Temporary["Generic"]["Language"] = AppLanguage.Current
 
-        CreateScreenBase(self, "Select profile information", "Middle")
+    
+        Debug.Log("Creating Layouts")
+        self.MainLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="vertical")
+        self.MiddleLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="horizontal")
+        self.TopLayout = MDBoxLayout(padding=("20sp","20sp","20sp","20sp"), size_hint_y = 0.25)
+    
+        # region ---- Card
+        Debug.Log("Creating Card and Card layouts")
+        self.LeftCard = MDCard(
+                        elevation = Shadow.Elevation.default,
+                        shadow_softness = Shadow.Smoothness.default,
+                        radius=Rounding.default,
+                        padding = 25,
+                        orientation = "vertical"
+                        )
+        self.RightCard = MDCard(
+                        elevation = Shadow.Elevation.default,
+                        shadow_softness = Shadow.Smoothness.default,
+                        radius=Rounding.default,
+                        padding = 25,
+                        orientation = "vertical"
+                        )
+
+        self.LeftCardTop = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="vertical")
+        self.LeftCardBottom = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
+
+        self.RightCardTop = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="vertical")
+        self.RightCardBottom = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
+
+        Debug.Log("Creating standard profile information widgets")
+        self.UsernameTitle = MDLabel(text=_("Username") + ":")
+        self.PasswordTitle = MDLabel(text=_("Password") + ":")
+        self.BiographyTitle = MDLabel(text=_("Short biography") + ":")
+        self.Username = MDTextField(text=Temporary["Generic"]["Username"])
+        self.Password = MDTextField(text=Temporary["Generic"]["Password"])
+        self.Biography = MDTextField(text=Temporary["Generic"]["Biography"])
+        self.Biography.max_height = 3
+        self.PasswordTitle.font_style = "H5"
+        self.UsernameTitle.font_style = "H5"
+        self.BiographyTitle.font_style = "H5"
+
+        # endregion
+        # region ---- Previous/Next
+        Debug.Log("Creating Previous/Next buttons")
+        self.Next = MDIconButton(text="chevron-right", icon="chevron-right")
+        self.Next.icon_size = "75sp"
+        self.Next.pos_hint={"center_x": 0.75, "center_y": 0.5}
+        self.Next.on_release = self.GoToNext
+
+        self.Previous = MDIconButton(text="chevron-left", icon="chevron-left")
+        self.Previous.icon_size = "75sp"
+        self.Previous.pos_hint={"center_x": 0.25, "center_y": 0.5}
+        self.Previous.on_release = self.GoToPrevious
+
+        # endregion
+
+        # Page title
+        self.PageTitle = MDLabel(text=_("Select profile information"),
+                                 font_style = "H2",
+                                 halign = "center")
+
+        # Top layout widgets
+        self.TopLayout.add_widget(self.Previous)
+        self.TopLayout.add_widget(self.PageTitle)
+        self.TopLayout.add_widget(self.Next)
+
 
         #region ---- Top Of Card
+        self.LeftCard.add_widget(self.UsernameTitle)
+        self.LeftCard.add_widget(self.Username)
+        self.LeftCard.add_widget(self.PasswordTitle)
+        self.LeftCard.add_widget(self.Password)
+        self.LeftCard.add_widget(self.BiographyTitle)
+        self.LeftCard.add_widget(self.Biography)
         #endregion
 
         # Add widgets
-        self.Card.add_widget(self.CardTop)
-        self.Card.add_widget(self.CardBottom)
-        self.MiddleLayout.add_widget(self.Card)
+        # self.LeftCard.add_widget(self.LeftCardTop)
+        # self.LeftCard.add_widget(self.LeftCardBottom)
+        # self.RightCard.add_widget(self.RightCardTop)
+        # self.RightCard.add_widget(self.RightCardBottom)
+        self.MiddleLayout.add_widget(self.LeftCard)
+        self.MiddleLayout.add_widget(self.RightCard)
 
         self.MainLayout.add_widget(self.TopLayout)
         self.MainLayout.add_widget(self.MiddleLayout)

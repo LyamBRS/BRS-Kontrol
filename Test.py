@@ -1,61 +1,3 @@
-from kivy.lang import Builder
-from kivy.properties import StringProperty
-from kivy.uix.screenmanager import Screen
-
-from kivymd.icon_definitions import md_icons
-from kivymd.app import MDApp
-from kivymd.uix.list import OneLineIconListItem
-
-
-Builder.load_string(
-    '''
-#:import images_path kivymd.images_path
-
-
-<CustomOneLineIconListItem>
-
-    IconLeftWidget:
-        icon: root.icon
-
-
-<PreviousMDIcons>
-
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: dp(10)
-        padding: dp(20)
-
-        MDBoxLayout:
-            adaptive_height: True
-
-            MDIconButton:
-                icon: 'magnify'
-
-            MDTextField:
-                id: search_field
-                hint_text: 'Search icon'
-                on_text: root.set_list_md_icons(self.text, True)
-
-        RecycleView:
-            id: rv
-            key_viewclass: 'viewclass'
-            key_size: 'height'
-
-            RecycleBoxLayout:
-                padding: dp(10)
-                default_size: None, dp(48)
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
-'''
-)
-
-
-class CustomOneLineIconListItem(OneLineIconListItem):
-    icon = StringProperty()
-
-
 DefaultIconBannedWords = {
     "abjad",
     "access",
@@ -131,141 +73,169 @@ DefaultIconBannedWords = {
     "block",
 }
 
-class PreviousMDIcons(Screen):
-
-    def set_list_md_icons(self, text="", search=False):
-        '''Builds a list of icons for the screen MDIcons.'''
-
-        def add_icon_item(name_icon):
-            name_icon_list = name_icon.split("-")
-
-            print(name_icon_list)
-
-            banned_word_detected = False
-            for word in name_icon_list:
-                for banned in DefaultIconBannedWords:
-                    if word==banned:
-                        banned_word_detected = True
-                        return
-
-            self.ids.rv.data.append(
-                {
-                    "viewclass": "CustomOneLineIconListItem",
-                    "icon": name_icon,
-                    "text": name_icon,
-                    "callback": lambda x: x,
-                }
-            )
-
-        self.ids.rv.data = []
-        for name_icon in md_icons.keys():
-            if search:
-                if text in name_icon:
-                    add_icon_item(name_icon)
-            else:
-                add_icon_item(name_icon)
-
-
-class MainApp(MDApp):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.screen = PreviousMDIcons()
-
-    def build(self):
-        return self.screen
-
-    def on_start(self):
-        self.screen.set_list_md_icons()
-
-
-MainApp().run()
-
-
-from kivymd.app import MDApp
-from kivymd.uix.button import MDIconButton
-from kivymd.uix.screen import MDScreen
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.floatlayout import MDFloatLayout
-
-
-class Example(MDApp):
-    def build(self):
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Orange"
-
-        return (
-            MDScreen(
-                MDFloatLayout(
-                    MDIconButton(
-                        icon="language-python",
-                        pos_hint={"center_x": 0.5, "center_y": 0.5},
-                    )
-                )
-            )
-        )
-
-
-Example().run()
-
-
-
-
 # from kivy.lang import Builder
-# from kivy.metrics import dp
 # from kivy.properties import StringProperty
-
-# from kivymd.uix.list import OneLineIconListItem, IconLeftWidget
+# from kivy.uix.screenmanager import Screen
+# from kivymd.icon_definitions import md_icons
 # from kivymd.app import MDApp
-# from kivymd.uix.menu import MDDropdownMenu
+# from kivymd.uix.list import OneLineIconListItem
 
-# KV = '''
-# MDScreen
 
-#     MDDropDownItem:
-#         id: drop_item
-#         pos_hint: {'center_x': .5, 'center_y': .5}
-#         text: 'Item 0'
-#         on_release: app.menu.open()
+# Builder.load_string(
+#     '''
+# #:import images_path kivymd.images_path
+
+
+# <CustomOneLineIconListItem>
+
+#     IconLeftWidget:
+#         icon: root.icon
+
+
+# <PreviousMDIcons>
+
+#     MDBoxLayout:
+#         orientation: 'vertical'
+#         spacing: dp(10)
+#         padding: dp(20)
+
+#         MDBoxLayout:
+#             adaptive_height: True
+
+#             MDIconButton:
+#                 icon: 'magnify'
+
+#             MDTextField:
+#                 id: search_field
+#                 hint_text: 'Search icon'
+#                 on_text: root.set_list_md_icons(self.text, True)
+
+#         RecycleView:
+#             id: rv
+#             key_viewclass: 'viewclass'
+#             key_size: 'height'
+
+#             RecycleBoxLayout:
+#                 padding: dp(10)
+#                 default_size: None, dp(48)
+#                 default_size_hint: 1, None
+#                 size_hint_y: None
+#                 height: self.minimum_height
+#                 orientation: 'vertical'
 # '''
+# )
 
 
-# class IconListItem(OneLineIconListItem):
+# class CustomOneLineIconListItem(OneLineIconListItem):
 #     icon = StringProperty()
-#     def __init__(self, **kwargs):
-#         super(IconListItem, self).__init__(**kwargs)
-#         self.orientation = 'horizontal'
-#         self.add_widget(IconLeftWidget())
 
-# class Test(MDApp):
+# class PreviousMDIcons(Screen):
+
+#     def set_list_md_icons(self, text="", search=False):
+#         '''Builds a list of icons for the screen MDIcons.'''
+
+#         def add_icon_item(name_icon):
+#             name_icon_list = name_icon.split("-")
+
+#             print(name_icon_list)
+
+#             banned_word_detected = False
+#             for word in name_icon_list:
+#                 for banned in DefaultIconBannedWords:
+#                     if word==banned:
+#                         banned_word_detected = True
+#                         return
+
+#             self.ids.rv.data.append(
+#                 {
+#                     "viewclass": "CustomOneLineIconListItem",
+#                     "icon": name_icon,
+#                     "text": name_icon,
+#                     "callback": lambda x: x,
+#                 }
+#             )
+
+#         self.ids.rv.data = []
+#         for name_icon in md_icons.keys():
+#             if search:
+#                 if text in name_icon:
+#                     add_icon_item(name_icon)
+#             else:
+#                 add_icon_item(name_icon)
+
+
+# class MainApp(MDApp):
 #     def __init__(self, **kwargs):
 #         super().__init__(**kwargs)
-#         self.screen = Builder.load_string(KV)
-#         menu_items = [
-#             {
-#                 "viewclass": "IconListItem",
-#                 "icon": "git",
-#                 "text": f"Item {i}",
-#                 "height": dp(56),
-#                 "on_release": lambda x=f"Item {i}": self.set_item(x),
-#             } for i in range(5)
-#         ]
-#         print("Menu items created")
-#         self.menu = MDDropdownMenu(
-#             caller=self.screen.ids.drop_item,
-#             items=menu_items,
-#             position="center",
-#             width_mult=4,
-#         )
-#         print("Menu created")
-#         self.menu.bind()
-
-#     def set_item(self, text_item):
-#         print("Set items")
-#         self.screen.ids.drop_item.set_item(text_item)
-#         self.menu.dismiss()
+#         self.screen = PreviousMDIcons()
 
 #     def build(self):
 #         return self.screen
 
+#     def on_start(self):
+#         self.screen.set_list_md_icons()
 
-# Test().run()
+
+# MainApp().run()
+
+
+from kivymd.app import MDApp
+from kivy.clock import Clock
+from kivy.metrics import dp
+from kivy.properties import StringProperty
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.screenmanager import Screen
+from kivy.uix.scrollview import ScrollView
+
+from kivymd.icon_definitions import md_icons
+from kivymd.uix.button import MDIconButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.list import OneLineIconListItem
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.scrollview import MDScrollView
+from kivymd.uix.card import MDCard
+
+
+class CustomOneLineIconListItem(OneLineIconListItem):
+    icon = StringProperty()
+
+
+class PreviousMDIcons(Screen):
+    def __init__(self, **kwargs):
+        super(PreviousMDIcons, self).__init__(**kwargs)
+        print("__init__")
+         # Create a horizontal box layout offset by half the screen to center the first profile in view.
+        # windowWidth = str(Window.width/2) + "sp"
+        self.Layout = MDBoxLayout(spacing=25, padding=(0,50,0,0), orientation="vertical")
+
+        self.profileBox = MDBoxLayout(orientation='vertical', spacing="0", padding = (0,"100sp",0,"50sp"), size_hint_y=None)
+        self.profileBox.bind(minimum_height = self.profileBox.setter('height'))
+
+        # Create the scroll view and add the box layout to it
+        self.scroll = MDScrollView(scroll_type=['bars','content'])
+        self.scroll.smooth_scroll_end = 10
+
+        self.scroll.add_widget(self.profileBox)
+        self.Layout.add_widget(self.scroll)
+        self.add_widget(self.Layout)
+
+        import random
+        choices = md_icons.keys()
+        count = 0
+        for key in random.sample(choices,k=50):
+            card = MDIconButton()
+            card.icon = key
+            self.profileBox.add_widget(card)
+            count = count + 1
+            if(count > 100):
+                break
+
+
+class MainApp(MDApp):
+    def build(self):
+        return PreviousMDIcons()
+
+
+if __name__ == "__main__":
+    MainApp().run()

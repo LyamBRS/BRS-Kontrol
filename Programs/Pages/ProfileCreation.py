@@ -23,6 +23,7 @@ from kivymd.uix.dropdownitem import MDDropDownItem
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
 from kivymd.app import MDApp
+from kivymd.uix.recycleview import MDRecycleView
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
@@ -644,6 +645,33 @@ class ProfileCreation_Step3(Screen):
         self.TopLayout.add_widget(self.PageTitle)
         self.TopLayout.add_widget(self.Next)
 
+        #region ---- SearchBar
+        self.MagnifyGlass = MDIconButton(icon = "magnify")
+        self.SearchBar = MDTextField()
+        self.SearchBar.hint_text = _("Search")
+        self.SearchLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="horizontal")
+        self.SearchLayout.add_widget(self.MagnifyGlass)
+        self.SearchLayout.add_widget(self.SearchBar)
+        self.RightCard.add_widget(self.SearchLayout)
+        #endregion
+
+        #region ---- RecycleView
+        self.RecycleView = MDRecycleView()
+        self.RecycleView.key_viewclass = "viewclass"
+
+            RecycleView:
+        id: rv
+        key_viewclass: 'viewclass'
+        key_size: 'height'
+
+        RecycleBoxLayout:
+            padding: dp(10)
+            default_size: None, dp(48)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
+        #endregion
 
         #region ---- Top Of Card
         self.LeftCard.add_widget(self.UsernameTitle)

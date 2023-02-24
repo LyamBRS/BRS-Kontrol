@@ -9,6 +9,7 @@ LoadingLog.Start("ProfileCreation.py")
 # Imports
 #====================================================================#
 import os
+import time
 from kivy.animation import Animation
 # -------------------------------------------------------------------
 from kivymd.uix.button import MDRaisedButton,MDRectangleFlatButton,MDFillRoundFlatButton,MDIconButton
@@ -30,6 +31,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppMan
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import LoadedProfile,Temporary
+from kivymd.uix.scrollview import MDScrollView
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
 from ..Local.FileHandler import Profiles
@@ -112,6 +114,21 @@ DefaultIconBannedWords = {
     "filter",
     "block",
 }
+
+ProfileIcons = []
+
+# Creating the allowed icons list:
+for key in md_icons.keys():
+    keyWordList = key.split("-")
+    isBanned = False
+    for banned in DefaultIconBannedWords:
+        if banned in keyWordList:
+            print(f"[BANNED]: {key}")
+            isBanned = True
+    
+    if(not isBanned):
+        print(key)
+        ProfileIcons.append(MDIconButton(icon = key))
 #====================================================================#
 # Functions
 #====================================================================#
@@ -659,18 +676,17 @@ class ProfileCreation_Step3(Screen):
         self.RecycleView = MDRecycleView()
         self.RecycleView.key_viewclass = "viewclass"
 
-            RecycleView:
-        id: rv
-        key_viewclass: 'viewclass'
-        key_size: 'height'
+        self.Layout = MDBoxLayout(spacing=25, padding=(0,50,0,0), orientation="vertical")
 
-        RecycleBoxLayout:
-            padding: dp(10)
-            default_size: None, dp(48)
-            default_size_hint: 1, None
-            size_hint_y: None
-            height: self.minimum_height
-            orientation: 'vertical'
+        self.profileBox = MDBoxLayout(orientation='vertical', spacing="0", padding = (0,"100sp",0,"50sp"), size_hint_y=None)
+        self.profileBox.bind(minimum_height = self.profileBox.setter('height'))
+
+        # Create the scroll view and add the box layout to it
+        self.scroll = MDRecycleView(scroll_type=['bars','content'])
+        self.scroll.smooth_scroll_end = 10
+
+        self.scroll.add_widget(self.profileBox)
+
         #endregion
 
         #region ---- Top Of Card
@@ -681,12 +697,18 @@ class ProfileCreation_Step3(Screen):
         self.LeftCard.add_widget(self.BiographyTitle)
         self.LeftCard.add_widget(self.Biography)
         #endregion
-
+        
+        start = time.time()
+        for icon in ProfileIcons:
+            self.profileBox.add_widget(icon)
+        end = time.time()
+        Debug.Warn(f"time taken: {end-start} seconds")
         # Add widgets
         # self.LeftCard.add_widget(self.LeftCardTop)
         # self.LeftCard.add_widget(self.LeftCardBottom)
         # self.RightCard.add_widget(self.RightCardTop)
         # self.RightCard.add_widget(self.RightCardBottom)
+        self.RightCard.add_widget(self.scroll)
         self.MiddleLayout.add_widget(self.LeftCard)
         self.MiddleLayout.add_widget(self.RightCard)
 
@@ -717,4 +739,11 @@ class ProfileCreation_Step3(Screen):
         # AppManager.manager.add_widget(ProfileCreation_Step4(name="ProfileCreation_Step4"))
         # AppManager.manager.transition.direction = "left"
         # AppManager.manager.current = "ProfileCreation_Step4"
+# ------------------------------------------------------------------------
+    def LoadProfileIcons(searchWord:str = None):
+        """
+            Loads profile icons that respects the banned word and must contain the
+            searchWord into the class's MDScrollview so that the user can choose a 
+            KivyMD icon for their profile.
+        """
 LoadingLog.End("ProfileCreation.py")

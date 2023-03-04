@@ -74,7 +74,7 @@ DefaultIconBannedWords = {
     "filter",
     "block",
 }
-
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
@@ -82,7 +82,9 @@ from kivymd.icon_definitions import md_icons
 from kivymd.app import MDApp
 from kivymd.uix.list import OneLineIconListItem
 
-
+Debug.enableConsole = True
+Debug.Start("Application")
+Debug.Log("Builder loading KV lang string")
 Builder.load_string(
     '''
 #:import images_path kivymd.images_path
@@ -114,6 +116,8 @@ Builder.load_string(
 
         RecycleView:
             id: rv
+            bar_width: 10
+            bar_height: 100
             key_viewclass: 'viewclass'
             key_size: 'height'
 
@@ -126,27 +130,31 @@ Builder.load_string(
                 orientation: 'vertical'
 '''
 )
-
+Debug.Log("Building done.")
 
 class CustomOneLineIconListItem(OneLineIconListItem):
+    Debug.Start("CustomOneLineIconListItem")
     icon = StringProperty()
+    Debug.End()
 
 class PreviousMDIcons(Screen):
+    Debug.Start("PreviousMDIcons")
 
     def set_list_md_icons(self, text="", search=False):
         '''Builds a list of icons for the screen MDIcons.'''
+        Debug.Start("set_list_md_icons")
 
         def add_icon_item(name_icon):
+            Debug.Start("add_icon_item")
             name_icon_list = name_icon.split("-")
-
-            print(name_icon_list)
 
             banned_word_detected = False
             for word in name_icon_list:
                 for banned in DefaultIconBannedWords:
                     if word==banned:
                         banned_word_detected = True
-                        return
+                        Debug.Warn("BANNED")
+                        break
 
             self.ids.rv.data.append(
                 {
@@ -156,6 +164,7 @@ class PreviousMDIcons(Screen):
                     "callback": lambda x: x,
                 }
             )
+            Debug.End()
 
         self.ids.rv.data = []
         for name_icon in md_icons.keys():
@@ -163,7 +172,11 @@ class PreviousMDIcons(Screen):
                 if text in name_icon:
                     add_icon_item(name_icon)
             else:
+                Debug.Log(f"Adding {name_icon}")
                 add_icon_item(name_icon)
+
+        Debug.End()
+    Debug.End()
 
 
 class MainApp(MDApp):

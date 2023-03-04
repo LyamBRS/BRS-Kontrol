@@ -2,7 +2,7 @@
     "ProfileConfig": {
         "CanDelete" : false,
         "Type" : "Normal",
-	"Version" : 1.0
+	"Version" : 1.2
     },
     "Generic" : {
         "Username" : "YoMom",

@@ -11,6 +11,7 @@ LoadingLog.Start("ProfileCreation.py")
 import os
 import time
 from kivy.animation import Animation
+from kivy.properties import StringProperty
 # -------------------------------------------------------------------
 from kivymd.uix.button import MDRaisedButton,MDRectangleFlatButton,MDFillRoundFlatButton,MDIconButton
 from kivymd.uix.label import MDLabel
@@ -123,24 +124,27 @@ for key in md_icons.keys():
     isBanned = False
     for banned in DefaultIconBannedWords:
         if banned in keyWordList:
-            print(f"[BANNED]: {key}")
             isBanned = True
     
     if(not isBanned):
-        print(key)
-        ProfileIcons.append(MDIconButton(icon = key))
+        ProfileIcons.append(key)
 #====================================================================#
 # Functions
 #====================================================================#
 class IconListItem(OneLineIconListItem):
-    icon = StringProperty()
     def __init__(self, **kwargs):
+        Debug.Start("IconListItem")
         super(IconListItem, self).__init__(**kwargs)
         self.orientation = 'horizontal'
         Bruh = IconLeftWidget()
-        # Bruh.icon = md_icons["cancel"]
+        Bruh.icon = self.icon
         Bruh.theme_icon_color = "Hint"
         self.add_widget(Bruh)
+        Debug.End()
+
+class CustomOneLineIconListItem(OneLineIconListItem):
+    print("CustomOneLineIconListItem")
+    icon = StringProperty()
 
 def CreateScreenBase(self, title:str, stepType:str) -> None:
     """
@@ -596,7 +600,6 @@ class ProfileCreation_Step3(Screen):
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
         # Temporary["Generic"]["Language"] = AppLanguage.Current
 
-    
         Debug.Log("Creating Layouts")
         self.MainLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="vertical")
         self.MiddleLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="horizontal")
@@ -674,7 +677,8 @@ class ProfileCreation_Step3(Screen):
 
         #region ---- RecycleView
         self.RecycleView = MDRecycleView()
-        self.RecycleView.key_viewclass = "viewclass"
+        self.RecycleView.viewclass = IconListItem
+        # self.RecycleView.key_viewclass = "viewclass"
 
         self.Layout = MDBoxLayout(spacing=25, padding=(0,50,0,0), orientation="vertical")
 
@@ -683,6 +687,7 @@ class ProfileCreation_Step3(Screen):
 
         # Create the scroll view and add the box layout to it
         self.scroll = MDRecycleView(scroll_type=['bars','content'])
+        self.scroll.viewclass = IconListItem
         self.scroll.smooth_scroll_end = 10
 
         self.scroll.add_widget(self.profileBox)
@@ -700,7 +705,18 @@ class ProfileCreation_Step3(Screen):
         
         start = time.time()
         for icon in ProfileIcons:
-            self.profileBox.add_widget(icon)
+            Debug.Log(icon)
+
+            self.scroll.data.append(
+                {
+                    "viewclass": "IconListItem",
+                    "icon": icon,
+                    "text": icon,
+                    "callback": lambda x: x,
+                }
+            )
+
+        Debug.Log(self.scroll.data)
         end = time.time()
         Debug.Warn(f"time taken: {end-start} seconds")
         # Add widgets
@@ -746,4 +762,5 @@ class ProfileCreation_Step3(Screen):
             searchWord into the class's MDScrollview so that the user can choose a 
             KivyMD icon for their profile.
         """
+# ------------------------------------------------------------------------
 LoadingLog.End("ProfileCreation.py")

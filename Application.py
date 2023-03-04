@@ -21,6 +21,7 @@ from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 from kivymd.theming import ThemeManager
+from Programs.Local.FileHandler.Cache import Cache
 # -------------------------------------------------------------------
 
 # -------------------------------------------------------------------
@@ -30,6 +31,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLang
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 # -------------------------------------------------------------------
 from Programs.Pages.ProfileMenu import ProfileMenu
+from Programs.Pages.Startup import Startup_Screens
 #====================================================================#
 # Configuration
 #====================================================================#
@@ -60,15 +62,17 @@ class Application(MDApp):
         """
         Debug.enableConsole = True
 
+        MDApp.on_stop
+
         self.theme_cls.material_style = 'M3'
         self.theme_cls.primary_palette = "Purple"
         self.theme_cls.accent_palette = "Teal"
-        self.theme_cls.theme_style = "Light"
+        self.theme_cls.theme_style = "Dark"
         self.theme_cls.theme_style_switch_animation = True
         self.theme_cls.theme_style_switch_animation_duration = 0
 
         # Load available languages
-        AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "CAN_French")
+        AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "US_English")
 
         Window.borderless = True
         Window.resizable = True
@@ -77,15 +81,31 @@ class Application(MDApp):
         Window.fullscreen = 'auto'
 
         AppManager.manager = ScreenManager()
-        AppManager.manager.transition.duration = 0.5
-        AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
-        AppManager.manager.current = "ProfileMenu"
+        # AppManager.manager.transition.duration = 0.5
+        # AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
+        # AppManager.manager.current = "ProfileMenu"
+        Startup_Screens.SetExiter(ProfileMenu, "ProfileMenu")
+        Startup_Screens.SetCaller(Application, "Application")
+        Startup_Screens.Call()
         return AppManager.manager
     
     def on_start(self):
         print("Application built... starting")
 
+    def on_stop(self):
+        Debug.Start("Application -> on_stop")
+        if(Cache.loaded):
+            Cache.SetExit("User")
+            Cache.SetDate("Exit")
+            Cache.SaveFile()
+        Debug.End()
 # ------------------------------------------------------------------------
+try:
+    Application().run()
+except:
+    if(Cache.loaded):
+        Cache.SetExit("Crashed")
+        Cache.SetDate("Exit")
+        Cache.SaveFile()
 
-Application().run()
 LoadingLog.End("Application.py")

@@ -6,6 +6,7 @@
 # Imports
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 LoadingLog.Start("Cache.py")
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -16,6 +17,8 @@ from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
+
+from .Profiles import CheckIntegrity as CheckProfileIntegrity
 #====================================================================#
 # Global accessibles
 #====================================================================#
@@ -173,7 +176,7 @@ class Cache():
             today = date.today()
             Cache.jsonData.jsonData["Cache"]["ExitReason"] = dateType
     #-------------------
-    def SetInfoFromProfile(self, profile):
+    def SetInfoFromProfile(self, profile:JSONdata):
         """
             SetInfoFromProfile:
             ----------
@@ -181,7 +184,13 @@ class Cache():
             a JSON file, and loads in into the cache class. It will test the profile using
             `CheckIntegrity` specific to Profiles.
         """
-        pass
+        Debug.Start("Cache -> SetInfoFromProfile")
+        # Check if cache was successfully loaded
+        if(Cache.loaded):
+            integrity = CheckProfileIntegrity(profile)
+            if(integrity == FileIntegrity.Good):
+                Debug.Log("Profile has passed the integrity check")
+        Debug.End()
     #-------------------
     def LoadTheme(self):
         """

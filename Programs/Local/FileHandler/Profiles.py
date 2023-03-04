@@ -9,6 +9,8 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("Profiles.py")
 
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
@@ -25,6 +27,7 @@ profileStructure = {
     "Generic" :{
         "Username" : "Username",
         "Password" : "",
+        "Biography" : "Biography",
         "IconType" : "Kivy",    # Kivy or Path
         "IconPath" : "account-outline",
         "Language" : "US_English"
@@ -79,64 +82,93 @@ Profiles: FilesFinder = None
 #====================================================================#
 # Functions
 #====================================================================#
-def CheckIntegrity(profileJson:JSONdata) -> str:
+def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     """
         This function allows you to check the integrity of a loaded
         profile JSON without having to do it manually.
 
         It checks every single values within the given profile `JSONdata`.
         
-        Returns: (`str`)
-            - `"Ahead"` : The profile version is bigger than the wanted profile version.
-            - `"Outdated"` : The saved profile version does not match the current application's profile version.
-            - `"Blank"` : All the profile's categories are absent.
-            - `"Corrupted"` : Some of the profile's data cannot be used at all.
-            - `"Good"` : The profile's integrity is good and can be loaded properly.
-            - `"Error"` : Fatal error, the given JSON could not be used or salvaged at all.
+        Returns: (`FileIntegrity`)
+            - `Ahead` : The profile version is bigger than the wanted profile version.
+            - `Outdated` : The saved profile version does not match the current application's profile version.
+            - `Blank` : All the profile's categories are absent.
+            - `Corrupted` : Some of the profile's data cannot be used at all.
+            - `Good` : The profile's integrity is good and can be loaded properly.
+            - `Error` : Fatal error, the given JSON could not be used or salvaged at all.
     """
+    Debug.Start("CheckIntegrity")
     #region [Step 0]: Attempt to load the JSON.
     try:
         if(profileJson == None):
-            return "Error"
+            Debug.Warn("Error detected in Step 0. Parameter is blank")
+            Debug.End()
+            return FileIntegrity.Error
         elif(profileJson.CreateFile == None):
-            return "Error"
+            Debug.Warn("Error detected in Step 0. Parameter is an unrelated class")
+            Debug.End()
+            return FileIntegrity.Error
     except:
-        print("ERROR: CheckIntegrity: Step 0")
-        return "Error"
+        Debug.Error("Exception in Step 0")
+        Debug.End()
+        return FileIntegrity.Error
     #endregion
     #region [Step 1]: Check if the profile is blank.
     try:
         if(profileJson.jsonData == None):
-            return "Blank"
+            Debug.Warn("File is blank")
+            Debug.End()
+            return FileIntegrity.Blank
     except:
-        print("ERROR: CheckIntegrity: Step 1")
-        return "Error"
+        Debug.Error("Exception in Step 1")
+        Debug.End()
+        return FileIntegrity.Error
     #endregion
     #region [Step 2]: Check if the profile version matches the profileStructure's profile version
     try:
         if(profileStructure["ProfileConfig"]["Version"] > profileJson.jsonData["ProfileConfig"]["Version"]):
-            return "Outdated"
+            Debug.Warn("File detected as outdated in Step 2")
+            Debug.End()
+            return FileIntegrity.Outdated
         if(profileStructure["ProfileConfig"]["Version"] < profileJson.jsonData["ProfileConfig"]["Version"]):
-            return "Ahead"
+            Debug.Warn("File detected as ahead in Step 2")
+            Debug.End()
+            return FileIntegrity.Ahead
     except:
-        print("ERROR: CheckIntegrity: Step 2")
-        return "Error"
+        Debug.Error("Exception in Step 2")
+        Debug.End()
+        return FileIntegrity.Error
     #endregion
     #region [Step 3]: Check if the keys match the profileStructure
     try:
         if(profileStructure.keys() != profileJson.jsonData.keys()):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 3: unmatching JSON keys")
+            Debug.End()
+            return FileIntegrity.Corrupted
+
         if(profileStructure["ProfileConfig"].keys() != profileJson.jsonData["ProfileConfig"].keys()):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 3: ProfileConfig JSON keys")
+            Debug.End()
+            return FileIntegrity.Corrupted
+
         if(profileStructure["Generic"].keys() != profileJson.jsonData["Generic"].keys()):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 3: Generic JSON keys")
+            Debug.End()
+            return FileIntegrity.Corrupted
+
         if(profileStructure["Theme"].keys() != profileJson.jsonData["Theme"].keys()):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 3: Theme JSON keys")
+            Debug.End()
+            return FileIntegrity.Corrupted
+
         if(profileStructure["Settings"].keys() != profileJson.jsonData["Settings"].keys()):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 3: Settings JSON keys")
+            Debug.End()
+            return FileIntegrity.Corrupted
     except:
-        print("ERROR: CheckIntegrity: Step 3")
-        return "Error"
+        Debug.Error("Exception in Step 3")
+        Debug.End()
+        return FileIntegrity.Error
     #endregion
     #region [Step 4]: Check if ProfileConfig's elements are correct.
     try:
@@ -144,10 +176,13 @@ def CheckIntegrity(profileJson:JSONdata) -> str:
         C = (type(profileJson.jsonData["ProfileConfig"]["Version"]) == float)
         B = profileJson.jsonData["ProfileConfig"]["Type"] == "Normal" or profileJson.jsonData["ProfileConfig"]["Type"] == "Guest" or profileJson.jsonData["ProfileConfig"]["Type"] == "Admin"
         if(not (A and B and C)):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 4: ProfileConfig")
+            Debug.End()
+            return FileIntegrity.Corrupted
     except:
-        print("ERROR: CheckIntegrity: Step 4")
-        return "Error"
+        Debug.Error("Exception in Step 4")
+        Debug.End()
+        return FileIntegrity.Error
     #endregion
     #region [Step 5]: Check if Generic's elements are correct.
     try:
@@ -159,15 +194,19 @@ def CheckIntegrity(profileJson:JSONdata) -> str:
             try:
                 icon = md_icons[profileJson.jsonData["Generic"]["IconPath"]]
             except:
-                print("ERROR: profile's KivyMD icon does not exist")
-                return "Corrupted"
+                Debug.Warn("Corruption detected in Step 5. Kivy Icon does not exist")
+                Debug.End()
+                return FileIntegrity.Corrupted
 
         if(not (A and B and C)):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 5.")
+            Debug.End()
+            return FileIntegrity.Corrupted
 
     except:
-        print("ERROR: CheckIntegrity: Step 5")
-        return "Error"
+        Debug.Error("Exception in Step 5")
+        Debug.End()
+        return FileIntegrity.Corrupted
     #endregion
     #region [Step 6]: Check if Theme's elements are correct.
     try:
@@ -177,13 +216,18 @@ def CheckIntegrity(profileJson:JSONdata) -> str:
         D = (type(profileJson.jsonData["Theme"]["Duration"]) == float)
 
         if(not (A and B and C and D)):
-            return "Corrupted"
+            Debug.Warn("Corruption detected in Step 6")
+            Debug.End()
+            return FileIntegrity.Corrupted
     except:
-        print("ERROR: CheckIntegrity: Step 6")
-        return "Error"
+        Debug.Error("Exception in Step 6")
+        Debug.End()
+        return FileIntegrity.Error
     #endregion
     #region [Step 7]: End of Integrity checks
-    return "Good"
+    Debug.Log("SUCCESS")
+    Debug.End()
+    return FileIntegrity.Good
     #endregion
 #====================================================================#
 # Classes

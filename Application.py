@@ -62,8 +62,6 @@ class Application(MDApp):
         """
         Debug.enableConsole = True
 
-        MDApp.on_stop
-
         self.theme_cls.material_style = 'M3'
         self.theme_cls.primary_palette = "Purple"
         self.theme_cls.accent_palette = "Teal"
@@ -74,11 +72,11 @@ class Application(MDApp):
         # Load available languages
         AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "US_English")
 
-        Window.borderless = True
-        Window.resizable = True
-        Window.left = -1024
-        Window.top = 600
-        Window.fullscreen = 'auto'
+        # Window.borderless = True
+        # Window.resizable = True
+        # Window.left = -1024
+        # Window.top = 600
+        # Window.fullscreen = 'auto'
 
         AppManager.manager = ScreenManager()
         # AppManager.manager.transition.duration = 0.5
@@ -100,12 +98,12 @@ class Application(MDApp):
             Cache.SaveFile()
         Debug.End()
 # ------------------------------------------------------------------------
-try:
-    Application().run()
-except:
-    if(Cache.loaded):
-        Cache.SetExit("Crashed")
-        Cache.SetDate("Exit")
-        Cache.SaveFile()
+# try:
+Application().run()
+# except:
+    # if(Cache.loaded):
+        # Cache.SetExit("Crashed")
+        # Cache.SetDate("Exit")
+        # Cache.SaveFile()
 
 LoadingLog.End("Application.py")

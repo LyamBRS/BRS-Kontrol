@@ -1,22 +1,24 @@
 {
-    "ProfileConfig": {
-        "CanDelete" : false,
-        "Type" : "Guest",
-	"Version" : 1.0
+    "ProfileConfig":{
+        "CanDelete" : true,
+        "Type" : "Normal",
+        "Version" : 1.2
     },
-    "Generic" : {
-        "Username" : "Guest",
-        "Password" : "",
+    "Generic" :{
+        "Username" : "Username",
+        "Password" : "Password",
+        "Biography" : "Biography",
         "IconType" : "Kivy",
-        "IconPath" : "account-check-outline"
+        "IconPath" : "account-outline",
+        "Language" : "US_English"
     },
-    "Theme" : {
-        "Style" : "Dark",
-        "Primary" : "Yellow",
+    "Theme" :{
+        "Style" : "Light",
+        "Primary" : "Purple",
         "Accent" : "Teal",
         "Duration" : 0.5
     },
-    "Settings" : {
+    "Settings" :{
         "TO DO":null
     }
 }

@@ -131,9 +131,15 @@ for key in md_icons.keys():
 #====================================================================#
 # Functions
 #====================================================================#
-class IconListItem(OneLineIconListItem):
+class CustomOneLineIconListItem(OneLineIconListItem):
+    print("CustomOneLineIconListItem")
+    icon = StringProperty()
+
+class IconListItem(CustomOneLineIconListItem):
     def __init__(self, **kwargs):
         Debug.Start("IconListItem")
+        Debug.Log(kwargs)
+        Debug.Log(f"self.icon -> {self.icon}")
         super(IconListItem, self).__init__(**kwargs)
         self.orientation = 'horizontal'
         Bruh = IconLeftWidget()
@@ -141,10 +147,6 @@ class IconListItem(OneLineIconListItem):
         Bruh.theme_icon_color = "Hint"
         self.add_widget(Bruh)
         Debug.End()
-
-class CustomOneLineIconListItem(OneLineIconListItem):
-    print("CustomOneLineIconListItem")
-    icon = StringProperty()
 
 def CreateScreenBase(self, title:str, stepType:str) -> None:
     """

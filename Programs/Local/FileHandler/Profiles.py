@@ -265,6 +265,7 @@ class LoadedProfile:
             If the function returns `False`, an error occured during
             initializing of this global function
         """
+        Debug.Start("LoadedProfile -> LoadProfile")
         error = False
         # Saves the profile's JSON into the LoadedProfile class.
         LoadedProfile.rawJson = jsonData
@@ -272,9 +273,13 @@ class LoadedProfile:
         error = LoadedProfile.LoadCLSTheme()
 
         if(not error):
+            Debug.Log("Profile initialized successfully")
             LoadedProfile.initialized = True
         else:
+            Debug.Log("Profile failed to load")
             LoadedProfile.initialized = False
+
+        Debug.End()
         return error
     #endregion
     #region   -- Private
@@ -283,18 +288,23 @@ class LoadedProfile:
             Loads the CLS theme saved in rawJson, into the application's real theme.
             returns `True` if successful, `False` if not.
         """
+        Debug.Start("LoadedProfile -> LoadCLSTheme")
         try:
             Style    = LoadedProfile.rawJson.jsonData["Theme"]["Style"]
             Primary  = LoadedProfile.rawJson.jsonData["Theme"]["Primary"]
             Accent   = LoadedProfile.rawJson.jsonData["Theme"]["Accent"]
-    
+
             MDApp.get_running_app().theme_cls.theme_style = Style
             MDApp.get_running_app().theme_cls.primary_palette = Primary
             MDApp.get_running_app().theme_cls.accent_palette = Accent
             MDApp.get_running_app().theme_cls.theme_style_switch_animation_duration = 0
+
+            Debug.Log("SUCCESS")
+            Debug.End()
             return True
         except:
-            print("_LoadCLSTheme ERROR")
+            Debug.Error("_LoadCLSTheme ERROR")
+            Debug.End()
             return False
     #endregion
     #endregion

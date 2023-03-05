@@ -7,6 +7,7 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
 LoadingLog.Start("Cache.py")
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -18,7 +19,7 @@ from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
 
-from .Profiles import CheckIntegrity as CheckProfileIntegrity
+from .Profiles import CheckIntegrity as CheckProfileIntegrity, LoadedProfile
 #====================================================================#
 # Global accessibles
 #====================================================================#
@@ -92,7 +93,7 @@ class Cache():
         Cache.fileFinder = FilesFinder("json", path)
 
         if(len(Cache.fileFinder.fileList) > 0):
-            Debug.Log("Some JSON files were found. Creating JSONdata")
+            Debug.Log("Some JSON files were found. Opening cache")
             Cache.jsonData = JSONdata("Cache", path)
             if(Cache.jsonData.jsonData == None):
                 Debug.Error("FAILED TO LOAD EXISTING JSON CACHE")
@@ -101,15 +102,27 @@ class Cache():
             else:
                 Debug.Log("JSONdata loaded from existing cache")
                 Cache.SetDate("Open")
-
         else:
             Debug.Log("No JSON files were found.")
             Debug.Log("Creating Cache.json")
             Cache.CreateNew()
 
+        # Cache has been loaded. External cache values may be loaded from now on.
         Cache.loaded = True
+
+        # Load cached theme
+        if(Cache.LoadTheme()):
+            Debug.Error("Cached CLS theme loading error")
+        else:
+            Debug.Log("Cached CLS theme loaded")
+
+        # Load cached language
+        if(Cache.LoadLanguage()):
+            Debug.Error("Cached language loading error")
+        else:
+            Debug.Log("Cached language loaded")
         Debug.End()
-    #-------------------
+    #-----------------------------------------------------------------
     def CreateNew():
         """
             CreateNew:
@@ -133,7 +146,7 @@ class Cache():
             Debug.Error("FAILED TO CREATE JSON FILE")
         Debug.End()
         pass
-    #-------------------
+    #-----------------------------------------------------------------
     def SaveFile():
         """
             SaveFile:
@@ -150,7 +163,7 @@ class Cache():
             else:
                 Debug.Error("Failed to save Application's cache")
         Debug.End()
-    #-------------------
+    #-----------------------------------------------------------------
     def SetDate(dateType:str):
         """
             SetDate:
@@ -162,7 +175,7 @@ class Cache():
         if(dateType=="Creation" or dateType=="Exit" or dateType=="Open"):
             today = datetime.now()
             Cache.jsonData.jsonData["Cache"]["Dates"][dateType] = today.strftime("%B %d %Y, %H:%M:%S")
-    #-------------------
+    #-----------------------------------------------------------------
     def SetExit(dateType:str):
         """
             SetExit:
@@ -175,31 +188,121 @@ class Cache():
         if(dateType=="User" or dateType=="Low Voltage" or dateType=="Corrupted" or dateType=="Corrupted"):
             today = date.today()
             Cache.jsonData.jsonData["Cache"]["ExitReason"] = dateType
-    #-------------------
-    def SetInfoFromProfile(self, profile:JSONdata):
+    #-----------------------------------------------------------------
+    def GetLoadedProfileInfo():
         """
-            SetInfoFromProfile:
+            GetLoadedProfileInfo:
             ----------
             This function takes a :ref:`FileFinder` class which loaded a profile from
             a JSON file, and loads in into the cache class. It will test the profile using
             `CheckIntegrity` specific to Profiles.
         """
-        Debug.Start("Cache -> SetInfoFromProfile")
+        Debug.Start("Cache -> GetLoadedProfileInfo")
         # Check if cache was successfully loaded
-        if(Cache.loaded):
-            integrity = CheckProfileIntegrity(profile)
-            if(integrity == FileIntegrity.Good):
-                Debug.Log("Profile has passed the integrity check")
+        if(Cache.loaded and LoadedProfile.initialized):
+            Debug.Log("Profile has passed the integrity check")
+
+            Debug.Log("Transfering theme into cache...")
+            Cache.jsonData.jsonData["Theme"] = LoadedProfile.rawJson.jsonData["Theme"]
+
+            Debug.Log("Transfering other info into cache...")
+            Cache.jsonData.jsonData["Profile"]["Loaded"] = LoadedProfile.rawJson.jsonData["Generic"]
+        else:
+            Debug.Error("Attempted to set cache info while no cache is loaded or no profiles were loaded")
         Debug.End()
-    #-------------------
-    def LoadTheme(self):
+    #-----------------------------------------------------------------
+    def LoadTheme() -> bool:
         """
             LoadTheme:
             ----------
             This function loads the theme saved in the cache into the application.
             Be sure you loaded the cache file prior to calling this.
+
+            Returns:
+                - `True`: Error occured
+                - `False`: No error occured and theme loaded successfully
         """
-        pass
+        Debug.Start("Cache -> LoadTheme")
+
+        #[1]: Check if cache is loaded
+        if(Cache.loaded):
+            try:
+                Style    = Cache.jsonData.jsonData["Theme"]["Style"]
+                Primary  = Cache.jsonData.jsonData["Theme"]["Primary"]
+                Accent   = Cache.jsonData.jsonData["Theme"]["Accent"]
+
+                MDApp.get_running_app().theme_cls.theme_style = Style
+                MDApp.get_running_app().theme_cls.primary_palette = Primary
+                MDApp.get_running_app().theme_cls.accent_palette = Accent
+                MDApp.get_running_app().theme_cls.theme_style_switch_animation_duration = 0
+
+                Debug.Log("SUCCESS")
+                Debug.End()
+                return False
+            except:
+                Debug.Error("An exception occured while loading cls theme")
+                Debug.End()
+                return True
+        else:
+            Debug.Error("Attempted to load theme from unloaded cache")
+            Debug.End()
+            return True
+    #-----------------------------------------------------------------
+    def GetAppInfo() -> bool:
+        """
+            GetAppInfo:
+            ----------
+            This function saves everything that needs to be saved
+            inside the cache loaded json. This needs to be called
+            when your application is quiting in order to get the
+            very last data into cache for next opening.
+
+            This does not save exit time nor exit reason
+            Returns:
+                `bool`: `True`: An error occured. `False`: No error occured
+        """
+        Debug.Start("Cache -> GetAppInfo")
+        if(Cache.loaded):
+            Debug.Log("Saving loaded profile's information into cache")
+            Cache.GetLoadedProfileInfo()
+
+            Debug.Log("Saving application's current theme...")
+            Cache.jsonData.jsonData["Theme"]["Style"] = MDApp.get_running_app().theme_cls.theme_style
+            Cache.jsonData.jsonData["Theme"]["Primary"] = MDApp.get_running_app().theme_cls.primary_palette
+            Cache.jsonData.jsonData["Theme"]["Accent"] = MDApp.get_running_app().theme_cls.accent_palette
+
+            Debug.Log("Saving Application's current language into cache")
+            if(AppLanguage.Current != None):
+                Cache.jsonData.jsonData["Profile"]["Language"] = AppLanguage.Current
+            else:
+                Debug.Warn("AppLanguage was not loaded. Defaulting cache to US_English")
+                Cache.jsonData.jsonData["Profile"]["Language"] = "US_English"
+
+        Debug.End()
+    #-----------------------------------------------------------------
+    def LoadLanguage() -> bool:
+        """
+            LoadLanguage:
+            -------------
+            This function is used to load the language that is saved
+            in the application's cache into the AppLanguage class.
+            You need to have Cache.loaded set to `True` prior to
+            calling this function.
+
+            Returns:
+                `bool`: `True`: An error occured. `False`: No error occured
+        """
+        Debug.Start("Cache -> LoadLanguage")
+        if(Cache.loaded):
+            Debug.Log("Setting AppLanguage to saved cache data")
+            if(AppLanguage.LoadLanguage(Cache.jsonData.jsonData["Profile"]["Language"])):
+                Debug.Log("Languages loaded successfully")
+            else:
+                Debug.Error("FAILED TO LOAD CACHED LANGUAGE")
+                Debug.End()
+                return True
+        return False
+        Debug.End()
     #endregion
 #====================================================================#
 # Functions

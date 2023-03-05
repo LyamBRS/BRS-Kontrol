@@ -336,8 +336,6 @@ class Startup(Screen):
             NOT USED
         """
         Debug.Start("Startup.py: on_pre_leave")
-        # Debug.Log("Loading cache")
-        # Cache.Load()
         Debug.End()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
@@ -424,6 +422,9 @@ class Startup(Screen):
             PopMatrix()
 
         if(args[2] == 1):
+            print("=====================================")
+            print("LOADING DATA FROM CACHE. APP STARTING")
+            print("=====================================")
             Cache.Load()
             Startup_Screens._Exit()
             pass

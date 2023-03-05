@@ -93,6 +93,7 @@ class Application(MDApp):
     def on_stop(self):
         Debug.Start("Application -> on_stop")
         if(Cache.loaded):
+            Cache.GetAppInfo()
             Cache.SetExit("User")
             Cache.SetDate("Exit")
             Cache.SaveFile()

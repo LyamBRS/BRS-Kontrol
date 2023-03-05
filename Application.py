@@ -82,6 +82,12 @@ class Application(MDApp):
         # AppManager.manager.transition.duration = 0.5
         # AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
         # AppManager.manager.current = "ProfileMenu"
+
+        if(Cache.Load()):
+            Debug.Error("Failed to load the application's cache")
+        else:
+            Debug.Log("CACHE LOAD SUCCESS")
+
         Startup_Screens.SetExiter(ProfileMenu, "ProfileMenu")
         Startup_Screens.SetCaller(Application, "Application")
         Startup_Screens.Call()

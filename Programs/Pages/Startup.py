@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from kivymd.app import MDApp
 LoadingLog.Start("Startup.py")
 #====================================================================#
 # Imports
@@ -250,12 +251,7 @@ class Startup(Screen):
 
             Screen specific actions:
             ------------------------
-            The :ref:`Startup` screen will check, verify and load the cached JSON of the application
-            so that the application's last values will be loaded as they were before it closed.
-            This means that anything like themes and languages will stay in memory and won't reset
-            to default values each time the application is started.
-            If no cached json is found, it will be created automatically and default values will be stored
-            in it.
+            The :ref:`Startup` is solely a short animation, nothing more, nothing less.
         """
         Debug.Start("Startup.py: on_pre_enter")
         self.padding = 25
@@ -269,9 +265,14 @@ class Startup(Screen):
         icon_size = Window.width / 3
         icon_size = str(icon_size) + "sp"
 
-        self.B = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-        self.R = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-        self.S = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+        if(MDApp.get_running_app().theme_cls.theme_style == "Dark"):
+            self.B = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.R = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.S = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+        else:
+            self.B = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.R = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.S = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
 
         self.B.icon_size = icon_size
         self.R.icon_size = icon_size
@@ -423,9 +424,8 @@ class Startup(Screen):
 
         if(args[2] == 1):
             print("=====================================")
-            print("LOADING DATA FROM CACHE. APP STARTING")
+            print("------------APP  STARTING------------")
             print("=====================================")
-            Cache.Load()
             Startup_Screens._Exit()
             pass
 # ------------------------------------------------------------------------

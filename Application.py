@@ -32,6 +32,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 # -------------------------------------------------------------------
 from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
+from Programs.Pages.AppLoading import AppLoading
 #====================================================================#
 # Configuration
 #====================================================================#
@@ -76,7 +77,7 @@ class Application(MDApp):
         # Window.resizable = True
         # Window.left = -1024
         # Window.top = 600
-        # Window.fullscreen = 'auto'
+        Window.fullscreen = 'auto'
 
         AppManager.manager = ScreenManager()
         # AppManager.manager.transition.duration = 0.5
@@ -88,7 +89,7 @@ class Application(MDApp):
         else:
             Debug.Log("CACHE LOAD SUCCESS")
 
-        Startup_Screens.SetExiter(ProfileMenu, "ProfileMenu")
+        Startup_Screens.SetExiter(AppLoading, "AppLoading")
         Startup_Screens.SetCaller(Application, "Application")
         Startup_Screens.Call()
         return AppManager.manager

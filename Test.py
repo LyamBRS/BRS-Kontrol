@@ -148,13 +148,13 @@ class PreviousMDIcons(Screen):
             Debug.Start("add_icon_item")
             name_icon_list = name_icon.split("-")
 
-            banned_word_detected = False
-            for word in name_icon_list:
-                for banned in DefaultIconBannedWords:
-                    if word==banned:
-                        banned_word_detected = True
-                        Debug.Warn("BANNED")
-                        break
+            # banned_word_detected = False
+            # for word in name_icon_list:
+                # for banned in DefaultIconBannedWords:
+                    # if word==banned:
+                        # banned_word_detected = True
+                        # Debug.Warn("BANNED")
+                        # break
 
             self.ids.rv.data.append(
                 {

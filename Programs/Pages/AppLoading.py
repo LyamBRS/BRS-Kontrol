@@ -8,22 +8,17 @@ LoadingLog.Start("AppLoading.py")
 #====================================================================#
 # Imports
 #====================================================================#
-import os
 from kivy.core.window import Window
-from random import randint, random
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.slider import Slider
-from kivy.core.window import Window
+from kivy.utils import get_color_from_hex
+from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
+from kivy.graphics import Color
 from kivy.animation import Animation
 from kivy.graphics import Canvas, Color, Rectangle, PushMatrix, PopMatrix, Rotate
 # -------------------------------------------------------------------
+from kivymd.color_definitions import colors
+from kivymd.app import MDApp
 from kivymd.uix.label import MDLabel
 from kivymd.uix.scrollview import MDScrollView
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.button import MDIconButton
@@ -35,12 +30,9 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
 from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard,CreateCard
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
-from .ProfileLogin import ProfileLogin
-from .ProfileCreation import ProfileCreation_Step1
-from ..Local.FileHandler import Profiles
+from ..Local.Loading.AppLoadingHandler import LoadApplication
 #====================================================================#
 # Screen Functions
 #====================================================================#
@@ -196,7 +188,9 @@ class AppLoading(Screen):
         - :ref:`on_leave`: Last function called by this screen before dying. Unloads all widgets
     """
     #region   --------------------------- MEMBERS
-
+    wantedRotation = 0
+    currentRotation = 0
+    ReadyForNextWindow:bool = False
     #endregion
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
@@ -226,17 +220,51 @@ class AppLoading(Screen):
         self.padding = 25
         self.spacing = 25
 
-        #region ---- Main Layout
+        #region ---- Layouts
         self.Layout = MDFloatLayout()
+        self.LoadingWheelLayout = MDBoxLayout()
+        self.LoadingWheelLayout.size_hint = (0.5,0.5)
+        self.LoadingWheelLayout.pos_hint = {'center_x': 0.5, 'center_y':0.5}
+        self.LoadingWheelLayout.size_hint_max = (Window.width/2.5, Window.width/2.5)
+        self.LoadingWheelLayout.size_hint_min = (Window.width/2.5, Window.width/2.5)
         #endregion
 
-        #region ---- B R S & Kontrol images
+        #region ---- Widgets
+        # Regular widgets
+        self.LoadingStep = MDLabel(text="Loading", halign="center", valign="bottom")
+        self.LoadingWheel = OutlineDial(trackWidth=5, fillingWidth=10)
+        self.LoadingWheel.Min = 0
+        self.LoadingWheel.Value = 0
+
+        # Centered Kontrol logo
+        if(MDApp.get_running_app().theme_cls.theme_style == "Dark"):
+            self.KontrolLogo = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_K.png", font_style='Icon', font_size = "100sp", halign = "center", valign = "center", disabled = True, opacity=1)
+        else:
+            self.KontrolLogo = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_K.png", font_style='Icon', font_size = "100sp", halign = "center", valign = "center", disabled = True, opacity=1)
+
+        # self.LoadingWheel.UseCustomFillingColor = get_color_from_hex(colors[MDApp.get_running_app().theme_cls.primary_palette]["500"])
+        self.LoadingWheel.UseCustomFillingColor = get_color_from_hex(colors[MDApp.get_running_app().theme_cls.primary_palette]["500"])
+        self.LoadingWheel.ShowTrack = False
+        self.LoadingWheel.EndAngle = 180
+        self.LoadingWheel.StartAngle = -180
+
+        # Widget settings
+        self.LoadingStep.font_style = "H4"
+        self.LoadingStep.size_hint = (1,0.125)
+        self.LoadingWheel.ShowShadow = False
+        self.LoadingWheel.ShowBackground = False
+        self.KontrolLogo.icon_size = Window.height/2.5
+        self.KontrolLogo.pos_hint = {'center_x': 0.5, 'center_y':0.5}
         #endregion
 
         #region ---- Initial status of Images
         #endregion
 
         #region ---- add_widgets
+        self.LoadingWheelLayout.add_widget(self.LoadingWheel)
+        self.Layout.add_widget(self.LoadingWheelLayout)
+        self.Layout.add_widget(self.KontrolLogo)
+        self.Layout.add_widget(self.LoadingStep)
         self.add_widget(self.Layout)
         #endregion
 
@@ -253,6 +281,16 @@ class AppLoading(Screen):
             Starts the BRS logo's startup screen.
         """
         Debug.Start("AppLoading.py: on_enter")
+        self.LoadingWheel.animated = True
+
+        #starting the spinning animation
+        self.KontrolLogo.opacity = 1
+        self.Animation = Animation(pos_hint={'center_x': 0.5, 'center_y':0.5}, opacity=2, duration=1.5, t="in_out_quart")
+        self.Animation.bind(on_progress = self.RotateLetter)
+        self.Animation.start(self.KontrolLogo)
+
+        #Scheduling loaders
+        LoadApplication(self.Update, self.SetStepTotalCount)
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
@@ -286,4 +324,58 @@ class AppLoading(Screen):
         self.clear_widgets()
         Debug.End()
 # ------------------------------------------------------------------------
+    def Update(self, loadingMessage:str, loadingStep:float):
+        """
+            Update:
+            -------
+            This function updates what is shown on the AppLoading screen.
+            it changes the text to display below the loading wheel as well
+            as the :ref:`OutlineDial`'s value to indicate a progression
+            in the application's loading steps.
+        """
+        Debug.Start("AppLoading -> Update")
+        Debug.Log("Updating loading message")
+        self.LoadingStep.text = loadingMessage
+        Debug.Log("Updating loading wheel's value")
+        self.LoadingWheel.Value = loadingStep
+        Debug.End()
+# ------------------------------------------------------------------------
+    def SetStepTotalCount(self, count):
+        """
+            SetStepTotalCount:
+            ------------------
+            This function puts the amount of steps to load into the
+            OutlineDial's maximum value.
+        """
+        Debug.Start("AppLoading -> SetStepTotalCount")
+        self.LoadingWheel.Max = count
+        Debug.End()
+# ------------------------------------------------------------------------
+    def RotateLetter(self, *args):
+        Debug.Start("RotateLetter")
+        wanted = (self.KontrolLogo.opacity - 1) * -360
+        current = self.currentRotation
+        difference = wanted-current
+        self.currentRotation = self.currentRotation + difference
+
+        with self.KontrolLogo.canvas.before:
+            PushMatrix()
+            Rotate(origin=self.KontrolLogo.center, angle=difference)
+
+        with self.KontrolLogo.canvas.after:
+            PopMatrix()
+
+        if(self.KontrolLogo.opacity >= 2 and (self.LoadingWheel.Value != self.LoadingWheel.Max)):
+            #reset opacity to 1 as it's what we use to trick it into turning
+            self.KontrolLogo.opacity = 1
+            self.Animation = Animation(pos_hint={'center_x': 0.5, 'center_y':0.5}, opacity=2, duration=1.5, t="in_out_quart")
+            self.Animation.bind(on_progress = self.RotateLetter)
+            self.Animation.start(self.KontrolLogo)
+            self.ReadyForNextWindow = False
+
+        if(self.LoadingWheel.Value >= self.LoadingWheel.Max and self.KontrolLogo.opacity >= 2):
+            self.ReadyForNextWindow = True
+
+        Debug.End()
+
 LoadingLog.End("AppLoading.py")

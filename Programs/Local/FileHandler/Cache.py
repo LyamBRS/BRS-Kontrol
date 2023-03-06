@@ -88,7 +88,7 @@ class Cache():
             Handles the loading and creation of the application's cache.
             This is the first thing you should call in your application
         """
-        Debug.Start("Cache: Load")
+        Debug.Start("Cache -> Load")
         path = os.getcwd() + "\\Local\\Cache"
         Cache.fileFinder = FilesFinder("json", path)
 
@@ -301,8 +301,8 @@ class Cache():
                 Debug.Error("FAILED TO LOAD CACHED LANGUAGE")
                 Debug.End()
                 return True
-        return False
         Debug.End()
+        return False
     #endregion
 #====================================================================#
 # Functions

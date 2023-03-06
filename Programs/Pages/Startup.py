@@ -142,11 +142,11 @@ class Startup_Screens:
         AppManager.manager.transition.duration = Startup_Screens._exitDuration
         AppManager.manager.transition.direction = Startup_Screens._exitDirection
 
-        try:
-            AppManager.manager.current = Startup_Screens._exitName
-        except:
-            Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
-            return True
+        # try:
+        AppManager.manager.current = Startup_Screens._exitName
+        # except:
+            # Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
+            # return True
         return False
     
     def Call() -> bool:

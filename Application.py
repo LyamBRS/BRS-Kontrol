@@ -32,7 +32,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 # -------------------------------------------------------------------
 from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
-from Programs.Pages.AppLoading import AppLoading
+from Programs.Pages.AppLoading import AppLoading,AppLoading_Screens
 #====================================================================#
 # Configuration
 #====================================================================#
@@ -73,10 +73,10 @@ class Application(MDApp):
         # Load available languages
         AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "US_English")
 
-        # Window.borderless = True
-        # Window.resizable = True
-        # Window.left = -1024
-        # Window.top = 600
+        Window.borderless = True
+        Window.resizable = True
+        Window.left = -1024
+        Window.top = 600
         Window.fullscreen = 'auto'
 
         AppManager.manager = ScreenManager()
@@ -89,6 +89,7 @@ class Application(MDApp):
         else:
             Debug.Log("CACHE LOAD SUCCESS")
 
+        AppLoading_Screens.SetExiter(ProfileMenu, "ProfileMenu")
         Startup_Screens.SetExiter(AppLoading, "AppLoading")
         Startup_Screens.SetCaller(Application, "Application")
         Startup_Screens.Call()

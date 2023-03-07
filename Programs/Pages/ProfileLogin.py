@@ -8,7 +8,6 @@ LoadingLog.Start("ProfileLogin.py")
 #====================================================================#
 # Imports
 #====================================================================#
-from cgitb import text
 import os
 from random import randint, random
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder

@@ -128,10 +128,10 @@ class AppLoading_Screens:
         AppManager.manager.transition.duration = AppLoading_Screens._exitDuration
         AppManager.manager.transition.direction = AppLoading_Screens._exitDirection
 
-        try:
-            AppManager.manager.current = AppLoading_Screens._exitName
-        except:
-            return True
+        # try:
+        AppManager.manager.current = AppLoading_Screens._exitName
+        # except:
+            # return True
         return True
     
     def Call() -> bool:
@@ -352,7 +352,7 @@ class AppLoading(Screen):
         Debug.End()
 # ------------------------------------------------------------------------
     def RotateLetter(self, *args):
-        Debug.Start("RotateLetter")
+        # Debug.Start("RotateLetter")
         wanted = (self.KontrolLogo.opacity - 1) * -360
         current = self.currentRotation
         difference = wanted-current
@@ -377,6 +377,6 @@ class AppLoading(Screen):
             self.ReadyForNextWindow = True
             AppLoading_Screens._Exit()
 
-        Debug.End()
+        # Debug.End()
 
 LoadingLog.End("AppLoading.py")

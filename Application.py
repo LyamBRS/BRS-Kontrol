@@ -33,6 +33,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
 from Programs.Pages.AppLoading import AppLoading,AppLoading_Screens
+from Programs.Pages.PopUps import PopUps,PopUps_Screens,PopUpsHandler,Keys,PopUpTypeEnum
 #====================================================================#
 # Configuration
 #====================================================================#
@@ -89,7 +90,13 @@ class Application(MDApp):
         else:
             Debug.Log("CACHE LOAD SUCCESS")
 
-        AppLoading_Screens.SetExiter(ProfileMenu, "ProfileMenu")
+        #Temporary pop up test
+        PopUpsHandler.Add(PopUpTypeEnum.Question, "help", "This is the question pop up. Among us among us", True)
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", "This is the Fatal Error pop up.", True)
+        PopUpsHandler.Add(PopUpTypeEnum.Remark, "black-mesa", "This is the remark pop up. it's very basic", True)
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", "This is the warning pop up. aaaaaaaaaaaaaaaaaaaaaaa", True)
+
+        AppLoading_Screens.SetExiter(PopUps, "PopUps")
         Startup_Screens.SetExiter(AppLoading, "AppLoading")
         Startup_Screens.SetCaller(Application, "Application")
         Startup_Screens.Call()

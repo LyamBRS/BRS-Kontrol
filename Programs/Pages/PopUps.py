@@ -15,6 +15,7 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding, Shadow
 LoadingLog.Start("PopUps.py")
 #====================================================================#
 # Imports
@@ -33,9 +34,16 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppMan
 #region -------------------------------------------------------- Kivy
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
+from kivy.uix.widget import Widget
+from kivy.core.window import Window
 #endregion
 #region ------------------------------------------------------ KivyMD
 from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.scrollview import MDScrollView
+from kivymd.uix.card import MDCard
+from kivymd.uix.button import MDIconButton,MDRaisedButton
+from kivymd.uix.label import MDLabel
 #endregion
 LoadingLog.Log("Import success")
 #====================================================================#
@@ -84,7 +92,7 @@ LoadingLog.Log("PopUpsHandler")
 class PopUpsHandler:
     """Class that handles the creation of the popups to display"""
     #region   --------------------------- MEMBERS
-    PopUps:list = {}
+    PopUps:list = []
     #endregion
     #region   --------------------------- METHODS
     def Clear():
@@ -310,21 +318,30 @@ class PopUps(Screen):
         self.spacing = 25
 
         #region ---- Main Layout
-        self.Layout = MDFloatLayout()
+        self.Layout = MDBoxLayout()
         #endregion
 
-        #region ---- B R S & Kontrol images
+        #region ---- ScrollView N widget
+        self.CardLayout = MDBoxLayout(orientation='horizontal', spacing="100sp", padding = ("50sp","50sp","50sp","50sp"), size_hint_x=None)
+        self.CardLayout.bind(minimum_width = self.CardLayout.setter('width'))
+
+        # Create the scroll view
+        self.Layout.ScrollView = MDScrollView(scroll_type=['bars','content'])
+        self.Layout.ScrollView.smooth_scroll_end = 10
         #endregion
 
-        #region ---- Initial status of Images
-        # Set the images as they are prior to the startup
-        self.B.pos_hint={'center_x': 0.17, 'center_y':self.letterYStart}
-        self.R.pos_hint={'center_x': 0.5,  'center_y':self.letterYStart}
-        self.S.pos_hint={'center_x': 0.83, 'center_y':self.letterYStart}
-        self.KontrolText.pos_hint={'center_x': 0.5, 'center_y':0}
+        #region ---- Widgets
+        for popup in PopUpsHandler.PopUps:
+            Debug.Log("Adding new pop up.")
+            def Temp(*args):
+                pass
+            Card = GetPopUpCard(popup,Temp,Temp)
+            self.CardLayout.add_widget(Card)
         #endregion
 
         #region ---- add_widgets
+        self.Layout.ScrollView.add_widget(self.CardLayout)
+        self.Layout.add_widget(self.Layout.ScrollView)
         self.add_widget(self.Layout)
         #endregion
         Debug.End()
@@ -374,5 +391,71 @@ class PopUps(Screen):
         Debug.End()
 # ------------------------------------------------------------------------
 
+#====================================================================#
+def GetPopUpCard(profileStructure:dict, goodCallBack, badCallBack) -> Widget:
+    """
+        GetPopUpCard:
+        -------------
+        This function returns you a card built based off the 
+        :ref:`PopUpStructure`.
+
+        You need to pass a profilestructure for this to build out of.
+        You need to specify a callback function that will be executed
+        depending on which button gets pressed. Defaults to the goodCallBack
+    """
+    Debug.Start("GetPopUpCard")
+
+    #region --------------------------- Set Card
+    Card = MDCard()
+    Card.orientation = "vertical"
+    Card.radius = Rounding.default
+    Card.elevation = Shadow.Elevation.default
+    Card.shadow_softness = Shadow.Smoothness.default
+    Card.size_hint_min = (Window.width - 100, Window.height - 100)
+
+    Layout = MDFloatLayout()
+    #endregion
+
+    #region --------------------------- Card widgets
+    Icon = MDIconButton(icon = profileStructure[Keys.Icon])
+    Message = MDLabel(text = profileStructure[Keys.Message])
+
+    if(profileStructure[Keys.Type] == PopUpTypeEnum.Remark):
+        Debug.Log("Building remark pop up")
+        GoodButton = MDRaisedButton(text = _("ok"))
+        GoodButton.bind(on_press = goodCallBack)
+        BadButton = None
+
+    if(profileStructure[Keys.Type] == PopUpTypeEnum.Question):
+        Debug.Log("Building remark pop up")
+        GoodButton = MDRaisedButton(text = _("ok"))
+        BadButton = MDRaisedButton(text = _("cancel"))
+        GoodButton.bind(on_press = goodCallBack)
+        BadButton.bind(on_press = badCallBack)
+
+    if(profileStructure[Keys.Type] == PopUpTypeEnum.Warning):
+        Debug.Log("Building warning pop up")
+        GoodButton = MDRaisedButton(text = _("ok"))
+        GoodButton.bind(on_press = goodCallBack)
+        BadButton = None
+
+    if(profileStructure[Keys.Type] == PopUpTypeEnum.FatalError):
+        Debug.Log("Building fatal error pop up")
+        GoodButton = MDRaisedButton(text = _("Quit"))
+        GoodButton.bind(on_press = goodCallBack)
+        BadButton = None
+    #endregion
+    #region --------------------------- Add widgets
+    Card.add_widget(Icon)
+    Card.add_widget(Message)
+    Card.add_widget(GoodButton)
+
+    if(BadButton != None):
+        Card.add_widget(BadButton)
+
+    Card.add_widget(Layout)
+    Debug.End()
+    return Card
+    #endregion
 #====================================================================#
 LoadingLog.End("PopUps.py")

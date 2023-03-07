@@ -223,16 +223,20 @@ class ProfileMenu(Screen):
 
             Loads the profile in Profiles.py for global access.
         """
-        LoadedProfile.LoadProfile(card.json)
+        Debug.Start("ProfilesClicked")
+        # LoadedProfile.LoadProfile(card.json)
+        # self.Layout.ProfilesLayout.profileBox.remove_widget(card)
 
         #Slowly make welcome fade off
         self.animation.stop_all(self)
         self.animation = Animation(progress = 0, duration = 0.5)
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
+
         AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
         AppManager.manager.transition.direction = "up"
         AppManager.manager.current = "ProfileLogin"
+        Debug.End()
 # ------------------------------------------------------------------------
     def CreateProfileClicked(self, card:ProfileCard):
         """

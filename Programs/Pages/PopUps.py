@@ -42,7 +42,7 @@ from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.card import MDCard
-from kivymd.uix.button import MDIconButton,MDRaisedButton
+from kivymd.uix.button import MDIconButton,MDRaisedButton,MDFillRoundFlatButton
 from kivymd.uix.label import MDLabel
 #endregion
 LoadingLog.Log("Import success")
@@ -61,6 +61,7 @@ class PopUpTypeEnum(Enum):
     FatalError:int = 1
     Question:int = 2
     Warning:int = 3
+    Custom:int = 4
 LoadingLog.Log("Keys")
 class Keys(Enum):
     """
@@ -73,6 +74,8 @@ class Keys(Enum):
     Message:int = 1
     Type:int = 2
     CanContinue:int = 3
+    ButtonAText:int = 4
+    ButtonBText:int = 5
 #====================================================================#
 # Pop up structure
 #====================================================================#
@@ -80,7 +83,9 @@ PopUpStructure = {
     Keys.Icon : "exclamation",
     Keys.Message : "Message",
     Keys.Type : PopUpTypeEnum.Remark,
-    Keys.CanContinue : True
+    Keys.CanContinue : True,
+    Keys.ButtonAText : "Ok",
+    Keys.ButtonBText : "None"
 }
 """
     the template structure used to build pop ups
@@ -105,7 +110,7 @@ class PopUpsHandler:
         PopUpsHandler.PopUps.clear()
         Debug.End()
     # -------------------------------------------
-    def Add(Type:Keys, Icon:str, Message:str, CanContinue:bool=True):
+    def Add(Type:Keys, Icon:str, Message:str, CanContinue:bool=True, ButtonAText:str="Ok", ButtonBText:str="Cancel"):
         """
             Add:
             ----
@@ -117,7 +122,9 @@ class PopUpsHandler:
             Keys.Icon : Icon,
             Keys.Message : Message,
             Keys.Type : Type,
-            Keys.CanContinue : CanContinue
+            Keys.CanContinue : CanContinue,
+            Keys.ButtonAText : ButtonAText,
+            Keys.ButtonBText : ButtonBText,
         })
         Debug.End()
     #endregion
@@ -392,7 +399,7 @@ class PopUps(Screen):
 # ------------------------------------------------------------------------
 
 #====================================================================#
-def GetPopUpCard(profileStructure:dict, goodCallBack, badCallBack) -> Widget:
+def GetPopUpCard(profileStructure:dict, ButtonACallback, ButtonBCallback) -> Widget:
     """
         GetPopUpCard:
         -------------
@@ -412,48 +419,61 @@ def GetPopUpCard(profileStructure:dict, goodCallBack, badCallBack) -> Widget:
     Card.elevation = Shadow.Elevation.default
     Card.shadow_softness = Shadow.Smoothness.default
     Card.size_hint_min = (Window.width - 100, Window.height - 100)
-
-    Layout = MDFloatLayout()
+    Card.padding = "10sp"
+    Layout = MDBoxLayout(orientation="vertical")
     #endregion
 
     #region --------------------------- Card widgets
-    Icon = MDIconButton(icon = profileStructure[Keys.Icon])
-    Message = MDLabel(text = profileStructure[Keys.Message])
+    Icon = MDIconButton(icon = profileStructure[Keys.Icon], valign="center", halign="center", pos_hint={"center_x": 0.5, "center_y": 0.5})
+    Icon.icon_size = "75sp"
+    # Icon.theme_icon_color = "Secondary"
+    Message = MDLabel(text = profileStructure[Keys.Message], valign="bottom", halign="center")
+    Message.font_style = "H6"
+    Message.theme_text_color = "Secondary"
+    ButtonLayout = MDBoxLayout(orientation = "horizontal", spacing = "25sp", size_hint=(1,0.25), padding="10sp")
+    ButtonA = MDFillRoundFlatButton(size_hint = (1,None), text=profileStructure[Keys.ButtonAText], font_style = "H5")
+    ButtonB = MDFillRoundFlatButton(size_hint = (1,None), text=profileStructure[Keys.ButtonBText], font_style = "H5")
+    ButtonA.bind(on_press = ButtonACallback)
+    ButtonB.bind(on_press = ButtonBCallback)
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.Remark):
         Debug.Log("Building remark pop up")
-        GoodButton = MDRaisedButton(text = _("ok"))
-        GoodButton.bind(on_press = goodCallBack)
-        BadButton = None
+        ButtonB = None
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.Question):
-        Debug.Log("Building remark pop up")
-        GoodButton = MDRaisedButton(text = _("ok"))
-        BadButton = MDRaisedButton(text = _("cancel"))
-        GoodButton.bind(on_press = goodCallBack)
-        BadButton.bind(on_press = badCallBack)
+        Debug.Log("Building Question pop up")
+        Icon.icon = "help"
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.Warning):
         Debug.Log("Building warning pop up")
-        GoodButton = MDRaisedButton(text = _("ok"))
-        GoodButton.bind(on_press = goodCallBack)
-        BadButton = None
+        Icon.icon = "alert"
+        ButtonB = None
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.FatalError):
         Debug.Log("Building fatal error pop up")
-        GoodButton = MDRaisedButton(text = _("Quit"))
-        GoodButton.bind(on_press = goodCallBack)
-        BadButton = None
+        Icon.icon = "alert-octagon"
+        Icon.theme_icon_color = "Error"
+        Icon.theme_text_color = "Error"
+        Message.theme_text_color = "Error"
+        ButtonB = None
+
+    if(profileStructure[Keys.Type] == PopUpTypeEnum.Custom):
+        Debug.Log("Building custom pop up.")
+        if(ButtonB.text == "None"):
+            ButtonB = None
+
+
     #endregion
     #region --------------------------- Add widgets
-    Card.add_widget(Icon)
-    Card.add_widget(Message)
-    Card.add_widget(GoodButton)
-
-    if(BadButton != None):
-        Card.add_widget(BadButton)
-
+    Layout.add_widget(Icon)
+    Layout.add_widget(Message)
     Card.add_widget(Layout)
+    ButtonLayout.add_widget(ButtonA)
+
+    if(ButtonB != None):
+        ButtonLayout.add_widget(ButtonB)
+
+    Card.add_widget(ButtonLayout)
     Debug.End()
     return Card
     #endregion

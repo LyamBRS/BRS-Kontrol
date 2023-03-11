@@ -16,6 +16,7 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding, Shadow
+# from Programs.Pages.AppLoading import AppLoading, AppLoading_Screens
 LoadingLog.Start("PopUps.py")
 #====================================================================#
 # Imports
@@ -36,8 +37,10 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
+from kivy.utils import get_color_from_hex
 #endregion
 #region ------------------------------------------------------ KivyMD
+from kivymd.color_definitions import colors
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
@@ -98,6 +101,7 @@ class PopUpsHandler:
     """Class that handles the creation of the popups to display"""
     #region   --------------------------- MEMBERS
     PopUps:list = []
+    _PopUpsWidgets:list = []
     #endregion
     #region   --------------------------- METHODS
     def Clear():
@@ -108,9 +112,10 @@ class PopUpsHandler:
         """
         Debug.Start("PopUps -> Clear")
         PopUpsHandler.PopUps.clear()
+        PopUpsHandler._PopUpsWidgets.clear()
         Debug.End()
     # -------------------------------------------
-    def Add(Type:Keys, Icon:str, Message:str, CanContinue:bool=True, ButtonAText:str="Ok", ButtonBText:str="Cancel"):
+    def Add(Type:Keys, Icon:str = "blank", Message:str=_("Empty pop up"), CanContinue:bool=True, ButtonAText:str="Ok", ButtonBText:str="Cancel"):
         """
             Add:
             ----
@@ -127,6 +132,13 @@ class PopUpsHandler:
             Keys.ButtonBText : ButtonBText,
         })
         Debug.End()
+    # -------------------------------------------
+    def _AddWidget(widget):
+        """
+            Adds the widget reference to the list of widgets displayed
+            in the scrollview.
+        """
+        PopUpsHandler._PopUpsWidgets.append(widget)
     #endregion
 #====================================================================#
 # Screen class
@@ -217,12 +229,12 @@ class PopUps_Screens:
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if exit class was specified
-            if(Startup_Screens._exitClass == None):
+            if(PopUps_Screens._exitClass == None):
                 return True
-            if(Startup_Screens._exitName == None):
+            if(PopUps_Screens._exitName == None):
                 return True
 
-            AppManager.manager.add_widget(Startup_Screens._exitClass(name=Startup_Screens._exitName))
+            AppManager.manager.add_widget(PopUps_Screens._exitClass(name=PopUps_Screens._exitName))
         except:
             Debug.Error("Startup_Screens: _Exit() -> Failed in add_widget")
             return True
@@ -246,28 +258,39 @@ class PopUps_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
         """
+        Debug.Start("Call")
         # Attempt to add the screen class as a widget of the AppManager
-        try:
-            # Check if exit class was specified
-            if(PopUps_Screens._callerClass == None):
-                return True
-            if(PopUps_Screens._callerName == None):
+        if(PopUpsHandler.PopUps.count() > 0):
+            try:
+                # Check if exit class was specified
+                if(PopUps_Screens._callerClass == None):
+                    Debug.End()
+                    return True
+                if(PopUps_Screens._callerName == None):
+                    Debug.End()
+                    return True
+
+                AppManager.manager.add_widget(PopUps(name="PopUps"))
+            except:
+                Debug.End()
                 return True
 
-            AppManager.manager.add_widget(Startup(name="PopUps"))
-        except:
+            # Attempt to call the added screen
+            AppManager.manager.transition = PopUps_Screens._callerTransition()
+            AppManager.manager.transition.duration = PopUps_Screens._callerDuration
+            AppManager.manager.transition.direction = PopUps_Screens._callerDirection
+    
+            try:
+                AppManager.manager.current = PopUps_Screens._callerName
+            except:
+                Debug.End()
+                return True
+            Debug.End()
             return True
-        
-        # Attempt to call the added screen
-        AppManager.manager.transition = PopUps_Screens._callerTransition()
-        AppManager.manager.transition.duration = PopUps_Screens._callerDuration
-        AppManager.manager.transition.direction = PopUps_Screens._callerDirection
-
-        try:
-            AppManager.manager.current = PopUps_Screens._callerName
-        except:
-            return True
-        return True
+        else:
+            Debug.Warn("No pop ups were queued, calling exit immediately.")
+            PopUps_Screens._Exit()
+            Debug.End()
 #====================================================================#
 # Main Function
 #====================================================================#
@@ -320,7 +343,7 @@ class PopUps(Screen):
             ------------------------
             The :ref:`Startup` is solely a short animation, nothing more, nothing less.
         """
-        Debug.Start("PopUps: on_pre_enter")
+        Debug.Start("PopUps -> on_pre_enter")
         self.padding = 25
         self.spacing = 25
 
@@ -333,7 +356,8 @@ class PopUps(Screen):
         self.CardLayout.bind(minimum_width = self.CardLayout.setter('width'))
 
         # Create the scroll view
-        self.Layout.ScrollView = MDScrollView(scroll_type=['bars','content'])
+        self.Layout.ScrollView = MDScrollView(scroll_type=['bars'])
+        self.Layout.ScrollView.scroll_timeout = 0 #So the scrollview cannot be scrolled.
         self.Layout.ScrollView.smooth_scroll_end = 10
         #endregion
 
@@ -344,6 +368,7 @@ class PopUps(Screen):
                 pass
             Card = GetPopUpCard(popup,Temp,Temp)
             self.CardLayout.add_widget(Card)
+            PopUpsHandler._AddWidget(Card)
         #endregion
 
         #region ---- add_widgets
@@ -399,7 +424,7 @@ class PopUps(Screen):
 # ------------------------------------------------------------------------
 
 #====================================================================#
-def GetPopUpCard(profileStructure:dict, ButtonACallback, ButtonBCallback) -> Widget:
+def GetPopUpCard(profileStructure:dict, ButtonACallback=None, ButtonBCallback=None) -> Widget:
     """
         GetPopUpCard:
         -------------
@@ -433,8 +458,18 @@ def GetPopUpCard(profileStructure:dict, ButtonACallback, ButtonBCallback) -> Wid
     ButtonLayout = MDBoxLayout(orientation = "horizontal", spacing = "25sp", size_hint=(1,0.25), padding="10sp")
     ButtonA = MDFillRoundFlatButton(size_hint = (1,None), text=profileStructure[Keys.ButtonAText], font_style = "H5")
     ButtonB = MDFillRoundFlatButton(size_hint = (1,None), text=profileStructure[Keys.ButtonBText], font_style = "H5")
-    ButtonA.bind(on_press = ButtonACallback)
-    ButtonB.bind(on_press = ButtonBCallback)
+    #region ---- button function binding
+    Debug.Log("Binding user functions to button's releases")
+    if(ButtonACallback != None):
+        ButtonA.bind(on_press = ButtonACallback)
+
+    if(ButtonBCallback != None):
+        ButtonB.bind(on_press = ButtonBCallback)
+
+    Debug.Log("Binding self delete functions to button's releases")
+    ButtonA.bind(on_release = AutoDestruction)
+    ButtonB.bind(on_release = AutoDestruction)
+    #endregion
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.Remark):
         Debug.Log("Building remark pop up")
@@ -442,11 +477,17 @@ def GetPopUpCard(profileStructure:dict, ButtonACallback, ButtonBCallback) -> Wid
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.Question):
         Debug.Log("Building Question pop up")
-        Icon.icon = "help"
+        if(profileStructure[Keys.Icon] == "blank"):
+            Icon.icon = "help"
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.Warning):
         Debug.Log("Building warning pop up")
-        Icon.icon = "alert"
+        Icon.theme_icon_color = "Custom"
+        Message.theme_text_color = "Custom"
+        Icon.icon_color = get_color_from_hex(colors["Orange"]["500"])
+        Message.text_color = get_color_from_hex(colors["Orange"]["500"])
+        if(profileStructure[Keys.Icon] == "blank"):
+            Icon.icon = "alert"
         ButtonB = None
 
     if(profileStructure[Keys.Type] == PopUpTypeEnum.FatalError):
@@ -477,5 +518,38 @@ def GetPopUpCard(profileStructure:dict, ButtonACallback, ButtonBCallback) -> Wid
     Debug.End()
     return Card
     #endregion
+# -------------------------------------------------------------------
+def AutoDestruction(self, *args):
+    """
+        AutoDestruction:
+        ----------------
+        This function is a function that can be bind to a widget's
+        callbacks. This function's purpose is to delete the widget
+        which called this function to free up space in the
+        ScrollView.
+    """
+    Debug.Start("AutoDestruction")
+    Card = self.parent.parent
+    ScrollView = Card.parent.parent
+
+    # self.parent.parent.parent.remove_widget(self.parent.parent)
+    Debug.Log("Removing self from list of pop up widgets.")
+    PopUpsHandler._PopUpsWidgets.remove(Card)
+
+    Debug.Log("Getting first card from the list.")
+    try:
+        widget = PopUpsHandler._PopUpsWidgets[0]
+    except:
+        Debug.Warn("Out of pop ups")
+        Debug.Warn("Exit to main menu")
+        PopUps_Screens._Exit()
+        Debug.End()
+        return
+
+    Debug.Log("Scrolling to next card")
+    Debug.Log(ScrollView.scroll_to(widget, padding=50))
+    Debug.Log("SUCCESS")
+    Debug.End()
+
 #====================================================================#
 LoadingLog.End("PopUps.py")

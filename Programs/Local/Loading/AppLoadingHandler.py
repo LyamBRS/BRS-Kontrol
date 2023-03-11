@@ -27,6 +27,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from ...Pages.PopUps import PopUpsHandler,Keys,PopUpTypeEnum
+from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
 #endregion
 #region -------------------------------------------------------- Kivy
 from kivy.clock import Clock
@@ -50,7 +51,7 @@ class LoadingStepsEnum(Enum):
         Step that checks Kontrol's program's to see if
         everything is there.
     """
-    EnvironementGathering:int = 1
+    EnvironementCheck:int = 1
     """
         Step that gathers system informations.
     """
@@ -91,6 +92,11 @@ class LoadingStepsEnum(Enum):
     """
         Step that check if the downloaded BrSpand card drivers have
         GitHub repositories and if they are up to date.
+    """
+    GPIOConnectionCheck:int = 10
+    """
+        Steps that checks if the Raspberry pi's GPIO bus is connected to 
+        a BRS Kontrol PCB.
     """
 # --------------------------------------------------------------------
 LoadingLog.Log("ParamEnum")
@@ -172,9 +178,86 @@ class ErrorTypeEnum(Enum):
     """ The step could not execute due to no connection """
     APIOutOfRequest:int = 6
     """ The step could not execute because the API used ran out of requests """
+# --------------------------------------------------------------------
+class Allowed():
+    #region --- DocString
+    """
+        Allowed:
+        -------------------
+        This class holds all the allowed informations for different
+        categories which are only used in the loading screen.
+    """
+    #endregion
+    #region --- Members
+    minimumPythonVersion:str = "v3.9.0"
+    """The minimum version that python must have to run Kontrol."""
+    #endregion
+    #region --- Enums
+    class OS(Enum):
+        Error:str = "Error"
+        Windows:str = "Windows"
+        Mac:str = "Darwin"
+        Linux:str = "Linux"
+
+    class Platform(Enum):
+        Error:int = 0
+        _32Bits:int = 1
+        _64Bits:int = 2
+        RaspberryPi3:int = 3
+        RaspberryPi4:int = 4
+        Unsupported:int = 5
+
+
+        def GetPlatform(processorType:str) -> int:
+            """
+                GetPlatform:
+                ------------
+                returns the enumeration equivalent of the processor.
+
+                - 32-bit x86: `"i386"`, `"i486"`, `"i586"`, `"i686"`
+                - 64-bit x86: `"x86_64"`, `"amd64"`, `"arm64"`
+                - ARM based:  `"armv6l"`, `"armv7l"`, `"aarch64"` -> Raspberry pies IoTs
+                - PowerPC:    `"ppc64"`, `"ppc64le"`
+                - IBM Z:      `"s390x"`
+            """
+            Debug.Start("GetPlatform")
+
+            if(processorType.startswith("i")):
+                Debug.Log("Platform identified as 32 bits")
+                Debug.End()
+                return Allowed.Platform._32Bits
+
+            if(processorType.startswith("armv") or processorType.startswith("aarch")):
+                Debug.Log("Platform identified as IoT")
+
+                if(processorType == "armv71"):
+                    Debug.Log("Older raspberry pi detected. Raspberry Pi 2/3")
+                    Debug.End()
+                    return Allowed.Platform.RaspberryPi3
+
+                if(processorType == "armv61"):
+                    Debug.Log("Too old of a raspberry pi detected. Returning unsupported")
+                    Debug.End()
+                    return Allowed.Platform.Unsupported
+
+                if(processorType == "aarch64"):
+                    Debug.Log("Newest raspberry pi detected.")
+                    Debug.End()
+                    return Allowed.Platform.RaspberryPi4
+
+            if(processorType.find("64") or processorType.find("86")):
+                Debug.Log("Using a 64 bits computer")
+                Debug.End()
+                return Allowed.Platform._64Bits
+            
+            Debug.Error("The computer may cause issues due to not being tested or supported")
+            Debug.End()
+            return Allowed.Platform.Unsupported
+    #endregion
 #====================================================================#
 # Functions
 #====================================================================#
+#region ---- Integrity
 LoadingLog.Log("IntegrityCheck")
 def IntegrityCheck() -> bool:
     #region ---- DocString
@@ -426,7 +509,9 @@ def IntegrityCheck_CallBack() -> bool:
 
     Debug.Log("Callback was called for no reasons.")
     Debug.End()
-#--------------------------------------------------------------------#
+#endregion
+#--------------------------------------------------------------------
+#region ---- Internet
 LoadingLog.Log("InternetCheck")
 def InternetCheck() -> bool:
     #region ---- DocString
@@ -472,34 +557,120 @@ def InternetCheck_CallBack() -> bool:
     # Check if function was executed
     if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
         Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
-        PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", _("Fatal loading error"), True)
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message = _("Fatal loading error"), CanContinue=False)
         Debug.End()
         return True
     else:
-        if(LoadingSteps[LoadingStepsEnum.IntegrityCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
+        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
             Debug.Warn("Some things were not right. Appending warning windows for future display")
-            PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage], True)
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon = "access-point-network", Message = LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
             Debug.End()
             return False
 
-        if(LoadingSteps[LoadingStepsEnum.IntegrityCheck][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
+        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
             Debug.Error("Critical Fatal error happened. Application cannot safely continue")
-            PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage], True)
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError,Message = LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage], CanContinue=False)
             Debug.End()
             return True
 
-        if(LoadingSteps[LoadingStepsEnum.IntegrityCheck][ParamEnum.ErrorType] == ErrorTypeEnum.NoConnection):
+        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.NoConnection):
             Debug.Error("No internet connection could be found. GitHub checks will be skipped.")
             LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.Skip] = True
             LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
             LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
             LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
-            PopUpsHandler.Add(PopUpTypeEnum.Remark, "wifi-off", LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage], True)
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="wifi-off", Message=LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
             Debug.End()
             return True
 
     Debug.Log("Callback was called for no reasons.")
     Debug.End()
+#endregion
+#--------------------------------------------------------------------
+#region ---- Environement
+LoadingLog.Log("EnvironementCheck")
+def EnvironementCheck() -> bool:
+    #region ---- DocString
+    """
+        EnvironementCheck:
+        ---------------
+        This loading step function check's if Kontrol's system can run
+        Kontrol.
+        
+        Returns:
+            `bool`: `True`: Error occured. `False`: Internet can be reached
+    """
+    #endregion
+    Debug.Start("EnvironementCheck")
+    #region ==== Gathering
+    Debug.Log("Gathering environement informations")
+    try:
+        Information.__init__(Information)
+    except:
+        Debug.Error()
+        LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Exception
+        LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("The application failed to get your computer's information.")
+    #endregion
+    #region ==== Comparing OS
+    Debug.Log("Compare gathered information with allowed information")
+    if(Information.platform != "Windows" and Information.platform != "Linux"):
+        Debug.Log(">>> Potentially unsupported OS")
+        LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Warning
+        LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("You are currently running Kontrol using untested hardware. Potential crashes may occur during the use of this application.")
+    #endregion
+    #region ==== Comparing python version
+    #endregion
+    Debug.End()
+
+LoadingLog.Log("EnvironementCheck_CallBack")
+def EnvironementCheck_CallBack() -> bool:
+    """
+        IntegrityCheck_CallBack:
+        ------------------------
+        This function is the error call back function of that specific
+        loading step function. It's goal is to handle the `ErrorType`
+        received and decide if the application can continue.
+
+        It handles if other steps should be skipped, appends warning
+        pop ups, error pop ups and so on.
+
+        Returns:
+            - `bool`: `True`: Application must be stopped. `False`: Application can continue
+    """
+    Debug.Start("InternetCheck_CallBack")
+
+    # Check if function was executed
+    if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
+        Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message = _("Fatal loading error"), CanContinue=False)
+        Debug.End()
+        return True
+    else:
+        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
+            Debug.Warn("Some things were not right. Appending warning windows for future display")
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon = "access-point-network", Message = LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
+            Debug.End()
+            return False
+
+        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
+            Debug.Error("Critical Fatal error happened. Application cannot safely continue")
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError,Message = LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage], CanContinue=False)
+            Debug.End()
+            return True
+
+        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.NoConnection):
+            Debug.Error("No internet connection could be found. GitHub checks will be skipped.")
+            LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="wifi-off", Message=LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
+            Debug.End()
+            return True
+
+    Debug.Log("Callback was called for no reasons.")
+    Debug.End()
+#endregion
 #====================================================================#
 # Main Function
 #====================================================================#
@@ -586,8 +757,8 @@ LoadingSteps = {
         ParamEnum.Function : IntegrityCheck,
         ParamEnum.Skip : False,
     },
-    LoadingStepsEnum.EnvironementGathering : {
-        ParamEnum.DisplayName : "Gathering system information",
+    LoadingStepsEnum.EnvironementCheck : {
+        ParamEnum.DisplayName : "Checking system information",
         ParamEnum.ErrorMessage : "Not done",
         ParamEnum.ErrorType : ErrorTypeEnum.Default,
         ParamEnum.ErrorCallBackFunction : None,

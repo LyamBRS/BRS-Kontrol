@@ -3,10 +3,10 @@
 #====================================================================#
 import os
 import sys
-
 print("=============================== IMPORT FIXER?")
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(CURRENT_DIR))
+print(sys.path)
 print("It did a thing, probably didnt work tho\n\n\n\n")
 
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
@@ -70,7 +70,9 @@ class Application(MDApp):
             Last, the current screen is set as one of them.
         """
         Debug.enableConsole = True
+        Debug.Start("build")
 
+        Debug.Log("Setting default application's theme.")
         self.theme_cls.material_style = 'M3'
         self.theme_cls.primary_palette = "Purple"
         self.theme_cls.accent_palette = "Yellow"
@@ -79,19 +81,23 @@ class Application(MDApp):
         self.theme_cls.theme_style_switch_animation_duration = 0
 
         # Load available languages
+        Debug.Log("Initializing AppLanguage. Defaulting to US_English")
         AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "US_English")
 
+        # Set window to 3rd monitor.
+        Debug.Log("Configuring window size and attributes")
         Window.borderless = True
         Window.resizable = True
         Window.left = -1024
         Window.top = 600
         Window.fullscreen = 'auto'
 
+        # Create screen manager
+        Debug.Log("Creating ScreenManager()")
         AppManager.manager = ScreenManager()
-        # AppManager.manager.transition.duration = 0.5
-        # AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
-        # AppManager.manager.current = "ProfileMenu"
 
+        # Load the cache
+        Debug.Log("Loading the cache.")
         if(Cache.Load()):
             Debug.Error("Failed to load the application's cache")
         else:
@@ -100,14 +106,22 @@ class Application(MDApp):
         #Temporary pop up test
         # PopUpsHandler.Add(PopUpTypeEnum.Question, "help", "This is the question pop up. Among us among us", True)
         # PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", "This is the Fatal Error pop up.", True)
-        PopUpsHandler.Add(PopUpTypeEnum.Remark, "bug", "This is a debugging pop up. It exist solely because without at least 1 pop up, the application would softlock.", True)
+        # PopUpsHandler.Add(PopUpTypeEnum.Remark, "bug", "This is a debugging pop up. It exist solely because without at least 1 pop up, the application would softlock.", True)
         # PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", "Where's my money, bitch?! I ain't gonna keep asking nice. Yo, alright? I want my money and my dope. Come on! What, what! What do you wanna say? Shut up! Shut... up! \nWhat business? The business you put me on, asshole! What, you already forgot? THIS business. Huh? That uh jog your memory, son of a bitch? Hey, you said... you said handle it, so you know what, I handled it. Didn't mean to kill somebody? Well, too late you know cause, dude's dead. Way dead. Oh, and hey, hey. Here's your money. Yeah, forty-six hundred and sixty bucks. Your half. Spend it in good health, you miserable son of bitch. \nI didn't say I killed him. Dude's wife crushed his head with an ATM machine. Crushed his head... with an ATM machine... right in front of me. I mean, crushed it like... Oh my god, the sound... it's still in my ears. You know and the the blood, like everywhere. Like there was so much you would not believe.", True)
 
-        AppLoading_Screens.SetExiter(PopUps, "PopUps")
+        Debug.Log("Setting transistion screen's callers and exiters.")
+        AppLoading_Screens.SetExiter(PopUps_Screens, "PopUps")
+        AppLoading_Screens.SetCaller(Startup_Screens, "Startup")
+
         PopUps_Screens.SetExiter(ProfileMenu, "ProfileMenu")
-        Startup_Screens.SetExiter(AppLoading, "AppLoading")
+        PopUps_Screens.SetCaller(AppLoading_Screens, "AppLoading")
+
+        Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
         Startup_Screens.SetCaller(Application, "Application")
+
+        Debug.Log("Calling startup screen")
         Startup_Screens.Call()
+        Debug.End()
         return AppManager.manager
     
     def on_start(self):

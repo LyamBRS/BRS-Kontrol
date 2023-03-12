@@ -55,7 +55,23 @@ class AppLoading_Screens:
         An exit screen is basically which screens should be loaded if something
         happens in the transition screen.
     """
+    #region ---- Members
+    _exitClass = None
+    _callerClass = None
 
+    _callerName = None
+    _exitName = None
+
+    _callerTransition = SlideTransition
+    _exitTransition = SlideTransition
+
+    _callerDirection = "up"
+    _exitDirection = "up"
+
+    _callerDuration = 0.5
+    _exitDuration = 0.5
+    #endregion
+    #region ---- Methods
     def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
         """
             Function which sets the screen that this screen should transition to on exit.
@@ -111,18 +127,37 @@ class AppLoading_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
         """
+        Debug.Start("AppLoading -> _Exit()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if exit class was specified
+            Debug.Log("Checking exit class")
             if(AppLoading_Screens._exitClass == None):
-                return True
-            if(AppLoading_Screens._exitName == None):
+                Debug.Error("Attempted to call exit while no exit class were specified")
+                Debug.End()
                 return True
 
-            AppManager.manager.add_widget(AppLoading_Screens._exitClass(name=AppLoading_Screens._exitName))
+            Debug.Log("Checking exit name")
+            if(AppLoading_Screens._exitName == None):
+                Debug.Error("Attempted to call exit while no exit name were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit class Call()")
+            try:
+                Debug.Log("Trying to call exit class caller.")
+                AppLoading_Screens._exitClass.Call()
+                Debug.Log("Success")
+                Debug.End()
+                return False
+            except:
+                Debug.Log("Class specified wasn't an _Screen class.")
+                AppManager.manager.add_widget(AppLoading_Screens._exitClass(name=AppLoading_Screens._exitName))
         except:
+            Debug.Error("AppLoading -> Exception occured.")
+            Debug.End()
             return True
-        
+
         # Attempt to call the added screen
         AppManager.manager.transition = AppLoading_Screens._exitTransition()
         AppManager.manager.transition.duration = AppLoading_Screens._exitDuration
@@ -132,8 +167,9 @@ class AppLoading_Screens:
         AppManager.manager.current = AppLoading_Screens._exitName
         # except:
             # return True
-        return True
-    
+        Debug.End()
+        return False
+
     def Call() -> bool:
         """
             Attempt to go to the main screen that is being handled by this class.
@@ -141,28 +177,44 @@ class AppLoading_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
         """
+        Debug.Start("AppLoading -> Call()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
-            # Check if exit class was specified
+            # Check if caller class was specified
+            Debug.Log("Checking caller class")
             if(AppLoading_Screens._callerClass == None):
+                Debug.Error("No caller class specified.")
+                Debug.End()
                 return True
+    
+            Debug.Log("Checking caller name")
             if(AppLoading_Screens._callerName == None):
+                Debug.Error("No caller name specified.")
+                Debug.End()
                 return True
-
-            AppManager.manager.add_widget(Startup(name="Startup"))
+    
+            Debug.Log("Attempting to add widget")
+            AppManager.manager.add_widget(AppLoading(name="AppLoading"))
         except:
+            Debug.Error("Exception occured while handling Call()")
+            Debug.End()
             return True
-        
+
         # Attempt to call the added screen
         AppManager.manager.transition = AppLoading_Screens._callerTransition()
         AppManager.manager.transition.duration = AppLoading_Screens._callerDuration
         AppManager.manager.transition.direction = AppLoading_Screens._callerDirection
 
-        try:
-            AppManager.manager.current = AppLoading_Screens._callerName
-        except:
-            return True
-        return True
+        # try:
+        AppManager.manager.current = "AppLoading"
+        Debug.Log("Screen successfully changed")
+        # except:
+            # Debug.Error("Failed to add AppLoading as current screen.")
+            # Debug.End()
+            # return True
+        Debug.End()
+        return False
+    #endregion
 #====================================================================#
 # Classes
 #====================================================================#

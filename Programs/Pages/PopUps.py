@@ -170,7 +170,23 @@ class PopUps_Screens:
         - `SetExiter(screenClass,screenName:str) -> bool`: set the screen to go to on exit. Returns `True` if an error occured
         - `Call() -> bool`: Attempt to go to the specified screen. Returns `True` if an error occured.
     """
+    #region ---- Members
+    _exitClass = None
+    _callerClass = None
 
+    _callerName = None
+    _exitName = None
+
+    _callerTransition = SlideTransition
+    _exitTransition = SlideTransition
+
+    _callerDirection = "up"
+    _exitDirection = "up"
+
+    _callerDuration = 0.5
+    _exitDuration = 0.5
+    #endregion
+    #region ---- Methods
     def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
         """
             Function which sets the screen that this screen should transition to on exit.
@@ -226,19 +242,37 @@ class PopUps_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
         """
+        Debug.Start("PopUps -> _Exit()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if exit class was specified
+            Debug.Log("Checking exit class")
             if(PopUps_Screens._exitClass == None):
-                return True
-            if(PopUps_Screens._exitName == None):
+                Debug.Error("Attempted to call exit while no exit class were specified")
+                Debug.End()
                 return True
 
-            AppManager.manager.add_widget(PopUps_Screens._exitClass(name=PopUps_Screens._exitName))
+            Debug.Log("Checking exit name")
+            if(PopUps_Screens._exitName == None):
+                Debug.Error("Attempted to call exit while no exit name were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit class Call()")
+            try:
+                Debug.Log("Trying to call exit class caller.")
+                PopUps_Screens._exitClass.Call()
+                Debug.Log("Success")
+                Debug.End()
+                return False
+            except:
+                Debug.Log("Class specified wasn't an _Screen class.")
+                AppManager.manager.add_widget(PopUps_Screens._exitClass(name=PopUps_Screens._exitName))
         except:
-            Debug.Error("Startup_Screens: _Exit() -> Failed in add_widget")
+            Debug.Error("PopUps: _Exit() -> Failed in add_widget")
+            Debug.End()
             return True
-        
+
         # Attempt to call the added screen
         AppManager.manager.transition = PopUps_Screens._exitTransition()
         AppManager.manager.transition.duration = PopUps_Screens._exitDuration
@@ -248,9 +282,11 @@ class PopUps_Screens:
         AppManager.manager.current = PopUps_Screens._exitName
         # except:
             # Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
+            # Debug.End()
             # return True
+        Debug.End()
         return False
-    
+
     def Call() -> bool:
         """
             Attempt to go to the main screen that is being handled by this class.
@@ -258,20 +294,28 @@ class PopUps_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
         """
-        Debug.Start("Call")
+        Debug.Start("PopUps -> Call")
         # Attempt to add the screen class as a widget of the AppManager
-        if(PopUpsHandler.PopUps.count() > 0):
+        if(len(PopUpsHandler.PopUps) > 0):
+            Debug.Log("Some pop ups can be displayed.")
             try:
                 # Check if exit class was specified
+                Debug.Log("Checking caller class")
                 if(PopUps_Screens._callerClass == None):
-                    Debug.End()
-                    return True
-                if(PopUps_Screens._callerName == None):
+                    Debug.Error("No caller class specified.")
                     Debug.End()
                     return True
 
+                Debug.Log("Checking caller name")
+                if(PopUps_Screens._callerName == None):
+                    Debug.Error("No caller name specified.")
+                    Debug.End()
+                    return True
+
+                Debug.Log("Adding widget")
                 AppManager.manager.add_widget(PopUps(name="PopUps"))
             except:
+                Debug.Error("Exception occured while handling Call()")
                 Debug.End()
                 return True
 
@@ -281,16 +325,20 @@ class PopUps_Screens:
             AppManager.manager.transition.direction = PopUps_Screens._callerDirection
     
             try:
-                AppManager.manager.current = PopUps_Screens._callerName
+                AppManager.manager.current = "PopUps"
             except:
+                Debug.Error("Failed to add PopUps as current screen.")
                 Debug.End()
                 return True
+
             Debug.End()
-            return True
+            return False
         else:
             Debug.Warn("No pop ups were queued, calling exit immediately.")
             PopUps_Screens._Exit()
             Debug.End()
+            return True
+    #endregion
 #====================================================================#
 # Main Function
 #====================================================================#

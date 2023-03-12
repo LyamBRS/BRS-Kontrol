@@ -536,6 +536,7 @@ def InternetCheck() -> bool:
         Debug.Log(">>> SUCCESS")
         LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Success
         LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage] = _("Good")
+        Debug.End()
         return False
 LoadingLog.Log("IntegrityCheck_CallBack")
 def InternetCheck_CallBack() -> bool:

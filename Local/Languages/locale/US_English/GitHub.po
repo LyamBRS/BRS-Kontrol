@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-03-12 12:00+0000\n"
+"PO-Revision-Date: 2023-03-12 12:00+0000\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS \n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: GitHub.py
+
+#: line 57 -> GetUser()
+msgid "Could not get username"
+msgstr "Could not get username"
+
+#: line 69 -> GetUserRepositories()
+msgid "No username stored in the GitHub class. Make sure to call GetAll"
+msgstr "No username stored in the GitHub class. Make sure to call GetAll"
+
+#: line 73 -> GetUserRepositories()
+msgid "No user information were stored. Verify network connected and call GetAll"
+msgstr "No user information were stored. Verify network connected and call GetAll"
+
+#: line 143 -> GetMatchingRepository() there was no local repository to check for matching.
+msgid "The local repository was not initialized."
+msgstr "The local repository was not initialized."
+
+#: line 147 -> GetMatchingRepository() No user to browse for repositories
+msgid "No GitHub users were initialized."
+msgstr "No GitHub users were initialized."
+
+#: line 151 -> GetMatchingRepository() No repository were initialized for the specified user.
+msgid "User's repositories were not initialized"
+msgstr "User's repositories were not initialized"
+
+#: line 164 -> GetMatchingRepository()
+msgid "No matching repositories. Make sure you are using a cloned repository."
+msgstr "No matching repositories. Make sure you are using a cloned repository."
+
+#: line 177 -> GetMatchingRepositoryTag()
+msgid "Failed to get master branch of matched repository"
+msgstr "Failed to get master branch of matched repository"
+
+#: line 183 -> GetMatchingRepositoryTag()
+msgid "Failed to get master branch's commits"
+msgstr "Failed to get master branch's commits"
+
+#: line 189 -> GetMatchingRepositoryTag()
+msgid "Failed to get tags of the matching repository"
+msgstr "Failed to get tags of the matching repository"
+
+#: line 197 -> GetMatchingRepositoryTag()
+msgid "Failed to sort repositories commit tags"
+msgstr "Failed to sort repositories commit tags"
+
+#: line 262 -> CheckIfBehind()
+msgid "GetAll was not called properly"
+msgstr "GetAll was not called properly"
+
+#: line 265 -> CheckIfBehind()
+msgid "No tags to compare with"
+msgstr "No tags to compare with"
+
+#: line 265 -> CheckIfBehind()
+msgid "No tags to compare with"
+msgstr "No tags to compare with"

@@ -385,12 +385,12 @@ class AppLoading(Screen):
             as the :ref:`OutlineDial`'s value to indicate a progression
             in the application's loading steps.
         """
-        Debug.Start("AppLoading -> Update")
+        Debug.Start("AppLoading -> Update", DontDebug=True)
         Debug.Log("Updating loading message")
         self.LoadingStep.text = loadingMessage
         Debug.Log("Updating loading wheel's value")
         self.LoadingWheel.Value = loadingStep
-        Debug.End()
+        Debug.End(ContinueDebug=True)
 # ------------------------------------------------------------------------
     def SetStepTotalCount(self, count):
         """

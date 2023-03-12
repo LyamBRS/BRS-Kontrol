@@ -100,3 +100,7 @@ msgstr "Selecting"
 #: Singular Welcome message.
 msgid "Welcome"
 msgstr "Welcome"
+
+#: Singular Good message.
+msgid "Good"
+msgstr "Good"

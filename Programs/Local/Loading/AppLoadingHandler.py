@@ -21,6 +21,7 @@ LoadingLog.Start("AppLoadingHandler.py")
 import os
 from enum import Enum
 from functools import partial
+import asyncio
 #endregion
 #region --------------------------------------------------------- BRS
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -28,6 +29,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from ...Pages.PopUps import PopUpsHandler,Keys,PopUpTypeEnum
 from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
+from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 #endregion
 #region -------------------------------------------------------- Kivy
 from kivy.clock import Clock
@@ -608,20 +610,47 @@ def EnvironementCheck() -> bool:
     try:
         Information.__init__(Information)
     except:
-        Debug.Error()
+        Debug.Error("Could not initialize Information class")
         LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Exception
         LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("The application failed to get your computer's information.")
+        Debug.End()
+        return True
+
     #endregion
+
     #region ==== Comparing OS
     Debug.Log("Compare gathered information with allowed information")
     if(Information.platform != "Windows" and Information.platform != "Linux"):
+        Debug.Log(f"Using OS: {Information.platform}")
         Debug.Log(">>> Potentially unsupported OS")
-        LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Warning
-        LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("You are currently running Kontrol using untested hardware. Potential crashes may occur during the use of this application.")
+        PopUpsHandler.Add(PopUpTypeEnum.Warning,
+                          Icon="apple",
+                          Message = _("You are currently running Kontrol using untested hardware. Potential crashes may occur during the use of this application."), 
+                          CanContinue=True)
+     #endregion
+
+    #region ==== Comparing Processor
+    Debug.Log("Checking if we are using a raspberry pi")
+    if(Information.processorType != "armv7l" and Information.platform != "armv6l" and Information.platform != "aarch64"):
+        Debug.Log(">>> Not using a raspberry pi")
+        PopUpsHandler.Add(PopUpTypeEnum.Warning,
+                          Icon="desktop-classic",
+                          Message = _("You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis"), 
+                          CanContinue=True)
+    else:
+        Debug.Log(">>> Using a raspberry pi.")
+        if(Information.platform == "armv6l"):
+            Debug.Error(">>> Too old of a raspberry pi")
+            LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.CriticalError
+            LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("Your raspberry pi is too old to be used by Kontrol.")
+            Debug.End()
+            return True
     #endregion
-    #region ==== Comparing python version
-    #endregion
+    Debug.Log(">>> SUCCESS")
+    LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Success
+    LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage] = _("Good")
     Debug.End()
+    return False
 
 LoadingLog.Log("EnvironementCheck_CallBack")
 def EnvironementCheck_CallBack() -> bool:
@@ -638,40 +667,210 @@ def EnvironementCheck_CallBack() -> bool:
         Returns:
             - `bool`: `True`: Application must be stopped. `False`: Application can continue
     """
-    Debug.Start("InternetCheck_CallBack")
+    Debug.Start("EnvironementCheck_CallBack")
 
     # Check if function was executed
-    if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
+    if(LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
         Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
         PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message = _("Fatal loading error"), CanContinue=False)
         Debug.End()
         return True
     else:
-        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
+        if(LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
             Debug.Warn("Some things were not right. Appending warning windows for future display")
-            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon = "access-point-network", Message = LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage])
             Debug.End()
             return False
 
-        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
+        if(LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
             Debug.Error("Critical Fatal error happened. Application cannot safely continue")
-            PopUpsHandler.Add(PopUpTypeEnum.FatalError,Message = LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage], CanContinue=False)
-            Debug.End()
-            return True
-
-        if(LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] == ErrorTypeEnum.NoConnection):
-            Debug.Error("No internet connection could be found. GitHub checks will be skipped.")
-            LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.Skip] = True
-            LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
-            LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
-            LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
-            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="wifi-off", Message=LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="raspberry-pi", Message = LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage], CanContinue=False)
             Debug.End()
             return True
 
     Debug.Log("Callback was called for no reasons.")
     Debug.End()
 #endregion
+#--------------------------------------------------------------------
+#region ---- GitHub
+LoadingLog.Log("GitHubCheck")
+def GitHubCheck() -> bool:
+    #region ---- DocString
+    """
+        GitHubCheck:
+        ---------------
+        This loading function checks if GitHub API can be accessed.
+        
+        Returns:
+            `bool`: `True`: Error occured. `False`: Internet can be reached
+    """
+    #endregion
+    Debug.Start("GitHubCheck")
+    #region ====== Step 1
+    Debug.Log("Step 1 -> Checking if requests can be accessed")
+    requests = GitHub.GetRequests()
+    if(requests):
+        if(requests == 0):
+            Debug.Error("You have no API requests.")
+            LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorType] = ErrorTypeEnum.APIOutOfRequest
+            LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorMessage] = _("The GitHub API is out of requests. Please wait up to an hour to receive 60 API requests.")
+            Debug.End()
+            return True
+        else:
+            Debug.Log(">>> SUCCESS")
+            LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Success
+            LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorMessage] = _("Good")
+            Debug.End()
+            return False
+    else:
+        Debug.Error("GitHub functions could not be executed")
+        LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorType] = ErrorTypeEnum.CriticalError
+        LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorMessage] = _("Kontrol failed to execute GitHub API's functions. You won't be able to update: BrSpand cards, Drivers and Kontrol.")
+        Debug.End()
+        return True
+    #endregion
+
+LoadingLog.Log("GitHubCheck_CallBack")
+def GitHubCheck_CallBack() -> bool:
+    """
+        IntegrityCheck_CallBack:
+        ------------------------
+        This function is the error call back function of that specific
+        loading step function. It's goal is to handle the `ErrorType`
+        received and decide if the application can continue.
+
+        It handles if other steps should be skipped, appends warning
+        pop ups, error pop ups and so on.
+
+        Returns:
+            - `bool`: `True`: Application must be stopped. `False`: Application can continue
+    """
+    Debug.Start("EnvironementCheck_CallBack")
+    step = LoadingStepsEnum.GitHubCheck
+
+    # Check if function was executed
+    if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
+        Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="github", Message = _("Fatal loading error"), CanContinue=False)
+        Debug.End()
+        return True
+    else:
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
+            Debug.Warn("Some things were not right. Appending warning windows for future display")
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = LoadingSteps[step][ParamEnum.ErrorMessage])
+            Debug.End()
+            return False
+
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
+            Debug.Error("Critical Fatal error happened.")
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="github", Message = LoadingSteps[step][ParamEnum.ErrorMessage], CanContinue=True)
+            LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
+            Debug.End()
+            return False
+
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.APIOutOfRequest):
+            Debug.Error("GitHub API was out of requests. Not attempting the rest of GitHub checks")
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="github", Message = LoadingSteps[step][ParamEnum.ErrorMessage], CanContinue=True)
+            LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
+            Debug.End()
+            return False
+
+    Debug.Log("Callback was called for no reasons.")
+    Debug.End()
+#endregion
+#--------------------------------------------------------------------
+#region ---- KontrolGitHub
+LoadingLog.Log("KontrolGitHub")
+def KontrolGitHub() -> bool:
+    #region ---- DocString
+    """
+        KontrolGitHub:
+        ---------------
+        This loading function checks if your Kontrol is up to date.
+        
+        Returns:
+            `bool`: `True`: Error occured. `False`: Internet can be reached
+    """
+    #endregion
+    Debug.Start("KontrolGitHub")
+
+    #region ====== Step 1
+    Debug.Log("Step 1 -> Checking LyamBRS repository")
+    step = LoadingStepsEnum.KontrolGitHub
+
+    error = GitHub.GetAll("LyamBRS")
+    if(error != None):
+        Debug.Error("Could not check if your device is up to date. ")
+        LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.CriticalError
+        LoadingSteps[step][ParamEnum.ErrorMessage] = _("Failed to verify if Kontrol is up to date. Error message: ") + _(error)
+        Debug.End()
+        return True
+    #endregion
+
+    Debug.Log("Kontrol's GitHub verified")
+    LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.Success
+    LoadingSteps[step][ParamEnum.ErrorMessage] = _("Good")
+    Debug.End()
+    return False
+LoadingLog.Log("KontrolGitHub_CallBack")
+def KontrolGitHub_CallBack() -> bool:
+    """
+        IntegrityCheck_CallBack:
+        ------------------------
+        This function is the error call back function of that specific
+        loading step function. It's goal is to handle the `ErrorType`
+        received and decide if the application can continue.
+
+        It handles if other steps should be skipped, appends warning
+        pop ups, error pop ups and so on.
+
+        Returns:
+            - `bool`: `True`: Application must be stopped. `False`: Application can continue
+    """
+    Debug.Start("KontrolGitHub_CallBack")
+    step = LoadingStepsEnum.KontrolGitHub
+
+    Debug.Log(LoadingSteps[step][ParamEnum.ErrorType])
+
+    # Check if function was executed
+    if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
+        Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message = _("Fatal loading error"), CanContinue=False)
+        Debug.End()
+        return True
+    else:
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
+            Debug.Warn("Some things were not right. Appending warning windows for future display")
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = LoadingSteps[step][ParamEnum.ErrorMessage])
+            Debug.End()
+            return False
+
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
+            Debug.Error("Critical Fatal error happened.")
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="github", Message = LoadingSteps[step][ParamEnum.ErrorMessage], CanContinue=True)
+            LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
+            Debug.End()
+            return False
+
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.APIOutOfRequest):
+            Debug.Error("GitHub API was out of requests. Not attempting the rest of GitHub checks")
+            PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="github", Message = LoadingSteps[step][ParamEnum.ErrorMessage], CanContinue=True)
+            LoadingSteps[LoadingStepsEnum.KontrolGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.BrSpandGitHub][ParamEnum.Skip] = True
+            LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
+            Debug.End()
+            return False
+
+    Debug.Log("Callback was called for no reasons.")
+    Debug.End()
+#endregion
+
 #====================================================================#
 # Main Function
 #====================================================================#
@@ -710,11 +909,13 @@ def LoadApplication(updateFunction, setMaxFunction) -> bool:
     delay = 0
 
     for step in LoadingSteps.items():
-        delay=delay+1
-        Clock.schedule_once(partial(ExecuteStep,updateFunction,step,count),0)
+        step = CurrentLoadingSteps.popitem()
+        delay=delay+0.5
+        Clock.schedule_once(partial(ExecuteStep,updateFunction,step,count),delay)
     Debug.End()
 
 def ExecuteStep(updateFunction,step, count:dict, *args):
+    Debug.Start("ExecuteStep")
     step = step[1]
     Debug.Log(f"{step[ParamEnum.DisplayName]}")
 
@@ -743,8 +944,12 @@ def ExecuteStep(updateFunction,step, count:dict, *args):
             Debug.Error("No loading step function to execute.")
 
         # Increase loading wheel count and update loading wheel
+
     count[0] = count[0] + 1.0
     updateFunction(step[ParamEnum.DisplayName], count[0])
+
+    Debug.End()
+
 #====================================================================#
 # Loading steps
 #====================================================================#
@@ -762,8 +967,8 @@ LoadingSteps = {
         ParamEnum.DisplayName : "Checking system information",
         ParamEnum.ErrorMessage : "Not done",
         ParamEnum.ErrorType : ErrorTypeEnum.Default,
-        ParamEnum.ErrorCallBackFunction : None,
-        ParamEnum.Function : None,
+        ParamEnum.ErrorCallBackFunction : EnvironementCheck_CallBack,
+        ParamEnum.Function : EnvironementCheck,
         ParamEnum.Skip : False,
     },
     LoadingStepsEnum.InternetCheck : {
@@ -778,8 +983,8 @@ LoadingSteps = {
         ParamEnum.DisplayName : "Connecting to GitHub's API",
         ParamEnum.ErrorMessage : "Not done",
         ParamEnum.ErrorType : ErrorTypeEnum.Default,
-        ParamEnum.ErrorCallBackFunction : None,
-        ParamEnum.Function : None,
+        ParamEnum.ErrorCallBackFunction : GitHubCheck_CallBack,
+        ParamEnum.Function : GitHubCheck,
         ParamEnum.Skip : False,
     },
     LoadingStepsEnum.DriversCheck : {
@@ -802,8 +1007,8 @@ LoadingSteps = {
         ParamEnum.DisplayName : "Checking Kontrol's version",
         ParamEnum.ErrorMessage : "Not done",
         ParamEnum.ErrorType : ErrorTypeEnum.Default,
-        ParamEnum.ErrorCallBackFunction : None,
-        ParamEnum.Function : None,
+        ParamEnum.ErrorCallBackFunction : KontrolGitHub_CallBack,
+        ParamEnum.Function : KontrolGitHub,
         ParamEnum.Skip : False,
     },
     LoadingStepsEnum.DriversGitHub : {
@@ -833,6 +1038,10 @@ LoadingSteps = {
     :ref:`LoadingStepsEnum`.
     - Step parameters can be found listed in their enumerations:
     :ref:`ParamEnum`.
+"""
+CurrentLoadingSteps = {**LoadingSteps}
+"""
+    Holds a copy of :ref:`LoadingSteps`.
 """
 #====================================================================#
 LoadingLog.End("AppLoadingHandler.py")

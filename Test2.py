@@ -1,38 +1,46 @@
 from kivy.app import App
-from kivy.lang import Builder
-from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Canvas, Color, Rectangle, PushMatrix, PopMatrix, Rotate
+from kivy.clock import Clock
+from kivy.metrics import dp
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.recycleview import RecycleView
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 
-kv = '''
-<MyWidget>:
-    orientation: 'vertical'
-    Label:
-        id: my_label
-        text: 'Hello, World!'
-        size_hint_y: None
-        height: self.texture_size[1]
-        canvas.before:
-            Color:
-                rgba: 1, 1, 1, 1 # set the background color to white
-            Rectangle:
-                pos: self.pos
-                size: self.size
-    Button:
-        text: 'Rotate'
-        on_press: root.rotate()
-'''
+class MainWidget(FloatLayout):
 
-class MyWidget(BoxLayout):
-    def rotate(self):
-        canvas = self.ids.my_label.canvas
-        with canvas:
-            PushMatrix()
-            Rotate(angle=45, origin=self.ids.my_label.center)
-            PopMatrix()
+    def create_layouts(self):
+        Debug.Start("create_layouts")
+        self.create_recycle_view()
+        Debug.End()
 
-class TestApp(App):
+    def create_recycle_view(self):
+        Debug.Start("create_recycle_view")
+        recycle_box_layout = RecycleBoxLayout(default_size=(None,
+                                              dp(56)),
+                                              default_size_hint=(1, None),
+                                              size_hint=(1, None),
+                                              orientation='vertical')
+        recycle_box_layout.bind(minimum_height=recycle_box_layout.setter("height"))
+        recycle_view = RecycleView()
+        recycle_view.add_widget(recycle_box_layout)
+        recycle_view.viewclass = 'Label'
+        self.add_widget(recycle_view)
+        recycle_view.data = [{'text': str(x)} for x in range(20)]
+        Debug.End()
+
+
+class MainApp(App):
     def build(self):
-        return MyWidget()
+        Debug.enableConsole = True
+        Debug.Start("build")
+        Clock.schedule_once(self.add_rv)
+        Debug.End()
+        return MainWidget()
 
-if __name__ == '__main__':
-    TestApp().run()
+    def add_rv(self, dt):
+        Debug.Start("add_rv")
+        self.root.create_layouts()
+        Debug.End()
+
+
+MainApp().run()

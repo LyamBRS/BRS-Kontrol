@@ -18,6 +18,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.slider import Slider
 from kivy.core.window import Window
 from kivy.animation import Animation
+from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
 # -------------------------------------------------------------------
 from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton,MDRectangleFlatButton,MDFillRoundFlatButton,MDIconButton
@@ -46,6 +47,279 @@ from ..Local.FileHandler import Profiles
 #====================================================================#
 # Functions
 #====================================================================#
+#====================================================================#
+# Screen class
+#====================================================================#
+LoadingLog.Log("ProfileLogin_Screens")
+class ProfileLogins_Screens:
+    """
+        ProfileLogins_Screens:
+        ================
+        Summary:
+        --------
+        This class allows the handling of the transitional screen
+        :class:`ProfileLogin`.
+
+        Description:
+        ------------
+        This class holds the different types of callers of the PopUps
+        screen as well as the different exit screens that this transitional
+        screen can go to. You must specify the names of the wanted exit screens
+        prior to calling the transition function.
+
+        An exit screen is basically which screens should be loaded if something
+        happens in the transition screen.
+
+        Members:
+        ------------
+        This class contains the following screens:
+        - `caller:str = ""`: The name of the screen which called this one.
+        - `SetExiter(screenClass,screenName:str) -> bool`: set the screen to go to on exit. Returns `True` if an error occured
+        - `Call() -> bool`: Attempt to go to the specified screen. Returns `True` if an error occured.
+    """
+    #region ---- Members
+    _callerClass = None
+    _goodExitClass = None
+    _badExitClass = None
+
+    _callerName = None
+    _goodExitName = None
+    _badExitName = None
+
+    _callerTransition = SlideTransition
+    _goodExitTransition = SlideTransition
+    _badExitTransition = SlideTransition
+
+    _callerDirection = "up"
+    _goodExitDirection = "up"
+    _badExitDirection = "down"
+
+    _callerDuration = 0.5
+    _goodExitDuration = 0.5
+    _badExitDuration = 0.5
+    #endregion
+    #region ---- Methods
+    def SetGoodExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
+        """
+            Function which sets the screen that this screen should transition to on exit.
+            This allows transitional screens to be reused by any screens at any time.
+
+            Args:
+                `screenClass (_type_)`: The screen class of the screen this handler should transition to on exit.
+                `screenName (str)`: The name of the screen class. It needs to be the same as :ref:`screenClass`.
+                `transition`: Optional kivy transition class. Defaults as `WipeTransition`
+                `duration (float)`: Optional specification of the transition's duration. Defaults to 0.5 seconds
+                `direction (str)`: Optional direction which the transition should go. Defaults as `"up"`.
+
+            Returns:
+                bool: `True`: Something went wrong. `False`: Success
+        """
+        # Attempt to add the screen class as a widget of the AppManager
+        ProfileLogins_Screens._goodExitClass = screenClass
+        ProfileLogins_Screens._goodExitName  = screenName
+
+        ProfileLogins_Screens._goodExitTransition = transition
+        ProfileLogins_Screens._goodExitDuration = duration
+        ProfileLogins_Screens._goodExitDirection = direction
+        return False
+
+    def SetBadExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
+        """
+            Function which sets the screen that this screen should transition to on exit.
+            This allows transitional screens to be reused by any screens at any time.
+
+            Args:
+                `screenClass (_type_)`: The screen class of the screen this handler should transition to on exit.
+                `screenName (str)`: The name of the screen class. It needs to be the same as :ref:`screenClass`.
+                `transition`: Optional kivy transition class. Defaults as `WipeTransition`
+                `duration (float)`: Optional specification of the transition's duration. Defaults to 0.5 seconds
+                `direction (str)`: Optional direction which the transition should go. Defaults as `"up"`.
+
+            Returns:
+                bool: `True`: Something went wrong. `False`: Success
+        """
+        # Attempt to add the screen class as a widget of the AppManager
+        ProfileLogins_Screens._badExitClass = screenClass
+        ProfileLogins_Screens._badExitName  = screenName
+
+        ProfileLogins_Screens._badExitTransition = transition
+        ProfileLogins_Screens._badExitDuration = duration
+        ProfileLogins_Screens._badExitDirection = direction
+        return False
+
+    def SetCaller(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
+        """
+            Function which sets the screen to load if an error occured. This is used to "go back" to whoever attempted
+            to call this screen.
+
+            Args:
+                `screenClass (_type_)`: The screen class of the screen that wants to transition to this one.
+                `screenName (str)`: The name of the screen class. It needs to be the same as :ref:`screenClass`.
+                `transition`: Optional kivy transition class. Defaults as `WipeTransition`
+                `duration (float)`: Optional specification of the transition's duration. Defaults to 0.5 seconds
+                `direction (str)`: Optional direction which the transition should go. Defaults as `"up"`.
+
+            Returns:
+                bool: `True`: Something went wrong. `False`: Success
+        """
+        # Attempt to add the screen class as a widget of the AppManager
+        ProfileLogins_Screens._callerClass = screenClass
+        ProfileLogins_Screens._callerName  = screenName
+
+        ProfileLogins_Screens._callerTransition = transition
+        ProfileLogins_Screens._callerDuration = duration
+        ProfileLogins_Screens._callerDirection = direction
+        return False
+
+    def _BadExit() -> bool:
+        """
+            Attempt to go to the specified screen that was set using :ref:`SetBadExiter`.
+
+            Returns:
+                bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileLogin -> _BadExit()")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            # Check if exit class was specified
+            Debug.Log("Checking exit class")
+            if(ProfileLogins_Screens._badExitClass == None):
+                Debug.Error("Attempted to call exit while no exit class were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit name")
+            if(ProfileLogins_Screens._badExitName == None):
+                Debug.Error("Attempted to call exit while no exit name were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit class Call()")
+            try:
+                Debug.Log("Trying to call exit class caller.")
+                ProfileLogins_Screens._badExitClass.Call()
+                Debug.Log("Success")
+                Debug.End()
+                return False
+            except:
+                Debug.Log("Class specified wasn't an _Screen class.")
+                AppManager.manager.add_widget(ProfileLogins_Screens._badExitClass(name=ProfileLogins_Screens._badExitName))
+        except:
+            Debug.Error("PopUps: _Exit() -> Failed in add_widget")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition = ProfileLogins_Screens._badExitTransition()
+        AppManager.manager.transition.duration = ProfileLogins_Screens._badExitDuration
+        AppManager.manager.transition.direction = ProfileLogins_Screens._badExitDirection
+
+        # try:
+        AppManager.manager.current = ProfileLogins_Screens._badExitName
+        # except:
+            # Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
+            # Debug.End()
+            # return True
+        Debug.End()
+        return False
+
+    def _GoodExit() -> bool:
+        """
+            Attempt to go to the specified screen that was set using :ref:`SetGoodExiter`.
+
+            Returns:
+                bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileLogin -> _GoodExit()")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            # Check if exit class was specified
+            Debug.Log("Checking exit class")
+            if(ProfileLogins_Screens._goodExitClass == None):
+                Debug.Error("Attempted to call exit while no exit class were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit name")
+            if(ProfileLogins_Screens._goodExitName == None):
+                Debug.Error("Attempted to call exit while no exit name were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit class Call()")
+            try:
+                Debug.Log("Trying to call exit class caller.")
+                ProfileLogins_Screens._goodExitClass.Call()
+                Debug.Log("Success")
+                Debug.End()
+                return False
+            except:
+                Debug.Log("Class specified wasn't an _Screen class.")
+                AppManager.manager.add_widget(ProfileLogins_Screens._goodExitClass(name=ProfileLogins_Screens._goodExitName))
+        except:
+            Debug.Error("PopUps: _Exit() -> Failed in add_widget")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition = ProfileLogins_Screens._goodExitTransition()
+        AppManager.manager.transition.duration = ProfileLogins_Screens._goodExitDuration
+        AppManager.manager.transition.direction = ProfileLogins_Screens._goodExitDirection
+
+        # try:
+        AppManager.manager.current = ProfileLogins_Screens._goodExitName
+        # except:
+            # Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
+            # Debug.End()
+            # return True
+        Debug.End()
+        return False
+
+    def Call() -> bool:
+        """
+            Attempt to go to the main screen that is being handled by this class.
+
+            Returns:
+                bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileLogin -> Call")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            # Check if exit class was specified
+            Debug.Log("Checking caller class")
+            if(ProfileLogins_Screens._callerClass == None):
+                Debug.Error("No caller class specified.")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking caller name")
+            if(ProfileLogins_Screens._callerName == None):
+                Debug.Error("No caller name specified.")
+                Debug.End()
+                return True
+
+            Debug.Log("Adding widget")
+            AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
+        except:
+            Debug.Error("Exception occured while handling Call()")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition = ProfileLogins_Screens._callerTransition()
+        AppManager.manager.transition.duration = ProfileLogins_Screens._callerDuration
+        AppManager.manager.transition.direction = ProfileLogins_Screens._callerDirection
+
+        # try:
+        AppManager.manager.current = "ProfileLogin"
+        # except:
+            # Debug.Error("Failed to add ProfileLogin as current screen.")
+            # Debug.End()
+            # return True
+
+        Debug.End()
+        return False
+    #endregion
 
 #====================================================================#
 # Classes
@@ -169,8 +443,9 @@ class ProfileLogin(Screen):
         """
             Function to go back to `ProfileMenu.py`
         """
-        AppManager.manager.transition.direction = "down"
-        AppManager.manager.current = "ProfileMenu"
+        # AppManager.manager.transition.direction = "down"
+        # AppManager.manager.current = "ProfileMenu"
+        ProfileLogins_Screens._BadExit()
 # ------------------------------------------------------------------------
     def LoginAttempt(self, *args):
         """
@@ -185,5 +460,10 @@ class ProfileLogin(Screen):
 
         if(password != self.Password.text):
             self.Password.error = True
+
+        if(self.Username.error or self.Password.error):
+            pass
+        else:
+            ProfileLogins_Screens._GoodExit()
 
 LoadingLog.End("ProfileLogin.py")

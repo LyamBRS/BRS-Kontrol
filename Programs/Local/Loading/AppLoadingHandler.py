@@ -709,7 +709,7 @@ def GitHubCheck() -> bool:
     #region ====== Step 1
     Debug.Log("Step 1 -> Checking if requests can be accessed")
     requests = GitHub.GetRequests()
-    if(requests):
+    if(requests >= 0):
         if(requests == 0):
             Debug.Error("You have no API requests.")
             LoadingSteps[LoadingStepsEnum.GitHubCheck][ParamEnum.ErrorType] = ErrorTypeEnum.APIOutOfRequest
@@ -909,7 +909,6 @@ def LoadApplication(updateFunction, setMaxFunction) -> bool:
     delay = 0
 
     for step in LoadingSteps.items():
-        step = CurrentLoadingSteps.popitem()
         delay=delay+0.5
         Clock.schedule_once(partial(ExecuteStep,updateFunction,step,count),delay)
     Debug.End()
@@ -1038,10 +1037,6 @@ LoadingSteps = {
     :ref:`LoadingStepsEnum`.
     - Step parameters can be found listed in their enumerations:
     :ref:`ParamEnum`.
-"""
-CurrentLoadingSteps = {**LoadingSteps}
-"""
-    Holds a copy of :ref:`LoadingSteps`.
 """
 #====================================================================#
 LoadingLog.End("AppLoadingHandler.py")

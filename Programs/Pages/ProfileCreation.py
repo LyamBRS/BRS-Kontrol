@@ -3,6 +3,7 @@
 #====================================================================#
 
 #====================================================================#
+from re import X
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("ProfileCreation.py")
 #====================================================================#
@@ -26,6 +27,9 @@ from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
 from kivymd.app import MDApp
 from kivymd.uix.recycleview import MDRecycleView
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.recycleview import RecycleView
+from kivy.clock import Clock
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
@@ -606,7 +610,7 @@ class ProfileCreation_Step3(Screen):
         self.MainLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="vertical")
         self.MiddleLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="horizontal")
         self.TopLayout = MDBoxLayout(padding=("20sp","20sp","20sp","20sp"), size_hint_y = 0.25)
-    
+
         # region ---- Card
         Debug.Log("Creating Card and Card layouts")
         self.LeftCard = MDCard(
@@ -628,6 +632,7 @@ class ProfileCreation_Step3(Screen):
         self.LeftCardBottom = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
 
         self.RightCardTop = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="vertical")
+        self.RightCardTop.size_hint = (1, 0.25)
         self.RightCardBottom = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
 
         Debug.Log("Creating standard profile information widgets")
@@ -671,29 +676,16 @@ class ProfileCreation_Step3(Screen):
         self.MagnifyGlass = MDIconButton(icon = "magnify")
         self.SearchBar = MDTextField()
         self.SearchBar.hint_text = _("Search")
-        self.SearchLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="horizontal")
+        self.SearchBar.bind(text=self.SearchIcons)
+        self.SearchLayout = MDBoxLayout(spacing=10, padding=("20sp","0sp","20sp","0sp"), orientation="horizontal")
         self.SearchLayout.add_widget(self.MagnifyGlass)
         self.SearchLayout.add_widget(self.SearchBar)
-        self.RightCard.add_widget(self.SearchLayout)
+        self.RightCardTop.add_widget(self.SearchLayout)
         #endregion
 
-        #region ---- RecycleView
-        self.RecycleView = MDRecycleView()
-        self.RecycleView.viewclass = IconListItem
-        # self.RecycleView.key_viewclass = "viewclass"
-
-        self.Layout = MDBoxLayout(spacing=25, padding=(0,50,0,0), orientation="vertical")
-
-        self.profileBox = MDBoxLayout(orientation='vertical', spacing="0", padding = (0,"100sp",0,"50sp"), size_hint_y=None)
-        self.profileBox.bind(minimum_height = self.profileBox.setter('height'))
-
-        # Create the scroll view and add the box layout to it
-        self.scroll = MDRecycleView(scroll_type=['bars','content'])
-        self.scroll.viewclass = IconListItem
-        self.scroll.smooth_scroll_end = 10
-
-        self.scroll.add_widget(self.profileBox)
-
+        #region ---- Recycle view
+        # Clock.schedule_once(self.create_layouts, 1)
+        self.create_layouts()
         #endregion
 
         #region ---- Top Of Card
@@ -704,29 +696,12 @@ class ProfileCreation_Step3(Screen):
         self.LeftCard.add_widget(self.BiographyTitle)
         self.LeftCard.add_widget(self.Biography)
         #endregion
-        
-        start = time.time()
-        for icon in ProfileIcons:
-            Debug.Log(icon)
 
-            self.scroll.data.append(
-                {
-                    "viewclass": "IconListItem",
-                    "icon": icon,
-                    "text": icon,
-                    "callback": lambda x: x,
-                }
-            )
-
-        Debug.Log(self.scroll.data)
-        end = time.time()
-        Debug.Warn(f"time taken: {end-start} seconds")
         # Add widgets
         # self.LeftCard.add_widget(self.LeftCardTop)
         # self.LeftCard.add_widget(self.LeftCardBottom)
-        # self.RightCard.add_widget(self.RightCardTop)
-        # self.RightCard.add_widget(self.RightCardBottom)
-        self.RightCard.add_widget(self.scroll)
+        self.RightCard.add_widget(self.RightCardTop)
+        self.RightCard.add_widget(self.RightCardBottom)
         self.MiddleLayout.add_widget(self.LeftCard)
         self.MiddleLayout.add_widget(self.RightCard)
 
@@ -765,4 +740,41 @@ class ProfileCreation_Step3(Screen):
             KivyMD icon for their profile.
         """
 # ------------------------------------------------------------------------
+    def create_layouts(self,*args):
+        Debug.Start("create_layouts")
+        self.create_recycle_view()
+        Debug.End()
+# ------------------------------------------------------------------------
+    def create_recycle_view(self):
+        Debug.Log("Creating recycle box layout")
+        self.RecyleBoxLayout = RecycleBoxLayout(default_size=(None,56),
+                                                default_size_hint=(1, None),
+                                                size_hint=(1, None),
+                                                orientation='vertical')
+        self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
+
+        self.recycleView = RecycleView()
+        self.recycleView.add_widget(self.RecyleBoxLayout)
+        self.recycleView.viewclass = 'Label'
+        self.RightCardBottom.add_widget(self.recycleView)
+        self.SearchIcons()
+# ------------------------------------------------------------------------
+    def SearchIcons(self, *args):
+        """
+            SearchIcons:
+            ------------
+            This function is a callback function called when the search
+            textbox changes or is confirmed. Doing this will rebuild
+            the recycleview's displayed icons and only keep the ones
+            which contains what is inside of the searchbar.
+        """
+        Debug.Start("SearchIcons")
+        icon:str = ""
+
+        Debug.Log("Clearing recycle view.")
+        if(len(self.SearchBar.text) > 0):
+            self.recycleView.data = [{'text': str(icon)} for icon in ProfileIcons if self.SearchBar.text in str(icon)]
+        else:
+            self.recycleView.data = [{'text': str(icon)} for icon in ProfileIcons]
+        Debug.End()
 LoadingLog.End("ProfileCreation.py")

@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Programs.Pages.Startup import Startup_Screens
 LoadingLog.Start("ProfileMenu.py")
 #====================================================================#
 # Imports
@@ -34,7 +35,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
-from .ProfileLogin import ProfileLogin
+from .ProfileLogin import ProfileLogins_Screens
 from .ProfileCreation import ProfileCreation_Step1
 from ..Local.FileHandler import Profiles
 #====================================================================#
@@ -226,16 +227,21 @@ class ProfileMenu(Screen):
         Debug.Start("ProfilesClicked")
         # LoadedProfile.LoadProfile(card.json)
         # self.Layout.ProfilesLayout.profileBox.remove_widget(card)
-
+        LoadedProfile.LoadProfile(card.json)
         #Slowly make welcome fade off
         self.animation.stop_all(self)
         self.animation = Animation(progress = 0, duration = 0.5)
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
 
-        AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
-        AppManager.manager.transition.direction = "up"
-        AppManager.manager.current = "ProfileLogin"
+        Debug.Log("Setting profileLoging exit and callers")
+        ProfileLogins_Screens.SetCaller(ProfileMenu, "ProfileMenu")
+        ProfileLogins_Screens.SetBadExiter(ProfileMenu, "ProfileMenu", direction="down")
+        ProfileLogins_Screens.SetGoodExiter(Startup_Screens, "Startup")
+        ProfileLogins_Screens.Call()
+        # AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
+        # AppManager.manager.transition.direction = "up"
+        # AppManager.manager.current = "ProfileLogin"
         Debug.End()
 # ------------------------------------------------------------------------
     def CreateProfileClicked(self, card:ProfileCard):

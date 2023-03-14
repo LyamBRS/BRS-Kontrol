@@ -1,3 +1,4 @@
+from tkinter import Button
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.metrics import dp
@@ -5,42 +6,32 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.recycleview import RecycleView
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+from kivy.uix.button import Button
 
-class MainWidget(FloatLayout):
+from kivy.app import App
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.button import Button
 
-    def create_layouts(self):
-        Debug.Start("create_layouts")
-        self.create_recycle_view()
-        Debug.End()
+class MyRecycleView(RecycleView):
+    def __init__(self, **kwargs):
+        super(MyRecycleView, self).__init__(**kwargs)
+        self.data = [{'text': str(i)} for i in range(10)]
+        self.viewclass = 'MyButton'
+        self.button_pressed_callback = None
 
-    def create_recycle_view(self):
-        Debug.Start("create_recycle_view")
-        recycle_box_layout = RecycleBoxLayout(default_size=(None,
-                                              dp(56)),
-                                              default_size_hint=(1, None),
-                                              size_hint=(1, None),
-                                              orientation='vertical')
-        recycle_box_layout.bind(minimum_height=recycle_box_layout.setter("height"))
-        recycle_view = RecycleView()
-        recycle_view.add_widget(recycle_box_layout)
-        recycle_view.viewclass = 'Label'
-        self.add_widget(recycle_view)
-        recycle_view.data = [{'text': str(x)} for x in range(20)]
-        Debug.End()
+class MyButton(Button):
+    def on_press(self):
+        if self.parent.parent.button_pressed_callback:
+            self.parent.parent.button_pressed_callback(self)
 
-
-class MainApp(App):
+class TestApp(App):
     def build(self):
-        Debug.enableConsole = True
-        Debug.Start("build")
-        Clock.schedule_once(self.add_rv)
-        Debug.End()
-        return MainWidget()
+        def button_pressed(button):
+            print("Button", button.text, "pressed")
 
-    def add_rv(self, dt):
-        Debug.Start("add_rv")
-        self.root.create_layouts()
-        Debug.End()
+        rv = MyRecycleView()
+        rv.button_pressed_callback = button_pressed
+        return rv
 
-
-MainApp().run()
+if __name__ == '__main__':
+    TestApp().run()

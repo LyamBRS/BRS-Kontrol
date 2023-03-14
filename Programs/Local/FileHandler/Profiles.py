@@ -8,6 +8,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("Profiles.py")
 
+from enum import Enum
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -18,52 +19,91 @@ from kivymd.color_definitions import palette,colors
 #====================================================================#
 # Global accessibles
 #====================================================================#
+class structureEnum(Enum):
+    """
+        structureEnum:
+        --------------
+        Contains each keys of the :ref:`profileStructure`
+    """
+    ProfileConfig:str = "ProfileConfig"
+    Generic:str = "Generic"
+    Theme:str = "Theme"
+    Settings:str = "Settings"
+
+class ProfileConfigEnum(Enum):
+    CanDelete:str = "CanDelete"
+    Type:str = "Type"
+    Version:str = "Version"
+
+class ProfileGenericEnum(Enum):
+    Username:str = "Username"
+    Password:str = "Password"
+    Biography:str = "Biography"
+    IconType:str = "IconType"
+    IconPath:str = "IconPath"
+    Language:str = "Language"
+
+class ProfileThemeEnum(Enum):
+    Style:str = "Style"
+    Password:str = "Primary"
+    Accent:str = "Accent"
+    Duration:str = "Duration"
+
+class ProfileThemeEnum(Enum):
+    Style:str = "Style"
+    Primary:str = "Primary"
+    Accent:str = "Accent"
+    Duration:str = "Duration"
+#====================================================================#
 profileStructure = {
-    "ProfileConfig":{
-        "CanDelete" : True,  # False, True
-        "Type" : "Guest", #"Guest", "Normal", "Temporary"
-        "Version" : 1.2 # the profile version.
+    structureEnum.ProfileConfig:{
+        ProfileConfigEnum.CanDelete : True,  # False, True
+        ProfileConfigEnum.Type : "Guest", #"Guest", "Normal", "Temporary"
+        ProfileConfigEnum.Version : 1.2 # the profile version.
     },
-    "Generic" :{
-        "Username" : "Username",
-        "Password" : "",
-        "Biography" : "Biography",
-        "IconType" : "Kivy",    # Kivy or Path
-        "IconPath" : "account-outline",
-        "Language" : "US_English"
+    structureEnum.Generic :{
+        ProfileGenericEnum.Username: "Username",
+        ProfileGenericEnum.Password: "",
+        ProfileGenericEnum.Biography: "Biography",
+        ProfileGenericEnum.IconType: "Kivy",    # Kivy or Path
+        ProfileGenericEnum.IconPath: "account-outline",
+        ProfileGenericEnum.Language: "US_English"
     },
-    "Theme" :{
-        "Style" : "Light",
-        "Primary" : "Purple",
-        "Accent" : "Teal",
-        "Duration" : 0.5,
+    structureEnum.Theme :{
+        ProfileThemeEnum.Style  : "Light",
+        ProfileThemeEnum.Primary  : "Purple",
+        ProfileThemeEnum.Accent  : "Teal",
+        ProfileThemeEnum.Duration  : 0.5,
     },
-    "Settings" :{
+    structureEnum.Settings :{
         "TO DO":None
     }
 }
 
+
+
+
 Temporary = {
-    "ProfileConfig":{
-        "CanDelete" : True,  # False, True
-        "Type" : "Normal", #"Guest", "Normal", "Temporary"
-        "Version" : 1.2 # the profile version.
+    structureEnum.ProfileConfig:{
+        ProfileConfigEnum.CanDelete : True,  # False, True
+        ProfileConfigEnum.Type : "Guest", #"Guest", "Normal", "Temporary"
+        ProfileConfigEnum.Version : 1.2 # the profile version.
     },
-    "Generic" :{
-        "Username" : "Username",
-        "Password" : "Password",
-        "Biography" : "Biography",
-        "IconType" : "Kivy",    # Kivy or Path
-        "IconPath" : "account-outline",
-        "Language" : "US_English"
+    structureEnum.Generic :{
+        ProfileGenericEnum.Username: "Username",
+        ProfileGenericEnum.Password: "",
+        ProfileGenericEnum.Biography: "Biography",
+        ProfileGenericEnum.IconType: "Kivy",    # Kivy or Path
+        ProfileGenericEnum.IconPath: "account-outline",
+        ProfileGenericEnum.Language: "US_English"
     },
-    "Theme" :{
-        "Style" : "Light",
-        "Primary" : "Purple",
-        "Accent" : "Teal",
-        "Duration" : 0.5,
+    structureEnum.Theme :{
+        ProfileThemeEnum.Style  : "Light",
+        ProfileThemeEnum.Primary  : "Purple",
+        ProfileThemeEnum.Accent  : "Teal",
+        ProfileThemeEnum.Duration  : 0.5,
     },
-    "Settings" :{
+    structureEnum.Settings :{
         "TO DO":None
     }
 }
@@ -126,16 +166,16 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 2]: Check if the profile version matches the profileStructure's profile version
     try:
-        if(profileStructure["ProfileConfig"]["Version"] > profileJson.jsonData["ProfileConfig"]["Version"]):
+        if(profileStructure[structureEnum.ProfileConfig][ProfileConfigEnum.Version] > profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Version]):
             Debug.Warn("File detected as outdated in Step 2")
             Debug.End()
             return FileIntegrity.Outdated
-        if(profileStructure["ProfileConfig"]["Version"] < profileJson.jsonData["ProfileConfig"]["Version"]):
+        if(profileStructure[structureEnum.ProfileConfig][ProfileConfigEnum.Version] < profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Version]):
             Debug.Warn("File detected as ahead in Step 2")
             Debug.End()
             return FileIntegrity.Ahead
     except:
-        Debug.Error("Exception in Step 2")
+        Debug.Error(f"Exception in Step 2: {ProfileConfigEnum.Version}")
         Debug.End()
         return FileIntegrity.Error
     #endregion
@@ -146,22 +186,22 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure["ProfileConfig"].keys() != profileJson.jsonData["ProfileConfig"].keys()):
+        if(profileStructure[structureEnum.ProfileConfig].keys() != profileJson.jsonData[structureEnum.ProfileConfig].keys()):
             Debug.Warn("Corruption detected in Step 3: ProfileConfig JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure["Generic"].keys() != profileJson.jsonData["Generic"].keys()):
+        if(profileStructure[structureEnum.Generic].keys() != profileJson.jsonData[structureEnum.Generic].keys()):
             Debug.Warn("Corruption detected in Step 3: Generic JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure["Theme"].keys() != profileJson.jsonData["Theme"].keys()):
+        if(profileStructure[structureEnum.Theme].keys() != profileJson.jsonData[structureEnum.Theme].keys()):
             Debug.Warn("Corruption detected in Step 3: Theme JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure["Settings"].keys() != profileJson.jsonData["Settings"].keys()):
+        if(profileStructure[structureEnum.Settings].keys() != profileJson.jsonData[structureEnum.Settings].keys()):
             Debug.Warn("Corruption detected in Step 3: Settings JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
@@ -172,9 +212,9 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 4]: Check if ProfileConfig's elements are correct.
     try:
-        A = (type(profileJson.jsonData["ProfileConfig"]["CanDelete"]) == bool)
-        C = (type(profileJson.jsonData["ProfileConfig"]["Version"]) == float)
-        B = profileJson.jsonData["ProfileConfig"]["Type"] == "Normal" or profileJson.jsonData["ProfileConfig"]["Type"] == "Guest" or profileJson.jsonData["ProfileConfig"]["Type"] == "Admin"
+        A = (type(profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.CanDelete]) == bool)
+        C = (type(profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Version]) == float)
+        B = profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Type] == "Normal" or profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Type] == "Guest" or profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Type] == "Admin"
         if(not (A and B and C)):
             Debug.Warn("Corruption detected in Step 4: ProfileConfig")
             Debug.End()
@@ -186,13 +226,14 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 5]: Check if Generic's elements are correct.
     try:
-        A = (type(profileJson.jsonData["Generic"]["Username"]) == str)
-        B = (type(profileJson.jsonData["Generic"]["Password"]) == str)
-        C = (profileJson.jsonData["Generic"]["IconType"] == "Kivy" or profileJson.jsonData["Generic"]["IconType"] == "Path")
+        ProfileGenericEnum.Username
+        A = (type(profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.Username]) == str)
+        B = (type(profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.Password]) == str)
+        C = (profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconType] == "Kivy" or profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconType] == "Path")
 
-        if(profileJson.jsonData["Generic"]["IconType"] == "Kivy"):
+        if(profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconType] == "Kivy"):
             try:
-                icon = md_icons[profileJson.jsonData["Generic"]["IconPath"]]
+                icon = md_icons[profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconPath]]
             except:
                 Debug.Warn("Corruption detected in Step 5. Kivy Icon does not exist")
                 Debug.End()
@@ -210,10 +251,10 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 6]: Check if Theme's elements are correct.
     try:
-        A = (profileJson.jsonData["Theme"]["Style"] == "Dark" or profileJson.jsonData["Theme"]["Style"] == "Light")
-        B = (profileJson.jsonData["Theme"]["Accent"] in colors)
-        C = (profileJson.jsonData["Theme"]["Primary"] in colors)
-        D = (type(profileJson.jsonData["Theme"]["Duration"]) == float)
+        A = (profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Style] == "Dark" or profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Style] == "Light")
+        B = (profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Accent] in colors)
+        C = (profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Primary] in colors)
+        D = (type(profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Duration]) == float)
 
         if(not (A and B and C and D)):
             Debug.Warn("Corruption detected in Step 6")
@@ -290,9 +331,9 @@ class LoadedProfile:
         """
         Debug.Start("LoadedProfile -> LoadCLSTheme")
         try:
-            Style    = LoadedProfile.rawJson.jsonData["Theme"]["Style"]
-            Primary  = LoadedProfile.rawJson.jsonData["Theme"]["Primary"]
-            Accent   = LoadedProfile.rawJson.jsonData["Theme"]["Accent"]
+            Style    = LoadedProfile.rawJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Style]
+            Primary  = LoadedProfile.rawJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Primary]
+            Accent   = LoadedProfile.rawJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Accent]
 
             MDApp.get_running_app().theme_cls.theme_style = Style
             MDApp.get_running_app().theme_cls.primary_palette = Primary

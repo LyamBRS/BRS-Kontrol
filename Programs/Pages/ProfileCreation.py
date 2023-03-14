@@ -28,6 +28,7 @@ from kivymd.color_definitions import palette,colors
 from kivymd.app import MDApp
 from kivymd.uix.recycleview import MDRecycleView
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.recycleview import RecycleView
 from kivy.clock import Clock
 # -------------------------------------------------------------------
@@ -35,7 +36,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile,Temporary
+from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum
 from kivymd.uix.scrollview import MDScrollView
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
@@ -239,7 +240,7 @@ class ProfileCreation_Step1(Screen):
         self.spacing = 25
 
         Debug.Log("Setting Temporary profile's language to AppLanguage.Current")
-        Temporary["Generic"]["Language"] = AppLanguage.Current
+        Temporary[structureEnum.Generic][ProfileGenericEnum.Language] = AppLanguage.Current
 
         CreateScreenBase(self, "Select a language", "First")
 
@@ -335,11 +336,10 @@ class ProfileCreation_Step1(Screen):
         self.SelectedLanguage.text = AppLanguage.Current
 
         Debug.Log("Setting new language in temporary profile class")
-        Temporary["Generic"]["Language"] = AppLanguage.Current
-        language = Temporary["Generic"]["Language"]
-        Debug.Warn(f"Temporary profile now uses: {language}")
+        Temporary[structureEnum.Generic][ProfileGenericEnum.Language] = AppLanguage.Current
+        Debug.Warn(f"Temporary profile now uses: {Temporary[structureEnum.Generic][ProfileGenericEnum.Language]}")
 
-        Debug.Log("Closing dropdown menu")
+        # Closing drop down menu
         self.menu.dismiss()
         Debug.End()
 #====================================================================#
@@ -370,8 +370,12 @@ class ProfileCreation_Step2(Screen):
         self.padding = 25
         self.spacing = 25
 
+        style = MDApp.get_running_app().theme_cls.theme_style
+        primary = MDApp.get_running_app().theme_cls.primary_palette
+        accent = MDApp.get_running_app().theme_cls.accent_palette
+
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
-        Temporary["Generic"]["Language"] = AppLanguage.Current
+        Temporary[structureEnum.Generic][ProfileGenericEnum.Language] = AppLanguage.Current
 
         CreateScreenBase(self, "Select a theme", "Middle")
 
@@ -398,12 +402,11 @@ class ProfileCreation_Step2(Screen):
         for color in palette:
             Primary = MDIconButton()
             Primary.text = color
-            Temporary["Theme"]["Primary"] = Primary.text
             Primary.theme_icon_color = "Custom"
             Primary.icon_color = get_color_from_hex(colors[color]["500"])
             Primary.line_width = 1.5
 
-            if color == MDApp.get_running_app().theme_cls.primary_palette:
+            if color == primary:
                 Primary.line_color = Primary.icon_color
                 Primary.icon = "checkbox-marked-circle"
 
@@ -419,7 +422,7 @@ class ProfileCreation_Step2(Screen):
             Accent.icon_color = get_color_from_hex(colors[color]["500"])
             Accent.line_width = 1.5
 
-            if color == MDApp.get_running_app().theme_cls.accent_palette:
+            if color == accent:
                 Accent.line_color = Accent.icon_color
                 Accent.icon = "checkbox-marked-circle"
 
@@ -438,11 +441,11 @@ class ProfileCreation_Step2(Screen):
         Light.icon_color = (0.8,0.8,0.8,1)
         Dark.icon_color = (0,0,0,1)
 
-        if MDApp.get_running_app().theme_cls.theme_style == "Light":
+        if style == "Light":
             Light.line_color = Light.icon_color
             Light.icon = "checkbox-marked-circle"
 
-        if MDApp.get_running_app().theme_cls.theme_style == "Dark":
+        if style == "Dark":
             Dark.line_color = Dark.icon_color
             Dark.icon = "checkbox-marked-circle"
 
@@ -454,6 +457,10 @@ class ProfileCreation_Step2(Screen):
         self.ThemeStyleLayout.add_widget(Dark)
         #endregion
 
+        # Save current theme_cls in Temporary
+        Temporary[structureEnum.Theme][ProfileThemeEnum.Style] = style
+        Temporary[structureEnum.Theme][ProfileThemeEnum.Primary] = primary
+        Temporary[structureEnum.Theme][ProfileThemeEnum.Accent] = accent
 
         # Add widgets
         self.Card.add_widget(self.ThemeStyleLabel)
@@ -507,8 +514,9 @@ class ProfileCreation_Step2(Screen):
             else:
                 button.line_color = button.icon_color
                 button.icon = "checkbox-marked-circle"
-                Temporary["Theme"]["Primary"] = button.text
                 MDApp.get_running_app().theme_cls.primary_palette = button.text
+
+                Temporary[structureEnum.Theme][ProfileThemeEnum.Primary] = button.text
                 Debug.Log(f"Primary color is now: {button.text}")
         Debug.End()
 # ------------------------------------------------------------------------
@@ -527,8 +535,9 @@ class ProfileCreation_Step2(Screen):
             else:
                 button.line_color = button.icon_color
                 button.icon = "checkbox-marked-circle"
-                Temporary["Theme"]["Accent"] = button.text
                 MDApp.get_running_app().theme_cls.accent_palette = button.text
+
+                Temporary[structureEnum.Theme][ProfileThemeEnum.Accent] = button.text
                 Debug.Log(f"Accent color is now: {button.text}")
         Debug.End()
 # ------------------------------------------------------------------------
@@ -547,7 +556,8 @@ class ProfileCreation_Step2(Screen):
             else:
                 button.line_color = button.icon_color
                 button.icon = "checkbox-marked-circle"
-                Temporary["Theme"]["Style"] = button.text
+
+                Temporary[structureEnum.Theme][ProfileThemeEnum.Style] = button.text
                 MDApp.get_running_app().theme_cls.theme_style = button.text
                 Debug.Log(f"Theme style color is now: {button.text}")
 
@@ -585,6 +595,7 @@ class ProfileCreation_Step3(Screen):
     """Animation object"""
     elevation = 0
     softness = 0
+    selectedProfilePic = ""
     #endregion
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
@@ -604,7 +615,6 @@ class ProfileCreation_Step3(Screen):
         self.spacing = 25
 
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
-        # Temporary["Generic"]["Language"] = AppLanguage.Current
 
         Debug.Log("Creating Layouts")
         self.MainLayout = MDBoxLayout(spacing=10, padding=("20sp","20sp","20sp","20sp"), orientation="vertical")
@@ -639,9 +649,9 @@ class ProfileCreation_Step3(Screen):
         self.UsernameTitle = MDLabel(text=_("Username") + ":")
         self.PasswordTitle = MDLabel(text=_("Password") + ":")
         self.BiographyTitle = MDLabel(text=_("Short biography") + ":")
-        self.Username = MDTextField(text=Temporary["Generic"]["Username"])
-        self.Password = MDTextField(text=Temporary["Generic"]["Password"])
-        self.Biography = MDTextField(text=Temporary["Generic"]["Biography"])
+        self.Username  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Username])
+        self.Password  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Password])
+        self.Biography = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Biography])
         self.Biography.max_height = 3
         self.PasswordTitle.font_style = "H5"
         self.UsernameTitle.font_style = "H5"
@@ -745,17 +755,32 @@ class ProfileCreation_Step3(Screen):
         self.create_recycle_view()
         Debug.End()
 # ------------------------------------------------------------------------
+    def IconSelected(self, *args):
+        """
+            IconSelected:
+            -------------
+            This function is a callback function executed when a new
+            icon is selected to use for the profile creation.
+        """
+        Debug.Start("IconSelected")
+        Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath] = args[0]
+        Debug.Log(f"Profile icon is now: {args[0]}")
+        self.SearchIcons()
+        Debug.End()
+# ------------------------------------------------------------------------
     def create_recycle_view(self):
         Debug.Log("Creating recycle box layout")
-        self.RecyleBoxLayout = RecycleBoxLayout(default_size=(None,56),
+        self.RecyleBoxLayout = RecycleGridLayout(default_size=(None,56),
                                                 default_size_hint=(1, None),
                                                 size_hint=(1, None),
-                                                orientation='vertical')
+                                                orientation='lr-tb')
+        self.RecyleBoxLayout.cols = 5
+        # self.RecyleBoxLayout.orientation
         self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
 
         self.recycleView = RecycleView()
         self.recycleView.add_widget(self.RecyleBoxLayout)
-        self.recycleView.viewclass = 'Label'
+        self.recycleView.viewclass = MDIconButton
         self.RightCardBottom.add_widget(self.recycleView)
         self.SearchIcons()
 # ------------------------------------------------------------------------
@@ -770,11 +795,36 @@ class ProfileCreation_Step3(Screen):
         """
         Debug.Start("SearchIcons")
         icon:str = ""
+        style = MDApp.get_running_app().theme_cls.theme_style
+
+        Debug.Log(f"style = {style}")
+        if(style == "Light"):
+            color = (0,0,0,1)
+        else:
+            color = (1,1,1,1)
 
         Debug.Log("Clearing recycle view.")
         if(len(self.SearchBar.text) > 0):
-            self.recycleView.data = [{'text': str(icon)} for icon in ProfileIcons if self.SearchBar.text in str(icon)]
+            self.recycleView.data = [{'theme_icon_color' : "Custom",
+                                      "icon_color":color,
+                                      'icon': str(icon),
+                                      'on_release':(lambda x: lambda: self.IconSelected(str(x)))(icon),
+                                      'icon_size':50}
+                                      for icon in ProfileIcons if self.SearchBar.text in str(icon) and not str(icon) in Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath]]
         else:
-            self.recycleView.data = [{'text': str(icon)} for icon in ProfileIcons]
+            self.recycleView.data = [{'theme_icon_color' : "Custom",
+                                      "icon_color":color,
+                                      'icon': str(icon),
+                                      'on_release':(lambda x: lambda: self.IconSelected(str(x)))(icon),
+                                      'icon_size':50}
+                                      for icon in ProfileIcons if not str(icon) in Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath]]
+
+        # Add the selected icon first in the list:
+        self.recycleView.data.insert(0,
+                                     {'theme_icon_color' : "Custom",
+                                      "icon_color":get_color_from_hex(colors[Temporary[structureEnum.Theme][ProfileThemeEnum.Primary]]["500"]),
+                                      'icon': str(Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath]), 
+                                      'icon_size':50})
+        MDIconButton.theme_icon_color
         Debug.End()
 LoadingLog.End("ProfileCreation.py")

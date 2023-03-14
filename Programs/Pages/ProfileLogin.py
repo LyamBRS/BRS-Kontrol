@@ -40,10 +40,11 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.states import StatesColors,Sta
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile
+from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, structureEnum
 # from Programs.Pages.ProfileMenu import ProfileMenu
 # -------------------------------------------------------------------
 from ..Local.FileHandler import Profiles
+from ..Pages.PopUps import PopUpTypeEnum, PopUpsHandler,PopUps_Screens
 #====================================================================#
 # Functions
 #====================================================================#
@@ -346,60 +347,65 @@ class ProfileLogin(Screen):
             The login screen consists of a "Login" message as well as
             a card containing a username and password textfields.
         """
-        self.padding = 25
-        self.spacing = 25
+        try:
+            self.padding = 25
+            self.spacing = 25
 
-        # Login card
-        self.MainLayout = MDBoxLayout(spacing=10, padding=("300sp","20sp","300sp","20sp"), orientation="vertical")
-        self.Card = MDCard(
-                            elevation = Shadow.Elevation.default,
-                            shadow_softness = Shadow.Smoothness.default,
-                            radius=Rounding.default,
-                            padding = 25,
-                            orientation = "vertical"
-                            )
+            # Login card
+            self.MainLayout = MDBoxLayout(spacing=10, padding=("300sp","20sp","300sp","20sp"), orientation="vertical")
+            self.Card = MDCard(
+                                elevation = Shadow.Elevation.default,
+                                shadow_softness = Shadow.Smoothness.default,
+                                radius=Rounding.default,
+                                padding = 25,
+                                orientation = "vertical"
+                                )
 
-        self.UsernameTitle = MDLabel(text=_("Username") + ":")
-        self.PasswordTitle = MDLabel(text=_("Password") + ":")
-        self.Username = MDTextField(text=LoadedProfile.rawJson.jsonData["Generic"]["Username"])
-        self.Password = MDTextField()
-        self.PasswordTitle.font_style = "H5"
-        self.UsernameTitle.font_style = "H5"
+            self.UsernameTitle = MDLabel(text=_("Username") + ":")
+            self.PasswordTitle = MDLabel(text=_("Password") + ":")
+            self.Username = MDTextField(text=LoadedProfile.rawJson.jsonData[structureEnum.Generic][ProfileGenericEnum.Username])
+            self.Password = MDTextField()
+            self.PasswordTitle.font_style = "H5"
+            self.UsernameTitle.font_style = "H5"
 
-        # Page title
-        self.LoginTitle = MDLabel(text=_("Login"), font_style = "H1", halign = "center", size_hint_y = 0.25)
+            # Page title
+            self.LoginTitle = MDLabel(text=_("Login"), font_style = "H1", halign = "center", size_hint_y = 0.25)
 
-        # Button Layout
-        self.ButtonLayout = MDBoxLayout(spacing=20)
-        self.CancelLayout = MDFloatLayout()
-        self.LoginLayout = MDFloatLayout()
+            # Button Layout
+            self.ButtonLayout = MDBoxLayout(spacing=20)
+            self.CancelLayout = MDFloatLayout()
+            self.LoginLayout = MDFloatLayout()
 
-        self.Login = MDIconButton(text="check", icon="check")
-        self.Cancel = MDIconButton(text="close-circle", icon="close-circle")
-        self.Login.icon_size = "100sp"
-        self.Cancel.icon_size = "100sp"
-        self.Login.pos_hint={"center_x": 0.5, "center_y": 0.5}
-        self.Cancel.pos_hint={"center_x": 0.5, "center_y": 0.5}
+            self.Login = MDIconButton(text="check", icon="check")
+            self.Cancel = MDIconButton(text="close-circle", icon="close-circle")
+            self.Login.icon_size = "100sp"
+            self.Cancel.icon_size = "100sp"
+            self.Login.pos_hint={"center_x": 0.5, "center_y": 0.5}
+            self.Cancel.pos_hint={"center_x": 0.5, "center_y": 0.5}
 
-        # Set back function
-        self.Cancel.on_release = self.GoBack
-        self.Login.on_release = self.LoginAttempt
+            # Set back function
+            self.Cancel.on_release = self.GoBack
+            self.Login.on_release = self.LoginAttempt
 
-        # Add widgets
-        self.CancelLayout.add_widget(self.Cancel)
-        self.LoginLayout.add_widget(self.Login)
-        self.ButtonLayout.add_widget(self.LoginLayout)
-        self.ButtonLayout.add_widget(self.CancelLayout)
-        self.Card.add_widget(self.UsernameTitle)
-        self.Card.add_widget(self.Username)
-        self.Card.add_widget(self.PasswordTitle)
-        self.Card.add_widget(self.Password)
-        self.Card.add_widget(self.ButtonLayout)
+            # Add widgets
+            self.CancelLayout.add_widget(self.Cancel)
+            self.LoginLayout.add_widget(self.Login)
+            self.ButtonLayout.add_widget(self.LoginLayout)
+            self.ButtonLayout.add_widget(self.CancelLayout)
+            self.Card.add_widget(self.UsernameTitle)
+            self.Card.add_widget(self.Username)
+            self.Card.add_widget(self.PasswordTitle)
+            self.Card.add_widget(self.Password)
+            self.Card.add_widget(self.ButtonLayout)
 
-        self.MainLayout.add_widget(self.LoginTitle)
-        self.MainLayout.add_widget(self.Card)
-        self.add_widget(self.MainLayout)
-        print("Login: on_pre_enter")
+            self.MainLayout.add_widget(self.LoginTitle)
+            self.MainLayout.add_widget(self.Card)
+            self.add_widget(self.MainLayout)
+        except:
+            PopUpsHandler.Clear()
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message=_("An error occured while trying to load this profile. No repairs can be done to fix this corrupted profile as no information can be retreived."))
+            PopUps_Screens.SetExiter(ProfileLogins_Screens._badExitClass, ProfileLogins_Screens._badExitName, direction="down")
+            PopUps_Screens.Call()
         pass
 # ------------------------------------------------------------------------
     def on_enter(self, *args):

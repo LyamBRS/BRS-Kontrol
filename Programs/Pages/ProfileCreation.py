@@ -36,7 +36,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum
+from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum, CheckUsername
 from kivymd.uix.scrollview import MDScrollView
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
@@ -650,8 +650,13 @@ class ProfileCreation_Step3(Screen):
         self.PasswordTitle = MDLabel(text=_("Password") + ":")
         self.BiographyTitle = MDLabel(text=_("Short biography") + ":")
         self.Username  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Username])
+        self.Username.bind(text = self.UsernameTextChanged)
         self.Password  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Password])
         self.Biography = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Biography])
+        self.Username.hint_text = _("Username")
+        self.Password.hint_text = _("Password")
+        self.Biography.hint_text = _("Short biography")
+
         self.Biography.max_height = 3
         self.PasswordTitle.font_style = "H5"
         self.UsernameTitle.font_style = "H5"
@@ -827,4 +832,21 @@ class ProfileCreation_Step3(Screen):
                                       'icon_size':50})
         MDIconButton.theme_icon_color
         Debug.End()
+# ------------------------------------------------------------------------
+    def UsernameTextChanged(self, *args):
+        """
+            UsernameTextChanged:
+            --------------------
+            Callback function executed when the username text field
+            changes. This compares the new username with the
+            :ref: CheckUsername function.
+        """
+        error = CheckUsername(self.Username.text)
+        if(not error):
+            Temporary[structureEnum.Generic][ProfileGenericEnum.Username] = self.Username.text
+            self.Username.error = False
+            self.Username.hint_text = _("Username")
+        else:
+            self.Username.error = True
+            self.Username.hint_text = _(error)
 LoadingLog.End("ProfileCreation.py")

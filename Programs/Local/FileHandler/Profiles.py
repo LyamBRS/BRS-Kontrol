@@ -270,6 +270,44 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     Debug.End()
     return FileIntegrity.Good
     #endregion
+#--------------------------------------------------------------------
+def CheckUsername(username:str) -> bool:
+    """
+        CheckUsername:
+        -------------
+        This function checks a username string and returns a boolean
+        value if the username is correct.
+    
+        Returns:
+            - (`bool`): `False` = Username can be used.
+            - (`str`)
+    """
+    Debug.Start("CheckUsername")
+    maxLenght = 8
+    bannedChars = {'#', '<', '>', '*', '?', '/', '%', '&', '\\', '{', '}', '$', '!', '+', '"', '\'', '`', ':', '@', '=', '|'}
+
+    if(len(username) < maxLenght):
+
+        if(len(username) == 0):
+            Debug.Error("Lenght 0")
+            Debug.End()
+            return "Username cannot be nothing"
+
+        for char in bannedChars:
+            if char in username:
+                Debug.Error("Username contains illegal character(s)")
+                Debug.End()
+                return "Illegal characters"
+        Debug.Log("Username is good")
+        Debug.End()
+        return False
+    else:
+        Debug.Error("Username too long")
+        Debug.End()
+        return "Username is too long"
+    
+
+    Debug.End()
 #====================================================================#
 # Classes
 #====================================================================#

@@ -36,7 +36,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum, CheckUsername
+from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum, CheckUsername, CheckPassword, CheckBiography
 from kivymd.uix.scrollview import MDScrollView
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
@@ -650,9 +650,11 @@ class ProfileCreation_Step3(Screen):
         self.PasswordTitle = MDLabel(text=_("Password") + ":")
         self.BiographyTitle = MDLabel(text=_("Short biography") + ":")
         self.Username  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Username])
-        self.Username.bind(text = self.UsernameTextChanged)
         self.Password  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Password])
         self.Biography = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Biography])
+        self.Username.bind(text = self.UsernameTextChanged)
+        self.Password.bind(text = self.PasswordTextChanged)
+        self.Biography.bind(text = self.BiographyTextChanged)
         self.Username.hint_text = _("Username")
         self.Password.hint_text = _("Password")
         self.Biography.hint_text = _("Short biography")
@@ -849,4 +851,41 @@ class ProfileCreation_Step3(Screen):
         else:
             self.Username.error = True
             self.Username.hint_text = _(error)
+# ------------------------------------------------------------------------
+    def PasswordTextChanged(self, *args):
+        """
+            PasswordTextChanged:
+            --------------------
+            Callback function executed when the password MDtextfield
+            changes. This compares the new password with the
+            :ref: CheckPassword function.
+        """
+        error = CheckPassword(self.Password.text)
+
+        if(error):
+            self.Password.error = True
+            self.Password.hint_text = _(error)
+        else:
+            self.Password.error = False
+            self.Password.hint_text = _("Password")
+            Temporary[structureEnum.Generic][ProfileGenericEnum.Password] = self.Password.text
+# ------------------------------------------------------------------------
+    def BiographyTextChanged(self, *args):
+        """
+            BiographyTextChanged:
+            --------------------
+            Callback function executed when the biography MDtextfield
+            changes.This compares the new username with the
+            :ref: CheckBiography function.
+        """
+        error = CheckBiography(self.Biography.text)
+
+        if(error):
+            self.Biography.error = True
+            self.Biography.hint_text = _(error)
+        else:
+            self.Biography.error = False
+            self.Biography.hint_text = _("Short biography")
+            Temporary[structureEnum.Generic][ProfileGenericEnum.Biography] = self.Biography.text
+# ------------------------------------------------------------------------
 LoadingLog.End("ProfileCreation.py")

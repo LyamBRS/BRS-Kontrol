@@ -289,9 +289,9 @@ def CheckUsername(username:str) -> bool:
     if(len(username) < maxLenght):
 
         if(len(username) == 0):
-            Debug.Error("Lenght 0")
+            Debug.Error("Cannot be empty")
             Debug.End()
-            return "Username cannot be nothing"
+            return "Cannot be empty"
 
         for char in bannedChars:
             if char in username:
@@ -302,12 +302,80 @@ def CheckUsername(username:str) -> bool:
         Debug.End()
         return False
     else:
-        Debug.Error("Username too long")
+        Debug.Error("Too long")
         Debug.End()
-        return "Username is too long"
+        return "Too long"
+#--------------------------------------------------------------------
+def CheckPassword(password:str) -> bool:
+    """
+        CheckPassword:
+        -------------
+        This function checks a password string and returns a boolean
+        value if the password is correct.
     
+        Returns:
+            - (`bool`): `False` = Password can be used.
+            - (`str`)
+    """
+    Debug.Start("CheckPassword")
+    maxLenght = 32
+    bannedChars = {'"', '\\'}
 
-    Debug.End()
+    if(len(password) < maxLenght):
+
+        # if(len(password) == 0):
+        #     Debug.Error("Lenght 0")
+        #     Debug.End()
+        #     return "Username cannot be nothing"
+
+        for char in bannedChars:
+            if char in password:
+                Debug.Error("Password contains illegal character(s)")
+                Debug.End()
+                return "Illegal characters"
+        Debug.Log("Password is good")
+        Debug.End()
+        return False
+    else:
+        Debug.Error("Too long")
+        Debug.End()
+        return "Too long"
+#--------------------------------------------------------------------
+def CheckBiography(biography:str) -> bool:
+    """
+        CheckBiography:
+        -------------
+        This function checks a biography string and returns a boolean
+        value if the biography is correct.
+    
+        Returns:
+            - (`bool`): `False` = biography can be used.
+            - (`str`)
+    """
+    Debug.Start("CheckBiography")
+    maxLenght = 1024
+    bannedChars = {'"', '\\'}
+
+    if(len(biography) < maxLenght):
+
+        if(len(biography) == 0):
+            Debug.Error("Lenght 0")
+            Debug.End()
+            return False#"Username cannot be nothing"
+
+        for char in bannedChars:
+            if char in biography:
+                Debug.Error("biography contains illegal character(s)")
+                Debug.End()
+                return "Illegal characters"
+        Debug.Log("biography is good")
+        Debug.End()
+        return False
+    else:
+        Debug.Error("Too long")
+        Debug.End()
+        return "Too long"
+
 #====================================================================#
 # Classes
 #====================================================================#

@@ -375,7 +375,7 @@ class PopUps(Screen):
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Debug.Start("ProfileMenu")
+        Debug.Start("PopUps")
         Debug.End()
     #endregion
 # ------------------------------------------------------------------------
@@ -467,7 +467,9 @@ class PopUps(Screen):
             calls `self.clear_widgets()`
         """
         Debug.Start("PopUps: on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
+        AppManager.manager.remove_widget(self)
         Debug.End()
 # ------------------------------------------------------------------------
 

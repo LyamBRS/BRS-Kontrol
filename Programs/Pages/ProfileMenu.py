@@ -183,7 +183,11 @@ class ProfileMenu(Screen):
         """
             Function called when the screen is fully out of view.
         """
-        print("Menu: on_leave")
+        Debug.Start("ProfileMenu -> on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
+        self.clear_widgets()
+        AppManager.manager.remove_widget(self)
+        Debug.End()
         self.clear_widgets()
 # ------------------------------------------------------------------------
     def _Animating(self, *args):

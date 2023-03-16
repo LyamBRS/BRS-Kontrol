@@ -426,8 +426,11 @@ class ProfileLogin(Screen):
         """
             Function called when the screen is fully left.
         """
-        print("Login: on_leave")
+        Debug.Start("Login -> on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
+        AppManager.manager.remove_widget(self)
+        Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
         """

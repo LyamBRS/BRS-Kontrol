@@ -5,6 +5,7 @@
 #====================================================================#
 from re import X
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+# from Programs.Pages.ProfileMenu import ProfileMenu
 LoadingLog.Start("ProfileCreation.py")
 #====================================================================#
 # Imports
@@ -41,6 +42,7 @@ from kivymd.uix.scrollview import MDScrollView
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
 from ..Local.FileHandler import Profiles
+from ..Pages.PopUps import PopUps_Screens,PopUpsHandler,PopUpTypeEnum
 from kivy.properties import StringProperty
 from kivymd.uix.list import OneLineIconListItem,IconLeftWidget
 #====================================================================#
@@ -301,15 +303,25 @@ class ProfileCreation_Step1(Screen):
         """
             Function called when the screen is fully left.
         """
-        print("ProfileCreation_Step1: on_leave")
+        Debug.Start("on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
+        self.clear_widgets()
+        AppManager.manager.remove_widget(self)
+        Debug.End()
         self.clear_widgets()
 # ------------------------------------------------------------------------
     def GoBack(self, *args):
         """
             Function to go back to `ProfileMenu.py`
         """
-        AppManager.manager.transition.direction = "down"
-        AppManager.manager.current = "ProfileMenu"
+        # AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
+        # AppManager.manager.transition.direction = "down"
+        # AppManager.manager.current = "ProfileMenu"
+        PopUpsHandler.Clear()
+        PopUpsHandler.Add(PopUpTypeEnum.Remark, Icon="bug", Message=("Temporary pop up put in place due to circular imports in profile creation handling. This will be fixed once ProfileCreation has it's own screen management class like the rest of the transitional screens already built."))
+        PopUps_Screens.SetCaller(ProfileCreation_Step1, "ProfileCreation_Step1")
+        PopUps_Screens.Call()
+
 # ------------------------------------------------------------------------
     def GoToNext(self, *args):
         """
@@ -481,13 +493,17 @@ class ProfileCreation_Step2(Screen):
         """
             Function called when the screen is fully left.
         """
-        print("ProfileCreation_Step2: on_leave")
+        Debug.Start("on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
+        AppManager.manager.remove_widget(self)
+        Debug.End()
 # ------------------------------------------------------------------------
     def GoToPrevious(self, *args):
         """
             Function to go back to `ProfileCreation_Step1.py`
         """
+        AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
         AppManager.manager.transition.direction = "right"
         AppManager.manager.current = "ProfileCreation_Step1"
 # ------------------------------------------------------------------------
@@ -659,7 +675,7 @@ class ProfileCreation_Step3(Screen):
         self.Password.hint_text = _("Password")
         self.Biography.hint_text = _("Short biography")
 
-        self.Biography.max_height = 3
+        # self.Biography.max_height = 3
         self.PasswordTitle.font_style = "H5"
         self.UsernameTitle.font_style = "H5"
         self.BiographyTitle.font_style = "H5"
@@ -732,13 +748,17 @@ class ProfileCreation_Step3(Screen):
         """
             Function called when the screen is fully left.
         """
-        print("ProfileCreation_Step3: on_leave")
+        Debug.Start("on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
+        AppManager.manager.remove_widget(self)
+        Debug.End()
 # ------------------------------------------------------------------------
     def GoToPrevious(self, *args):
         """
             Function to go back to `ProfileCreation_Step1.py`
         """
+        AppManager.manager.add_widget(ProfileCreation_Step2(name="ProfileCreation_Step2"))
         AppManager.manager.transition.direction = "right"
         AppManager.manager.current = "ProfileCreation_Step2"
 # ------------------------------------------------------------------------

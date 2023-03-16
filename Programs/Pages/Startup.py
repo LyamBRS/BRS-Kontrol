@@ -399,7 +399,9 @@ class Startup(Screen):
             calls `self.clear_widgets()`
         """
         Debug.Start("Startup.py: on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
+        AppManager.manager.remove_widget(self)
         Debug.End()
 # ------------------------------------------------------------------------
     def _animationStep0(self, *args):

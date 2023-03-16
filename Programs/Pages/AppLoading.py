@@ -373,7 +373,9 @@ class AppLoading(Screen):
             calls `self.clear_widgets()`
         """
         Debug.Start("AppLoading.py: on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
+        AppManager.manager.remove_widget(self)
         Debug.End()
 # ------------------------------------------------------------------------
     def Update(self, loadingMessage:str, loadingStep:float):

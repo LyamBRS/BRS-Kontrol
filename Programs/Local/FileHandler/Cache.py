@@ -19,7 +19,7 @@ from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
 
-from .Profiles import CheckIntegrity as CheckProfileIntegrity, LoadedProfile
+from .Profiles import CheckIntegrity as CheckProfileIntegrity, ProfileHandler
 #====================================================================#
 # Global accessibles
 #====================================================================#
@@ -189,24 +189,24 @@ class Cache():
             today = date.today()
             Cache.jsonData.jsonData["Cache"]["ExitReason"] = dateType
     #-----------------------------------------------------------------
-    def GetLoadedProfileInfo():
+    def GetProfileHandlerInfo():
         """
-            GetLoadedProfileInfo:
+            GetProfileHandlerInfo:
             ----------
             This function takes a :ref:`FileFinder` class which loaded a profile from
             a JSON file, and loads in into the cache class. It will test the profile using
             `CheckIntegrity` specific to Profiles.
         """
-        Debug.Start("Cache -> GetLoadedProfileInfo")
+        Debug.Start("Cache -> GetProfileHandlerInfo")
         # Check if cache was successfully loaded
-        if(Cache.loaded and LoadedProfile.initialized):
+        if(Cache.loaded and ProfileHandler.initialized):
             Debug.Log("Profile has passed the integrity check")
 
             Debug.Log("Transfering theme into cache...")
-            Cache.jsonData.jsonData["Theme"] = LoadedProfile.rawJson.jsonData["Theme"]
+            Cache.jsonData.jsonData["Theme"] = ProfileHandler.rawJson.jsonData["Theme"]
 
             Debug.Log("Transfering other info into cache...")
-            Cache.jsonData.jsonData["Profile"]["Loaded"] = LoadedProfile.rawJson.jsonData["Generic"]
+            Cache.jsonData.jsonData["Profile"]["Loaded"] = ProfileHandler.rawJson.jsonData["Generic"]
         else:
             Debug.Error("Attempted to set cache info while no cache is loaded or no profiles were loaded")
         Debug.End()
@@ -264,7 +264,7 @@ class Cache():
         Debug.Start("Cache -> GetAppInfo")
         if(Cache.loaded):
             Debug.Log("Saving loaded profile's information into cache")
-            Cache.GetLoadedProfileInfo()
+            Cache.GetProfileHandlerInfo()
 
             Debug.Log("Saving application's current theme...")
             Cache.jsonData.jsonData["Theme"]["Style"] = MDApp.get_running_app().theme_cls.theme_style
@@ -416,5 +416,4 @@ def CheckIntegrity(cacheJson:JSONdata) -> str:
 #====================================================================#
 # Classes
 #====================================================================#
-
 LoadingLog.End("Cache.py")

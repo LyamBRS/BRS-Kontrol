@@ -9,6 +9,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("Profiles.py")
 
 from enum import Enum
+import os
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -16,6 +17,9 @@ from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Dates
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
+from datetime import date,datetime
 #====================================================================#
 # Global accessibles
 #====================================================================#
@@ -34,6 +38,7 @@ class ProfileConfigEnum(Enum):
     CanDelete:str = "CanDelete"
     Type:str = "Type"
     Version:str = "Version"
+    Dates:str = "Dates"
 
 class ProfileGenericEnum(Enum):
     Username:str = "Username"
@@ -56,26 +61,32 @@ class ProfileThemeEnum(Enum):
     Duration:str = "Duration"
 #====================================================================#
 profileStructure = {
-    structureEnum.ProfileConfig:{
-        ProfileConfigEnum.CanDelete : True,  # False, True
-        ProfileConfigEnum.Type : "Guest", #"Guest", "Normal", "Temporary"
-        ProfileConfigEnum.Version : 1.2 # the profile version.
+    structureEnum.ProfileConfig.value:{
+        ProfileConfigEnum.CanDelete.value : True,  # False, True
+        ProfileConfigEnum.Type.value      : "Guest", #"Guest", "Normal", "Temporary"
+        ProfileConfigEnum.Version.value   : 1.3, # the profile version.
+        ProfileConfigEnum.Dates.value:{
+            Dates.Creation.value:"",
+            Dates.Updated.value:"",
+            Dates.Open.value:"",
+            Dates.Exit.value:""
+        },
     },
-    structureEnum.Generic :{
-        ProfileGenericEnum.Username: "Username",
-        ProfileGenericEnum.Password: "",
-        ProfileGenericEnum.Biography: "Biography",
-        ProfileGenericEnum.IconType: "Kivy",    # Kivy or Path
-        ProfileGenericEnum.IconPath: "account-outline",
-        ProfileGenericEnum.Language: "US_English"
+    structureEnum.Generic.value :{
+        ProfileGenericEnum.Username.value: "Username",
+        ProfileGenericEnum.Password.value: "",
+        ProfileGenericEnum.Biography.value: "Biography",
+        ProfileGenericEnum.IconType.value: "Kivy",    # Kivy or Path
+        ProfileGenericEnum.IconPath.value: "account-outline",
+        ProfileGenericEnum.Language.value: "US_English"
     },
-    structureEnum.Theme :{
-        ProfileThemeEnum.Style  : "Light",
-        ProfileThemeEnum.Primary  : "Purple",
-        ProfileThemeEnum.Accent  : "Teal",
-        ProfileThemeEnum.Duration  : 0.5,
+    structureEnum.Theme.value :{
+        ProfileThemeEnum.Style.value  : "Light",
+        ProfileThemeEnum.Primary.value  : "Purple",
+        ProfileThemeEnum.Accent.value  : "Teal",
+        ProfileThemeEnum.Duration.value  : 0.5,
     },
-    structureEnum.Settings :{
+    structureEnum.Settings.value :{
         "TO DO":None
     }
 }
@@ -84,26 +95,32 @@ profileStructure = {
 
 
 Temporary = {
-    structureEnum.ProfileConfig:{
-        ProfileConfigEnum.CanDelete : True,  # False, True
-        ProfileConfigEnum.Type : "Guest", #"Guest", "Normal", "Temporary"
-        ProfileConfigEnum.Version : 1.2 # the profile version.
+    structureEnum.ProfileConfig.value:{
+        ProfileConfigEnum.CanDelete.value : True,  # False, True
+        ProfileConfigEnum.Type.value      : "Guest", #"Guest", "Normal", "Temporary"
+        ProfileConfigEnum.Version.value   : 1.3, # the profile version.
+        ProfileConfigEnum.Dates.value:{
+            Dates.Creation.value:"",
+            Dates.Updated.value:"",
+            Dates.Open.value:"",
+            Dates.Exit.value:""
+        },
     },
-    structureEnum.Generic :{
-        ProfileGenericEnum.Username: "Username",
-        ProfileGenericEnum.Password: "",
-        ProfileGenericEnum.Biography: "Biography",
-        ProfileGenericEnum.IconType: "Kivy",    # Kivy or Path
-        ProfileGenericEnum.IconPath: "account-outline",
-        ProfileGenericEnum.Language: "US_English"
+    structureEnum.Generic.value :{
+        ProfileGenericEnum.Username.value: "",
+        ProfileGenericEnum.Password.value: "",
+        ProfileGenericEnum.Biography.value: "",
+        ProfileGenericEnum.IconType.value: "Kivy",    # Kivy or Path
+        ProfileGenericEnum.IconPath.value: "account-outline",
+        ProfileGenericEnum.Language.value: "US_English"
     },
-    structureEnum.Theme :{
-        ProfileThemeEnum.Style  : "Light",
-        ProfileThemeEnum.Primary  : "Purple",
-        ProfileThemeEnum.Accent  : "Teal",
-        ProfileThemeEnum.Duration  : 0.5,
+    structureEnum.Theme.value :{
+        ProfileThemeEnum.Style.value  : "Light",
+        ProfileThemeEnum.Primary.value  : "Purple",
+        ProfileThemeEnum.Accent.value  : "Teal",
+        ProfileThemeEnum.Duration.value  : 0.5,
     },
-    structureEnum.Settings :{
+    structureEnum.Settings.value :{
         "TO DO":None
     }
 }
@@ -166,11 +183,11 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 2]: Check if the profile version matches the profileStructure's profile version
     try:
-        if(profileStructure[structureEnum.ProfileConfig][ProfileConfigEnum.Version] > profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Version]):
+        if(profileStructure[structureEnum.ProfileConfig.value][ProfileConfigEnum.Version.value] > profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Version.value]):
             Debug.Warn("File detected as outdated in Step 2")
             Debug.End()
             return FileIntegrity.Outdated
-        if(profileStructure[structureEnum.ProfileConfig][ProfileConfigEnum.Version] < profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Version]):
+        if(profileStructure[structureEnum.ProfileConfig.value][ProfileConfigEnum.Version.value] < profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Version.value]):
             Debug.Warn("File detected as ahead in Step 2")
             Debug.End()
             return FileIntegrity.Ahead
@@ -186,22 +203,22 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure[structureEnum.ProfileConfig].keys() != profileJson.jsonData[structureEnum.ProfileConfig].keys()):
+        if(profileStructure[structureEnum.ProfileConfig.value].keys() != profileJson.jsonData[structureEnum.ProfileConfig.value].keys()):
             Debug.Warn("Corruption detected in Step 3: ProfileConfig JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure[structureEnum.Generic].keys() != profileJson.jsonData[structureEnum.Generic].keys()):
+        if(profileStructure[structureEnum.Generic.value].keys() != profileJson.jsonData[structureEnum.Generic.value].keys()):
             Debug.Warn("Corruption detected in Step 3: Generic JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure[structureEnum.Theme].keys() != profileJson.jsonData[structureEnum.Theme].keys()):
+        if(profileStructure[structureEnum.Theme.value].keys() != profileJson.jsonData[structureEnum.Theme.value].keys()):
             Debug.Warn("Corruption detected in Step 3: Theme JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
 
-        if(profileStructure[structureEnum.Settings].keys() != profileJson.jsonData[structureEnum.Settings].keys()):
+        if(profileStructure[structureEnum.Settings.value].keys() != profileJson.jsonData[structureEnum.Settings.value].keys()):
             Debug.Warn("Corruption detected in Step 3: Settings JSON keys")
             Debug.End()
             return FileIntegrity.Corrupted
@@ -212,9 +229,9 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 4]: Check if ProfileConfig's elements are correct.
     try:
-        A = (type(profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.CanDelete]) == bool)
-        C = (type(profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Version]) == float)
-        B = profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Type] == "Normal" or profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Type] == "Guest" or profileJson.jsonData[structureEnum.ProfileConfig][ProfileConfigEnum.Type] == "Admin"
+        A = (type(profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.CanDelete.value]) == bool)
+        C = (type(profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Version.value]) == float)
+        B = profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Type.value] == "Normal" or profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Type.value] == "Guest" or profileJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Type.value] == "Admin"
         if(not (A and B and C)):
             Debug.Warn("Corruption detected in Step 4: ProfileConfig")
             Debug.End()
@@ -226,14 +243,13 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 5]: Check if Generic's elements are correct.
     try:
-        ProfileGenericEnum.Username
-        A = (type(profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.Username]) == str)
-        B = (type(profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.Password]) == str)
-        C = (profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconType] == "Kivy" or profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconType] == "Path")
+        A = (type(profileJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]) == str)
+        B = (type(profileJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Password.value]) == str)
+        C = (profileJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.IconType.value] == "Kivy" or profileJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.IconType.value] == "Path")
 
-        if(profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconType] == "Kivy"):
+        if(profileJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.IconType.value] == "Kivy"):
             try:
-                icon = md_icons[profileJson.jsonData[structureEnum.Generic][ProfileGenericEnum.IconPath]]
+                icon = md_icons[profileJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.IconPath.value]]
             except:
                 Debug.Warn("Corruption detected in Step 5. Kivy Icon does not exist")
                 Debug.End()
@@ -241,6 +257,7 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
 
         if(not (A and B and C)):
             Debug.Warn("Corruption detected in Step 5.")
+            Debug.Warn("")
             Debug.End()
             return FileIntegrity.Corrupted
 
@@ -251,10 +268,10 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     #endregion
     #region [Step 6]: Check if Theme's elements are correct.
     try:
-        A = (profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Style] == "Dark" or profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Style] == "Light")
-        B = (profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Accent] in colors)
-        C = (profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Primary] in colors)
-        D = (type(profileJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Duration]) == float)
+        A = (profileJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Style.value] == "Dark" or profileJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Style.value] == "Light")
+        B = (profileJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Accent.value] in colors)
+        C = (profileJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Primary.value] in colors)
+        D = (type(profileJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Duration.value]) == float)
 
         if(not (A and B and C and D)):
             Debug.Warn("Corruption detected in Step 6")
@@ -283,8 +300,15 @@ def CheckUsername(username:str) -> bool:
             - (`str`)
     """
     Debug.Start("CheckUsername")
-    maxLenght = 8
-    bannedChars = {'#', '<', '>', '*', '?', '/', '%', '&', '\\', '{', '}', '$', '!', '+', '"', '\'', '`', ':', '@', '=', '|'}
+    maxLenght = 10
+    bannedChars = {'#', '<', '>', '*', '?', '/', '%', '&', '\\', '{', '}', '$', '!', '+', '"', '\'', '`', ':', '@', '=', '|', '.'}
+
+    Debug.Log("Checking if profile already exists")
+    Profiles = FilesFinder(".json", os.getcwd() + "\\Local\\Profiles")
+    if((username)+".json" in Profiles.fileList):
+        Debug.Log("username already exists")
+        Debug.End()
+        return "Already exists"
 
     if(len(username) < maxLenght):
 
@@ -379,12 +403,17 @@ def CheckBiography(biography:str) -> bool:
 #====================================================================#
 # Classes
 #====================================================================#
-class LoadedProfile:
+class ProfileHandler:
     #region   --------------------------- DOCSTRING
     '''
+        ProfileHandler:
+        ---------------
         Holds the profile that was selected in the ProfileMenu.py screen.
         This profile is used throughout the entire application to save
         the user's data and preferences.
+
+        Also holds various functions used to handle the loaded profile
+        or create new profiles from Temporary for example.
 
         Defaults to None, as none are loaded when the application starts.
     '''
@@ -392,42 +421,117 @@ class LoadedProfile:
     #region   --------------------------- MEMBERS
     initialized:bool = False
     """
-        if `True`, the LoadedProfile class was initialized with a profile.
+        if `True`, the ProfileHandler class was initialized with a profile.
         Otherwise, do not use the data inside of this class as it may be
-        None or unwanted values.
+        `None` or unwanted values.
     """
 
     rawJson:JSONdata = None
     """
         The raw data loaded from the profile's json. Defaults to `None`.
     """
+    #endregion
     #region   --------------------------- METHODS
     #region   -- Public
     def LoadProfile(jsonData:JSONdata) -> bool:
         """
-            Function used to initialize the LoadedProfile global class.
+            Function used to initialize the ProfileHandler global class.
             if the function returns `True`, the profile specified was
             successfully loaded into the class.
 
             If the function returns `False`, an error occured during
             initializing of this global function
         """
-        Debug.Start("LoadedProfile -> LoadProfile")
+        Debug.Start("ProfileHandler -> LoadProfile")
         error = False
-        # Saves the profile's JSON into the LoadedProfile class.
-        LoadedProfile.rawJson = jsonData
 
-        error = LoadedProfile.LoadCLSTheme()
+        error = CheckIntegrity(jsonData)
+        if(error == FileIntegrity.Good):
+            # Saves the profile's JSON into the ProfileHandler class.
+            ProfileHandler.rawJson = jsonData
 
-        if(not error):
-            Debug.Log("Profile initialized successfully")
-            LoadedProfile.initialized = True
+            # Load profile's CLS theme into the application
+            error = ProfileHandler.LoadCLSTheme()
+            if(error):
+                Debug.Log("Profile initialized successfully")
+                ProfileHandler.initialized = True
+
+                AppLanguage.LoadLanguage(ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Language.value])
+
+                Debug.Log("Setting new dates")
+                ProfileHandler.SetDate(Dates.Open)
+
+                Debug.Log("Setting Cache")
+                Debug.Error("TO DO")
+            else:
+                Debug.Error("Profile failed to load")
+                ProfileHandler.initialized = False
+
+            Debug.End()
+            return error
         else:
-            Debug.Log("Profile failed to load")
-            LoadedProfile.initialized = False
+            Debug.Error("Specified program failed CheckIntegrity")
+            Debug.Log(f"Error code: {error}")
+            Debug.End()
+            return error
+    #------------------------------------
+    def CreateProfile(profileStructure:list) -> bool:
+        """
+            CreateProfile:
+            --------------
+            This function allows you to create a new profile from
+            a :ref:`profileStructure` styled list such as :ref:`Temporary`.
+            The created profile will be the latest profile version and
+            will be automatically loaded in :ref:`rawJson` for the application
+            to use as the current LoadedProfile.
+        """
+        Debug.Start("ProfileHandler -> CreateProfile")
+
+        Debug.Log("Getting profile directory")
+        profileDirectory = os.getcwd() + "\\Local\\Profiles\\"
+
+        sus = {"among us" : 1}
+
+        Debug.Log(profileStructure)
+
+        Json = JSONdata(profileStructure[structureEnum.Generic.value][ProfileGenericEnum.Username.value], profileDirectory)
+        Json.jsonData = profileStructure
+        if(not Json.CreateFile(profileStructure)):
+            Debug.Log("New profile successfully created and saved")
+            Json = JSONdata(profileStructure[structureEnum.Generic.value][ProfileGenericEnum.Username.value], profileDirectory)
+            # Json.jsonData = profileStructure
+            ProfileHandler.LoadProfile(Json)
+            ProfileHandler.SetDate(Dates.Creation)
+            Json.SaveFile()
+        else:
+            Debug.Error("Profile could not be saved.", FileName="Profiles.py", Line=487)
 
         Debug.End()
-        return error
+    #------------------------------------
+    def SetDate(dateType:Dates):
+        """
+            SetDate:
+            ----------
+            Function used to save the current time as a specified profile time.
+            The possible profile times to save are located in the :ref:`ProfileConfigEnum`.
+            It will get the computer's current time to save it.
+        """
+        Debug.Start("ProfileHandler -> SetDate")
+        Debug.Log("Getting datetime.now()")
+        today = datetime.now()
+
+        if(dateType == Dates.Updated or dateType == Dates.Creation or dateType == Dates.Exit or dateType == Dates.Open):
+            Debug.Log(f"Saving profile's {dateType} date.")
+            ProfileHandler.rawJson.jsonData[structureEnum.ProfileConfig.value][ProfileConfigEnum.Dates.value][dateType.value] = today.strftime("%B %d %Y, %H:%M:%S")
+
+            # Saving the file's new data.
+            if(ProfileHandler.rawJson.SaveFile()):
+                Debug.Log("Profile has been saved")
+            else:
+                Debug.Error("Failed to save profile")
+        else:
+            Debug.Error("ATTEMPTED TO SAVE UNKOWN DATE INTO PROFILE JSON.")
+        Debug.End()
     #endregion
     #region   -- Private
     def LoadCLSTheme() ->bool:
@@ -435,11 +539,11 @@ class LoadedProfile:
             Loads the CLS theme saved in rawJson, into the application's real theme.
             returns `True` if successful, `False` if not.
         """
-        Debug.Start("LoadedProfile -> LoadCLSTheme")
+        Debug.Start("ProfileHandler -> LoadCLSTheme")
         try:
-            Style    = LoadedProfile.rawJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Style]
-            Primary  = LoadedProfile.rawJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Primary]
-            Accent   = LoadedProfile.rawJson.jsonData[structureEnum.Theme][ProfileThemeEnum.Accent]
+            Style    = ProfileHandler.rawJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Style.value]
+            Primary  = ProfileHandler.rawJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Primary.value]
+            Accent   = ProfileHandler.rawJson.jsonData[structureEnum.Theme.value][ProfileThemeEnum.Accent.value]
 
             MDApp.get_running_app().theme_cls.theme_style = Style
             MDApp.get_running_app().theme_cls.primary_palette = Primary
@@ -453,7 +557,6 @@ class LoadedProfile:
             Debug.Error("_LoadCLSTheme ERROR")
             Debug.End()
             return False
-    #endregion
     #endregion
     #endregion
 

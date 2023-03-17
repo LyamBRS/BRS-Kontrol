@@ -12,95 +12,95 @@ msgstr ""
 #: AppLoadingHandler
 #: --------------------------------------------- Loading steps
 msgid "Checking self integrity"
-msgstr "Checking self integrity"
+msgstr "Confirmation de l'intégrité de l'application"
 
 msgid "Checking system information"
-msgstr "Checking system information"
+msgstr "Analyze des information du système"
 
 msgid "Checking internet connection"
-msgstr "Checking internet connection"
+msgstr "Analyze de la connection internet"
 
 msgid "Connecting to GitHub's API"
-msgstr "Connecting to GitHub's API"
+msgstr "Connection à l'API de GitHub"
 
 msgid "Checking available BrSpand drivers"
-msgstr "Checking available BrSpand drivers"
+msgstr "Analyze des programmes BrSpand disponible"
 
 msgid "Checking available Kontrol drivers"
-msgstr "Checking available Kontrol drivers"
+msgstr "Analyze des programmes Kontrol disponible"
 
 msgid "Checking Kontrol's version"
-msgstr "Checking Kontrol's version"
+msgstr "Comparaison de la version de l'application"
 
 msgid  "Checking Drivers versions"
-msgstr  "Checking Drivers versions"
+msgstr  "Vérification des versions des programmes téléchargé."
 
 msgid "Checking BrSpand drivers versions"
-msgstr "Checking BrSpand drivers versions"
+msgstr "Vérification des versions des programmes BrSpand"
 
 msgid "Checking Kontrol's version"
-msgstr "Checking Kontrol's version"
+msgstr "Vérification de la version de l'application"
 #: --------------------------------------------- Error messages
 #: Message shown when some critical files or folders are missing.
 msgid "Critical file(s)/folder(s) missing: "
-msgstr "Critical file(s)/folder(s) missing: "
+msgstr "Des fichiers ou dossiers critiques manques: "
 
 #: Message shown when some local files are missing
 msgid "Critical Local file(s)/folder(s) missing: "
-msgstr "Critical Local file(s)/folder(s) missing: "
+msgstr "Des fichiers ou dossiers locaux critiques manques: "
 
 #: Message shown when program files are missing
 msgid "Critical Program file(s)/folder(s) missing: "
-msgstr "Critical Program file(s)/folder(s) missing: "
+msgstr "Des fichiers ou dossiers critique dans Program manques: "
 
 #: Message shown when some icons are missing from Kontrol
 msgid "Warning, some icons are missing: "
-msgstr "Warning, some icons are missing: "
+msgstr "Attention, quelques icones n'ont pas été trouvés: "
 
 #: Message shown when no cache is found during loading
 msgid "Warning, cache was not found. Parameters will not be saved when quitting.: "
-msgstr "Warning, cache was not found. Parameters will not be saved when quitting.: "
+msgstr "Attention, la cache temporaire n'a pas été trouvée. Les paramètres changés lors de l'utilisation de l'application ne seront pas sauvegardé"
 
 #: Message shown when no language is found.
 msgid "No language packs found. The application will only work in default english."
-msgstr "No language packs found. The application will only work in default english."
+msgstr "Aucune extension de langue n'a été trouvé. L'application vas utiliser l'anglais par défaut."
 
 #: Message shown only when a critical program loading error occurs.
 msgid "Fatal loading error"
-msgstr "Fatal loading error"
+msgstr "Erreur critique de chargement"
 
 #: Message shown when the internet connection cannot be verified
 msgid "Failed to verify internet connection."
-msgstr "Failed to verify internet connection."
+msgstr "La connection internet n'a pas pu être vérifier"
 
 #: Failed to read the computer's information
 msgid "The application failed to get your computer's information."
-msgstr "The application failed to get your computer's information."
+msgstr "L'application n'a pas réussi à obtenir les informations de votre ordinateur."
 
 #: Message shown to the user when they run Kontrol on untested hardware
 msgid "You are currently running Kontrol using untested hardware. Potential crashes may occur during the use of this application."
-msgstr "You are currently running Kontrol using untested hardware. Potential crashes may occur during the use of this application."
+msgstr "Vous utilisez Kontrol sur un ordinateur qui n'a pas été testé. L'application peut potentiellement crash durant votre session."
 
 #: Message shown to the user when they are using an unkown processor thus some things may work differently or not at all.
 msgid "You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis"
-msgstr "You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis"
+msgstr "Vous executer Kontrol sur un processeur inconnu. Il est possible que certaines choses soit désactiver. Cette application est conçue pour des Raspberry Pi."
 
 #: Message shown to the user when they are using a raspberry pi that is too old to work with the hardware.
 msgid "Your raspberry pi is too old to be used by Kontrol."
-msgstr "Your raspberry pi is too old to be used by Kontrol."
+msgstr "Votre Raspberry Pi est trop vieux pour être utilisé par Kontrol de façon efficace."
 
 #: Message shown to the user when the API is out of request.
 msgid "The GitHub API is out of requests. Please wait up to an hour to receive 60 API requests."
-msgstr "The GitHub API is out of requests. Please wait up to an hour to receive 60 API requests."
+msgstr "Aucune requêtes disponible pour l'API de GitHub. Veuillez attendre jusqu'à une heure avant d'en recevoir 60."
 
 #: Message shown when they API's functions don't work and thus cannot update Kontrol.
 msgid "Kontrol failed to execute GitHub API's functions. You won't be able to update: BrSpand cards, Drivers and Kontrol."
-msgstr "Kontrol failed to execute GitHub API's functions. You won't be able to update: BrSpand cards, Drivers and Kontrol."
+msgstr "Kontrol n'a pas réussi à executer certaines fonctionalitées de l'API de GitHub. Vous ne serez pas capable de télécharger de nouvelles versions de Kontrol ou de ses sous-programmes"
 
 #: Message shown when we failed to verify if Kontrol was up to date.
 msgid "Failed to verify if Kontrol is up to date. Error message: "
-msgstr "Failed to verify if Kontrol is up to date. Error message: "
+msgstr "Une erreur est survenue lors de la vérification de la version de Kontrol: "
 
 #: Message shown when a loading step is skipped
 msgid "Skipped"
-msgstr "Skipped"
+msgstr "Étape non fait."

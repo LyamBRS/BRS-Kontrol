@@ -32,11 +32,11 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
 from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard,CreateCard
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
+from Programs.Local.FileHandler.Profiles import ProfileHandler,CheckIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogins_Screens
-from .ProfileCreation import ProfileCreation_Step1
+from .ProfileCreation import ProfileCreation_Screens
 from ..Local.FileHandler import Profiles
 #====================================================================#
 # Functions
@@ -229,9 +229,9 @@ class ProfileMenu(Screen):
             Loads the profile in Profiles.py for global access.
         """
         Debug.Start("ProfilesClicked")
-        # LoadedProfile.LoadProfile(card.json)
+        # ProfileHandler.LoadProfile(card.json)
         # self.Layout.ProfilesLayout.profileBox.remove_widget(card)
-        LoadedProfile.LoadProfile(card.json)
+        ProfileHandler.LoadProfile(card.json)
         #Slowly make welcome fade off
         self.animation.stop_all(self)
         self.animation = Animation(progress = 0, duration = 0.5)
@@ -259,8 +259,12 @@ class ProfileMenu(Screen):
         self.animation = Animation(progress = 0, duration = 0.5)
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
-        AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
-        AppManager.manager.transition.direction = "up"
-        AppManager.manager.current = "ProfileCreation_Step1"
+
+        ProfileCreation_Screens.SetCaller(ProfileMenu, "ProfileMenu")
+        ProfileCreation_Screens.SetBadExiter(ProfileMenu, "ProfileMenu", direction="down")
+        ProfileCreation_Screens.Call()
+        # AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
+        # AppManager.manager.transition.direction = "up"
+        # AppManager.manager.current = "ProfileCreation_Step1"
 
 LoadingLog.End("ProfileMenu.py")

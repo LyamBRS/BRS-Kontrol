@@ -40,7 +40,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.states import StatesColors,Sta
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, structureEnum
+from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, structureEnum
 # from Programs.Pages.ProfileMenu import ProfileMenu
 # -------------------------------------------------------------------
 from ..Local.FileHandler import Profiles
@@ -363,7 +363,7 @@ class ProfileLogin(Screen):
 
             self.UsernameTitle = MDLabel(text=_("Username") + ":")
             self.PasswordTitle = MDLabel(text=_("Password") + ":")
-            self.Username = MDTextField(text=LoadedProfile.rawJson.jsonData[structureEnum.Generic][ProfileGenericEnum.Username])
+            self.Username = MDTextField(text=ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
             self.Password = MDTextField()
             self.PasswordTitle.font_style = "H5"
             self.UsernameTitle.font_style = "H5"
@@ -461,8 +461,8 @@ class ProfileLogin(Screen):
             Function called when attempting to log in with the specified
             password and username
         """
-        username = LoadedProfile.rawJson.jsonData["Generic"]["Username"]
-        password = LoadedProfile.rawJson.jsonData["Generic"]["Password"]
+        username = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
+        password = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Password.value]
 
         if(username != self.Username.text):
             self.Username.error = True

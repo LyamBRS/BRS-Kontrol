@@ -389,7 +389,7 @@ class AppLoading(Screen):
         """
         Debug.Start("AppLoading -> Update", DontDebug=True)
         Debug.Log("Updating loading message")
-        self.LoadingStep.text = loadingMessage
+        self.LoadingStep.text = _(loadingMessage)
         Debug.Log("Updating loading wheel's value")
         self.LoadingWheel.Value = loadingStep
         Debug.End(ContinueDebug=True)

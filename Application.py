@@ -86,7 +86,7 @@ class Application(MDApp):
 
         # Set window to 3rd monitor.
         Debug.Log("Configuring window size and attributes")
-        # Window.borderless = True
+        Window.borderless = True
         Window.resizable = True
         Window.left = -1024
         Window.top = 600

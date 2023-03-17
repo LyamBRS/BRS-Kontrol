@@ -32,12 +32,13 @@ from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.recycleview import RecycleView
 from kivy.clock import Clock
+from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import LoadedProfile, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum, CheckUsername, CheckPassword, CheckBiography
+from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum, CheckUsername, CheckPassword, CheckBiography
 from kivymd.uix.scrollview import MDScrollView
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
@@ -138,6 +139,279 @@ for key in md_icons.keys():
 #====================================================================#
 # Functions
 #====================================================================#
+class ProfileCreation_Screens:
+    """
+        ProfileCreation:
+        ================
+        Summary:
+        --------
+        This class allows the handling of the transitional screen
+        :class:`ProfileCreation`.
+
+        Description:
+        ------------
+        This class holds the different types of callers of the ProfileCreation
+        screen as well as the different exit screens that this transitional
+        screen can go to. You must specify the names of the wanted exit screens
+        prior to calling the transition function.
+
+        An exit screen is basically which screens should be loaded if something
+        happens in the transition screen.
+
+        Members:
+        ------------
+        This class contains the following screens:
+        - `caller:str = ""`: The name of the screen which called this one.
+        - `SetExiter(screenClass,screenName:str) -> bool`: set the screen to go to on exit. Returns `True` if an error occured
+        - `Call() -> bool`: Attempt to go to the specified screen. Returns `True` if an error occured.
+    """
+    #region ---- Members
+    _callerClass = None
+    _goodExitClass = None
+    _badExitClass = None
+
+    _callerName = None
+    _goodExitName = None
+    _badExitName = None
+
+    _callerTransition = SlideTransition
+    _goodExitTransition = SlideTransition
+    _badExitTransition = SlideTransition
+
+    _callerDirection = "up"
+    _goodExitDirection = "up"
+    _badExitDirection = "down"
+
+    _callerDuration = 0.5
+    _goodExitDuration = 0.5
+    _badExitDuration = 0.5
+    #endregion
+    #region ---- Methods
+    def SetGoodExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
+        """
+            Function which sets the screen that this screen should transition to on exit.
+            This allows transitional screens to be reused by any screens at any time.
+
+            Args:
+                `screenClass (_type_)`: The screen class of the screen this handler should transition to on exit.
+                `screenName (str)`: The name of the screen class. It needs to be the same as :ref:`screenClass`.
+                `transition`: Optional kivy transition class. Defaults as `WipeTransition`
+                `duration (float)`: Optional specification of the transition's duration. Defaults to 0.5 seconds
+                `direction (str)`: Optional direction which the transition should go. Defaults as `"up"`.
+
+            Returns:
+                bool: `True`: Something went wrong. `False`: Success
+        """
+        # Attempt to add the screen class as a widget of the AppManager
+        ProfileCreation_Screens._goodExitClass = screenClass
+        ProfileCreation_Screens._goodExitName  = screenName
+
+        ProfileCreation_Screens._goodExitTransition = transition
+        ProfileCreation_Screens._goodExitDuration = duration
+        ProfileCreation_Screens._goodExitDirection = direction
+        return False
+
+    def SetBadExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
+        """
+            Function which sets the screen that this screen should transition to on exit.
+            This allows transitional screens to be reused by any screens at any time.
+
+            Args:
+                `screenClass (_type_)`: The screen class of the screen this handler should transition to on exit.
+                `screenName (str)`: The name of the screen class. It needs to be the same as :ref:`screenClass`.
+                `transition`: Optional kivy transition class. Defaults as `WipeTransition`
+                `duration (float)`: Optional specification of the transition's duration. Defaults to 0.5 seconds
+                `direction (str)`: Optional direction which the transition should go. Defaults as `"up"`.
+
+            Returns:
+                bool: `True`: Something went wrong. `False`: Success
+        """
+        # Attempt to add the screen class as a widget of the AppManager
+        ProfileCreation_Screens._badExitClass = screenClass
+        ProfileCreation_Screens._badExitName  = screenName
+
+        ProfileCreation_Screens._badExitTransition = transition
+        ProfileCreation_Screens._badExitDuration = duration
+        ProfileCreation_Screens._badExitDirection = direction
+        return False
+
+    def SetCaller(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
+        """
+            Function which sets the screen to load if an error occured. This is used to "go back" to whoever attempted
+            to call this screen.
+
+            Args:
+                `screenClass (_type_)`: The screen class of the screen that wants to transition to this one.
+                `screenName (str)`: The name of the screen class. It needs to be the same as :ref:`screenClass`.
+                `transition`: Optional kivy transition class. Defaults as `WipeTransition`
+                `duration (float)`: Optional specification of the transition's duration. Defaults to 0.5 seconds
+                `direction (str)`: Optional direction which the transition should go. Defaults as `"up"`.
+
+            Returns:
+                bool: `True`: Something went wrong. `False`: Success
+        """
+        # Attempt to add the screen class as a widget of the AppManager
+        ProfileCreation_Screens._callerClass = screenClass
+        ProfileCreation_Screens._callerName  = screenName
+
+        ProfileCreation_Screens._callerTransition = transition
+        ProfileCreation_Screens._callerDuration = duration
+        ProfileCreation_Screens._callerDirection = direction
+        return False
+
+    def _BadExit() -> bool:
+        """
+            Attempt to go to the specified screen that was set using :ref:`SetBadExiter`.
+
+            Returns:
+                bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileCreation -> _BadExit()")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            # Check if exit class was specified
+            Debug.Log("Checking exit class")
+            if(ProfileCreation_Screens._badExitClass == None):
+                Debug.Error("Attempted to call exit while no exit class were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit name")
+            if(ProfileCreation_Screens._badExitName == None):
+                Debug.Error("Attempted to call exit while no exit name were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit class Call()")
+            try:
+                Debug.Log("Trying to call exit class caller.")
+                ProfileCreation_Screens._badExitClass.Call()
+                Debug.Log("Success")
+                Debug.End()
+                return False
+            except:
+                Debug.Error("Class specified wasn't an _Screen class.")
+                AppManager.manager.add_widget(ProfileCreation_Screens._badExitClass(name=ProfileCreation_Screens._badExitName))
+        except:
+            Debug.Error("ProfileCreation: _Exit() -> Failed in add_widget")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition = ProfileCreation_Screens._badExitTransition()
+        AppManager.manager.transition.duration = ProfileCreation_Screens._badExitDuration
+        AppManager.manager.transition.direction = ProfileCreation_Screens._badExitDirection
+
+        # try:
+        AppManager.manager.current = ProfileCreation_Screens._badExitName
+        # except:
+            # Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
+            # Debug.End()
+            # return True
+        Debug.End()
+        return False
+
+    def _GoodExit() -> bool:
+        """
+            Attempt to go to the specified screen that was set using :ref:`SetGoodExiter`.
+
+            Returns:
+                bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileCreation -> _GoodExit()")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            # Check if exit class was specified
+            Debug.Log("Checking exit class")
+            if(ProfileCreation_Screens._goodExitClass == None):
+                Debug.Error("Attempted to call exit while no exit class were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit name")
+            if(ProfileCreation_Screens._goodExitName == None):
+                Debug.Error("Attempted to call exit while no exit name were specified")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking exit class Call()")
+            try:
+                Debug.Log("Trying to call exit class caller.")
+                ProfileLogins_Screens._goodExitClass.Call()
+                Debug.Log("Success")
+                Debug.End()
+                return False
+            except:
+                Debug.Log("Class specified wasn't an _Screen class.")
+                AppManager.manager.add_widget(ProfileLogins_Screens._goodExitClass(name=ProfileLogins_Screens._goodExitName))
+        except:
+            Debug.Error("ProfileCreation: _Exit() -> Failed in add_widget")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition = ProfileCreation_Screens._goodExitTransition()
+        AppManager.manager.transition.duration = ProfileCreation_Screens._goodExitDuration
+        AppManager.manager.transition.direction = ProfileCreation_Screens._goodExitDirection
+
+        # try:
+        AppManager.manager.current = ProfileCreation_Screens._goodExitName
+        # except:
+            # Debug.Error("Startup_Screens: _Exit() -> AppManager.manager.current FAILED")
+            # Debug.End()
+            # return True
+        Debug.End()
+        return False
+
+    def Call() -> bool:
+        """
+            Attempt to go to the main screen that is being handled by this class.
+
+            Returns:
+                bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileCreation -> Call")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            # Check if exit class was specified
+            Debug.Log("Checking caller class")
+            if(ProfileCreation_Screens._callerClass == None):
+                Debug.Error("No caller class specified.")
+                Debug.End()
+                return True
+
+            Debug.Log("Checking caller name")
+            if(ProfileCreation_Screens._callerName == None):
+                Debug.Error("No caller name specified.")
+                Debug.End()
+                return True
+
+            Debug.Log("Adding widget")
+            AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
+        except:
+            Debug.Error("Exception occured while handling Call()")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition = ProfileCreation_Screens._callerTransition()
+        AppManager.manager.transition.duration = ProfileCreation_Screens._callerDuration
+        AppManager.manager.transition.direction = ProfileCreation_Screens._callerDirection
+
+        # try:
+        AppManager.manager.current = "ProfileCreation_Step1"
+        # except:
+            # Debug.Error("Failed to add ProfileLogin as current screen.")
+            # Debug.End()
+            # return True
+
+        Debug.End()
+        return False
+    #endregion
+
+#====================================================================#
+# Functions
+#====================================================================#
 class CustomOneLineIconListItem(OneLineIconListItem):
     print("CustomOneLineIconListItem")
     icon = StringProperty()
@@ -184,24 +458,37 @@ def CreateScreenBase(self, title:str, stepType:str) -> None:
     self.Next = MDIconButton(text="chevron-right", icon="chevron-right")
     self.Next.icon_size = "75sp"
     self.Next.pos_hint={"center_x": 0.75, "center_y": 0.5}
-    self.Next.on_release = self.GoToNext
-    
+    # self.Next.on_release = self.GoToNext
+
     if(stepType == "Middle"):
         self.Previous = MDIconButton(text="chevron-left", icon="chevron-left")
         self.Previous.icon_size = "75sp"
         self.Previous.pos_hint={"center_x": 0.25, "center_y": 0.5}
         self.Previous.on_release = self.GoToPrevious
+        self.Next.on_release = self.GoToNext
 
     if(stepType == "First"):
         self.Previous = MDIconButton(text="close", icon="close")
         self.Previous.icon_size = "75sp"
         self.Previous.pos_hint={"center_x": 0.25, "center_y": 0.5}
         self.Previous.on_release = self.GoBack
+        self.Next.on_release = self.GoToNext
+
+    if(stepType == "Last"):
+        self.Previous = MDIconButton(text="chevron-left", icon="chevron-left")
+        self.Previous.icon_size = "75sp"
+        self.Previous.pos_hint={"center_x": 0.25, "center_y": 0.5}
+        self.Previous.on_release = self.GoToPrevious
+
+        self.Next = MDIconButton(text="confirm", icon="account-check")
+        self.Next.icon_size = "75sp"
+        self.Next.pos_hint={"center_x": 0.25, "center_y": 0.5}
+        self.Next.on_release = self.ConfirmProfile
     # endregion
 
     # Page title
     Debug.Log(f"Creating page title: {title}")
-    self.PageTitle = MDLabel(text=_(title),
+    self.PageTitle = MDLabel(text=title,
                                 font_style = "H2",
                                 halign = "center")
 
@@ -242,9 +529,9 @@ class ProfileCreation_Step1(Screen):
         self.spacing = 25
 
         Debug.Log("Setting Temporary profile's language to AppLanguage.Current")
-        Temporary[structureEnum.Generic][ProfileGenericEnum.Language] = AppLanguage.Current
+        Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
 
-        CreateScreenBase(self, "Select a language", "First")
+        CreateScreenBase(self, _("Select a language"), "First")
 
         #region ---- Top Of Card
         self.HelloWorld = MDLabel(text=_("Hello, world!"),
@@ -297,7 +584,6 @@ class ProfileCreation_Step1(Screen):
         self.add_widget(self.MainLayout)
         Debug.End()
         pass
-
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
@@ -314,14 +600,11 @@ class ProfileCreation_Step1(Screen):
         """
             Function to go back to `ProfileMenu.py`
         """
-        # AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
-        # AppManager.manager.transition.direction = "down"
-        # AppManager.manager.current = "ProfileMenu"
-        PopUpsHandler.Clear()
-        PopUpsHandler.Add(PopUpTypeEnum.Remark, Icon="bug", Message=("Temporary pop up put in place due to circular imports in profile creation handling. This will be fixed once ProfileCreation has it's own screen management class like the rest of the transitional screens already built."))
-        PopUps_Screens.SetCaller(ProfileCreation_Step1, "ProfileCreation_Step1")
-        PopUps_Screens.Call()
-
+        if (ProfileCreation_Screens._BadExit()):
+            PopUpsHandler.Clear()
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="bug", Message=("An error occured while attempting to go back to the previously loaded screen. The application needs to be restarted."))
+            PopUps_Screens.SetCaller(PopUps_Screens._callerClass, PopUps_Screens._callerName)
+            PopUps_Screens.Call()
 # ------------------------------------------------------------------------
     def GoToNext(self, *args):
         """
@@ -348,8 +631,8 @@ class ProfileCreation_Step1(Screen):
         self.SelectedLanguage.text = AppLanguage.Current
 
         Debug.Log("Setting new language in temporary profile class")
-        Temporary[structureEnum.Generic][ProfileGenericEnum.Language] = AppLanguage.Current
-        Debug.Warn(f"Temporary profile now uses: {Temporary[structureEnum.Generic][ProfileGenericEnum.Language]}")
+        Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
+        Debug.Warn(f"Temporary profile now uses: {Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value]}")
 
         # Closing drop down menu
         self.menu.dismiss()
@@ -387,9 +670,9 @@ class ProfileCreation_Step2(Screen):
         accent = MDApp.get_running_app().theme_cls.accent_palette
 
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
-        Temporary[structureEnum.Generic][ProfileGenericEnum.Language] = AppLanguage.Current
+        Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
 
-        CreateScreenBase(self, "Select a theme", "Middle")
+        CreateScreenBase(self, _("Select a theme"), "Middle")
 
         #region ---- Top Of Card
         self.ThemeStyleLayout = MDBoxLayout(spacing=0,  padding=("0sp","0sp","0sp","0sp"), orientation="horizontal")
@@ -470,9 +753,9 @@ class ProfileCreation_Step2(Screen):
         #endregion
 
         # Save current theme_cls in Temporary
-        Temporary[structureEnum.Theme][ProfileThemeEnum.Style] = style
-        Temporary[structureEnum.Theme][ProfileThemeEnum.Primary] = primary
-        Temporary[structureEnum.Theme][ProfileThemeEnum.Accent] = accent
+        Temporary[structureEnum.Theme.value][ProfileThemeEnum.Style.value] = style
+        Temporary[structureEnum.Theme.value][ProfileThemeEnum.Primary.value] = primary
+        Temporary[structureEnum.Theme.value][ProfileThemeEnum.Accent.value] = accent
 
         # Add widgets
         self.Card.add_widget(self.ThemeStyleLabel)
@@ -532,7 +815,7 @@ class ProfileCreation_Step2(Screen):
                 button.icon = "checkbox-marked-circle"
                 MDApp.get_running_app().theme_cls.primary_palette = button.text
 
-                Temporary[structureEnum.Theme][ProfileThemeEnum.Primary] = button.text
+                Temporary[structureEnum.Theme.value][ProfileThemeEnum.Primary.value] = button.text
                 Debug.Log(f"Primary color is now: {button.text}")
         Debug.End()
 # ------------------------------------------------------------------------
@@ -553,7 +836,7 @@ class ProfileCreation_Step2(Screen):
                 button.icon = "checkbox-marked-circle"
                 MDApp.get_running_app().theme_cls.accent_palette = button.text
 
-                Temporary[structureEnum.Theme][ProfileThemeEnum.Accent] = button.text
+                Temporary[structureEnum.Theme.value][ProfileThemeEnum.Accent.value] = button.text
                 Debug.Log(f"Accent color is now: {button.text}")
         Debug.End()
 # ------------------------------------------------------------------------
@@ -573,7 +856,7 @@ class ProfileCreation_Step2(Screen):
                 button.line_color = button.icon_color
                 button.icon = "checkbox-marked-circle"
 
-                Temporary[structureEnum.Theme][ProfileThemeEnum.Style] = button.text
+                Temporary[structureEnum.Theme.value][ProfileThemeEnum.Style.value] = button.text
                 MDApp.get_running_app().theme_cls.theme_style = button.text
                 Debug.Log(f"Theme style color is now: {button.text}")
 
@@ -612,6 +895,10 @@ class ProfileCreation_Step3(Screen):
     elevation = 0
     softness = 0
     selectedProfilePic = ""
+
+    usernameError:bool = False
+    passwordError:bool = False
+    biographyError:bool = False
     #endregion
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
@@ -664,16 +951,16 @@ class ProfileCreation_Step3(Screen):
         Debug.Log("Creating standard profile information widgets")
         self.UsernameTitle = MDLabel(text=_("Username") + ":")
         self.PasswordTitle = MDLabel(text=_("Password") + ":")
-        self.BiographyTitle = MDLabel(text=_("Short biography") + ":")
-        self.Username  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Username])
-        self.Password  = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Password])
-        self.Biography = MDTextField(text=Temporary[structureEnum.Generic][ProfileGenericEnum.Biography])
+        self.BiographyTitle = MDLabel(text=_("Biography") + ":")
+        self.Username  = MDTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
+        self.Password  = MDTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value])
+        self.Biography = MDTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value])
         self.Username.bind(text = self.UsernameTextChanged)
         self.Password.bind(text = self.PasswordTextChanged)
         self.Biography.bind(text = self.BiographyTextChanged)
         self.Username.hint_text = _("Username")
         self.Password.hint_text = _("Password")
-        self.Biography.hint_text = _("Short biography")
+        self.Biography.hint_text = _("Biography")
 
         # self.Biography.max_height = 3
         self.PasswordTitle.font_style = "H5"
@@ -730,9 +1017,10 @@ class ProfileCreation_Step3(Screen):
         self.LeftCard.add_widget(self.Biography)
         #endregion
 
+        #Checking currently saved username
+        self.UsernameTextChanged()
+
         # Add widgets
-        # self.LeftCard.add_widget(self.LeftCardTop)
-        # self.LeftCard.add_widget(self.LeftCardBottom)
         self.RightCard.add_widget(self.RightCardTop)
         self.RightCard.add_widget(self.RightCardBottom)
         self.MiddleLayout.add_widget(self.LeftCard)
@@ -766,9 +1054,39 @@ class ProfileCreation_Step3(Screen):
         """
             Function to go back to `ProfileCreation_Step3.py`
         """
-        # AppManager.manager.add_widget(ProfileCreation_Step4(name="ProfileCreation_Step4"))
-        # AppManager.manager.transition.direction = "left"
-        # AppManager.manager.current = "ProfileCreation_Step4"
+        Debug.Start("GoToNext")
+
+        Debug.Log("Checking if anything equals to errors")
+        AppManager.manager.add_widget(ProfileCreation_Step4(name="ProfileCreation_Step4"))
+        AppManager.manager.transition.direction = "left"
+        AppManager.manager.current = "ProfileCreation_Step4"
+        Debug.End()
+# ------------------------------------------------------------------------
+    def UpdateScreenForErrors(self, *args) -> bool:
+        """
+            UpdateScreenForErrors:
+            ----------------------
+            This function verifies if anything is giving out errors to
+            update the view of the application until the errors are no
+            longer there.
+
+            Call this anytime you verify some information for the screen
+            to visually update other components unrelated to the component
+            giving out errors.
+        """
+        Debug.Start("UpdateScreenForErrors")
+
+        if(self.Username.error or self.Password.error or self.Biography.error):
+            Debug.Warn("Some errors were found. Updating Step3 visually.")
+            self.Next.icon = "lock"
+            self.Next.theme_icon_color = "Error"
+            self.Next.disabled = True
+        else:
+            self.Next.icon = "chevron-right"
+            self.Next.theme_icon_color = "Primary"
+            self.Next.disabled = False
+
+        Debug.End()
 # ------------------------------------------------------------------------
     def LoadProfileIcons(searchWord:str = None):
         """
@@ -790,7 +1108,7 @@ class ProfileCreation_Step3(Screen):
             icon is selected to use for the profile creation.
         """
         Debug.Start("IconSelected")
-        Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath] = args[0]
+        Temporary[structureEnum.Generic.value][ProfileGenericEnum.IconPath.value] = args[0]
         Debug.Log(f"Profile icon is now: {args[0]}")
         self.SearchIcons()
         Debug.End()
@@ -837,20 +1155,20 @@ class ProfileCreation_Step3(Screen):
                                       'icon': str(icon),
                                       'on_release':(lambda x: lambda: self.IconSelected(str(x)))(icon),
                                       'icon_size':50}
-                                      for icon in ProfileIcons if self.SearchBar.text in str(icon) and not str(icon) in Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath]]
+                                      for icon in ProfileIcons if self.SearchBar.text in str(icon) and not str(icon) in Temporary[structureEnum.Generic.value][ProfileGenericEnum.IconPath.value]]
         else:
             self.recycleView.data = [{'theme_icon_color' : "Custom",
                                       "icon_color":color,
                                       'icon': str(icon),
                                       'on_release':(lambda x: lambda: self.IconSelected(str(x)))(icon),
                                       'icon_size':50}
-                                      for icon in ProfileIcons if not str(icon) in Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath]]
+                                      for icon in ProfileIcons if not str(icon) in Temporary[structureEnum.Generic.value][ProfileGenericEnum.IconPath.value]]
 
         # Add the selected icon first in the list:
         self.recycleView.data.insert(0,
                                      {'theme_icon_color' : "Custom",
-                                      "icon_color":get_color_from_hex(colors[Temporary[structureEnum.Theme][ProfileThemeEnum.Primary]]["500"]),
-                                      'icon': str(Temporary[structureEnum.Generic][ProfileGenericEnum.IconPath]), 
+                                      "icon_color":get_color_from_hex(colors[Temporary[structureEnum.Theme.value][ProfileThemeEnum.Primary.value]]["500"]),
+                                      'icon': str(Temporary[structureEnum.Generic.value][ProfileGenericEnum.IconPath.value]), 
                                       'icon_size':50})
         MDIconButton.theme_icon_color
         Debug.End()
@@ -863,14 +1181,29 @@ class ProfileCreation_Step3(Screen):
             changes. This compares the new username with the
             :ref: CheckUsername function.
         """
+        Debug.Start("UsernameTextChanged")
         error = CheckUsername(self.Username.text)
+        Debug.Log(error)
+
         if(not error):
-            Temporary[structureEnum.Generic][ProfileGenericEnum.Username] = self.Username.text
-            self.Username.error = False
-            self.Username.hint_text = _("Username")
+            Debug.Log(self.Username.error)
+            if(self.usernameError == True):
+                Debug.Log("Was previously error, updating...")
+                self.usernameError = False
+                self.Username.error = False
+                self.UpdateScreenForErrors()
+                self.Username.hint_text = _("Username")
+
+            Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value] = self.Username.text
         else:
-            self.Username.error = True
+            if(self.usernameError == False):
+                Debug.Log("Was not previously in error, updating")
+                self.Username.error = True
+                self.usernameError = True
+                self.UpdateScreenForErrors()
+
             self.Username.hint_text = _(error)
+        Debug.End()
 # ------------------------------------------------------------------------
     def PasswordTextChanged(self, *args):
         """
@@ -883,12 +1216,18 @@ class ProfileCreation_Step3(Screen):
         error = CheckPassword(self.Password.text)
 
         if(error):
-            self.Password.error = True
+            if(self.passwordError == False):
+                self.passwordError = True
+                self.Password.error = True
+                self.UpdateScreenForErrors()
             self.Password.hint_text = _(error)
         else:
-            self.Password.error = False
-            self.Password.hint_text = _("Password")
-            Temporary[structureEnum.Generic][ProfileGenericEnum.Password] = self.Password.text
+            if(self.passwordError == True):
+                self.passwordError = False
+                self.Password.error = False
+                self.UpdateScreenForErrors()
+                self.Password.hint_text = _("Password")
+            Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value] = self.Password.text
 # ------------------------------------------------------------------------
     def BiographyTextChanged(self, *args):
         """
@@ -901,11 +1240,143 @@ class ProfileCreation_Step3(Screen):
         error = CheckBiography(self.Biography.text)
 
         if(error):
-            self.Biography.error = True
+            if(self.biographyError == False):
+                self.biographyError = True
+                self.Biography.error = True
+                self.UpdateScreenForErrors()
             self.Biography.hint_text = _(error)
         else:
-            self.Biography.error = False
-            self.Biography.hint_text = _("Short biography")
-            Temporary[structureEnum.Generic][ProfileGenericEnum.Biography] = self.Biography.text
+            if(self.biographyError == True):
+                self.biographyError = False
+                self.Biography.error = False
+                self.UpdateScreenForErrors()
+                self.Biography.hint_text = _("Biography")
+
+            Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value] = self.Biography.text
+#====================================================================#
+class ProfileCreation_Step4(Screen):
+    #region   --------------------------- MEMBERS
+    progress = 0
+    """The animation's progress from 0 to 1"""
+    animation = Animation()
+    """Animation object"""
+    elevation = 0
+    softness = 0
+    selectedProfilePic = ""
+    #endregion
+    #region   --------------------------- CONSTRUCTOR
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Debug.Start("ProfileCreation_Step4", DontDebug=True)
+        Debug.End(ContinueDebug=True)
+        #endregion
 # ------------------------------------------------------------------------
+    def on_pre_enter(self, *args):
+        """
+            Builds the ProfileCreation_Step4 entirely
+        """
+        Debug.Start("ProfileCreation_Step4 -> on_pre_enter")
+        self.padding = 25
+        self.spacing = 25
+
+        CreateScreenBase(self, _("Confirm your profile"), "Last")
+
+        #region ---- RecycleView
+        Debug.Log("Creating recycle box layout")
+        self.RecyleBoxLayout = RecycleBoxLayout(default_size=(None,56),
+                                                default_size_hint=(1, None),
+                                                size_hint=(1, None),
+                                                orientation='vertical')
+        self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
+
+        self.recycleView = RecycleView()
+        self.recycleView.add_widget(self.RecyleBoxLayout)
+        self.recycleView.viewclass = MDLabel
+        self.Card.add_widget(self.recycleView)
+        self._FillRecycleView()
+        #endregion
+
+        self.MainLayout.add_widget(self.TopLayout)
+        self.MainLayout.add_widget(self.Card)
+        self.add_widget(self.MainLayout)
+        Debug.End()
+        pass
+# ------------------------------------------------------------------------
+    def on_leave(self, *args):
+        """
+            Function called when the screen is fully left.
+        """
+        Debug.Start("on_leave")
+        Debug.Log("Attempting to remove self from AppManager's widgets")
+        self.clear_widgets()
+        AppManager.manager.remove_widget(self)
+        Debug.End()
+# ------------------------------------------------------------------------
+    def GoToPrevious(self, *args):
+        """
+            Function to go back to `ProfileCreation_Step3.py`
+        """
+        AppManager.manager.add_widget(ProfileCreation_Step3(name="ProfileCreation_Step3"))
+        AppManager.manager.transition.direction = "right"
+        AppManager.manager.current = "ProfileCreation_Step3"
+# ------------------------------------------------------------------------
+    def ConfirmProfile(self, *args):
+        """
+            Function that creates the profile and calls Good exit from
+            _screen.
+        """
+        Debug.Start("ConfirmProfile")
+        Debug.Log("Creating profile")
+        ProfileHandler.CreateProfile(Temporary)
+        ProfileCreation_Screens._GoodExit()
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _FillRecycleView(self, *args):
+        """
+            _FillRecycleView:
+            ------------
+            This function's purpose is to fill the screen's recycleViews
+            with their respective data lists. This one fills the screen's
+            recycle view with Labels consisting of the profile's data.
+        """
+        Debug.Start("_FillRecycleView")
+
+        Debug.Log("Filling recycle view.")
+        # self.recycleView.data = [{'font_style' : "Body1",
+                                    # 'text' : (generic.value + ":    " + str(Temporary[structureEnum.Generic.value][generic]))}
+                                    # for generic in Temporary[structureEnum.Generic.value]]
+
+        Debug.Log("Creating profile datas")
+        Generics = [{'font_style' : "Body1",
+                        'text' : (_(generic) + ":    " + str(Temporary[structureEnum.Generic.value][generic]))}
+                        for generic in Temporary[structureEnum.Generic.value]]
+
+        Configs = [{'font_style' : "Body1",
+                    'text' : (_(config) + ":    " + str(Temporary[structureEnum.ProfileConfig.value][config]))}
+                        for config in Temporary[structureEnum.ProfileConfig.value]]
+
+        Themes = [{'font_style' : "Body1",
+                    'text' : (_(theme) + ":    " + str(Temporary[structureEnum.Theme.value][theme]))}
+                        for theme in Temporary[structureEnum.Theme.value]]
+
+        Debug.Log("Creating section titles")
+        GenericTitle = [{'font_style' : "H4",
+                        'text' : _("Generic")+":"}]
+
+        ThemeTitle = [{'font_style' : "H4",
+                        'text' : _("Theme")+":"}]
+
+        ConfigsTitle = [{'font_style' : "H4",
+                        'text' : _("Configuration")+":"}]
+
+        Debug.Log("Building recycleView data")
+        self.recycleView.data = GenericTitle
+        self.recycleView.data.extend(Generics)
+        self.recycleView.data.extend(ThemeTitle)
+        self.recycleView.data.extend(Themes)
+        self.recycleView.data.extend(ConfigsTitle)
+        self.recycleView.data.extend(Configs)
+        Debug.End()
+# ------------------------------------------------------------------------
+
 LoadingLog.End("ProfileCreation.py")

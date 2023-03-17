@@ -33,7 +33,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppMan
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
-from Programs.Local.FileHandler.Profiles import LoadedProfile,CheckIntegrity
+from Programs.Local.FileHandler.Profiles import ProfileHandler,CheckIntegrity
 from Programs.Local.FileHandler.Cache import Cache
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogin

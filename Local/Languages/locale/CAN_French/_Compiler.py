@@ -25,10 +25,13 @@ for filename in os.listdir(script_dir):
         po_filepath = os.path.join(script_dir, filename)
 
         # Load the .po file and compile it to a .mo file
+        # try:
         po = polib.pofile(po_filepath)
         mo_filepath = os.path.splitext(po_filepath)[0] + '.mo'
         mo_filepath = mo_filepath.replace(folder, folder+"\\LC_MESSAGES")
         po.save_as_mofile(mo_filepath)
         print(f"Compiled: {filename}")
+        # except:
+            # print(f"[-FAILED-]: {filename}")
 
 print("----------\nDONE")

@@ -2,13 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BRS Kontrol - Languages\n"
 "POT-Creation-Date: 2023-02-15 12:00+0000\n"
-"PO-Revision-Date: 2023-02-18 12:00+0000\n"
+"PO-Revision-Date: 2023-03-17 12:00+0000\n"
 "Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
 "Language-Team: BRS \n"
 "MIME-Version: 1.1\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ---------------------------------------------------------------------- A
 #: Singular word for Account
 msgid "Account"
 msgstr "Account"
@@ -25,10 +26,16 @@ msgstr "Admin"
 msgid "Ahead"
 msgstr "Ahead"
 
+#: ---------------------------------------------------------------------- B
 #: Singular word used for something that is empty
 msgid "Blank"
 msgstr "Blank"
 
+#: Singular word used to indicate a Biography
+msgid "Biography"
+msgstr "Biography"
+
+#: ---------------------------------------------------------------------- C
 #: Singular word which means selecting something."
 msgid "Cancel"
 msgstr "Cancel"
@@ -40,6 +47,10 @@ msgstr "Color"
 #: Singular word which means confirming something. Usually paired with Cancel"
 msgid "Confirm"
 msgstr "Confirm"
+
+#: Singular word representing a section title for a section about configurating something.
+msgid "Configuration"
+msgstr "Configuration"
 
 #: Singular word to represent the connection status is connected
 msgid "Connected"
@@ -53,34 +64,83 @@ msgstr "Corrupted"
 msgid "Create"
 msgstr "Create"
 
+#: ---------------------------------------------------------------------- D
 #: Singular word to represent the connection status is no more.
 msgid "Disconnected"
 msgstr "Disconnected"
 
+#: ---------------------------------------------------------------------- E
 #: Singular word for an error. Mostly used prior to error strings. "Error; error description"
 msgid "Error"
 msgstr "Error"
 
+#: ---------------------------------------------------------------------- F
+#: Singular word that says something was fatal. As in an Error
+msgid "Fatal"
+msgstr "Fatal"
+
+#: ---------------------------------------------------------------------- G
+#: Singular word for something that is generic.
+msgid "Generic"
+msgstr "Generic"
+
+#: Singular Good message.
+msgid "Good"
+msgstr "Good"
+
+#: ---------------------------------------------------------------------- H
+#: ---------------------------------------------------------------------- I
 #: Singular word representing the image displayed on an account. Keep it short.
 msgid "Icon"
 msgstr "Icon"
 
-#: Singular word for a UI theme.
-msgid "Theme"
-msgstr "Theme"
+#: ---------------------------------------------------------------------- K
+#: ---------------------------------------------------------------------- L
+#: Singular word used to say Language
+msgid "Language"
+msgstr "Language"
 
 #: Singular word for a locked device/item
 msgid "Locked"
 msgstr "Locked"
 
+#: ---------------------------------------------------------------------- M
+#: ---------------------------------------------------------------------- N
+#: ---------------------------------------------------------------------- O
 #: Singular word used for something whose version is out of date
 msgid "Outdated"
 msgstr "Outdated"
 
+#: ---------------------------------------------------------------------- P
 #: Singular word for password
 msgid "Password"
 msgstr "Password"
 
+#: Singular word that says something is primary
+msgid "Primary"
+msgstr "Primary"
+
+#: ---------------------------------------------------------------------- Q
+#: ---------------------------------------------------------------------- R
+#: ---------------------------------------------------------------------- S
+#: Singular word which means to select a thing
+msgid "Select"
+msgstr "Select"
+
+#: Singular word which is put inside of search bar to indicate that it is used for searching elements
+msgid "Search"
+msgstr "Search"
+
+#: Singular word which means selecting something."
+msgid "Selecting"
+msgstr "Selecting"
+
+#: ---------------------------------------------------------------------- T
+#: Singular word for a UI theme.
+msgid "Theme"
+msgstr "Theme"
+
+#: ---------------------------------------------------------------------- U
 #: Singular word for an unlocked device/item
 msgid "Unlocked"
 msgstr "Unlocked"
@@ -89,18 +149,12 @@ msgstr "Unlocked"
 msgid "Username"
 msgstr "Username"
 
-#: Singular word which means to select a thing
-msgid "Select"
-msgstr "Select"
+#: ---------------------------------------------------------------------- V
+#: Singular word that says the version.
+msgid "Version"
+msgstr "Version"
 
-#: Singular word which means selecting something."
-msgid "Selecting"
-msgstr "Selecting"
-
+#: ---------------------------------------------------------------------- W
 #: Singular Welcome message.
 msgid "Welcome"
 msgstr "Welcome"
-
-#: Singular Good message.
-msgid "Good"
-msgstr "Good"

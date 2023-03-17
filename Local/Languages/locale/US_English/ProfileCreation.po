@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-03-17 12:00+0000\n"
+"PO-Revision-Date: 2023-03-17 12:00+0000\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Used to display the language type
+msgid "Hello, world!"
+msgstr "Hello, world!"
+
+#: Page title prompting the user to select a language
+msgid "Select a language"
+msgstr "Select a language"
+
+#: Page content for theme selection
+msgid "Theme"
+msgstr "Theme"
+
+#: Page content for primary color selection
+msgid "Primary color"
+msgstr "Primary color"
+
+#: Page content for accent color selection
+msgid "Accent color"
+msgstr "Accent color"
+
+#: Page content for accent color selection
+msgid "Accent color"
+msgstr "Accent color"
+
+#: Page title prompting the user to select profile informations
+msgid "Select profile information"
+msgstr "Select profile information"
+
+#: Page title prompting the user to select theme informations
+msgid "Select a theme"
+msgstr "Select a theme"
+
+#: Page title prompting the user to confirm their user informations
+msgid "Confirm your profile"
+msgstr "Confirm your profile"

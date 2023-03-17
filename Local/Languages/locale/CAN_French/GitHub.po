@@ -1,0 +1,64 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-03-12 12:00+0000\n"
+"PO-Revision-Date: 2023-03-12 12:00+0000\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS \n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: GitHub.py
+
+#: line 57 -> GetUser()
+msgid "Could not get username"
+msgstr "Nom d'utilisateur n'a pas pu être chargé"
+
+#: line 69 -> GetUserRepositories()
+msgid "No username stored in the GitHub class. Make sure to call GetAll"
+msgstr "Aucun nom d'utilisateur sauvegardé dans la classe GitHub. Veuillez être sur que GetAll à été appellé"
+
+#: line 73 -> GetUserRepositories()
+msgid "No user information were stored. Verify network connected and call GetAll"
+msgstr "Aucune information sur l'utilisateur n'a été stocké. Veuillez vérifier votre connection internet."
+
+#: line 143 -> GetMatchingRepository() there was no local repository to check for matching.
+msgid "The local repository was not initialized."
+msgstr "Le repository locale n'a pas été initializé"
+
+#: line 147 -> GetMatchingRepository() No user to browse for repositories
+msgid "No GitHub users were initialized."
+msgstr "Aucun utilisateur GitHub n'a été initializé"
+
+#: line 151 -> GetMatchingRepository() No repository were initialized for the specified user.
+msgid "User's repositories were not initialized"
+msgstr "Les repository de l'utilisateur n'ont pas été initializé."
+
+#: line 164 -> GetMatchingRepository()
+msgid "No matching repositories. Make sure you are using a cloned repository."
+msgstr "Aucun repository n'a correspondu. Veuillez être sur que Kontrol est installé par l'entremise de Git."
+
+#: line 177 -> GetMatchingRepositoryTag()
+msgid "Failed to get master branch of matched repository"
+msgstr "Une erreur est survenu lorsque l'application a tenté de chercher la branche Master du repository."
+
+#: line 183 -> GetMatchingRepositoryTag()
+msgid "Failed to get master branch's commits"
+msgstr "Une erreur est survenue lorsque l'application a tenté de chercher les commits de la branche Master."
+
+#: line 189 -> GetMatchingRepositoryTag()
+msgid "Failed to get tags of the matching repository"
+msgstr "Une erreur est survenue lorsque l'application a tenté de chercher les tags de la branche Master."
+
+#: line 197 -> GetMatchingRepositoryTag()
+msgid "Failed to sort repositories commit tags"
+msgstr "Une erreur est survenue lorsque l'application a tenté de trié les tags de la branche Master."
+
+#: line 262 -> CheckIfBehind()
+msgid "GetAll was not called properly"
+msgstr "GetAll n'a pas été appellé correctement."
+
+#: line 265 -> CheckIfBehind()
+msgid "No tags to compare with"
+msgstr "Aucun tags n'a été trouvé pour executé la comparaison de versions."

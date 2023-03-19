@@ -337,13 +337,13 @@ class ProfileCreation_Screens:
             Debug.Log("Checking exit class Call()")
             try:
                 Debug.Log("Trying to call exit class caller.")
-                ProfileLogins_Screens._goodExitClass.Call()
+                ProfileCreation_Screens._goodExitClass.Call()
                 Debug.Log("Success")
                 Debug.End()
                 return False
             except:
                 Debug.Log("Class specified wasn't an _Screen class.")
-                AppManager.manager.add_widget(ProfileLogins_Screens._goodExitClass(name=ProfileLogins_Screens._goodExitName))
+                AppManager.manager.add_widget(ProfileCreation_Screens._goodExitClass(name=ProfileCreation_Screens._goodExitName))
         except:
             Debug.Error("ProfileCreation: _Exit() -> Failed in add_widget")
             Debug.End()

@@ -32,7 +32,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
 from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard,CreateCard
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import ProfileHandler,CheckIntegrity
+from Programs.Local.FileHandler.Profiles import ProfileGenericEnum, ProfileHandler,CheckIntegrity, structureEnum
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogins_Screens
@@ -227,6 +227,7 @@ class ProfileMenu(Screen):
             variable to 1 in the animation.
 
             Loads the profile in Profiles.py for global access.
+            Also sets the ProfileLogins_Screens.
         """
         Debug.Start("ProfilesClicked")
         # ProfileHandler.LoadProfile(card.json)
@@ -238,14 +239,16 @@ class ProfileMenu(Screen):
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
 
+        Debug.Log("Checking if profile has no password")
+        if(len(card.json.jsonData[structureEnum.Generic][ProfileGenericEnum.Password]) == 0):
+            Debug.Log("No password required")
+
         Debug.Log("Setting profileLoging exit and callers")
         ProfileLogins_Screens.SetCaller(ProfileMenu, "ProfileMenu")
         ProfileLogins_Screens.SetBadExiter(ProfileMenu, "ProfileMenu", direction="down")
         ProfileLogins_Screens.SetGoodExiter(Startup_Screens, "Startup")
         ProfileLogins_Screens.Call()
-        # AppManager.manager.add_widget(ProfileLogin(name="ProfileLogin"))
-        # AppManager.manager.transition.direction = "up"
-        # AppManager.manager.current = "ProfileLogin"
+
         Debug.End()
 # ------------------------------------------------------------------------
     def CreateProfileClicked(self, card:ProfileCard):
@@ -262,6 +265,7 @@ class ProfileMenu(Screen):
 
         ProfileCreation_Screens.SetCaller(ProfileMenu, "ProfileMenu")
         ProfileCreation_Screens.SetBadExiter(ProfileMenu, "ProfileMenu", direction="down")
+        ProfileCreation_Screens.SetGoodExiter(ProfileMenu, "ProfileMenu", direction="down")
         ProfileCreation_Screens.Call()
         # AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
         # AppManager.manager.transition.direction = "up"

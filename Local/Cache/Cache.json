@@ -1,1 +1,33 @@
-{"Cache": {"Dates": {"Exit": "March 19 2023, 23:35:28", "Open": "March 19 2023, 23:34:51", "Creation": "March 04 2023, 23:34:25"}, "ExitReason": "User", "Version": 1.0, "Type": "Application"}, "Profile": {"Loaded": {"Username": "test", "Password": "", "Biography": "", "IconType": "Kivy", "IconPath": "traffic-cone", "Language": "US_English"}, "Version": 1.2, "Language": "US_English"}, "Theme": {"Style": "Light", "Primary": "Purple", "Accent": "Pink", "Duration": 0.5}, "Settings": {"TO DO": null}}
+{
+    "Cache": {
+        "Dates": {
+            "Exit": "March 20 2023, 10:05:49",
+            "Open": "March 20 2023, 10:05:22",
+            "Creation": "March 04 2023, 23:34:25"
+        },
+        "ExitReason": "User",
+        "Version": 1.0,
+        "Type": "Application"
+    },
+    "Profile": {
+        "Loaded": {
+            "Username": "Test",
+            "Password": "1234",
+            "Biography": "Ta mere",
+            "IconType": "Kivy",
+            "IconPath": "target-account",
+            "Language": "US_English"
+        },
+        "Version": 1.2,
+        "Language": "US_English"
+    },
+    "Theme": {
+        "Style": "Dark",
+        "Primary": "LightBlue",
+        "Accent": "LightGreen",
+        "Duration": 0.5
+    },
+    "Settings": {
+        "TO DO": null
+    }
+}

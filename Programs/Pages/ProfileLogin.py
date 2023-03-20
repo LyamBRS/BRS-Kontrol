@@ -368,6 +368,9 @@ class ProfileLogin(Screen):
             self.PasswordTitle.font_style = "H5"
             self.UsernameTitle.font_style = "H5"
 
+            self.Username.hint_text = _("Username")
+            self.Password.hint_text = _("Password")
+
             # Page title
             self.LoginTitle = MDLabel(text=_("Login"), font_style = "H1", halign = "center", size_hint_y = 0.25)
 

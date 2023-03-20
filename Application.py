@@ -20,9 +20,9 @@ BRSpath = path + "\Libraries\BRS_Python_Libraries\BRS"
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1,path)
 sys.path.insert(2,BRSpath)
-#====================================================================#
+#===================================================================#
 # Imports
-#====================================================================#
+#===================================================================#
 from kivy.core.window import Window
 # -------------------------------------------------------------------
 from kivymd.app import MDApp

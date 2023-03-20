@@ -33,6 +33,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
 from ..Local.Loading.AppLoadingHandler import LoadApplication
+
 #====================================================================#
 # Screen Functions
 #====================================================================#

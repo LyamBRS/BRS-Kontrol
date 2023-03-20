@@ -1,0 +1,21 @@
+{
+    "Information" : {
+        "Authors" : ["Lyam"],
+        "Companies" : [
+            "BRS"
+        ],
+        "Version" : "2023.08.18",
+        "Name" : "Debugger",
+        "Description" : "",
+        "IconPath" : "bug",
+        "IconType" : "Kivy"
+    },
+    "Configuration" : {
+        "RequiresBrSpand" : false,
+        "Repository" : ""
+    },
+    "Requirements" : {
+        "OS" : "Any",
+        "Processor" : "Any"
+    }
+}

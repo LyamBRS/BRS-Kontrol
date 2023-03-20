@@ -38,6 +38,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from .ProfileLogin import ProfileLogins_Screens
 from .ProfileCreation import ProfileCreation_Screens
 from ..Local.FileHandler import Profiles
+from ..Pages.DriverMenu import DriverMenu
 #====================================================================#
 # Functions
 #====================================================================#
@@ -240,13 +241,13 @@ class ProfileMenu(Screen):
         self.animation.start(self)
 
         Debug.Log("Checking if profile has no password")
-        if(len(card.json.jsonData[structureEnum.Generic][ProfileGenericEnum.Password]) == 0):
+        if(len(card.json.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Password.value]) == 0):
             Debug.Log("No password required")
 
         Debug.Log("Setting profileLoging exit and callers")
         ProfileLogins_Screens.SetCaller(ProfileMenu, "ProfileMenu")
         ProfileLogins_Screens.SetBadExiter(ProfileMenu, "ProfileMenu", direction="down")
-        ProfileLogins_Screens.SetGoodExiter(Startup_Screens, "Startup")
+        ProfileLogins_Screens.SetGoodExiter(DriverMenu, "DriverMenu")
         ProfileLogins_Screens.Call()
 
         Debug.End()

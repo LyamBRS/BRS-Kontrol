@@ -3,11 +3,11 @@
 #====================================================================#
 import os
 import sys
-print("=============================== IMPORT FIXER?")
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(CURRENT_DIR))
-print(sys.path)
-print("It did a thing, probably didnt work tho\n\n\n\n")
+# print("=============================== IMPORT FIXER?")
+# CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# sys.path.append(os.path.dirname(CURRENT_DIR))
+# print(sys.path)
+# print("It did a thing, probably didnt work tho\n\n\n\n")
 
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("Application.py")

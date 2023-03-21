@@ -21,18 +21,59 @@ LoadingLog.Start("AppLoading.py")
 #region --------------------------------------------------------- BRS
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #endregion
 #region -------------------------------------------------------- Kivy
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
 #endregion
 #region ------------------------------------------------------ KivyMD
 from kivymd.uix.navigationdrawer import MDNavigationDrawer,MDNavigationDrawerDivider,MDNavigationDrawerHeader,MDNavigationDrawerItem,MDNavigationDrawerLabel,MDNavigationDrawerMenu,MDNavigationLayout
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.list import MDList, OneLineListItem, OneLineIconListItem
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.recycleview import MDRecycleView
+from kivymd.uix.button import MDFillRoundFlatIconButton
 #endregion
 #====================================================================#
 # Functions
 #====================================================================#
-
+SettingMenuButtons = [
+    {
+        "name" : _("Network"),
+        "icon" : "wifi-cog",
+        "function" : None
+    },
+    {
+        "name" : _("Bluetooth"),
+        "icon" : "bluetooth-settings",
+        "function" : None
+    },
+    {
+        "name" : _("Devices"),
+        "icon" : "devices",
+        "function" : None
+    },
+    {
+        "name" : _("BrSpand"),
+        "icon" : "expansion-card-variant",
+        "function" : None
+    },
+    {
+        "name" : _("Controls & Keybinds"),
+        "icon" : "controller",
+        "function" : None
+    },
+    {
+        "name" : _("Account"),
+        "icon" : "account-edit",
+        "function" : None
+    },
+    {
+        "name" : _("Quit"),
+        "icon" : "power",
+        "function" : None
+    }
+]
 #====================================================================#
 # Classes
 #====================================================================#
@@ -48,17 +89,34 @@ class AppNavigationBar():
         super(AppNavigationBar, self).__init__(**kwargs)
         Debug.Start("AppNavigationBar -> __init__")
 
-        self.NavDrawer = MDNavigationDrawer()
 
-        # Add a list to the navigation drawer
-        nav_list = MDList()
-        nav_list.orientation = "tb-rl"
-        
-        nav_list.add_widget(OneLineIconListItem(text="Option 1"))
-        nav_list.add_widget(OneLineIconListItem(text="Option 2"))
-        nav_list.add_widget(OneLineIconListItem(text="Option 3"))
-        nav_list.add_widget(OneLineIconListItem(text="Option 4"))
-        self.NavDrawer.add_widget(nav_list)
+        # Widgets
+        self.NavDrawer = MDNavigationDrawer()
+        self.DrawerLayout = MDBoxLayout()
+        self.RecyleBoxLayout = RecycleBoxLayout(default_size=(None,56),
+                                                default_size_hint=(1, None),
+                                                size_hint=(1, None),
+                                                orientation='vertical',
+                                                spacing = 10)
+        self.recycleView = MDRecycleView()
+        # RecycleView
+        self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
+        self.recycleView.add_widget(self.RecyleBoxLayout)
+        self.recycleView.viewclass = MDFillRoundFlatIconButton
+
+        # Recycle view filling
+        self.recycleView.data = [{'icon': data["icon"],
+                                  'font_style' : "H5",
+                                   'on_release':data["function"],
+                                   'text' : data["name"],
+                                   'valign' : "center",
+                                   'halign' : "left"}
+                                    for data in SettingMenuButtons
+                                    ]
+
+
+        # Nav Drawer handler
+        self.NavDrawer.add_widget(self.recycleView)
         self.NavDrawer.orientation = "vertical"
         self.NavDrawer.elevation = Shadow.Elevation.default
         self.NavDrawer.shadow_softness = Shadow.Smoothness.default

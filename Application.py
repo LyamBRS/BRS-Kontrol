@@ -20,9 +20,9 @@ BRSpath = path + "\Libraries\BRS_Python_Libraries\BRS"
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1,path)
 sys.path.insert(2,BRSpath)
-#====================================================================#
+#===================================================================#
 # Imports
-#====================================================================#
+#===================================================================#
 from kivy.core.window import Window
 # -------------------------------------------------------------------
 from kivymd.app import MDApp
@@ -88,8 +88,8 @@ class Application(MDApp):
         Debug.Log("Configuring window size and attributes")
         Window.borderless = True
         Window.resizable = True
-        #Window.left = -1024
-        #Window.top = 600
+        Window.left = -1024
+        Window.top = 600
         Window.fullscreen = "auto"
 
         # Create screen manager

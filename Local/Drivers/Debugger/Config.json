@@ -11,11 +11,23 @@
         "IconType" : "Kivy"
     },
     "Configuration" : {
-        "RequiresBrSpand" : false,
+        "Version" : "2023.03.21",
         "Repository" : ""
     },
     "Requirements" : {
         "OS" : "Any",
-        "Processor" : "Any"
+        "Processor" : "Any",
+        "Internet" : false,
+        "Bluethoot" : false,
+        "BrSpand" : false,
+        "Kontrol" : false,
+        "OtherDevice" : false
+    },
+    "Utilizes" : {
+        "Internet" : false,
+        "Bluethoot" : false,
+        "BrSpand" : false,
+        "Kontrol" : false,
+        "OtherDevice" : false
     }
 }

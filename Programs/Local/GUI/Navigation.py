@@ -17,6 +17,7 @@ LoadingLog.Start("AppLoading.py")
 # Imports
 #====================================================================#
 #region ------------------------------------------------------ Python
+import os
 #endregion
 #region --------------------------------------------------------- BRS
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -34,44 +35,52 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.recycleview import MDRecycleView
 from kivymd.uix.button import MDFillRoundFlatIconButton
 #endregion
+from ..FileHandler.deviceDriver import CheckIntegrity, GetDrivers
 #====================================================================#
 # Functions
+#====================================================================#
+def TryFunction(*args):
+    Debug.Start("TryFunction")
+    CheckIntegrity("Debugger")
+    Debug.End()
+#====================================================================#
+# Structure
 #====================================================================#
 SettingMenuButtons = [
     {
         "name" : _("Network"),
         "icon" : "wifi-cog",
-        "function" : None
+        "function" : TryFunction
     },
     {
         "name" : _("Bluetooth"),
         "icon" : "bluetooth-settings",
-        "function" : None
+        "function" : TryFunction
     },
     {
         "name" : _("Devices"),
         "icon" : "devices",
-        "function" : None
+        "function" : TryFunction
     },
     {
         "name" : _("BrSpand"),
         "icon" : "expansion-card-variant",
-        "function" : None
+        "function" : TryFunction
     },
     {
         "name" : _("Controls & Keybinds"),
         "icon" : "controller",
-        "function" : None
+        "function" : TryFunction
     },
     {
         "name" : _("Account"),
         "icon" : "account-edit",
-        "function" : None
+        "function" : TryFunction
     },
     {
         "name" : _("Quit"),
         "icon" : "power",
-        "function" : None
+        "function" : TryFunction
     }
 ]
 #====================================================================#

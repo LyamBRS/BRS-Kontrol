@@ -20,7 +20,7 @@ LoadingLog.Start("AppLoading.py")
 import os
 #endregion
 #region --------------------------------------------------------- BRS
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, JSONdata, IsPathValid
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, JSONdata, IsPathValid, CompareKeys
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog      import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums       import FileIntegrity
 #endregion
@@ -141,6 +141,24 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
         Debug.End()
         return FileIntegrity.Corrupted
     #endregion
+    #region -------------------------------------------------- STEP 4
+    Debug.Log("[4]: Config.json verifications")
+    json = JSONdata("Config", pathToDeviceDriver)
+
+    if (len(json.jsonData.keys()) != len(JsonStructure.keys())):
+        Debug.Error("-> Number of keys don't match")
+        Debug.End()
+        return FileIntegrity.Corrupted
+    else:
+        Debug.Log(">>> SUCCESS")
+    #endregion
+    #region -------------------------------------------------- STEP 5
+    Debug.Log("[5]: Config.json deep verifications")
+    
+    Debug.Log("Checking regular keys")
+    CompareKeys(JsonStructure, json.jsonData, "Huh")
+    #endregion
+
 
     Debug.End()
 # -------------------------------------------------------------------

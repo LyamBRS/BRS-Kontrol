@@ -13,7 +13,7 @@ import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from datetime import date,datetime
 
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder, AppendPath
 from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
@@ -89,7 +89,7 @@ class Cache():
             This is the first thing you should call in your application
         """
         Debug.Start("Cache -> Load")
-        path = os.getcwd() + "\\Local\\Cache"
+        path = AppendPath(os.getcwd(), "/Local/Cache")
         Cache.fileFinder = FilesFinder("json", path)
 
         if(len(Cache.fileFinder.fileList) > 0):
@@ -135,10 +135,10 @@ class Cache():
             where it absolutely cannot be created at all.
         """
         Debug.Start("Cache: CreateNew")
-        Cache.jsonData = JSONdata("Cache",os.getcwd() + "\\Local\\Cache\\")
+        Cache.jsonData = JSONdata("Cache",AppendPath(os.getcwd(), "/Local/Cache/"))
 
         if(Cache.jsonData.CreateFile(cacheStructure)):
-            Cache.jsonData = JSONdata("Cache",os.getcwd() + "\\Local\\Cache\\")
+            Cache.jsonData = JSONdata("Cache",AppendPath(os.getcwd(), "/Local/Cache/"))
             Debug.Log("File created successfully")
             Cache.SetDate("Creation")
             Cache.SetDate("Open")

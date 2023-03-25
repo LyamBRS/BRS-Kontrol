@@ -30,6 +30,7 @@ from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from ...Pages.PopUps import PopUpsHandler,Keys,PopUpTypeEnum
 from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
 from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 #endregion
 #region -------------------------------------------------------- Kivy
 from kivy.clock import Clock
@@ -287,15 +288,15 @@ def IntegrityCheck() -> bool:
 
     #region ---- Step 0 -> Creating variables
     Debug.Log("Step 0 -> Creating variables")
-    workingDirectory = os.getcwd()
-    mainFolders = os.listdir(workingDirectory)
-    ProgramsFolders = os.listdir(workingDirectory + "\\Programs")
-    LocalFolders = os.listdir(workingDirectory + "\\Local")
-    LibrariesFolders = os.listdir(workingDirectory + "\\Libraries")
-    BrSpandFolders = os.listdir(workingDirectory + "\\BrSpand")
-    IconFiles = os.listdir(workingDirectory + "\\Libraries\\Icons\\Logo")
-    CacheFiles = os.listdir(workingDirectory + "\\Local\\Cache")
-    LanguagePacksFolders = os.listdir(workingDirectory + "\\Local\\Languages\\locale")
+    workingDirectory        = os.getcwd()
+    mainFolders             = os.listdir(AppendPath(workingDirectory, ""))
+    ProgramsFolders         = os.listdir(AppendPath(workingDirectory, "/Programs"))
+    LocalFolders            = os.listdir(AppendPath(workingDirectory, "/Local"))
+    LibrariesFolders        = os.listdir(AppendPath(workingDirectory, "/Libraries"))
+    BrSpandFolders          = os.listdir(AppendPath(workingDirectory, "/BrSpand"))
+    IconFiles               = os.listdir(AppendPath(workingDirectory, "/Libraries/Icons/Logo"))
+    CacheFiles              = os.listdir(AppendPath(workingDirectory, "/Local/Cache"))
+    LanguagePacksFolders    = os.listdir(AppendPath(workingDirectory, "/Local/Languages/locale"))
     missingFilesList = []
     missingFiles = False
 

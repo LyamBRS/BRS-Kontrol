@@ -20,7 +20,7 @@ LoadingLog.Start("AppLoading.py")
 import os
 #endregion
 #region --------------------------------------------------------- BRS
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, JSONdata, IsPathValid, CompareKeys
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, JSONdata, IsPathValid, CompareKeys, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog      import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums       import FileIntegrity
 #endregion
@@ -104,7 +104,7 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
 
     #region -------------------------------------------------- STEP 1
     Debug.Log("[1]: Path validation")
-    pathToDeviceDriver = os.getcwd() + f"\\Local\\Drivers\\{NameOfDeviceDriver}"
+    pathToDeviceDriver = AppendPath(os.getcwd(), f"/Local/Drivers/{NameOfDeviceDriver}")
 
     if(IsPathValid(pathToDeviceDriver)):
         Debug.Log(">>> Success")
@@ -129,7 +129,7 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
     #endregion
     #region -------------------------------------------------- STEP 3
     Debug.Log("[3]: Local folder verification")
-    content = os.listdir(pathToDeviceDriver + "\\Local")
+    content = os.listdir(AppendPath(pathToDeviceDriver, "/Local"))
     Debug.Log(content)
 
     if all(elem in content for elem in mandatoryLocalContent):
@@ -172,7 +172,7 @@ def GetDrivers(NameOfDeviceDriver) -> list:
     """
     Debug.Start("GetDrivers")
     appPath = os.getcwd()
-    appPath = appPath + f"\\Local\\Drivers\\{NameOfDeviceDriver}"
+    appPath = AppendPath(appPath, f"/Local/Drivers/{NameOfDeviceDriver}")
 
     Debug.Log("Found drivers:")
     drivers = os.listdir(appPath)

@@ -36,6 +36,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppMan
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 # -------------------------------------------------------------------
 from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
@@ -82,7 +83,8 @@ class Application(MDApp):
 
         # Load available languages
         Debug.Log("Initializing AppLanguage. Defaulting to US_English")
-        AppLanguage.__init__(AppLanguage, os.getcwd() + "\\Local\\Languages\\locale", "US_English")
+        path = AppendPath(os.getcwd(), "/Local/Languages/locale")
+        AppLanguage.__init__(AppLanguage, path, "US_English")
 
         # Set window to 3rd monitor.
         Debug.Log("Configuring window size and attributes")

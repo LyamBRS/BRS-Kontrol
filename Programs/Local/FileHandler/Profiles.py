@@ -10,7 +10,7 @@ LoadingLog.Start("Profiles.py")
 
 from enum import Enum
 import os
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from kivymd.theming import ThemeManager
@@ -304,7 +304,7 @@ def CheckUsername(username:str) -> bool:
     bannedChars = {'#', '<', '>', '*', '?', '/', '%', '&', '\\', '{', '}', '$', '!', '+', '"', '\'', '`', ':', '@', '=', '|', '.'}
 
     Debug.Log("Checking if profile already exists")
-    Profiles = FilesFinder(".json", os.getcwd() + "\\Local\\Profiles")
+    Profiles = FilesFinder(".json", AppendPath(os.getcwd(), "/Local/Profiles"))
     if((username)+".json" in Profiles.fileList):
         Debug.Log("username already exists")
         Debug.End()
@@ -488,7 +488,7 @@ class ProfileHandler:
         Debug.Start("ProfileHandler -> CreateProfile")
 
         Debug.Log("Getting profile directory")
-        profileDirectory = os.getcwd() + "\\Local\\Profiles\\"
+        profileDirectory = AppendPath(os.getcwd(), "/Local/Profiles/")
 
         sus = {"among us" : 1}
 

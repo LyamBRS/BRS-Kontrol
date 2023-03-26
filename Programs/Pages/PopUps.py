@@ -22,17 +22,20 @@ LoadingLog.Start("PopUps.py")
 # Imports
 #====================================================================#
 #region ------------------------------------------------------ Python
+LoadingLog.Import("Python")
 import os
 from enum import Enum
 from functools import partial
 #endregion
 #region --------------------------------------------------------- BRS
+LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 #endregion
 #region -------------------------------------------------------- Kivy
+LoadingLog.Import("Kivy")
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
 from kivy.uix.widget import Widget
@@ -40,6 +43,7 @@ from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 #endregion
 #region ------------------------------------------------------ KivyMD
+LoadingLog.Import("KivyMD")
 from kivymd.color_definitions import colors
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -48,11 +52,10 @@ from kivymd.uix.card import MDCard
 from kivymd.uix.button import MDIconButton,MDRaisedButton,MDFillRoundFlatButton
 from kivymd.uix.label import MDLabel
 #endregion
-LoadingLog.Log("Import success")
 #====================================================================#
 # Enums
 #====================================================================#
-LoadingLog.Log("PopUpTypeEnum")
+LoadingLog.Class("PopUpTypeEnum")
 class PopUpTypeEnum(Enum):
     """
         PopUpTypeEnum:
@@ -65,7 +68,7 @@ class PopUpTypeEnum(Enum):
     Question:int = 2
     Warning:int = 3
     Custom:int = 4
-LoadingLog.Log("Keys")
+LoadingLog.Class("Keys")
 class Keys(Enum):
     """
         Keys:
@@ -82,6 +85,7 @@ class Keys(Enum):
 #====================================================================#
 # Pop up structure
 #====================================================================#
+LoadingLog.GlobalVariable("PopUpStructure")
 PopUpStructure = {
     Keys.Icon : "exclamation",
     Keys.Message : "Message",
@@ -96,7 +100,7 @@ PopUpStructure = {
 #====================================================================#
 # Functions
 #====================================================================#
-LoadingLog.Log("PopUpsHandler")
+LoadingLog.Class("PopUpsHandler")
 class PopUpsHandler:
     """Class that handles the creation of the popups to display"""
     #region   --------------------------- MEMBERS
@@ -104,6 +108,7 @@ class PopUpsHandler:
     _PopUpsWidgets:list = []
     #endregion
     #region   --------------------------- METHODS
+    LoadingLog.Method("Clear")
     def Clear():
         """
             Clear:
@@ -115,6 +120,7 @@ class PopUpsHandler:
         PopUpsHandler._PopUpsWidgets.clear()
         Debug.End()
     # -------------------------------------------
+    LoadingLog.Method("Add")
     def Add(Type:Keys, Icon:str = "blank", Message:str=_("Empty pop up"), CanContinue:bool=True, ButtonAText:str="Ok", ButtonBText:str="Cancel"):
         """
             Add:
@@ -133,6 +139,7 @@ class PopUpsHandler:
         })
         Debug.End()
     # -------------------------------------------
+    LoadingLog.Method("_AddWidget")
     def _AddWidget(widget):
         """
             Adds the widget reference to the list of widgets displayed
@@ -143,7 +150,7 @@ class PopUpsHandler:
 #====================================================================#
 # Screen class
 #====================================================================#
-LoadingLog.Log("PopUps_Screens")
+LoadingLog.Class("PopUps_Screens")
 class PopUps_Screens:
     """
         PopUps_Screens:
@@ -342,7 +349,7 @@ class PopUps_Screens:
 #====================================================================#
 # Main Function
 #====================================================================#
-LoadingLog.Log("PopUps")
+LoadingLog.Class("PopUps")
 class PopUps(Screen):
     """
         PopUps:
@@ -373,6 +380,7 @@ class PopUps(Screen):
     #region   --------------------------- MEMBERS
     #endregion
     #region   --------------------------- CONSTRUCTOR
+    LoadingLog.Method("__init__")
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Debug.Start("PopUps")
@@ -474,6 +482,7 @@ class PopUps(Screen):
 # ------------------------------------------------------------------------
 
 #====================================================================#
+LoadingLog.Function("GetPopUpCard")
 def GetPopUpCard(profileStructure:dict, ButtonACallback=None, ButtonBCallback=None) -> Widget:
     """
         GetPopUpCard:
@@ -569,6 +578,7 @@ def GetPopUpCard(profileStructure:dict, ButtonACallback=None, ButtonBCallback=No
     return Card
     #endregion
 # -------------------------------------------------------------------
+LoadingLog.Function("AutoDestruction")
 def AutoDestruction(self, *args):
     """
         AutoDestruction:
@@ -600,6 +610,5 @@ def AutoDestruction(self, *args):
     Debug.Log(ScrollView.scroll_to(widget, padding=50))
     Debug.Log("SUCCESS")
     Debug.End()
-
 #====================================================================#
 LoadingLog.End("PopUps.py")

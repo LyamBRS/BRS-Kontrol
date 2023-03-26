@@ -23,14 +23,16 @@ sys.path.insert(2,BRSpath)
 #===================================================================#
 # Imports
 #===================================================================#
+LoadingLog.Import("Kivy")
 from kivy.core.window import Window
+from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 # -------------------------------------------------------------------
+LoadingLog.Import("KivyMD")
 from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 from kivymd.theming import ThemeManager
-from Programs.Local.FileHandler.Cache import Cache
 # -------------------------------------------------------------------
+LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.font import Font
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
@@ -38,6 +40,8 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 # -------------------------------------------------------------------
+LoadingLog.Import("Local")
+from Programs.Local.FileHandler.Cache import Cache
 from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
 from Programs.Pages.AppLoading import AppLoading,AppLoading_Screens
@@ -58,10 +62,11 @@ ButtonFont.size = "32sp"
 # Classes
 #====================================================================#
 # ------------------------------------------------------------------------
+LoadingLog.Class("Application")
 class Application(MDApp):
 
     # theme_cls = ThemeManager()
-
+    LoadingLog.Method("build")
     def build(self):
         """
             This creates the Screen manager, which is stored inside of the global AppManager class.
@@ -125,10 +130,12 @@ class Application(MDApp):
         Startup_Screens.Call()
         Debug.End()
         return AppManager.manager
-    
+
+    LoadingLog.Method("on_start")
     def on_start(self):
         print("Application built... starting")
 
+    LoadingLog.Method("on_stop")
     def on_stop(self):
         Debug.Start("Application -> on_stop")
         if(Cache.loaded):

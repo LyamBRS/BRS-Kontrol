@@ -3,9 +3,7 @@
 #====================================================================#
 
 #====================================================================#
-from re import X
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-# from Programs.Pages.ProfileMenu import ProfileMenu
 LoadingLog.Start("ProfileCreation.py")
 #====================================================================#
 # Imports
@@ -127,6 +125,7 @@ DefaultIconBannedWords = {
 ProfileIcons = []
 
 # Creating the allowed icons list:
+LoadingLog.Log("Creating profile icon list")
 for key in md_icons.keys():
     keyWordList = key.split("-")
     isBanned = False
@@ -413,7 +412,6 @@ class ProfileCreation_Screens:
 # Functions
 #====================================================================#
 class CustomOneLineIconListItem(OneLineIconListItem):
-    print("CustomOneLineIconListItem")
     icon = StringProperty()
 
 class IconListItem(CustomOneLineIconListItem):

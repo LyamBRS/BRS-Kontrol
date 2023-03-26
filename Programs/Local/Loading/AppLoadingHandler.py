@@ -18,12 +18,14 @@ LoadingLog.Start("AppLoadingHandler.py")
 # Imports
 #====================================================================#
 #region ------------------------------------------------------ Python
+LoadingLog.Import("Python")
 import os
 from enum import Enum
 from functools import partial
 import asyncio
 #endregion
 #region --------------------------------------------------------- BRS
+LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
@@ -33,15 +35,15 @@ from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 #endregion
 #region -------------------------------------------------------- Kivy
+LoadingLog.Import("Kivy")
 from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 #endregion
-LoadingLog.Log("Import success")
 #====================================================================#
 # Enums
 #====================================================================#
-LoadingLog.Log("LoadingStepsEnum")
+LoadingLog.Class("LoadingStepsEnum")
 class LoadingStepsEnum(Enum):
     """
         LoadingSteps:
@@ -102,7 +104,7 @@ class LoadingStepsEnum(Enum):
         a BRS Kontrol PCB.
     """
 # --------------------------------------------------------------------
-LoadingLog.Log("ParamEnum")
+LoadingLog.Class("ParamEnum")
 class ParamEnum(Enum):
     """
         ParamEnum:
@@ -156,7 +158,7 @@ class ParamEnum(Enum):
         set the skip of all GitHub functions to `True`.
     """
 # --------------------------------------------------------------------
-LoadingLog.Log("ErrorTypeEnum")
+LoadingLog.Class("ErrorTypeEnum")
 class ErrorTypeEnum(Enum):
     """
         ErrorTypeEnum:
@@ -182,6 +184,7 @@ class ErrorTypeEnum(Enum):
     APIOutOfRequest:int = 6
     """ The step could not execute because the API used ran out of requests """
 # --------------------------------------------------------------------
+LoadingLog.Class("Allowed")
 class Allowed():
     #region --- DocString
     """
@@ -261,7 +264,7 @@ class Allowed():
 # Functions
 #====================================================================#
 #region ---- Integrity
-LoadingLog.Log("IntegrityCheck")
+LoadingLog.Function("IntegrityCheck")
 def IntegrityCheck() -> bool:
     #region ---- DocString
     """
@@ -468,7 +471,7 @@ def IntegrityCheck() -> bool:
         Debug.End()
         return True
     #endregion
-LoadingLog.Log("IntegrityCheck_CallBack")
+LoadingLog.Function("IntegrityCheck_CallBack")
 def IntegrityCheck_CallBack() -> bool:
     """
         IntegrityCheck_CallBack:
@@ -515,7 +518,7 @@ def IntegrityCheck_CallBack() -> bool:
 #endregion
 #--------------------------------------------------------------------
 #region ---- Internet
-LoadingLog.Log("InternetCheck")
+LoadingLog.Function("InternetCheck")
 def InternetCheck() -> bool:
     #region ---- DocString
     """
@@ -541,7 +544,7 @@ def InternetCheck() -> bool:
         LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage] = _("Good")
         Debug.End()
         return False
-LoadingLog.Log("IntegrityCheck_CallBack")
+LoadingLog.Function("IntegrityCheck_CallBack")
 def InternetCheck_CallBack() -> bool:
     """
         IntegrityCheck_CallBack:
@@ -592,7 +595,7 @@ def InternetCheck_CallBack() -> bool:
 #endregion
 #--------------------------------------------------------------------
 #region ---- Environement
-LoadingLog.Log("EnvironementCheck")
+LoadingLog.Function("EnvironementCheck")
 def EnvironementCheck() -> bool:
     #region ---- DocString
     """
@@ -653,7 +656,7 @@ def EnvironementCheck() -> bool:
     Debug.End()
     return False
 
-LoadingLog.Log("EnvironementCheck_CallBack")
+LoadingLog.Function("EnvironementCheck_CallBack")
 def EnvironementCheck_CallBack() -> bool:
     """
         IntegrityCheck_CallBack:
@@ -694,7 +697,7 @@ def EnvironementCheck_CallBack() -> bool:
 #endregion
 #--------------------------------------------------------------------
 #region ---- GitHub
-LoadingLog.Log("GitHubCheck")
+LoadingLog.Function("GitHubCheck")
 def GitHubCheck() -> bool:
     #region ---- DocString
     """
@@ -731,7 +734,7 @@ def GitHubCheck() -> bool:
         return True
     #endregion
 
-LoadingLog.Log("GitHubCheck_CallBack")
+LoadingLog.Function("GitHubCheck_CallBack")
 def GitHubCheck_CallBack() -> bool:
     """
         IntegrityCheck_CallBack:
@@ -785,7 +788,7 @@ def GitHubCheck_CallBack() -> bool:
 #endregion
 #--------------------------------------------------------------------
 #region ---- KontrolGitHub
-LoadingLog.Log("KontrolGitHub")
+LoadingLog.Function("KontrolGitHub")
 def KontrolGitHub() -> bool:
     #region ---- DocString
     """
@@ -817,7 +820,7 @@ def KontrolGitHub() -> bool:
     LoadingSteps[step][ParamEnum.ErrorMessage] = _("Good")
     Debug.End()
     return False
-LoadingLog.Log("KontrolGitHub_CallBack")
+LoadingLog.Function("KontrolGitHub_CallBack")
 def KontrolGitHub_CallBack() -> bool:
     """
         IntegrityCheck_CallBack:
@@ -875,7 +878,7 @@ def KontrolGitHub_CallBack() -> bool:
 #====================================================================#
 # Main Function
 #====================================================================#
-LoadingLog.Log("LoadApplication")
+LoadingLog.Function("LoadApplication")
 def LoadApplication(updateFunction, setMaxFunction) -> bool:
     """
         LoadApplication:
@@ -913,7 +916,7 @@ def LoadApplication(updateFunction, setMaxFunction) -> bool:
         delay=delay+0.5
         Clock.schedule_once(partial(ExecuteStep,updateFunction,step,count),delay)
     Debug.End()
-
+LoadingLog.Function("ExecuteStep")
 def ExecuteStep(updateFunction,step, count:dict, *args):
     Debug.Start("ExecuteStep")
     step = step[1]
@@ -953,7 +956,7 @@ def ExecuteStep(updateFunction,step, count:dict, *args):
 #====================================================================#
 # Loading steps
 #====================================================================#
-LoadingLog.Log("LoadingSteps")
+LoadingLog.GlobalVariable("LoadingSteps")
 LoadingSteps = {
     LoadingStepsEnum.IntegrityCheck : {
         ParamEnum.DisplayName : "Checking self integrity",

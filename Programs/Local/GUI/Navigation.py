@@ -17,17 +17,21 @@ LoadingLog.Start("AppLoading.py")
 # Imports
 #====================================================================#
 #region ------------------------------------------------------ Python
+LoadingLog.Import("Python")
 import os
 #endregion
 #region --------------------------------------------------------- BRS
+LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #endregion
 #region -------------------------------------------------------- Kivy
+LoadingLog.Import("Kivy")
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 #endregion
 #region ------------------------------------------------------ KivyMD
+LoadingLog.Import("KivyMD")
 from kivymd.uix.navigationdrawer import MDNavigationDrawer,MDNavigationDrawerDivider,MDNavigationDrawerHeader,MDNavigationDrawerItem,MDNavigationDrawerLabel,MDNavigationDrawerMenu,MDNavigationLayout
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.list import MDList, OneLineListItem, OneLineIconListItem
@@ -35,10 +39,12 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.recycleview import MDRecycleView
 from kivymd.uix.button import MDFillRoundFlatIconButton
 #endregion
+LoadingLog.Import("Local")
 from ..FileHandler.deviceDriver import CheckIntegrity, GetDrivers
 #====================================================================#
 # Functions
 #====================================================================#
+LoadingLog.Function("TryFunction")
 def TryFunction(*args):
     Debug.Start("TryFunction")
     CheckIntegrity("Debugger")
@@ -46,6 +52,7 @@ def TryFunction(*args):
 #====================================================================#
 # Structure
 #====================================================================#
+LoadingLog.GlobalVariable("SettingMenuButtons")
 SettingMenuButtons = [
     {
         "name" : _("Network"),
@@ -86,6 +93,7 @@ SettingMenuButtons = [
 #====================================================================#
 # Classes
 #====================================================================#
+LoadingLog.Class("AppNavigationBar")
 class AppNavigationBar():
     """
         NavigationBar:
@@ -94,6 +102,7 @@ class AppNavigationBar():
         and navigation drawer for the main menus (NOT DRIVERS)
     """
     #region ---------------------------------------------- Constructor
+    LoadingLog.Method("__init__")
     def __init__(self, pageTitle:str = "", **kwargs):
         super(AppNavigationBar, self).__init__(**kwargs)
         Debug.Start("AppNavigationBar -> __init__")
@@ -145,10 +154,14 @@ class AppNavigationBar():
         Debug.End()
     #endregion
     #region -------------------------------------------------- Members
+    LoadingLog.Member("ToolBar")
     ToolBar:MDTopAppBar = None
+
+    LoadingLog.Member("NavDrawer")
     NavDrawer:MDNavigationDrawer = None
     #endregion
     #region -------------------------------------------------- Methods
+    LoadingLog.Method("Callback")
     def Callback(self, *args):
         pass
     #endregion

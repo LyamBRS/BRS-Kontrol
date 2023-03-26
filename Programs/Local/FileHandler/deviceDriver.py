@@ -162,7 +162,7 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
 
     Debug.End()
 # -------------------------------------------------------------------
-def GetDrivers(NameOfDeviceDriver) -> list:
+def GetDrivers(NameOfDeviceDriver:str="") -> list:
     """
         GetDrivers:
         -----------
@@ -172,7 +172,7 @@ def GetDrivers(NameOfDeviceDriver) -> list:
     """
     Debug.Start("GetDrivers")
     appPath = os.getcwd()
-    appPath = AppendPath(appPath, f"/Local/Drivers/{NameOfDeviceDriver}")
+    appPath = AppendPath(appPath, f"/Local/Drivers")
 
     Debug.Log("Found drivers:")
     drivers = os.listdir(appPath)

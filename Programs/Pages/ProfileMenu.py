@@ -102,7 +102,6 @@ class ProfileMenu(Screen):
             per available profiles.
         """
         Debug.Start("ProfileMenu.py: on_pre_enter")
-
         self.padding = 25
         self.spacing = 25
 
@@ -165,12 +164,13 @@ class ProfileMenu(Screen):
             In this case, once the view is fully loaded, the cards
             will slowly elevate to the wanted value.
         """
-        print("Menu: on_enter")
+        Debug.Start("ProfileMenu -> on_enter")
         # Slowly make "Welcome" appear on screen
         self.animation.stop_all(self)
         self.animation = Animation(progress = 1, duration = 0.5)
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
+        Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
         """
@@ -178,7 +178,8 @@ class ProfileMenu(Screen):
             us time to animate the screen leaving before destroying the
             objects and instances it created.
         """
-        print("Menu: on_pre_leave")
+        Debug.Start("ProfileMenu -> on_pre_leave")
+        Debug.End()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
@@ -188,8 +189,8 @@ class ProfileMenu(Screen):
         Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
         AppManager.manager.remove_widget(self)
-        Debug.End()
         self.clear_widgets()
+        Debug.End()
 # ------------------------------------------------------------------------
     def _Animating(self, *args):
         """

@@ -266,7 +266,7 @@ class PopUps_Screens:
                 Debug.End()
                 return False
             except:
-                Debug.Log("Class specified wasn't an _Screen class.")
+                Debug.Error("Class specified wasn't an _Screen class.")
                 AppManager.manager.add_widget(PopUps_Screens._exitClass(name=PopUps_Screens._exitName))
         except:
             Debug.Error("PopUps: _Exit() -> Failed in add_widget")
@@ -596,7 +596,7 @@ def AutoDestruction(self, *args):
         Debug.End()
         return
 
-    Debug.Log("Scrolling to next card")
+    Debug.Log("Scrolling to next card...")
     Debug.Log(ScrollView.scroll_to(widget, padding=50))
     Debug.Log("SUCCESS")
     Debug.End()

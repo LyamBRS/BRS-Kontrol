@@ -121,34 +121,62 @@
 
 
 # TestNavigationDrawer().run()
-
 from kivy.lang import Builder
-from kivy.properties import ListProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivymd.app import MDApp
-from kivymd.uix.button import MDFillRoundFlatIconButton, MDRoundFlatIconButton
-from kivy.animation import Animation
+from kivymd.uix.button import MDFillRoundFlatButton
+from kivymd.uix.navigationdrawer import MDNavigationDrawer
+from kivymd.uix.toolbar import MDTopAppBar
 
 KV = '''
-MDFillRoundFlatIconButton:
-    text: "Press me"
-    icon: "android"
-    pos_hint: {"center_x": 0.5, "center_y": 0.5}
-    size_hint: None, None
-    size: "150dp", "150dp"
-    on_press: app.on_button_press(self)
+<MainScreen>:
+    MDNavigationDrawer:
+        id: nav_drawer
+        orientation: "vertical"
+        padding: "8dp"
+        MDLabel:
+            text: "Navigation Drawer"
+            font_style: "H6"
+            size_hint_y: None
+            height: self.texture_size[1]
+
+    MDTopAppBar:
+        id: toolbar
+        pos_hint: {"top": 1}
+        title: "MDNavigationDrawer Example"
+        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+        elevation: 10
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "8dp"
+
+        MDFillRoundFlatButton:
+            text: "Button 1"
+            on_release: print("Button 1 pressed")
+
+        MDFillRoundFlatButton:
+            text: "Button 2"
+            on_release: print("Button 2 pressed")
+
+        MDFillRoundFlatButton:
+            text: "Button 3"
+            on_release: print("Button 3 pressed")
 '''
 
-class TestApp(MDApp):
-    md_bg_color = ListProperty([0, 0, 0, 0])
+class MainScreen(FloatLayout):
+    pass
 
+class TestApp(MDApp):
     def build(self):
         return Builder.load_string(KV)
 
-    def on_button_press(self, button):
-        self.md_bg_color = button.theme_cls.primary_light
-
-        anim = Animation(md_bg_color=[0, 0, 0, 0], duration=0.2)
-        anim.start(button)
-
 if __name__ == '__main__':
     TestApp().run()
+
+
+
+
+
+

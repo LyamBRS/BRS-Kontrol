@@ -9,12 +9,14 @@ LoadingLog.Start("DriverMenu.py")
 # Imports
 #====================================================================#
 #region ------------------------------------------------------ Python
+import os
 #endregion
 #region --------------------------------------------------------- BRS
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
 #endregion
 #region -------------------------------------------------------- Kivy
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
@@ -23,9 +25,13 @@ from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTr
 from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.card import MDCard
+from kivymd.uix.button import MDTextButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 from ..Local.GUI.Navigation import AppNavigationBar
+from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #endregion
 #====================================================================#
 # Functions
@@ -62,12 +68,44 @@ class DriverMenu(Screen):
         self.spacing = 0
 
         #region ---------------------------- Layouts
-        self.Layout = MDBoxLayout(spacing=0, padding=(0,0,0,0), orientation="vertical")
+        # self.TopLayout = MDBoxLayout(spacing=0, padding=(0,0,0,0), orientation="vertical")
+        self.Layout = MDFloatLayout()
+        # Create a horizontal box layout offset by half the screen to center the first profile in view.
+        self.driversBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="400sp", padding = (50,50,50,50), size_hint_x=None)
+        self.driversBox.bind(minimum_width = self.driversBox.setter('width'))
+
+        # Create the scroll view and add the box layout to it
+        self.scroll = MDScrollView(pos_hint = {'top': 1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
+        self.scroll.smooth_scroll_end = 10
+
+        # Add widgets
+        self.scroll.add_widget(self.driversBox)
         #endregion
         #region ---------------------------- ToolBar
         self.ToolBar = AppNavigationBar(pageTitle=_("Devices Driver"))
         #endregion
+        #region ---------------------------- Drivers
+        path = AppendPath(os.getcwd(), "/Local/Drivers")
+        drivers = GetDrivers()
 
+        self.driversBox.add_widget(MDTextButton())
+
+        for driver in drivers:
+            card = DriverCard(AppendPath(path, f"/{driver}"),
+                            AppendPath(path, f"/{driver}/Config.json"),
+                            CheckIntegrity)
+            self.driversBox.add_widget(card)
+
+        # card = MDCard()
+        # card.size_hint_min = (1000,1)
+        # card.size_hint = (1,1)
+        # card.add_widget(MDTextButton(text="WTF"))
+        # self.driversBox.add_widget(card)
+        # card = MDTextButton(text="WTF")
+        # self.driversBox.add_widget(card)
+        #endregion
+
+        self.Layout.add_widget(self.scroll)
         self.Layout.add_widget(self.ToolBar.ToolBar)
         self.Layout.add_widget(self.ToolBar.NavDrawer)
         self.add_widget(self.Layout)

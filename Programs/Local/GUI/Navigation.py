@@ -100,14 +100,14 @@ class AppNavigationBar():
 
 
         # Widgets
-        self.NavDrawer = MDNavigationDrawer()
-        self.DrawerLayout = MDBoxLayout()
+        self.NavDrawer = MDNavigationDrawer(pos_hint = {'top': 1, 'left': 0})
+        self.DrawerLayout = MDBoxLayout(pos_hint = {'top': 1, 'left': 0})
         self.RecyleBoxLayout = RecycleBoxLayout(default_size=(None,56),
                                                 default_size_hint=(1, None),
                                                 size_hint=(1, None),
                                                 orientation='vertical',
                                                 spacing = 10)
-        self.recycleView = MDRecycleView()
+        self.recycleView = MDRecycleView(pos_hint = {'top': 1, 'left': 0})
         # RecycleView
         self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
         self.recycleView.add_widget(self.RecyleBoxLayout)
@@ -132,7 +132,7 @@ class AppNavigationBar():
         self.NavDrawer.shadow_radius = Shadow.Radius.default
 
         Debug.Log("Creating MDToolBar")
-        self.ToolBar = MDTopAppBar()
+        self.ToolBar = MDTopAppBar(pos_hint = {'top': 1, 'left': 0})
         self.ToolBar.title = pageTitle
         self.ToolBar.headline_text = "Headline"
         self.ToolBar.anchor_title = "left"

@@ -22,7 +22,6 @@ LoadingLog.Import("Python")
 import os
 from enum import Enum
 from functools import partial
-import asyncio
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
@@ -30,7 +29,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from ...Pages.PopUps import PopUpsHandler,Keys,PopUpTypeEnum
-from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 #endregion

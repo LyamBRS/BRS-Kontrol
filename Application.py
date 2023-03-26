@@ -3,23 +3,8 @@
 #====================================================================#
 import os
 import sys
-# print("=============================== IMPORT FIXER?")
-# CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# sys.path.append(os.path.dirname(CURRENT_DIR))
-# print(sys.path)
-# print("It did a thing, probably didnt work tho\n\n\n\n")
-
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("Application.py")
-
-path = os.getcwd()
-BRSpath = path + "\Libraries\BRS_Python_Libraries\BRS"
-
-
-
-# caution: path[0] is reserved for script path (or '' in REPL)
-sys.path.insert(1,path)
-sys.path.insert(2,BRSpath)
 #===================================================================#
 # Imports
 #===================================================================#
@@ -37,7 +22,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.font import Font
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Libraries.BRS_Python_Libraries.BRS.Hardware.System.information import Information
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 # -------------------------------------------------------------------
 LoadingLog.Import("Local")
@@ -90,6 +75,17 @@ class Application(MDApp):
         Debug.Log("Initializing AppLanguage. Defaulting to US_English")
         path = AppendPath(os.getcwd(), "/Local/Languages/locale")
         AppLanguage.__init__(AppLanguage, path, "US_English")
+
+        # Set default AppInfo informations
+        Debug.Log("Setting Information")
+        Information.Name = "BRS Kontrol"
+        Information.Description = "Python program controlling BRS Kontrol's application"
+        Information.Framework = "KivyMD"
+
+        if(AppLanguage.Current == None):
+            Information.CanUse.Languages = False
+        else:
+            Information.CanUse.Languages = True
 
         # Set window to 3rd monitor.
         Debug.Log("Configuring window size and attributes")

@@ -15,8 +15,8 @@
         "Repository" : ""
     },
     "Requirements" : {
-        "OS" : "Any",
-        "Processor" : "Any",
+        "OS" : "Linux",
+        "Processor" : "raspberry",
         "Internet" : true,
         "Bluetooth" : true,
         "BrSpand" : true,

@@ -17,11 +17,11 @@
     "Requirements" : {
         "OS" : "Any",
         "Processor" : "Any",
-        "Internet" : true,
-        "Bluetooth" : true,
-        "BrSpand" : true,
-        "Kontrol" : true,
-        "OtherDevice" : true
+        "Internet" : false,
+        "Bluetooth" : false,
+        "BrSpand" : false,
+        "Kontrol" : false,
+        "OtherDevice" : false
     },
     "Utilizes" : {
         "Internet" : false,

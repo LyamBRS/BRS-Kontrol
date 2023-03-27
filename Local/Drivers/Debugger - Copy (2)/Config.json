@@ -15,8 +15,8 @@
         "Repository" : ""
     },
     "Requirements" : {
-        "OS" : "Any",
-        "Processor" : "Any",
+        "OS" : "Windows",
+        "Processor" : "i3",
         "Internet" : true,
         "Bluetooth" : true,
         "BrSpand" : true,

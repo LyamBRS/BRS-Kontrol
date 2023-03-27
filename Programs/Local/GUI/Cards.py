@@ -12,6 +12,7 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 LoadingLog.Start("Cards.py")
 #====================================================================#
 # Imports
@@ -23,6 +24,7 @@ LoadingLog.Import("Python")
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -30,9 +32,14 @@ from kivy.uix.widget import Widget
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import('KivyMD')
-from kivymd.uix.button import BaseButton
+from kivymd.uix.button import BaseButton, MDIconButton
 from kivymd.uix.card import MDCard
+from kivymd.uix.label import MDLabel
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.boxlayout import MDBoxLayout
 #endregion
+LoadingLog.Import("Local")
+from ..FileHandler.deviceDriver import Get_OtherDeviceButton, GetJson, CheckIntegrity, Get_BluetoothButton, Get_BrSpandButton, Get_InternetButton, Get_KontrolButton, Get_OSButton, Get_ProcessorButton
 #====================================================================#
 # Functions
 #====================================================================#
@@ -136,12 +143,114 @@ class DeviceDriverCard(BaseButton, Widget):
         self.bind(_finishing_ripple = self._RippleHandling)
 
         self.Card = MDCard()
+        self.Card.orientation = "vertical"
         self.Card.elevation = Shadow.Elevation.default
         self.Card.shadow_softness = Shadow.Smoothness.default
         self.Card.radius = Rounding.Cards.default
-        self.size = (400,400)
+        self.size = (400,425)
         #endregion
 
+        #region --------------------------- Widgets
+        self.Layout = MDFloatLayout()
+        self.Layout.padding = 25
+        self.Layout.size_hint = (1,1)
+
+        self.RequirementsLayout = MDBoxLayout()
+        self.RequirementsLayout.orientation = "horizontal"
+        # self.RequirementsLayout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+        self.RequirementsLayout.size_hint = (1, 0.15)
+
+        self.Icon = MDIconButton(icon = "exclamation", halign = "center", icon_size = 120)
+        self.Icon.pos_hint = { 'center_x': 0.5, 'center_y': 0.75 }
+
+        self.Name = MDLabel(text=_("Error"), font_style = "H5", halign = "center")
+        self.Name.pos_hint = { 'center_x': 0.5, 'center_y': 0.5 }
+
+        self.Description = MDLabel(text=_("Not Initialized"), halign = "center")
+        self.Description.pos_hint = { 'center_x': 0.5, 'center_y': 0.25 }
+        #endregion
+
+        #region --------------------------- Integrity Check
+        Debug.Log("Checking integrity of -> {driverName}")
+        integrity = CheckIntegrity(driverName)
+
+        if(integrity == FileIntegrity.Good):
+            Debug.Log("Good integrity")
+
+            Debug.Log("Getting JSON")
+            self.json = GetJson(driverName)
+
+            self.name        = self.json.jsonData["Information"]["Name"]
+            self.description = self.json.jsonData["Information"]["Description"]
+            self.iconPath    = self.json.jsonData["Information"]["IconPath"]
+            self.iconType    = self.json.jsonData["Information"]["IconType"]
+            self.version     = self.json.jsonData["Information"]["Version"]
+
+            self.needs_OS           = self.json.jsonData["Requirements"]["OS"]
+            self.needs_Processor    = self.json.jsonData["Requirements"]["Processor"]
+            self.needs_Internet     = self.json.jsonData["Requirements"]["Internet"]
+            self.needs_Bluetooth    = self.json.jsonData["Requirements"]["Bluetooth"]
+            self.needs_BrSpand      = self.json.jsonData["Requirements"]["BrSpand"]
+            self.needs_Kontrol      = self.json.jsonData["Requirements"]["Kontrol"]
+            self.needs_OtherDevice  = self.json.jsonData["Requirements"]["OtherDevice"]
+
+            self.OS          = Get_OSButton(self.needs_OS)
+            self.Processor   = Get_ProcessorButton(self.needs_Processor)
+            self.Internet    = Get_InternetButton(self.needs_Internet)
+            self.Bluetooth   = Get_BluetoothButton(self.needs_Bluetooth)
+            self.BrSpand     = Get_BrSpandButton(self.needs_BrSpand)
+            self.Kontrol     = Get_KontrolButton(self.needs_Kontrol)
+            self.OtherDevice = Get_OtherDeviceButton(self.needs_OtherDevice)
+
+            if(self.OS != None):
+                Debug.Log("Adding OS icon")
+                self.RequirementsLayout.add_widget(self.OS)
+
+            if(self.Processor != None):
+                Debug.Log("Adding Processor icon")
+                self.RequirementsLayout.add_widget(self.Processor)
+
+            if(self.Internet != None):
+                Debug.Log("Adding Internet icon")
+                self.RequirementsLayout.add_widget(self.Internet)
+
+            if(self.Bluetooth != None):
+                Debug.Log("Adding Bluetooth icon")
+                self.RequirementsLayout.add_widget(self.Bluetooth)
+
+            if(self.BrSpand != None):
+                Debug.Log("Adding BrSpand icon")
+                self.RequirementsLayout.add_widget(self.BrSpand)
+
+            if(self.Kontrol != None):
+                Debug.Log("Adding Kontrol icon")
+                self.RequirementsLayout.add_widget(self.Kontrol)
+
+            if(self.OtherDevice != None):
+                Debug.Log("Adding OtherDevice icon")
+                self.RequirementsLayout.add_widget(self.OtherDevice)
+
+            self.Name.text = self.name
+            self.Description.text = self.description
+            self.Icon.icon = self.iconPath
+        else:
+            if(integrity == FileIntegrity.Error):
+                pass
+            elif(integrity == FileIntegrity.Corrupted):
+                pass
+            elif(integrity == FileIntegrity.Ahead):
+                pass
+            elif(integrity == FileIntegrity.Outdated):
+                pass
+            elif(integrity == FileIntegrity.Blank):
+                pass
+        #endregion
+
+        self.Card.add_widget(self.RequirementsLayout)
+        self.Layout.add_widget(self.Icon)
+        self.Layout.add_widget(self.Name)
+        self.Layout.add_widget(self.Description)
+        self.Card.add_widget(self.Layout)
         self.add_widget(self.Card)
         Debug.End()
     #endregion

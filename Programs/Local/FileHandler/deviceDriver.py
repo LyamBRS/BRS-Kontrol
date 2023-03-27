@@ -12,7 +12,7 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-LoadingLog.Start("AppLoading.py")
+LoadingLog.Start("deviceDriver.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -27,6 +27,8 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums       import FileIntegri
 #region -------------------------------------------------------- Kivy
 #endregion
 #region ------------------------------------------------------ KivyMD
+LoadingLog.Import("KivyMD")
+from kivymd.uix.button import MDIconButton
 #endregion
 #====================================================================#
 # Structures
@@ -189,9 +191,209 @@ def GetDrivers(NameOfDeviceDriver:str="") -> list:
     Debug.End()
 
     return new_drivers
+# -------------------------------------------------------------------
+def GetJson(NameOfDeviceDriver:str="") -> JSONdata:
+    """
+        GetJson:
+        ========
+        Summary:
+        --------
+        This function is used to get the JSON data of a device driver.
+        All you need to do is specify a deviceDriver name to this
+        function.
+    """
+    Debug.Start("GetJson")
+
+    Debug.Log("Checking if driver exist.")
+    drivers = GetDrivers()
+    if(NameOfDeviceDriver in drivers):
+        Debug.Log(">>> SUCCESS")
+        
+        Debug.Log("Getting path")
+        path = AppendPath(os.getcwd(), f"/Local/Drivers/{NameOfDeviceDriver}")
+
+        Debug.Log("Checking if path is valid")
+        valid = IsPathValid(path)
+        if(valid):
+            Debug.Log(">>> SUCCESS")
+
+            Debug.Log("Getting JSON.")
+            json = JSONdata(fileName="Config.json", path=path)
+            Debug.Log(">>> SUCCESS")
+            Debug.End()
+            return json
+        else:
+            Debug.Error("-> PATH IS NOT VALID. FUNCTION RETURNED FALSE")
+    else:
+        Debug.Error("THE SPECIFIED DRIVER DOES NOT EXIST")
+    Debug.End()
+# -------------------------------------------------------------------
+def Get_OSButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_OSButton:
+        =============
+        Summary:
+        --------
+        Returns the OS button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_OSButton")
+    icon = "blank"
+
+    if(jsonValue == "Any"):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        if(jsonValue == "Windows"):
+            icon = "microsoft-windows"
+        elif(jsonValue == "Linux"):
+            icon = "linux"
+        elif(jsonValue == "ios"):
+            icon = "apple-ios"
+        elif(jsonValue == "apple"):
+            icon = "apple"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def Get_ProcessorButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_ProcessorButton:
+        =============
+        Summary:
+        --------
+        Returns the processor button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_ProcessorButton")
+    icon = "blank"
+
+    if(jsonValue == "Any"):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        if(jsonValue == "raspberry"):
+            icon = "raspberry-pi"
+        else:
+            icon = "chip"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def Get_InternetButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_InternetButton:
+        =============
+        Summary:
+        --------
+        Returns the processor button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_ProcessorButton")
+    icon = "blank"
+
+    if(jsonValue == False):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        icon = "server"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def Get_BluetoothButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_BluetoothButton:
+        =============
+        Summary:
+        --------
+        Returns the processor button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_BluetoothButton")
+    icon = "blank"
+
+    if(jsonValue == False):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        icon = "bluetooth"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def Get_BrSpandButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_BrSpandButton:
+        =============
+        Summary:
+        --------
+        Returns the processor button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_BrSpandButton")
+    icon = "blank"
+
+    if(jsonValue == False):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        icon = "expansion-card"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def Get_KontrolButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_KontrolButton:
+        =============
+        Summary:
+        --------
+        Returns the processor button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_KontrolButton")
+    icon = "blank"
+
+    if(jsonValue == False):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        icon = "alpha-k-box"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def Get_OtherDeviceButton(jsonValue:str) -> MDIconButton:
+    """
+        Get_OtherDeviceButton:
+        =============
+        Summary:
+        --------
+        Returns the processor button depending on the deviceDriver's
+        Requirements JSON data value.
+    """
+    Debug.Start("Get_OtherDeviceButton")
+    icon = "blank"
+
+    if(jsonValue == False):
+        Debug.Log("No icons required")
+        Debug.End()
+        return None
+    else:
+        icon = "devices"
+
+    Debug.End()
+    return MDIconButton(icon=icon)
 #====================================================================#
 # Classes
 #====================================================================#
 
 #====================================================================#
-LoadingLog.End("AppLoading.py")
+LoadingLog.End("deviceDriver.py")

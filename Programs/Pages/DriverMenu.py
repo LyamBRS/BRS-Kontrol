@@ -75,10 +75,9 @@ class DriverMenu(Screen):
         self.spacing = 0
 
         #region ---------------------------- Layouts
-        # self.TopLayout = MDBoxLayout(spacing=0, padding=(0,0,0,0), orientation="vertical")
         self.Layout = MDFloatLayout()
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
-        self.driversBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="400sp", padding = (50,50,50,50), size_hint_x=None)
+        self.driversBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
         self.driversBox.bind(minimum_width = self.driversBox.setter('width'))
 
         # Create the scroll view and add the box layout to it
@@ -95,17 +94,9 @@ class DriverMenu(Screen):
         path = AppendPath(os.getcwd(), "/Local/Drivers")
         drivers = GetDrivers()
 
-        self.driversBox.add_widget(MDTextButton())
-
         for driver in drivers:
             card = DeviceDriverCard(driverName=driver)
             self.driversBox.add_widget(card)
-
-        card = ButtonCard()
-        self.driversBox.add_widget(card)
-
-        card = DeviceDriverCard()
-        self.driversBox.add_widget(card)
         #endregion
 
         self.Layout.add_widget(self.scroll)

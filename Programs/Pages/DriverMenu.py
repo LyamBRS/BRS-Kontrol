@@ -36,6 +36,7 @@ from kivymd.uix.button import MDTextButton
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
+from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
 from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #endregion
 #====================================================================#
@@ -97,18 +98,14 @@ class DriverMenu(Screen):
         self.driversBox.add_widget(MDTextButton())
 
         for driver in drivers:
-            card = DriverCard(AppendPath(path, f"/{driver}"),
-                            AppendPath(path, f"/{driver}/Config.json"),
-                            CheckIntegrity)
+            card = DeviceDriverCard(driverName=driver)
             self.driversBox.add_widget(card)
 
-        # card = MDCard()
-        # card.size_hint_min = (1000,1)
-        # card.size_hint = (1,1)
-        # card.add_widget(MDTextButton(text="WTF"))
-        # self.driversBox.add_widget(card)
-        # card = MDTextButton(text="WTF")
-        # self.driversBox.add_widget(card)
+        card = ButtonCard()
+        self.driversBox.add_widget(card)
+
+        card = DeviceDriverCard()
+        self.driversBox.add_widget(card)
         #endregion
 
         self.Layout.add_widget(self.scroll)

@@ -117,7 +117,7 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
     Debug.Log("[2]: Main content verifications")
 
     content = os.listdir(pathToDeviceDriver)
-    Debug.Log(content)
+    Debug.Log(f">>> {content}")
     if all(elem in content for elem in mandatoryDriverContent):
         Debug.Log(">>> SUCCESS")
     else:
@@ -130,7 +130,7 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
     #region -------------------------------------------------- STEP 3
     Debug.Log("[3]: Local folder verification")
     content = os.listdir(AppendPath(pathToDeviceDriver, "/Local"))
-    Debug.Log(content)
+    Debug.Log(f">>> {content}")
 
     if all(elem in content for elem in mandatoryLocalContent):
         Debug.Log(">>> SUCCESS")
@@ -154,13 +154,21 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
     #endregion
     #region -------------------------------------------------- STEP 5
     Debug.Log("[5]: Config.json deep verifications")
-    
-    Debug.Log("Checking regular keys")
-    CompareKeys(JsonStructure, json.jsonData, "Huh")
+
+    Debug.Log(">>> Checking regular keys")
+    error = CompareKeys(JsonStructure, json.jsonData, "Huh")
+    if(error == FileIntegrity.Good):
+        Debug.Log(">>> SUCCESS")
+    else:
+        Debug.Error("-> JSON file is not correct.")
+        Debug.End()
+        return FileIntegrity.Corrupted
+
     #endregion
 
 
     Debug.End()
+    return FileIntegrity.Good
 # -------------------------------------------------------------------
 def GetDrivers(NameOfDeviceDriver:str="") -> list:
     """
@@ -180,7 +188,7 @@ def GetDrivers(NameOfDeviceDriver:str="") -> list:
     Debug.Log(new_drivers)
     Debug.End()
 
-    return drivers
+    return new_drivers
 #====================================================================#
 # Classes
 #====================================================================#

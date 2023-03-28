@@ -4,7 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-LoadingLog.Start("DriverMenu.py")
+LoadingLog.Start("AboutMenu.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -45,19 +45,19 @@ from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #====================================================================#
 # Screen class
 #====================================================================#
-LoadingLog.Class("DriverMenu_Screens")
-class DriverMenu_Screens:
+LoadingLog.Class("AboutMenu_Screens")
+class AboutMenu_Screens:
     """
-        DriverMenu_Screens:
+        AboutMenu_Screens:
         ================
         Summary:
         --------
         This class allows the handling of the transitional screen
-        :class:`DriverMenu`.
+        :class:`AboutMenu`.
 
         Description:
         ------------
-        This class holds the different types of callers of the AppLoading
+        This class holds the different types of callers of the AboutMenu
         screen as well as the different exit screens that this transitional
         screen can go to. You must specify the names of the wanted exit screens
         prior to calling the transition function.
@@ -98,12 +98,12 @@ class DriverMenu_Screens:
                 bool: `True`: Something went wrong. `False`: Success
         """
         # Attempt to add the screen class as a widget of the AppManager
-        DriverMenu_Screens._exitClass = screenClass
-        DriverMenu_Screens._exitName  = screenName
+        AboutMenu_Screens._exitClass = screenClass
+        AboutMenu_Screens._exitName  = screenName
 
-        DriverMenu_Screens._exitTransition = transition
-        DriverMenu_Screens._exitDuration = duration
-        DriverMenu_Screens._exitDirection = direction
+        AboutMenu_Screens._exitTransition = transition
+        AboutMenu_Screens._exitDuration = duration
+        AboutMenu_Screens._exitDirection = direction
         return False
 
     def SetCaller(screenClass, screenName:str, transition=SlideTransition, duration:float=0, direction:str="up") -> bool:
@@ -122,12 +122,12 @@ class DriverMenu_Screens:
                 bool: `True`: Something went wrong. `False`: Success
         """
         # Attempt to add the screen class as a widget of the AppManager
-        DriverMenu_Screens._callerClass = screenClass
-        DriverMenu_Screens._callerName  = screenName
+        AboutMenu_Screens._callerClass = screenClass
+        AboutMenu_Screens._callerName  = screenName
 
-        DriverMenu_Screens._callerTransition = transition
-        DriverMenu_Screens._callerDuration = duration
-        DriverMenu_Screens._callerDirection = direction
+        AboutMenu_Screens._callerTransition = transition
+        AboutMenu_Screens._callerDuration = duration
+        AboutMenu_Screens._callerDirection = direction
         return False
 
     def _Exit() -> bool:
@@ -137,18 +137,18 @@ class DriverMenu_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
         """
-        Debug.Start("DriverMenu_Screens -> _Exit()")
+        Debug.Start("AboutMenu_Screens -> _Exit()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if exit class was specified
             Debug.Log("Checking exit class")
-            if(DriverMenu_Screens._exitClass == None):
+            if(AboutMenu_Screens._exitClass == None):
                 Debug.Error("Attempted to call exit while no exit class were specified")
                 Debug.End()
                 return True
 
             Debug.Log("Checking exit name")
-            if(DriverMenu_Screens._exitName == None):
+            if(AboutMenu_Screens._exitName == None):
                 Debug.Error("Attempted to call exit while no exit name were specified")
                 Debug.End()
                 return True
@@ -156,25 +156,25 @@ class DriverMenu_Screens:
             Debug.Log("Checking exit class Call()")
             try:
                 Debug.Log("Trying to call exit class caller.")
-                DriverMenu_Screens._exitClass.Call()
+                AboutMenu_Screens._exitClass.Call()
                 Debug.Log("Success")
                 Debug.End()
                 return False
             except:
                 Debug.Log("Class specified wasn't an _Screen class.")
-                AppManager.manager.add_widget(DriverMenu_Screens._exitClass(name=DriverMenu_Screens._exitName))
+                AppManager.manager.add_widget(AboutMenu_Screens._exitClass(name=AboutMenu_Screens._exitName))
         except:
-            Debug.Error("AppLoading -> Exception occured.")
+            Debug.Error("AboutMenu_Screens -> Exception occured.")
             Debug.End()
             return True
 
         # Attempt to call the added screen
-        AppManager.manager.transition = DriverMenu_Screens._exitTransition()
-        AppManager.manager.transition.duration = DriverMenu_Screens._exitDuration
-        AppManager.manager.transition.direction = DriverMenu_Screens._exitDirection
+        AppManager.manager.transition = AboutMenu_Screens._exitTransition()
+        AppManager.manager.transition.duration = AboutMenu_Screens._exitDuration
+        AppManager.manager.transition.direction = AboutMenu_Screens._exitDirection
 
         # try:
-        AppManager.manager.current = DriverMenu_Screens._exitName
+        AppManager.manager.current = AboutMenu_Screens._exitName
         # except:
             # return True
         Debug.End()
@@ -187,36 +187,36 @@ class DriverMenu_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
         """
-        Debug.Start("DriverMenu_Screens -> Call()")
+        Debug.Start("NetworkMenu_Screens -> Call()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if caller class was specified
             # Debug.Log("Checking caller class")
-            # if(DriverMenu_Screens._callerClass == None):
+            # if(AccountMenu_Screens._callerClass == None):
                 # Debug.Error("No caller class specified.")
                 # Debug.End()
                 # return True
 
             # Debug.Log("Checking caller name")
-            # if(DriverMenu_Screens._callerName == None):
+            # if(AccountMenu_Screens._callerName == None):
                 # Debug.Error("No caller name specified.")
                 # Debug.End()
                 # return True
 
             Debug.Log("Attempting to add widget")
-            AppManager.manager.add_widget(DriverMenu(name="DriverMenu"))
+            AppManager.manager.add_widget(AboutMenu(name="AboutMenu"))
         except:
             Debug.Error("Exception occured while handling Call()")
             Debug.End()
             return True
 
         # Attempt to call the added screen
-        AppManager.manager.transition = DriverMenu_Screens._callerTransition()
-        AppManager.manager.transition.duration = DriverMenu_Screens._callerDuration
-        AppManager.manager.transition.direction = DriverMenu_Screens._callerDirection
+        AppManager.manager.transition = AboutMenu_Screens._callerTransition()
+        AppManager.manager.transition.duration = AboutMenu_Screens._callerDuration
+        AppManager.manager.transition.direction = AboutMenu_Screens._callerDirection
 
         # try:
-        AppManager.manager.current = "DriverMenu"
+        AppManager.manager.current = "AboutMenu"
         Debug.Log("Screen successfully changed")
         # except:
             # Debug.Error("Failed to add AppLoading as current screen.")
@@ -228,13 +228,13 @@ class DriverMenu_Screens:
 #====================================================================#
 # Classes
 #====================================================================#
-LoadingLog.Class("DriverMenu")
-class DriverMenu(Screen):
+LoadingLog.Class("AboutMenu")
+class AboutMenu(Screen):
     """
-        DriverMenu:
+        AboutMenu:
         -----------
-        This class handles the screen of the driver menu which shows
-        to the user their downloaded device drivers as selectable cards.
+        This class handles the screen of the account menu which shows
+        to the user some actions that they can do with their user profiles
     """
     #region   --------------------------- MEMBERS
     ToolBar:AppNavigationBar = None
@@ -242,16 +242,14 @@ class DriverMenu(Screen):
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Debug.Start("DriverMenu -> __init__")
+        Debug.Start("AboutMenu -> __init__")
         Debug.End()
         #endregion
 # ------------------------------------------------------------------------
     def on_pre_enter(self, *args):
         """
-            Load the JSONs available, and create 1 profile card
-            per available profiles.
         """
-        Debug.Start("DriverMenu -> on_pre_enter")
+        Debug.Start("AboutMenu -> on_pre_enter")
 
         self.padding = 0
         self.spacing = 0
@@ -259,27 +257,20 @@ class DriverMenu(Screen):
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
-        self.driversBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
-        self.driversBox.bind(minimum_width = self.driversBox.setter('width'))
+        self.cardBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
+        self.cardBox.bind(minimum_width = self.cardBox.setter('width'))
 
         # Create the scroll view and add the box layout to it
         self.scroll = MDScrollView(pos_hint = {'top': 1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
         self.scroll.smooth_scroll_end = 10
 
         # Add widgets
-        self.scroll.add_widget(self.driversBox)
+        self.scroll.add_widget(self.cardBox)
         #endregion
         #region ---------------------------- ToolBar
-        self.ToolBar = AppNavigationBar(pageTitle=_("Devices Driver"))
+        self.ToolBar = AppNavigationBar(pageTitle=_("About"))
         #endregion
-        #region ---------------------------- Drivers
-        path = AppendPath(os.getcwd(), "/Local/Drivers")
-        drivers = GetDrivers()
 
-        for driver in drivers:
-            card = DeviceDriverCard(driverName=driver)
-            self.driversBox.add_widget(card)
-        #endregion
 
         self.Layout.add_widget(self.scroll)
         self.Layout.add_widget(self.ToolBar.ToolBar)
@@ -293,7 +284,7 @@ class DriverMenu(Screen):
             In this case, once the view is fully loaded, the cards
             will slowly elevate to the wanted value.
         """
-        Debug.Start("DriverMenu -> on_enter")
+        Debug.Start("AboutMenu -> on_enter")
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
@@ -302,14 +293,14 @@ class DriverMenu(Screen):
             us time to animate the screen leaving before destroying the
             objects and instances it created.
         """
-        Debug.Start("DriverMenu -> on_pre_leave")
+        Debug.Start("AboutMenu -> on_pre_leave")
         Debug.End()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
             Function called when the screen is fully out of view.
         """
-        Debug.Start("ProfileMenu -> on_leave")
+        Debug.Start("AboutMenu -> on_leave")
         Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
         AppManager.manager.remove_widget(self)
@@ -325,4 +316,4 @@ class DriverMenu(Screen):
         pass
 # ------------------------------------------------------------------------
 
-LoadingLog.End("DriverMenu.py")
+LoadingLog.End("AboutMenu.py")

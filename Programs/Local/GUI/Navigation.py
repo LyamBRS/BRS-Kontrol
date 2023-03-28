@@ -29,6 +29,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition, SwapTransition, ShaderTransition
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -44,52 +45,146 @@ from ..FileHandler.deviceDriver import CheckIntegrity, GetDrivers
 #====================================================================#
 # Functions
 #====================================================================#
-LoadingLog.Function("TryFunction")
-def TryFunction(*args):
-    Debug.Start("TryFunction")
-    CheckIntegrity("Debugger")
+def GoTo_Network(*args):
+    """
+        GoTo_Network:
+        =================
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the Network button inside the navigation drawer.
+        This should take them to the Network screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_Network")
+    from ...Pages.NetworkMenu import NetworkMenu_Screens
+    NetworkMenu_Screens._callerTransition = SlideTransition
+    NetworkMenu_Screens._callerDirection = "right"
+    NetworkMenu_Screens.Call()
     Debug.End()
-#====================================================================#
-# Structure
-#====================================================================#
-LoadingLog.GlobalVariable("SettingMenuButtons")
-SettingMenuButtons = [
-    {
-        "name" : _("Network"),
-        "icon" : "wifi-cog",
-        "function" : TryFunction
-    },
-    {
-        "name" : _("Bluetooth"),
-        "icon" : "bluetooth-settings",
-        "function" : TryFunction
-    },
-    {
-        "name" : _("Devices"),
-        "icon" : "devices",
-        "function" : TryFunction
-    },
-    {
-        "name" : _("BrSpand"),
-        "icon" : "expansion-card-variant",
-        "function" : TryFunction
-    },
-    {
-        "name" : _("Controls & Keybinds"),
-        "icon" : "controller",
-        "function" : TryFunction
-    },
-    {
-        "name" : _("Account"),
-        "icon" : "account-edit",
-        "function" : TryFunction
-    },
-    {
-        "name" : _("Quit"),
-        "icon" : "power",
-        "function" : TryFunction
-    }
-]
+# ----------------------------------------------------------------
+def GoTo_Bluetooth(*args):
+    """
+        GoTo_Bluetooth:
+        =================
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the Bluetooth button inside the navigation drawer.
+        This should take them to the Bluetooth screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_Bluetooth")
+    from ...Pages.BluetoothMenu import BluetoothMenu_Screens
+    BluetoothMenu_Screens._callerTransition = SlideTransition
+    BluetoothMenu_Screens._callerDirection = "right"
+    BluetoothMenu_Screens.Call()
+    Debug.End()
+# ----------------------------------------------------------------
+def GoTo_Devices(*args):
+    """
+        GoTo_Devices:
+        =================
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the Devices button inside the navigation drawer.
+        This should take them to the Devices screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_Devices")
+    from ...Pages.DriverMenu import DriverMenu_Screens
+    DriverMenu_Screens._callerTransition = SlideTransition
+    DriverMenu_Screens._callerDirection = "right"
+    DriverMenu_Screens.Call()
+    Debug.End()
+# ----------------------------------------------------------------
+def GoTo_BrSpand(*args):
+    """
+        GoTo_BrSpand:
+        =================
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the BrSpand button inside the navigation drawer.
+        This should take them to the BrSpand screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_BrSpand")
+    from ...Pages.BrSpandMenu import BrSpandMenu_Screens
+    BrSpandMenu_Screens._callerTransition = SlideTransition
+    BrSpandMenu_Screens._callerDirection = "right"
+    BrSpandMenu_Screens.Call()
+    Debug.End()
+# ----------------------------------------------------------------
+def GoTo_Controls(*args):
+    """
+        GoTo_Controls:
+        =================
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the Controls button inside the navigation drawer.
+        This should take them to the Controls screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_Controls")
+    from ...Pages.ControlsMenu import ControlMenu_Screens
+    ControlMenu_Screens._callerTransition = SlideTransition
+    ControlMenu_Screens._callerDirection = "right"
+    ControlMenu_Screens.Call()
+    Debug.End()
+# ----------------------------------------------------------------
+def GoTo_Account(*args):
+    """
+        GoTo_Account:
+        =============
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the Account button inside the navigation drawer.
+        This should take them to the Account screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_Account")
+    from ...Pages.AccountMenu import AccountMenu_Screens
+    AccountMenu_Screens._callerTransition = SlideTransition
+    AccountMenu_Screens._callerDirection = "right"
+    AccountMenu_Screens.Call()
+    Debug.End()
+# ----------------------------------------------------------------
+def GoTo_About(*args):
+    """
+        GoTo_About:
+        ===========
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the About button inside the navigation drawer.
+        This should take them to the About screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_About")
+    from ...Pages.AboutMenu import AboutMenu_Screens
+    AboutMenu_Screens._callerTransition = SlideTransition
+    AboutMenu_Screens._callerDirection = "right"
+    AboutMenu_Screens.Call()
+    Debug.End()
+# ----------------------------------------------------------------
+def GoTo_Quit(*args):
+    """
+        GoTo_Quit:
+        ==========
+        Summary:
+        --------
+        This callback function is executed when the user presses
+        on the Account button inside the navigation drawer.
+        This should take them to the Account screen or an error
+        pop up in case it fails for X reason.
+    """
+    Debug.Start("GoTo_Quit")
+    Debug.End()
+
 #====================================================================#
 # Classes
 #====================================================================#
@@ -106,8 +201,6 @@ class AppNavigationBar():
     def __init__(self, pageTitle:str = "", **kwargs):
         super(AppNavigationBar, self).__init__(**kwargs)
         Debug.Start("AppNavigationBar -> __init__")
-
-
         # Widgets
         self.NavDrawer = MDNavigationDrawer(pos_hint = {'top': 1, 'left': 0})
         self.DrawerLayout = MDBoxLayout(pos_hint = {'top': 1, 'left': 0})
@@ -164,6 +257,53 @@ class AppNavigationBar():
     LoadingLog.Method("Callback")
     def Callback(self, *args):
         pass
+    # ----------------------------------------------------------------
     #endregion
 #====================================================================#
-LoadingLog.End("AppLoading.py")
+# Structure
+#====================================================================#
+LoadingLog.GlobalVariable("SettingMenuButtons")
+SettingMenuButtons = [
+    {
+        "name" : _("Network"),
+        "icon" : "wifi-cog",
+        "function" : GoTo_Network
+    },
+    {
+        "name" : _("Bluetooth"),
+        "icon" : "bluetooth-settings",
+        "function" : GoTo_Bluetooth
+    },
+    {
+        "name" : _("Devices"),
+        "icon" : "devices",
+        "function" : GoTo_Devices
+    },
+    {
+        "name" : _("BrSpand"),
+        "icon" : "expansion-card-variant",
+        "function" : GoTo_BrSpand
+    },
+    {
+        "name" : _("Controls & Keybinds"),
+        "icon" : "controller",
+        "function" : GoTo_Controls
+    },
+    {
+        "name" : _("Account"),
+        "icon" : "account-edit",
+        "function" : GoTo_Account
+    },
+    {
+        "name" : _("About"),
+        "icon" : "help",
+        "function" : GoTo_About
+    },
+    {
+        "name" : _("Quit"),
+        "icon" : "power",
+        "function" : GoTo_Quit
+    }
+]
+#====================================================================#
+LoadingLog.End("Navigation.py")

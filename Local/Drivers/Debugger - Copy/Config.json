@@ -5,9 +5,9 @@
             "BRS"
         ],
         "Version" : "2023.08.18",
-        "Name" : "Debugger",
-        "Description" : "Kontrol debugging GUI for developpers. Displays all the important data and classes loaded during the use of the application.",
-        "IconPath" : "bug",
+        "Name" : "Smart Shuttlecock",
+        "Description" : "Connect and configure smart professional shuttlecocks",
+        "IconPath" : "badminton",
         "IconType" : "Kivy"
     },
     "Configuration" : {
@@ -18,16 +18,16 @@
         "OS" : "Any",
         "Processor" : "Any",
         "Internet" : false,
-        "Bluetooth" : false,
+        "Bluetooth" : true,
         "BrSpand" : false,
         "Kontrol" : false,
-        "OtherDevice" : false
+        "OtherDevice" : true
     },
     "Utilizes" : {
         "Internet" : false,
-        "Bluethoot" : false,
+        "Bluethoot" : true,
         "BrSpand" : false,
         "Kontrol" : false,
-        "OtherDevice" : false
+        "OtherDevice" : true
     }
 }

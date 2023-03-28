@@ -29,9 +29,14 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.widget import Widget
+from kivy.utils import get_color_from_hex
+from kivy.graphics import Color, RoundedRectangle
+from kivy.graphics.instructions import InstructionGroup
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import('KivyMD')
+from kivymd.app import MDApp
+from kivymd.color_definitions import colors
 from kivymd.uix.button import BaseButton, MDIconButton
 from kivymd.uix.card import MDCard
 from kivymd.uix.label import MDLabel
@@ -112,6 +117,7 @@ class DeviceDriverCard(BaseButton, Widget):
     '''
     #endregion
     #region   --------------------------- MEMBERS
+    banner_rect = None
     #endregion
     #region   --------------------------- METHODS
     #region   -- Public
@@ -128,6 +134,19 @@ class DeviceDriverCard(BaseButton, Widget):
         if(finished):
             self.PressedEnd(self)
     # ------------------------------------------------------
+    def UpdateBanner(self, *args):
+        banner_width = self.RequirementsLayout.width
+        banner_height = self.RequirementsLayout.height + 5
+
+        if self.banner_rect:
+            self.banner_rect.pos = (self.RequirementsLayout.x, self.RequirementsLayout.y - 6)
+            self.banner_rect.size = (banner_width, banner_height)
+        else:
+            corner:str = Rounding.Cards.default.replace("dp","")
+            corner = int(corner)
+            with self.RequirementsLayout.canvas.before:
+                Color(*self.banner_color)
+                self.banner_rect = RoundedRectangle(pos=self.RequirementsLayout.pos, size=(banner_width, banner_height), radius=[corner, corner, corner, corner])
     #endregion
     #endregion
     #region   --------------------------- CONSTRUCTOR
@@ -246,12 +265,23 @@ class DeviceDriverCard(BaseButton, Widget):
                 pass
         #endregion
 
+
         self.Card.add_widget(self.RequirementsLayout)
         self.Layout.add_widget(self.Icon)
         self.Layout.add_widget(self.Name)
         self.Layout.add_widget(self.Description)
         self.Card.add_widget(self.Layout)
         self.add_widget(self.Card)
+
+        #region --------------------------- Canvas
+        # Adding a banner to the top of the card for requirement
+        # icons to be layed on.
+        color = MDApp.get_running_app().theme_cls.accent_palette
+        self.banner_color = get_color_from_hex(colors[color]["500"])
+        self.RequirementsLayout.bind(pos=self.UpdateBanner, size=self.UpdateBanner)
+
+        #endregion
+
         Debug.End()
     #endregion
     pass

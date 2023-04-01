@@ -13,13 +13,12 @@ import os
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
-from kivymd.color_definitions import palette,colors
+from kivymd.color_definitions import colors
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Dates
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
-from datetime import date,datetime
+from datetime import datetime
 #====================================================================#
 # Global accessibles
 #====================================================================#
@@ -474,6 +473,25 @@ class ProfileHandler:
             Debug.Log(f"Error code: {error}")
             Debug.End()
             return error
+    #------------------------------------
+    def UnLoadProfile() -> bool:
+        """
+            Function used to uninitialize the ProfileHandler global class.
+            if the function returns `True`, the profile specified was
+            successfully unloaded.
+
+            If the function returns `False`, an error occured during
+            initializing of this global function
+        """
+        Debug.Start("ProfileHandler -> UnLoadProfile")
+
+        if(True):
+            # Saves the profile's JSON into the ProfileHandler class.
+            ProfileHandler.SetDate(Dates.Exit)
+            ProfileHandler.rawJson = None
+            ProfileHandler.initialized = False
+
+            Debug.End()
     #------------------------------------
     def CreateProfile(profileStructure:list) -> bool:
         """

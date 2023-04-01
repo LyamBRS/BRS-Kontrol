@@ -22,7 +22,7 @@ from kivy.animation import Animation
 # -------------------------------------------------------------------
 from kivymd.uix.label import MDLabel
 from kivymd.uix.scrollview import MDScrollView
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
+from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
 from kivymd.uix.boxlayout import MDBoxLayout
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
@@ -37,11 +37,69 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogins_Screens
 from .ProfileCreation import ProfileCreation_Screens
-from ..Local.FileHandler import Profiles
+from ..Local.FileHandler.Profiles import Profiles, ProfileHandler
 from ..Pages.DriverMenu import DriverMenu
 #====================================================================#
 # Functions
 #====================================================================#
+#====================================================================#
+# Screen class
+#====================================================================#
+LoadingLog.Log("ProfileLogin_Screens")
+class ProfileMenu_Screens:
+    """
+        ProfileMenu_Screens:
+        ================
+        Summary:
+        --------
+        This class allows the handling of the transitional screen
+        :class:`ProfileMenu`.
+
+        Description:
+        ------------
+        This class holds the function that calls ProfileMenu.
+
+        Members:
+        ------------
+        This class contains the following screens:
+    """
+    #region ---- Members
+
+    #endregion
+    #region ---- Methods
+
+    def Call(*args) -> bool:
+        """
+            Attempt to go to the main screen that is being handled by this class.
+
+            Returns:
+                bool: `True`:  Something went wrong and the screen can't be loaded. `False`: Success
+        """
+        Debug.Start("ProfileMenu -> Call")
+        # Attempt to add the screen class as a widget of the AppManager
+        try:
+            Debug.Log("Adding widget")
+            AppManager.manager.add_widget(ProfileMenu(name="ProfileMenu"))
+        except:
+            Debug.Error("Exception occured while handling Call()")
+            Debug.End()
+            return True
+
+        # Attempt to call the added screen
+        AppManager.manager.transition.duration = 0.5
+        AppManager.manager.transition.direction = "down"
+
+        # try:
+        AppManager.manager.current = "ProfileMenu"
+        ProfileHandler.UnLoadProfile()
+        # except:
+            # Debug.Error("Failed to add ProfileLogin as current screen.")
+            # Debug.End()
+            # return True
+
+        Debug.End()
+        return False
+    #endregion
 
 #====================================================================#
 # Classes

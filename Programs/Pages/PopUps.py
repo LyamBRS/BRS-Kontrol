@@ -82,6 +82,8 @@ class Keys(Enum):
     CanContinue:int = 3
     ButtonAText:int = 4
     ButtonBText:int = 5
+    ButtonAHandler:int = 6
+    ButtonBHandler:int = 7
 #====================================================================#
 # Pop up structure
 #====================================================================#
@@ -92,7 +94,9 @@ PopUpStructure = {
     Keys.Type : PopUpTypeEnum.Remark,
     Keys.CanContinue : True,
     Keys.ButtonAText : "Ok",
-    Keys.ButtonBText : "None"
+    Keys.ButtonBText : "None",
+    Keys.ButtonAHandler : None,
+    Keys.ButtonBHandler : None
 }
 """
     the template structure used to build pop ups
@@ -102,7 +106,29 @@ PopUpStructure = {
 #====================================================================#
 LoadingLog.Class("PopUpsHandler")
 class PopUpsHandler:
-    """Class that handles the creation of the popups to display"""
+    """
+        PopUpsHandler:
+        ==============
+        Summary:
+        --------
+        This class handles the creation and clearing of the PopUps
+        buffer. Use this class to create a series of popups that will
+        be hosted on a screen.
+
+        How to use:
+        -----------
+        To use this class, you need to use the 2 main methods provided
+        in it. These methods are the following:
+            - :ref:`Add`
+            - :ref:`Clear`
+        For more information, see their individual DocStrings.
+
+        How to call:
+        -----------
+        After you've created your PopUps, using this class, you will
+        need to set the `PopUps_Screens` transitional screen manager class
+        If no exit classes are refered in your pop ups, the Exiter will be called.
+    """
     #region   --------------------------- MEMBERS
     PopUps:list = []
     _PopUpsWidgets:list = []
@@ -114,6 +140,8 @@ class PopUpsHandler:
             Clear:
             ------
             Clears all pop ups in the pop up list.
+            Before adding new pop ups, call this to ensure
+            that no other screens forgot to call theirs.
         """
         Debug.Start("PopUps -> Clear")
         PopUpsHandler.PopUps.clear()
@@ -121,12 +149,35 @@ class PopUpsHandler:
         Debug.End()
     # -------------------------------------------
     LoadingLog.Method("Add")
-    def Add(Type:Keys, Icon:str = "blank", Message:str=_("Empty pop up"), CanContinue:bool=True, ButtonAText:str="Ok", ButtonBText:str="Cancel"):
+    def Add(Type:Keys, Icon:str = "blank", Message:str=_("Empty pop up"), CanContinue:bool=True, ButtonAText:str="Ok", ButtonBText:str="Cancel", ButtonAHandler=None, ButtonBHandler=None):
         """
             Add:
-            ----
+            ====
+            Summary:
+            --------
             Adds a pop up to the list of daisy chain pop ups that will
             be displayed to the user.
+
+            Parameters:
+            -----------
+                - :ref:`Type` : Refer to :ref:`PopUpTypeEnum` to see all the types of PopUps
+                - :ref:`Icon` : The name of a KivyMD icon.
+                - :ref:`Message` : the message to display to the user.
+                - :ref:`CanContinue` : If set to false, the application will close after the button is pressed
+                - :ref:`ButtonAText` : The text displayed on the only button or the right button
+                - :ref:`ButtonBText` : The text displayed on the second button. Keep empty for only one button
+
+                - :ref:`ButtonAHandler`: Put a function here if you want the pop up to do something when a button is pressed.
+                - :ref:`ButtonBHandler`: Put a function here if you want the pop up to do something when a button is pressed.
+
+            Note:
+            -----
+            Leaving the `ButtonXHandler` parameters empty will cause the PopUps to transition to the next one.
+            Otherwise,
+            the PopUps list will be cleared, then the PopUps will navigate to the transitional screen specified when the corresponding
+            button is pressed.
+            If no popups button handler are specified, the PopUps_Screen caller and exiter will define where the application goes
+            once all the popups are exhausted.
         """
         Debug.Start("Add")
         PopUpsHandler.PopUps.append({
@@ -136,6 +187,8 @@ class PopUpsHandler:
             Keys.CanContinue : CanContinue,
             Keys.ButtonAText : ButtonAText,
             Keys.ButtonBText : ButtonBText,
+            Keys.ButtonAHandler : ButtonAHandler,
+            Keys.ButtonBHandler : ButtonBHandler,
         })
         Debug.End()
     # -------------------------------------------
@@ -420,9 +473,7 @@ class PopUps(Screen):
         #region ---- Widgets
         for popup in PopUpsHandler.PopUps:
             Debug.Log("Adding new pop up.")
-            def Temp(*args):
-                pass
-            Card = GetPopUpCard(popup,Temp,Temp)
+            Card = GetPopUpCard(popup)
             self.CardLayout.add_widget(Card)
             PopUpsHandler._AddWidget(Card)
         #endregion
@@ -478,21 +529,20 @@ class PopUps(Screen):
         Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
         AppManager.manager.remove_widget(self)
+        PopUpsHandler.Clear()
         Debug.End()
 # ------------------------------------------------------------------------
 
 #====================================================================#
 LoadingLog.Function("GetPopUpCard")
-def GetPopUpCard(profileStructure:dict, ButtonACallback=None, ButtonBCallback=None) -> Widget:
+def GetPopUpCard(profileStructure:dict) -> Widget:
     """
         GetPopUpCard:
         -------------
         This function returns you a card built based off the 
         :ref:`PopUpStructure`.
 
-        You need to pass a profilestructure for this to build out of.
-        You need to specify a callback function that will be executed
-        depending on which button gets pressed. Defaults to the goodCallBack
+        You need to pass a profileStructure for this to build out of.
     """
     Debug.Start("GetPopUpCard")
 
@@ -519,11 +569,11 @@ def GetPopUpCard(profileStructure:dict, ButtonACallback=None, ButtonBCallback=No
     ButtonB = MDFillRoundFlatButton(size_hint = (1,None), text=profileStructure[Keys.ButtonBText], font_style = "H5")
     #region ---- button function binding
     Debug.Log("Binding user functions to button's releases")
-    if(ButtonACallback != None):
-        ButtonA.bind(on_press = ButtonACallback)
+    if(profileStructure[Keys.ButtonAHandler] != None):
+        ButtonA.bind(on_press = profileStructure[Keys.ButtonAHandler])
 
-    if(ButtonBCallback != None):
-        ButtonB.bind(on_press = ButtonBCallback)
+    if(profileStructure[Keys.ButtonBHandler] != None):
+        ButtonB.bind(on_press = profileStructure[Keys.ButtonBHandler])
 
     Debug.Log("Binding self delete functions to button's releases")
     ButtonA.bind(on_release = AutoDestruction)

@@ -79,18 +79,21 @@ def LogOutPressed(*args):
     Debug.Log("Importing dependencies for Pop Ups handling")
     from .PopUps import PopUpsHandler,PopUps_Screens, PopUpTypeEnum
     from .DriverMenu import DriverMenu_Screens
+    from .ProfileMenu import ProfileMenu_Screens
 
     Debug.Log("Creating necessary pop ups")
     PopUpsHandler.Clear()
-    PopUpsHandler.Add(Icon="logout",
-                      Message=_("Are you sure you want to log out of your account? You need to be logged in to close Kontrol."),
-                      Type=PopUpTypeEnum.Custom,
-                      ButtonAText=_("Log out"),
-                      ButtonBText=_("Cancel"))
+    PopUpsHandler.Add(Icon              = "logout",
+                      Message           = _("Are you sure you want to log out of your account? You need to be logged in to close Kontrol."),
+                      Type              = PopUpTypeEnum.Custom,
+                      ButtonAText       = _("Log out"),
+                      ButtonBText       = _("Cancel"),
+                      ButtonAHandler    = ProfileMenu_Screens.Call,
+                      ButtonBHandler    = AccountMenu_Screens.Call)
 
     Debug.Log("Handling PopUps_Screens")
     PopUps_Screens.SetCaller(AccountMenu_Screens, "AccountMenu")
-    PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+    PopUps_Screens.SetExiter(None, None)
 
     Debug.Log("Calling PopUps")
     PopUps_Screens.Call()
@@ -234,7 +237,7 @@ class AccountMenu_Screens:
         Debug.End()
         return False
 
-    def Call() -> bool:
+    def Call(*args) -> bool:
         """
             Attempt to go to the main screen that is being handled by this class.
 

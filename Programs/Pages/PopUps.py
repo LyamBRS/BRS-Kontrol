@@ -644,7 +644,10 @@ def AutoDestruction(self, *args):
 
     # self.parent.parent.parent.remove_widget(self.parent.parent)
     Debug.Log("Removing self from list of pop up widgets.")
-    PopUpsHandler._PopUpsWidgets.remove(Card)
+    try:
+        PopUpsHandler._PopUpsWidgets.remove(Card)
+    except:
+        Debug.Error(">>> NO CARD TO REMOVE")
 
     Debug.Log("Getting first card from the list.")
     try:

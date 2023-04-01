@@ -485,11 +485,13 @@ class ProfileHandler:
         """
         Debug.Start("ProfileHandler -> UnLoadProfile")
 
-        if(True):
+        if(ProfileHandler.initialized):
             # Saves the profile's JSON into the ProfileHandler class.
             ProfileHandler.SetDate(Dates.Exit)
             ProfileHandler.rawJson = None
             ProfileHandler.initialized = False
+        else:
+            Debug.Log("No profile to unload")
 
             Debug.End()
     #------------------------------------
@@ -549,6 +551,40 @@ class ProfileHandler:
                 Debug.Error("Failed to save profile")
         else:
             Debug.Error("ATTEMPTED TO SAVE UNKOWN DATE INTO PROFILE JSON.")
+        Debug.End()
+    #------------------------------------
+    def Delete() -> None:
+        """
+            Delete:
+            -------
+            This function will permanently delete the profile that is loaded.
+            Will call UnLoadProfile automatically for you.
+        """
+        Debug.Start("ProfileHandler -> Delete")
+
+        if(ProfileHandler.initialized):
+            Debug.Log("Getting profile's name")
+            name = ProfileHandler.rawJson.fileName
+
+            Debug.Log("Unloading profile")
+            ProfileHandler.UnLoadProfile()
+
+            Debug.Log("Getting paths")
+            path = os.getcwd()
+
+            Debug.Log("Getting Profile path")
+            path = AppendPath(path, f"/Local/Profiles/{name}")
+
+            Debug.Log("Removing what's at that path")
+            try:
+                os.remove(path)
+                Debug.Log(">>> DELETE SUCCESS")
+            except:
+                Debug.Error(">>> NO PROFILE TO DELETE")
+                Debug.Error(f"Path: {path}")
+        else:
+            Debug.Error("Cannot delete a profile that is not initialized")
+
         Debug.End()
     #endregion
     #region   -- Private

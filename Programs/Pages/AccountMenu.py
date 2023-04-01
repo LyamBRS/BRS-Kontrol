@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Programs.Local.FileHandler.Profiles import ProfileHandler
 LoadingLog.Start("Account.py")
 #====================================================================#
 # Imports
@@ -42,6 +43,29 @@ from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #====================================================================#
 # Functions
 #====================================================================#
+def DeleteAccount(*args):
+    """
+        DeleteAccount:
+        ==============
+        Summary:
+        --------
+        Calling this deletes the currently loaded profile and deletes
+        their JSON from any BrSpand drivers or Device Drivers.
+    """
+    Debug.Start("DeleteAccount")
+    #region --------------------- Deleting profile
+    ProfileHandler.Delete()
+    #endregion
+    #region ------------------- Imports
+    Debug.Log("Importing dependencies for ProfileMenu handling")
+    from .ProfileMenu import ProfileMenu_Screens
+    #endregion
+    #region ------------------- Load to Profile_Menu
+    Debug.Log("Returning to ProfileMenu_Screens")
+    ProfileMenu_Screens.Call()
+    #endregion
+    Debug.End()
+# -------------------------------------------------------------------
 def DeletePressed(*args):
     """
         DeletePressed:
@@ -58,6 +82,38 @@ def DeletePressed(*args):
         handler.
     """
     Debug.Start("DeletePressed")
+
+    #region ------------------- Imports
+    Debug.Log("Importing dependencies for Pop Ups handling")
+    from .PopUps import PopUpsHandler,PopUps_Screens, PopUpTypeEnum
+    from .DriverMenu import DriverMenu_Screens
+    from .ProfileMenu import ProfileMenu_Screens
+    #endregion
+    #region ------------------- PopUps Creation
+    PopUpsHandler.Clear()
+    PopUpsHandler.Add(Icon              = "delete",
+                      Message           = _("Are you sure you want to delete this account? You will not be able to recover this account. Cache  associated with this account inside of drivers and cards will also be deleted permanently."),
+                      Type              = PopUpTypeEnum.Custom,
+                      ButtonAText       = _("Delete account"),
+                      ButtonBText       = _("Cancel"),
+                      ButtonAHandler    = None,
+                      ButtonBHandler    = AccountMenu_Screens.Call)
+    PopUpsHandler.Add(Icon              = "delete",
+                      Message           = _("Are you really sure you want to permanently delete this account?"),
+                      Type              = PopUpTypeEnum.Custom,
+                      ButtonAText       = _("Cancel"),
+                      ButtonBText       = _("Delete account"),
+                      ButtonAHandler    = AccountMenu_Screens.Call,
+                      ButtonBHandler    = DeleteAccount)
+    #endregion
+    #region ------------------- PopUps calling
+    Debug.Log("Handling PopUps_Screens")
+    PopUps_Screens.SetCaller(AccountMenu_Screens, "AccountMenu")
+    PopUps_Screens.SetExiter(None, None)
+
+    Debug.Log("Calling PopUps")
+    PopUps_Screens.Call()
+    #endregion
     Debug.End()
 # -------------------------------------------------------------------
 def LogOutPressed(*args):
@@ -76,11 +132,14 @@ def LogOutPressed(*args):
     """
     Debug.Start("LogOutPressed")
 
+    #region ------------------- Imports
     Debug.Log("Importing dependencies for Pop Ups handling")
     from .PopUps import PopUpsHandler,PopUps_Screens, PopUpTypeEnum
     from .DriverMenu import DriverMenu_Screens
     from .ProfileMenu import ProfileMenu_Screens
+    #endregion
 
+    #region ------------------- PopUps Creation
     Debug.Log("Creating necessary pop ups")
     PopUpsHandler.Clear()
     PopUpsHandler.Add(Icon              = "logout",
@@ -90,14 +149,16 @@ def LogOutPressed(*args):
                       ButtonBText       = _("Cancel"),
                       ButtonAHandler    = ProfileMenu_Screens.Call,
                       ButtonBHandler    = AccountMenu_Screens.Call)
+    #endregion
 
+    #region ------------------- PopUps calling
     Debug.Log("Handling PopUps_Screens")
     PopUps_Screens.SetCaller(AccountMenu_Screens, "AccountMenu")
     PopUps_Screens.SetExiter(None, None)
 
     Debug.Log("Calling PopUps")
     PopUps_Screens.Call()
-
+    #endregion
     Debug.End()
 #====================================================================#
 # Screen class

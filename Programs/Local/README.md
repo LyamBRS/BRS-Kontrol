@@ -1,6 +1,7 @@
 # **Programs**
 ## - Description
-This folder contains Kontrol's specific python programs necessary for the whole project to work. Such programs are used to save settings, load profiles, detect BrSpand cards, etc This folder basically contains the core of BRS Kontrol that excludes the 
+This folder contains Kontrol's specific python programs necessary for the whole project to work. Such programs are used to save settings, load profiles, detect BrSpand cards, etc This folder basically contains the core of BRS Kontrol that excludes the GUI pages.
+This folder is divided in multiple sub folder to ease the finding of the specific python script you need.
 
 ## - Folders & Contents
 #### - Quick Summary:
@@ -11,3 +12,5 @@ https://drive.google.com/file/d/148wSuXA7z0FR9rAaGs48DwkEv2R8qK-p/view?usp=share
 The following is a quick list of this folder's directories. If you want a description of each folders and their contents, please refer to the markdown file associated with each folder. They will explain in greater detail their contents and purpose.
 - **Programs**
     - **FileHandler** - Scripts used to handle various files such as Profiles, Drivers etc
+    - **GUI**   - Scripts used to create widgets or GUI specific to Kontrol such as DeviceDriver cards.
+    - **Loading** - Scripts used when the application is loading or to load various things at different times.

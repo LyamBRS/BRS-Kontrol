@@ -286,4 +286,86 @@ class DeviceDriverCard(BaseButton, Widget):
     #endregion
     pass
 #====================================================================#
+LoadingLog.Class("WidgetCard")
+class WidgetCard(BaseButton, Widget):
+    #region   --------------------------- DOCSTRING
+    ''' 
+        WidgetCard:
+        ===========
+        Summary:
+        --------
+        This card is used as a simple widget card displaying
+        a single icon in it's center, with a word below it.
+    '''
+    #endregion
+    #region   --------------------------- MEMBERS
+    #endregion
+    #region   --------------------------- METHODS
+    #region   -- Public
+    def PressedEnd(self, *args):
+        """
+            Function called by the card once the ripple effect
+            comes to an end.
+        """
+        pass
+    #endregion
+    #region   -- Private
+    # ------------------------------------------------------
+    def _RippleHandling(self, object, finished):
+        if(finished):
+            self.PressedEnd(self)
+    #endregion
+    #endregion
+    #region   --------------------------- CONSTRUCTOR
+    def __init__(self,
+                 name:str="blank",
+                 icon:str="blank",
+                 error:bool=False,
+                 outlined:bool=False,
+                 **kwargs):
+        super(WidgetCard, self).__init__(**kwargs)
+        Debug.Start("WidgetCard")
+        #region --------------------------- Initial check ups
+        self.padding = 0
+        self.spacing = 0
+        self.size = (400,425)
+
+        self.bind(_finishing_ripple = self._RippleHandling)
+
+        Card = MDCard()
+        Card.orientation = "vertical"
+        Card.elevation = Shadow.Elevation.default
+        Card.shadow_softness = Shadow.Smoothness.default
+        Card.radius = Rounding.Cards.default
+        #endregion
+
+        #region --------------------------- Widgets
+        Layout = MDFloatLayout()
+        Layout.padding = 25
+        Layout.size_hint = (1,1)
+
+        Icon = MDIconButton(icon = icon, halign = "center", icon_size = 200)
+        Icon.pos_hint = { 'center_x': 0.5, 'center_y': 0.60 }
+
+        Name = MDLabel(text=name, font_style = "H4", halign = "center")
+        Name.pos_hint = { 'center_x': 0.5, 'center_y': 0.25 }
+
+        if(error):
+            # icons and text should be red
+            Name.theme_text_color = "Error"
+            Icon.theme_text_color = "Error"
+            Icon.theme_icon_color = "Error"
+
+
+        Layout.add_widget(Icon)
+        Layout.add_widget(Name)
+        Card.add_widget(Layout)
+        self.add_widget(Card)
+
+        #endregion
+        Debug.End()
+    #endregion
+    pass
+
+#====================================================================#
 LoadingLog.End("Cards.py")

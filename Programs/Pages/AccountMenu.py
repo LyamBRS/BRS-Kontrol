@@ -36,12 +36,66 @@ from kivymd.uix.button import MDTextButton
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
-from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
+from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard, WidgetCard
 from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #endregion
 #====================================================================#
 # Functions
 #====================================================================#
+def DeletePressed(*args):
+    """
+        DeletePressed:
+        ==============
+        Summary:
+        --------
+        This function is a callback function called when the Delete
+        card is pressed. This function handles the deletion of the
+        Loaded profile and then calls the function that LogsOut the
+        user.
+
+        Firstly, the user is asked if he really wants to delete the
+        profile prior to deleting it. This is done through the PopUps
+        handler.
+    """
+    Debug.Start("DeletePressed")
+    Debug.End()
+# -------------------------------------------------------------------
+def LogOutPressed(*args):
+    """
+        LogOutPressed:
+        ==============
+        Summary:
+        --------
+        This function is a callback function called when the LogOut
+        card is pressed. This function can also just be called to 
+        log out.
+
+        It is preferable that you copy this function for your logout
+        purposes. Please note that a pop up is generated prompting
+        the user to answer yes or no to leaving the application.
+    """
+    Debug.Start("LogOutPressed")
+
+    Debug.Log("Importing dependencies for Pop Ups handling")
+    from .PopUps import PopUpsHandler,PopUps_Screens, PopUpTypeEnum
+    from .DriverMenu import DriverMenu_Screens
+
+    Debug.Log("Creating necessary pop ups")
+    PopUpsHandler.Clear()
+    PopUpsHandler.Add(Icon="logout",
+                      Message=_("Are you sure you want to log out of your account? You need to be logged in to close Kontrol."),
+                      Type=PopUpTypeEnum.Custom,
+                      ButtonAText=_("Log out"),
+                      ButtonBText=_("Cancel"))
+
+    Debug.Log("Handling PopUps_Screens")
+    PopUps_Screens.SetCaller(AccountMenu_Screens, "AccountMenu")
+    PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+
+    Debug.Log("Calling PopUps")
+    PopUps_Screens.Call()
+
+    Debug.End()
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -228,7 +282,7 @@ class AccountMenu_Screens:
 #====================================================================#
 # Classes
 #====================================================================#
-LoadingLog.Class("DriverMenu")
+LoadingLog.Class("AccountMenu")
 class AccountMenu(Screen):
     """
         AccountMenu:
@@ -255,27 +309,39 @@ class AccountMenu(Screen):
         self.spacing = 0
 
         #region ---------------------------- Layouts
-        self.Layout = MDFloatLayout()
+        Layout = MDFloatLayout()
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
-        self.cardBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
-        self.cardBox.bind(minimum_width = self.cardBox.setter('width'))
+        cardBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
+        cardBox.bind(minimum_width = cardBox.setter('width'))
 
         # Create the scroll view and add the box layout to it
-        self.scroll = MDScrollView(pos_hint = {'top': 1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
-        self.scroll.smooth_scroll_end = 10
+        scroll = MDScrollView(pos_hint = {'top': 1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
+        scroll.smooth_scroll_end = 10
 
         # Add widgets
-        self.scroll.add_widget(self.cardBox)
+        scroll.add_widget(cardBox)
         #endregion
         #region ---------------------------- ToolBar
-        self.ToolBar = AppNavigationBar(pageTitle=_("Account Parameters"))
+        ToolBar = AppNavigationBar(pageTitle=_("Account Parameters"))
         #endregion
 
+        # Card widgets
+        EditCard = WidgetCard(_("Edit"), "account-edit")
+        LogOutCard = WidgetCard(_("Log out"), "logout")
+        DeleteCard = WidgetCard(_("Delete"), "delete-forever", True)
 
-        self.Layout.add_widget(self.scroll)
-        self.Layout.add_widget(self.ToolBar.ToolBar)
-        self.Layout.add_widget(self.ToolBar.NavDrawer)
-        self.add_widget(self.Layout)
+        DeleteCard.PressedEnd = DeletePressed
+        LogOutCard.PressedEnd = LogOutPressed
+
+        Layout.add_widget(scroll)
+        Layout.add_widget(ToolBar.ToolBar)
+        Layout.add_widget(ToolBar.NavDrawer)
+
+        cardBox.add_widget(EditCard)
+        cardBox.add_widget(LogOutCard)
+        cardBox.add_widget(DeleteCard)
+
+        self.add_widget(Layout)
         Debug.End()
 # ------------------------------------------------------------------------
     def on_enter(self, *args):

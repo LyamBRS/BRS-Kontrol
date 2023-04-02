@@ -90,11 +90,8 @@ profileStructure = {
     }
 }
 
-
-
-
-Temporary = {
-    structureEnum.ProfileConfig.value:{
+Temporary = { 
+        structureEnum.ProfileConfig.value:{
         ProfileConfigEnum.CanDelete.value : True,  # False, True
         ProfileConfigEnum.Type.value      : "Guest", #"Guest", "Normal", "Temporary"
         ProfileConfigEnum.Version.value   : 1.3, # the profile version.
@@ -287,12 +284,14 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
     return FileIntegrity.Good
     #endregion
 #--------------------------------------------------------------------
-def CheckUsername(username:str) -> bool:
+def CheckUsername(username:str, byPassName:str=None) -> bool:
     """
         CheckUsername:
         -------------
         This function checks a username string and returns a boolean
-        value if the username is correct.
+        value if the username is correct. If `byPassName` is set to
+        a string value, it will not cause an error if it already
+        exists.
     
         Returns:
             - (`bool`): `False` = Username can be used.
@@ -306,8 +305,12 @@ def CheckUsername(username:str) -> bool:
     Profiles = FilesFinder(".json", AppendPath(os.getcwd(), "/Local/Profiles"))
     if((username)+".json" in Profiles.fileList):
         Debug.Log("username already exists")
-        Debug.End()
-        return "Already exists"
+
+        if(byPassName == username):
+            Debug.Warn(" BY PASSED USERNAME ALREADY EXIST")
+        else:
+            Debug.End()
+            return "Already exists"
 
     if(len(username) < maxLenght):
 
@@ -398,6 +401,37 @@ def CheckBiography(biography:str) -> bool:
         Debug.Error("Too long")
         Debug.End()
         return "Too long"
+#--------------------------------------------------------------------
+def SetTemporary(wantedTemporary:str) -> None:
+    """
+        SetTemporary:
+        =============
+        Summary:
+        --------
+        This function is used to set the :ref:`Temporary` profile to
+        a specific profileStructure's raw JSON.
+
+        This is used in Editing mode of profileCreation.py to preload
+        the Temporary.
+    """
+    Debug.Start("SetTemporary")
+    global Temporary
+    Temporary = wantedTemporary
+    Debug.Log(f">>> Temporary -> {Temporary}")
+    Debug.End()
+#--------------------------------------------------------------------
+def GetTemporary() -> list:
+    """
+        GetTemporary:
+        =============
+        Summary:
+        --------
+        This function is used to get the :ref:`Temporary` profile
+    """
+    Debug.Start("GetTemporary")
+    global Temporary
+    Debug.End()
+    return Temporary
 
 #====================================================================#
 # Classes
@@ -493,7 +527,7 @@ class ProfileHandler:
         else:
             Debug.Log("No profile to unload")
 
-            Debug.End()
+        Debug.End()
     #------------------------------------
     def CreateProfile(profileStructure:list) -> bool:
         """
@@ -510,14 +544,16 @@ class ProfileHandler:
         Debug.Log("Getting profile directory")
         profileDirectory = AppendPath(os.getcwd(), "/Local/Profiles/")
 
-        sus = {"among us" : 1}
+        Debug.Log("Profile directory:")
+        Debug.Log(profileDirectory)
 
-        Debug.Log(profileStructure)
-
+        Debug.Log("Creating new JSONdata class")
         Json = JSONdata(profileStructure[structureEnum.Generic.value][ProfileGenericEnum.Username.value], profileDirectory)
         Json.jsonData = profileStructure
-        if(not Json.CreateFile(profileStructure)):
+    
+        if(Json.CreateFile(profileStructure)):
             Debug.Log("New profile successfully created and saved")
+
             Json = JSONdata(profileStructure[structureEnum.Generic.value][ProfileGenericEnum.Username.value], profileDirectory)
             # Json.jsonData = profileStructure
             ProfileHandler.LoadProfile(Json)

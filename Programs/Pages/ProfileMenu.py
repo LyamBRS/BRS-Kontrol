@@ -92,6 +92,7 @@ class ProfileMenu_Screens:
         # try:
         AppManager.manager.current = "ProfileMenu"
         ProfileHandler.UnLoadProfile()
+        ProfileCreation_Screens.Mode = "Creation"
         # except:
             # Debug.Error("Failed to add ProfileLogin as current screen.")
             # Debug.End()

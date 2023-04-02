@@ -3,7 +3,9 @@
 #====================================================================#
 
 #====================================================================#
+from profile import Profile
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 LoadingLog.Start("ProfileCreation.py")
 #====================================================================#
 # Imports
@@ -13,31 +15,27 @@ import time
 from kivy.animation import Animation
 from kivy.properties import StringProperty
 # -------------------------------------------------------------------
-from kivymd.uix.button import MDRaisedButton,MDRectangleFlatButton,MDFillRoundFlatButton,MDIconButton
+from kivymd.uix.button import MDFillRoundFlatButton,MDIconButton
 from kivymd.uix.label import MDLabel
 from kivymd.uix.card import MDCard,MDSeparator
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
+from kivy.uix.screenmanager import Screen
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.textfield import MDTextField,MDTextFieldRect
-from kivymd.uix.dropdownitem import MDDropDownItem
+from kivymd.uix.textfield import MDTextField
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
 from kivymd.app import MDApp
-from kivymd.uix.recycleview import MDRecycleView
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.recycleview import RecycleView
 from kivy.clock import Clock
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, ProfileThemeEnum,Temporary, structureEnum, CheckUsername, CheckPassword, CheckBiography
-from kivymd.uix.scrollview import MDScrollView
+from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, ProfileThemeEnum, SetTemporary, structureEnum, CheckUsername, CheckPassword, CheckBiography, GetTemporary
 from kivy.utils import get_color_from_hex
 # -------------------------------------------------------------------
 from ..Local.FileHandler import Profiles
@@ -165,6 +163,26 @@ class ProfileCreation_Screens:
         - `Call() -> bool`: Attempt to go to the specified screen. Returns `True` if an error occured.
     """
     #region ---- Members
+    Mode:str = "Creation"
+    """
+        Mode
+        ====
+        Summary:
+        --------
+        The mode member of :ref:`ProfileCreation_Screens` is used to
+        indicate in which mode the profile creation screen bundle should
+        operate. You need to manually load :ref:`ProfileHandler` into :ref:`Temporary`
+
+        How to use:
+        -----------
+        The mode member only have 2 possible values.
+            - `"Creation"`: This mode will create a new profile uppon completion
+            - `"Editing"` : This mode will edit the profile that is loaded in :ref:`ProfileHandler`
+
+        It is important that you set the mode before calling :ref:`Call` because who knows
+        what the mode is left as before you call this.
+    """
+
     _callerClass = None
     _goodExitClass = None
     _badExitClass = None
@@ -526,6 +544,8 @@ class ProfileCreation_Step1(Screen):
         self.padding = 25
         self.spacing = 25
 
+        Temporary = GetTemporary()
+
         Debug.Log("Setting Temporary profile's language to AppLanguage.Current")
         Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
 
@@ -598,6 +618,12 @@ class ProfileCreation_Step1(Screen):
         """
             Function to go back to `ProfileMenu.py`
         """
+        
+        if(ProfileCreation_Screens.Mode == "Editing"):
+            Debug.Warn("Reloading the profile")
+            ProfileHandler.LoadProfile(ProfileHandler.rawJson)
+            Debug.Log(">>> SUCCESS")
+        
         if (ProfileCreation_Screens._BadExit()):
             PopUpsHandler.Clear()
             PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="bug", Message=("An error occured while attempting to go back to the previously loaded screen. The application needs to be restarted."))
@@ -629,7 +655,9 @@ class ProfileCreation_Step1(Screen):
         self.SelectedLanguage.text = AppLanguage.Current
 
         Debug.Log("Setting new language in temporary profile class")
+        Temporary = GetTemporary()
         Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
+        SetTemporary(Temporary)
         Debug.Warn(f"Temporary profile now uses: {Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value]}")
 
         # Closing drop down menu
@@ -666,6 +694,7 @@ class ProfileCreation_Step2(Screen):
         style = MDApp.get_running_app().theme_cls.theme_style
         primary = MDApp.get_running_app().theme_cls.primary_palette
         accent = MDApp.get_running_app().theme_cls.accent_palette
+        Temporary = GetTemporary()
 
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
         Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
@@ -767,6 +796,8 @@ class ProfileCreation_Step2(Screen):
         self.MainLayout.add_widget(self.TopLayout)
         self.MainLayout.add_widget(self.MiddleLayout)
         self.add_widget(self.MainLayout)
+
+        SetTemporary(Temporary)
         Debug.End()
         pass
 # ------------------------------------------------------------------------
@@ -804,6 +835,7 @@ class ProfileCreation_Step2(Screen):
             Highlights the selected button.
         """
         Debug.Start("PrimaryPressed")
+        Temporary = GetTemporary()
         for button in self.PrimaryColorsList:
             if(button.state == "normal"):
                 button.line_color = (0,0,0,0)
@@ -815,6 +847,7 @@ class ProfileCreation_Step2(Screen):
 
                 Temporary[structureEnum.Theme.value][ProfileThemeEnum.Primary.value] = button.text
                 Debug.Log(f"Primary color is now: {button.text}")
+        SetTemporary(Temporary)
         Debug.End()
 # ------------------------------------------------------------------------
     def AccentPressed(self, *args):
@@ -825,6 +858,7 @@ class ProfileCreation_Step2(Screen):
             Highlights the selected button.
         """
         Debug.Start("AccentPressed")
+        Temporary = GetTemporary()
         for button in self.AccentColorsList:
             if(button.state == "normal"):
                 button.line_color = (0,0,0,0)
@@ -836,6 +870,7 @@ class ProfileCreation_Step2(Screen):
 
                 Temporary[structureEnum.Theme.value][ProfileThemeEnum.Accent.value] = button.text
                 Debug.Log(f"Accent color is now: {button.text}")
+        SetTemporary(Temporary)
         Debug.End()
 # ------------------------------------------------------------------------
     def ThemePressed(self, *args):
@@ -846,6 +881,7 @@ class ProfileCreation_Step2(Screen):
             Highlights the selected button.
         """
         Debug.Start("ThemePressed")
+        Temporary = GetTemporary()
         for button in self.ThemeColorsList:
             if(button.state == "normal"):
                 button.line_color = (0,0,0,0)
@@ -882,6 +918,8 @@ class ProfileCreation_Step2(Screen):
                 self.PrimaryLabel.text_color = TextColor
                 self.Next.icon_color = TextColor
                 self.Previous.icon_color = TextColor
+        
+        SetTemporary(Temporary)
         Debug.End()
 #====================================================================#
 class ProfileCreation_Step3(Screen):
@@ -914,6 +952,7 @@ class ProfileCreation_Step3(Screen):
         Debug.Start("ProfileCreation_Step3: on_pre_enter")
         self.padding = 25
         self.spacing = 25
+        Temporary = GetTemporary()
 
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
 
@@ -1018,6 +1057,18 @@ class ProfileCreation_Step3(Screen):
         #Checking currently saved username
         self.UsernameTextChanged()
 
+        if(ProfileCreation_Screens.Mode == "Editing"):
+            Debug.Log("EDITING SET TO TRUE, TEXT FIELDS SHOULD BE FILLED.")
+            self.Username.text = Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
+            self.Password.text = Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value]
+            self.Biography.text = Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value]
+
+            Debug.Log(f">>> Username -> {self.Username.text}")
+            Debug.Log(f">>> Password -> {self.Password.text}")
+            Debug.Log(f">>> Biography -> {self.Biography.text}")
+
+            Debug.Log(f"Temporary -> {Temporary}")
+
         # Add widgets
         self.RightCard.add_widget(self.RightCardTop)
         self.RightCard.add_widget(self.RightCardBottom)
@@ -1106,9 +1157,11 @@ class ProfileCreation_Step3(Screen):
             icon is selected to use for the profile creation.
         """
         Debug.Start("IconSelected")
+        Temporary = GetTemporary()
         Temporary[structureEnum.Generic.value][ProfileGenericEnum.IconPath.value] = args[0]
         Debug.Log(f"Profile icon is now: {args[0]}")
         self.SearchIcons()
+        SetTemporary(Temporary)
         Debug.End()
 # ------------------------------------------------------------------------
     def create_recycle_view(self):
@@ -1137,6 +1190,7 @@ class ProfileCreation_Step3(Screen):
             which contains what is inside of the searchbar.
         """
         Debug.Start("SearchIcons")
+        Temporary = GetTemporary()
         icon:str = ""
         style = MDApp.get_running_app().theme_cls.theme_style
 
@@ -1180,7 +1234,12 @@ class ProfileCreation_Step3(Screen):
             :ref: CheckUsername function.
         """
         Debug.Start("UsernameTextChanged")
-        error = CheckUsername(self.Username.text)
+        Temporary = GetTemporary()
+
+        if(ProfileCreation_Screens.Mode == "Editing"):
+            error = CheckUsername(self.Username.text, byPassName=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
+        else:
+            error = CheckUsername(self.Username.text)
         Debug.Log(error)
 
         if(not error):
@@ -1201,6 +1260,7 @@ class ProfileCreation_Step3(Screen):
                 self.UpdateScreenForErrors()
 
             self.Username.hint_text = _(error)
+        SetTemporary(Temporary)
         Debug.End()
 # ------------------------------------------------------------------------
     def PasswordTextChanged(self, *args):
@@ -1211,6 +1271,7 @@ class ProfileCreation_Step3(Screen):
             changes. This compares the new password with the
             :ref: CheckPassword function.
         """
+        Temporary = GetTemporary()
         error = CheckPassword(self.Password.text)
 
         if(error):
@@ -1226,6 +1287,7 @@ class ProfileCreation_Step3(Screen):
                 self.UpdateScreenForErrors()
                 self.Password.hint_text = _("Password")
             Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value] = self.Password.text
+        SetTemporary(Temporary)
 # ------------------------------------------------------------------------
     def BiographyTextChanged(self, *args):
         """
@@ -1235,6 +1297,7 @@ class ProfileCreation_Step3(Screen):
             changes.This compares the new username with the
             :ref: CheckBiography function.
         """
+        Temporary = GetTemporary()
         error = CheckBiography(self.Biography.text)
 
         if(error):
@@ -1251,6 +1314,7 @@ class ProfileCreation_Step3(Screen):
                 self.Biography.hint_text = _("Biography")
 
             Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value] = self.Biography.text
+        SetTemporary(Temporary)
 #====================================================================#
 class ProfileCreation_Step4(Screen):
     #region   --------------------------- MEMBERS
@@ -1324,8 +1388,23 @@ class ProfileCreation_Step4(Screen):
             _screen.
         """
         Debug.Start("ConfirmProfile")
+        Temporary = GetTemporary()
         Debug.Log("Creating profile")
+
+        if(ProfileCreation_Screens.Mode == "Editing"):
+            Debug.Warn("Deleting profile")
+            ProfileHandler.Delete()
+
         ProfileHandler.CreateProfile(Temporary)
+
+        if(ProfileCreation_Screens.Mode == "Editing"):
+            Debug.Warn("Loading new profile")
+            if(ProfileHandler.LoadProfile(ProfileHandler.rawJson) == FileIntegrity.Good):
+                Debug.Log(">>> LOADING SUCCESS")
+            else:
+                Debug.Error("FAILED TO LOAD PROFILE.")
+                Debug.Error(f"Tried to load: {ProfileHandler.rawJson}")
+
         ProfileCreation_Screens._GoodExit()
         Debug.End()
 # ------------------------------------------------------------------------
@@ -1338,6 +1417,7 @@ class ProfileCreation_Step4(Screen):
             recycle view with Labels consisting of the profile's data.
         """
         Debug.Start("_FillRecycleView")
+        Temporary = GetTemporary()
 
         Debug.Log("Filling recycle view.")
         # self.recycleView.data = [{'font_style' : "Body1",

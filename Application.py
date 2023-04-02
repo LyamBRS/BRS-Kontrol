@@ -91,8 +91,8 @@ class Application(MDApp):
         Debug.Log("Configuring window size and attributes")
         Window.borderless = True
         Window.resizable = True
-        Window.left = -1024
-        Window.top = 600
+        # Window.left = -1024
+        # Window.top = 600
         Window.fullscreen = "auto"
 
         # Create screen manager

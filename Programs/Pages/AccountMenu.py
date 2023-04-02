@@ -4,7 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Programs.Local.FileHandler.Profiles import ProfileHandler
+from Programs.Local.FileHandler.Profiles import GetTemporary, ProfileHandler
 LoadingLog.Start("Account.py")
 #====================================================================#
 # Imports
@@ -158,6 +158,43 @@ def LogOutPressed(*args):
 
     Debug.Log("Calling PopUps")
     PopUps_Screens.Call()
+    #endregion
+    Debug.End()
+# -------------------------------------------------------------------
+def EditProfilePressed(*args):
+    """
+        EditProfilePressed:
+        ==============
+        Summary:
+        --------
+        This function is a callback function called when the Edit Profile
+        card is pressed. This function calls directly the ProfileCreation_Screen
+        in "Editing" mode.
+    """
+    Debug.Start("EditProfilePressed")
+
+    #region ------------------- Imports
+    Debug.Log("Importing dependencies for ProfileCreation handling")
+    from .ProfileCreation import ProfileCreation_Screens
+    from ..Local.FileHandler.Profiles import SetTemporary
+    #endregion
+
+    #region ------------------- ProfileCreation_Screens handling
+    Debug.Log("Setting up ProfileCreation_Screens")
+    ProfileCreation_Screens.SetCaller(AccountMenu_Screens, "AccountMenu")
+    ProfileCreation_Screens.SetBadExiter(AccountMenu_Screens, "AccountMenu")
+    ProfileCreation_Screens.SetGoodExiter(AccountMenu_Screens, "AccountMenu")
+    ProfileCreation_Screens.Mode = "Editing"
+    #endregion
+
+    #region ------------------- Profile loading into Temporary
+    Debug.Log("Setting temporary as the current profile")
+    SetTemporary(ProfileHandler.rawJson.jsonData.copy())
+    #endregion
+
+    #region ------------------- Profile loading into Temporary
+    Debug.Log("Calling ProfileCreation")
+    ProfileCreation_Screens.Call()
     #endregion
     Debug.End()
 #====================================================================#
@@ -396,6 +433,7 @@ class AccountMenu(Screen):
 
         DeleteCard.PressedEnd = DeletePressed
         LogOutCard.PressedEnd = LogOutPressed
+        EditCard.PressedEnd = EditProfilePressed
 
         Layout.add_widget(scroll)
         Layout.add_widget(ToolBar.ToolBar)

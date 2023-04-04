@@ -78,9 +78,9 @@ class Application(MDApp):
 
         # Set default AppInfo informations
         Debug.Log("Setting Information")
-        Information.Name = "BRS Kontrol"
-        Information.Description = "Python program controlling BRS Kontrol's application"
-        Information.Framework = "KivyMD"
+        Information.name = "BRS Kontrol"
+        Information.description = "Python program controlling BRS Kontrol's application"
+        Information.framework = "KivyMD"
 
         if(AppLanguage.Current == None):
             Information.CanUse.Languages = False
@@ -91,8 +91,8 @@ class Application(MDApp):
         Debug.Log("Configuring window size and attributes")
         Window.borderless = True
         Window.resizable = True
-        # Window.left = -1024
-        # Window.top = 600
+        Window.left = -1024
+        Window.top = 600
         Window.fullscreen = "auto"
 
         # Create screen manager

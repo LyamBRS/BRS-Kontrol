@@ -42,6 +42,7 @@ from kivymd.uix.card import MDCard
 from kivymd.uix.label import MDLabel
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.gridlayout import MDGridLayout
 #endregion
 LoadingLog.Import("Local")
 from ..FileHandler.deviceDriver import Get_OtherDeviceButton, GetJson, CheckIntegrity, Get_BluetoothButton, Get_BrSpandButton, Get_InternetButton, Get_KontrolButton, Get_OSButton, Get_ProcessorButton
@@ -366,6 +367,123 @@ class WidgetCard(BaseButton, Widget):
         Debug.End()
     #endregion
     pass
+#====================================================================#
+#====================================================================#
+LoadingLog.Class("ListCard")
+class ListCard(BaseButton, Widget):
+    #region   --------------------------- DOCSTRING
+    ''' 
+        ListCard:
+        ===========
+        Summary:
+        --------
+        This class is used to create a card that displays a dictionary
+        with a title associated with it.
+    '''
+    #endregion
+    #region   --------------------------- MEMBERS
+    banner_rect = None
+    #endregion
+    #region   --------------------------- METHODS
+    #region   -- Public
+    def PressedEnd(self, *args):
+        """
+            Function called by the card once the ripple effect
+            comes to an end.
+        """
+        pass
+    #endregion
+    #region   -- Private
+    # ------------------------------------------------------
+    def _RippleHandling(self, object, finished):
+        if(finished):
+            self.PressedEnd(self)
+    # ------------------------------------------------------
+    def UpdateBanner(self, *args):
+        banner_width = self.TitleLayout.width
+        banner_height = self.TitleLayout.height + 5
 
+        if self.banner_rect:
+            self.banner_rect.pos = (self.TitleLayout.x, self.TitleLayout.y - 6)
+            self.banner_rect.size = (banner_width, banner_height)
+        else:
+            corner:str = Rounding.Cards.default.replace("dp","")
+            corner = int(corner)
+            with self.TitleLayout.canvas.before:
+                Color(*self.banner_color)
+                self.banner_rect = RoundedRectangle(pos=self.TitleLayout.pos, size=(banner_width, banner_height), radius=[corner, corner, corner, corner])
+    #endregion
+    #endregion
+    #region   --------------------------- CONSTRUCTOR
+    def __init__(self,
+                 dictionary:dict,
+                 title:str="",
+                 **kwargs):
+        super(ListCard, self).__init__(**kwargs)
+        Debug.Start("ListCard")
+        #region --------------------------- Initial check ups
+        self.padding = 0
+        self.spacing = 0
+
+        self.bind(_finishing_ripple = self._RippleHandling)
+
+        self.Card = MDCard()
+        self.Card.orientation = "vertical"
+        self.Card.elevation = Shadow.Elevation.default
+        self.Card.shadow_softness = Shadow.Smoothness.default
+        self.Card.radius = Rounding.Cards.default
+        self.size = (400,425)
+        self.disabled = True
+        #endregion
+
+        #region --------------------------- Widgets
+        self.Layout = MDFloatLayout()
+        self.Layout.padding = 25
+        self.Layout.size_hint = (1,1)
+
+        self.TitleLayout = MDBoxLayout()
+        self.TitleLayout.orientation = "horizontal"
+        # self.RequirementsLayout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+        self.TitleLayout.size_hint = (1, 0.15)
+
+        self.Name = MDLabel(text=title, font_style = "H4", halign = "center")
+        self.Name.pos_hint = { 'center_x': 0.5, 'center_y': 0.5 }
+
+        self.ListLayout = MDGridLayout()
+        self.ListLayout.cols = 2
+        self.ListLayout.pos_hint = { 'center_x': 0.5, 'center_y': 0.5 }
+        #endregion
+
+        #region --------------------------- Array handling
+        Debug.Log("Putting keys and values in card")
+
+        for key in dictionary.keys():
+            value = dictionary[key]
+
+            value = MDLabel(text=str(value), halign = "center")
+            key   = MDLabel(text=str(key), halign = "center")
+
+            self.ListLayout.add_widget(key)
+            self.ListLayout.add_widget(value)
+        #endregion
+
+        self.TitleLayout.add_widget(self.Name)
+        self.Layout.add_widget(self.ListLayout)
+        self.Card.add_widget(self.TitleLayout)
+        self.Card.add_widget(self.Layout)
+        self.add_widget(self.Card)
+
+        #region --------------------------- Canvas
+        # Adding a banner to the top of the card for requirement
+        # icons to be layed on.
+        color = MDApp.get_running_app().theme_cls.accent_palette
+        self.banner_color = get_color_from_hex(colors[color]["500"])
+        self.TitleLayout.bind(pos=self.UpdateBanner, size=self.UpdateBanner)
+
+        #endregion
+
+        Debug.End()
+    #endregion
+    pass
 #====================================================================#
 LoadingLog.End("Cards.py")

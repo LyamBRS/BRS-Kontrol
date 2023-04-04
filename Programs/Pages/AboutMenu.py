@@ -10,19 +10,17 @@ LoadingLog.Start("AboutMenu.py")
 #====================================================================#
 #region ------------------------------------------------------ Python
 LoadingLog.Import("Python")
-import os
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -36,8 +34,7 @@ from kivymd.uix.button import MDTextButton
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
-from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
-from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
+from ..Local.GUI.Cards import ListCard, WidgetCard
 #endregion
 #====================================================================#
 # Functions
@@ -270,7 +267,45 @@ class AboutMenu(Screen):
         #region ---------------------------- ToolBar
         self.ToolBar = AppNavigationBar(pageTitle=_("About"))
         #endregion
+        #region ---------------------------- Dictionaries
+        Versions = {
+            _("Kontrol") : str(Information.version),
+            _("Python") : str(Information.pythonVersion()),
+            _("Hardware") : "To Do",
+            _("Software") : "To Do"
+        }
+        Technicalities = {
+            _("OS") : str(Information.OS),
+            _("Platform") : str(Information.platform),
+            _("Framework") : str(Information.framework),
+            _("Hardware" ) : str(Information.hardware),
+            _("Processor") : str(Information.processorType),
+        }
+        Kontrol = {
+            _("Host") : str(Information.PCName),
+            _("Name") : str(Information.name),
+            _("Description") : str(Information.description),
+        }
+        #endregion
+        #region ---------------------------- Cards
+        # Card containing the project's name, description and host.
+        self.KontrolCard = ListCard(title=_("Kontrol"), dictionary=Kontrol)
+        self.cardBox.add_widget(self.KontrolCard)
 
+        # Card containing the technicalities of the project.
+        self.Technicalities = ListCard(title=_("Technicalities"), dictionary=Technicalities)
+        self.cardBox.add_widget(self.Technicalities)
+
+        # Card containing the project's versions (hardware, software, python ect)
+        self.VersionCard = ListCard(title=_("Versions"), dictionary=Versions)
+        self.cardBox.add_widget(self.VersionCard)
+
+        self.GitHub = WidgetCard(name=_("GitHub"), icon="github")
+        self.Discord = WidgetCard(name=_("Discord"), icon="server")
+
+        self.cardBox.add_widget(self.GitHub)
+        self.cardBox.add_widget(self.Discord)
+        #endregion
 
         self.Layout.add_widget(self.scroll)
         self.Layout.add_widget(self.ToolBar.ToolBar)

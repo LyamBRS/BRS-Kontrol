@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
 LoadingLog.Start("DriverMenu.py")
 #====================================================================#
 # Imports
@@ -38,10 +39,200 @@ LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
 from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
 from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
+from ..Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
 #====================================================================#
 # Functions
 #====================================================================#
+def HandleDriverIntegrity(driverName, GetErrorMessageFunction) -> Execution:
+    """
+        HandleDriverIntegrity:
+        ======================
+        Summary:
+        --------
+        This function is made to remove some copy pasted lines of code
+        and to make the program clearer to read. This function handles
+        the integrity of a device driver.
+
+        Function:
+        ---------
+        First attempts to get CheckIntegrity from driverName.
+        If that fails, a pop up is called.
+        Otherwise, it attempts to execute the integrity function.
+        Popups are built depending on the integrity results.
+
+        if everything is well with the integrity of the device driver,
+        then `Execution.Passed` is returned.
+    """
+    Debug.Start("HandleDriverIntegrity")
+    from ..Local.FileHandler.deviceDriver import GetFunction
+
+    def CallPopUps(message:str):
+        PopUpsHandler.Clear()
+        PopUpsHandler.Add(Type = PopUpTypeEnum.FatalError,
+                          Message=message)
+        PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.Call()
+
+    Debug.Log("[0]: Getting CheckIntegrity")
+    try:
+        function = GetFunction("CheckIntegrity", driverName)
+        Debug.Log(">>> SUCCESS")
+    except:
+        Debug.Error("Failed to get function")
+        CallPopUps(_("Kontrol failed to get the following function from this device driver: ") + "CheckIntegrity")
+        Debug.End()
+        return Execution.Crashed
+
+    Debug.Log("[1]: Executing CheckIntegrity")
+    try:
+        integrity = function()
+        Debug.Log(">>> SUCCESS")
+    except:
+        Debug.Error("Failed to execute the function.")
+        CallPopUps(_("A fatal error occured while executing this device driver's function: ") + "CheckIntegrity")
+        Debug.End()
+        return Execution.Crashed
+
+    Debug.Log("[2]: Getting error message")
+    driverMessage = GetErrorMessageFunction()
+    if driverMessage != None:
+        driverMessage = " " + _("Driver error message: ") + driverMessage
+
+    Debug.Log("[2]: Handling driver's integrity")
+    if(integrity == FileIntegrity.Good):
+        Debug.Log(">>> SUCCESS")
+        Debug.End()
+        return Execution.Passed
+
+    if(integrity == Execution.ByPassed):
+        Debug.Error("Function bypassed")
+
+        message = _("The device driver is bypassing its Integrity check.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == Execution.Incompatibility):
+        Debug.Error("Function Incompatibility")
+
+        message = _("The device driver encountered an incompatibility issue while performing a self check.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == Execution.Failed):
+        Debug.Error("Function failed")
+
+        message = _("The device driver failed its self check.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == Execution.NoConnection):
+        Debug.Error("Function failed due to no connection.")
+
+        message = _("The device driver cannot work without a connection.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == Execution.Crashed):
+        Debug.Error("Function crashed")
+
+        message = _("The device driver crashed while attempting to self check.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == Execution.Unecessary):
+        Debug.Error("Function unecessary")
+
+        message = _("The device driver thinks it's unecessesary to perform a self check. The driver cannot launch until a proper integrity result is given.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == FileIntegrity.Outdated):
+        Debug.Error("Driver is outdated")
+
+        message = _("The device driver says it's Outdated.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == FileIntegrity.Error):
+        Debug.Error("Driver is error")
+
+        message = _("The device driver returned Error when performing its self check.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == FileIntegrity.Corrupted):
+        Debug.Error("Driver is Corrupted")
+
+        message = _("The device driver identified a corrupted within itself.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(integrity == FileIntegrity.Blank):
+        Debug.Error("Driver is blank")
+
+        message = _("The device driver sees itself as empty.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+    
+    if(integrity == FileIntegrity.Ahead):
+        Debug.Error("Driver is blank")
+
+        message = _("The device driver returned Ahead when performing its self check.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    Debug.Error("Incorrect returned value from CheckIntegrity")
+    message = _("The self check executed by the device driver returned an unkown result that Kontrol cannot comprehend.")
+    message = message + " " + ("Returned value is: ") + str(integrity)
+    CallPopUps(message)
+    Debug.End()
+    return Execution.Incompatibility
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -278,6 +469,7 @@ class DriverMenu(Screen):
 
         for driver in drivers:
             card = DeviceDriverCard(driverName=driver)
+            card.PressedEnd = self.DriverPressed
             self.driversBox.add_widget(card)
         #endregion
 
@@ -323,6 +515,28 @@ class DriverMenu(Screen):
             leaving the application.
         """
         pass
+# ------------------------------------------------------------------------
+    def DriverPressed(*args):
+        """
+            DriverPressed:
+            ==============
+            Summary:
+            --------
+            This function is used as a callback when device driver card is
+            pressed. It will attempt to call the Launch function of that
+            device driver.
+        """
+        Debug.Start("DriverPressed")
+        from Programs.Local.FileHandler.deviceDriver import GetFunction
+        card = args[1]
+        driverName = card.Name.text
+
+        GetError = GetFunction("GetErrorMessage", driverName)
+
+        HandleDriverIntegrity(driverName, GetError)
+
+
+        Debug.End()
 # ------------------------------------------------------------------------
 
 LoadingLog.End("DriverMenu.py")

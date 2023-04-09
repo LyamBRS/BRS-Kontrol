@@ -22,7 +22,7 @@ import os
 #region --------------------------------------------------------- BRS
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, JSONdata, IsPathValid, CompareKeys, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog      import Debug
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums       import FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums       import FileIntegrity, Execution
 #endregion
 #region -------------------------------------------------------- Kivy
 #endregion
@@ -167,7 +167,42 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
         return FileIntegrity.Corrupted
 
     #endregion
+    #region -------------------------------------------------- STEP 6
+    Debug.Log("[6]: Getting driver module")
+    import importlib
+    try:
+        module = importlib.import_module(f"Local.Drivers.{NameOfDeviceDriver}.Driver")
+    except:
+        Debug.Error(">>> Driver file crashes when loading.")
+        Debug.End()
+        return FileIntegrity.Corrupted
+    #endregion
+    #region -------------------------------------------------- STEP 7
+    Debug.Log("[7]: Verifying Driver.py")
+    try:
+        Debug.Log(">>> CheckIntegrity")
+        CheckIntegrity = getattr(module, "CheckIntegrity")
 
+        Debug.Log(">>> CheckIntegrity")
+        ClearProfileCache = getattr(module, "ClearProfileCache")
+
+        Debug.Log(">>> Uninstall")
+        Uninstall = getattr(module, "Uninstall")
+
+        Debug.Log(">>> Update")
+        Update = getattr(module, "Update")
+
+        Debug.Log(">>> GetErrorMessage")
+        GetErrorMessage = getattr(module, "GetErrorMessage")
+
+        Debug.Log(">>> Quit")
+        Quit = getattr(module, "Quit")
+
+    except:
+        Debug.Error(">>> Driver.py integrity is not functional")
+        Debug.End()
+        return FileIntegrity.Error
+    #endregion
 
     Debug.End()
     return FileIntegrity.Good
@@ -391,6 +426,49 @@ def Get_OtherDeviceButton(jsonValue:str) -> MDIconButton:
 
     Debug.End()
     return MDIconButton(icon=icon)
+# -------------------------------------------------------------------
+def GetFunction(functionName:str, driverName:str) -> Execution:
+    """
+        GetFunction:
+        ============
+        Summary:
+        --------
+        This function is used to get a general function from a
+        device driver. Be sure you have checked the integrity of
+        that device driver is good.
+
+        Returns:
+        --------
+        This function returns a value from the `Execution` enum.
+        If it returns `Execution.Pass`, the function was executed
+        successfully.
+
+        - `Execution.Crashed` = Failed to import Driver.py
+        - `Execution.Failed` = Failed to import the function
+        - function -> the function executed successfully.
+    """
+    Debug.Start("ExecuteFunction")
+
+    Debug.Log(f"Getting module: {driverName}")
+    import importlib
+    try:
+        module = importlib.import_module(f"Local.Drivers.{driverName}.Driver")
+    except:
+        Debug.Error("Driver crashed when importing.")
+        Debug.End()
+        return Execution.Crashed
+    
+    try:
+        Debug.Log(f"Getting: {functionName}")
+        function = getattr(module, functionName)
+    except:
+        Debug.Error(f"Function {functionName} could not be imported from {driverName}")
+        Debug.End()
+        return Execution.Failed
+
+
+    Debug.End()
+    return function
 #====================================================================#
 # Classes
 #====================================================================#

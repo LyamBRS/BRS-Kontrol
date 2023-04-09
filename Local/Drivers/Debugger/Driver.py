@@ -29,6 +29,11 @@ LoadingLog.Import("Kivy")
 LoadingLog.Import('KivyMD')
 #endregion
 #====================================================================#
+# Variables
+#====================================================================#
+class variables:
+    errorMessage:str = None
+#====================================================================#
 # Functions
 #====================================================================#
 def CheckIntegrity() -> FileIntegrity:
@@ -42,8 +47,9 @@ def CheckIntegrity() -> FileIntegrity:
         integrity of itself and returns the resulted integrity.
     """
     Debug.Start("CheckIntegrity")
+    variables.errorMessage = "message"
     Debug.End()
-    return Execution.ByPassed
+    return FileIntegrity.Good
 # -------------------------------------------------------------------
 def Launch() -> Execution:
     """
@@ -119,7 +125,7 @@ def GetErrorMessage() -> str:
     """
     Debug.Start("GetErrorMessage")
     Debug.End()
-    return None
+    return variables.errorMessage
 # -------------------------------------------------------------------
 def Quit() -> Execution:
     """

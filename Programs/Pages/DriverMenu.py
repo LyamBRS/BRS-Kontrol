@@ -197,7 +197,7 @@ def HandleDriverIntegrity(driverName, GetErrorMessageFunction) -> Execution:
     if(integrity == FileIntegrity.Corrupted):
         Debug.Error("Driver is Corrupted")
 
-        message = _("The device driver identified a corrupted within itself.") + " " + _("Kontrol cannot launch this device driver safely.")
+        message = _("The device driver identified a corruption within itself.") + " " + _("Kontrol cannot launch this device driver safely.")
         if driverMessage != None:
             message = message + driverMessage
 
@@ -233,6 +233,141 @@ def HandleDriverIntegrity(driverName, GetErrorMessageFunction) -> Execution:
     CallPopUps(message)
     Debug.End()
     return Execution.Incompatibility
+# ------------------------------------------------------------------
+def HandleDriverLaunch(driverName, GetErrorMessageFunction) -> Execution:
+    """
+        HandleDriverLaunch:
+        ======================
+        Summary:
+        --------
+        This function is made to remove some copy pasted lines of code
+        and to make the program clearer to read. This function handles
+        the launch of a device driver.
+
+        Function:
+        ---------
+        First attempts to get Launch from driverName.
+        If that fails, a pop up is called.
+        Otherwise, it attempts to execute the Launch function.
+        Popups are built depending on the Execution results.
+
+        if everything is well with the integrity of the device driver,
+        then `Execution.Passed` is returned.
+    """
+    Debug.Start("HandleDriverLaunch")
+    from ..Local.FileHandler.deviceDriver import GetFunction
+
+    def CallPopUps(message:str):
+        PopUpsHandler.Clear()
+        PopUpsHandler.Add(Type = PopUpTypeEnum.FatalError,
+                          Message=message)
+        PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.Call()
+
+    Debug.Log("[0]: Getting Launch")
+    try:
+        function = GetFunction("Launch", driverName)
+        Debug.Log(">>> SUCCESS")
+    except:
+        Debug.Error("Failed to get function")
+        CallPopUps(_("Kontrol failed to get the following function from this device driver: ") + "Launch")
+        Debug.End()
+        return Execution.Crashed
+
+    Debug.Log("[1]: Executing Launch")
+    try:
+        execution = function()
+        Debug.Log(">>> SUCCESS")
+    except:
+        Debug.Error("Failed to execute the function.")
+        CallPopUps(_("A fatal error occured while executing this device driver's function: ") + "Launch")
+        Debug.End()
+        return Execution.Crashed
+
+    Debug.Log("[2]: Getting error message")
+    driverMessage = GetErrorMessageFunction()
+    if driverMessage != None:
+        driverMessage = " " + _("Driver error message: ") + driverMessage
+
+    Debug.Log("[3]: Handling execution results")
+
+    if(execution == Execution.Passed):
+        Debug.Log("Device driver launched successfully.")
+        Debug.End()
+        return Execution.Passed
+
+    if(execution == Execution.ByPassed):
+        Debug.Error("Function bypassed")
+
+        message = _("The device driver is bypassing its launch.") + " " + _("Kontrol cannot launch this device driver safely.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(execution == Execution.Incompatibility):
+        Debug.Error("Function Incompatibility")
+
+        message = _("The device driver encountered an incompatibility issue while launching.") + " " + _("Kontrol failed to execute this function.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(execution == Execution.Failed):
+        Debug.Error("Function failed")
+
+        message = _("The device driver failed to launch.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(execution == Execution.NoConnection):
+        Debug.Error("Function failed due to no connection.")
+
+        message = _("The device driver cannot work without a connection.") + " " + _("Kontrol failed to execute this function.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(execution == Execution.Crashed):
+        Debug.Error("Function crashed")
+
+        message = _("The device driver crashed while attempting to launch.") + " " + _("Kontrol failed to execute this function.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    if(execution == Execution.Unecessary):
+        Debug.Error("Function unecessary")
+
+        message = _("The device driver thinks it's unecessesary perform a launch? The driver cannot launch until a proper execution result is given.")
+        if driverMessage != None:
+            message = message + driverMessage
+
+        CallPopUps(message)
+        Debug.End()
+        return Execution.Failed
+
+    Debug.Error("The device driver returned an unknown value.")
+    message = _("The launch executed by the device driver returned an unkown result that Kontrol cannot comprehend.")
+    message = message + " " + ("Returned value is: ") + str(execution)
+    CallPopUps(message)
+    Debug.End()
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -533,9 +668,9 @@ class DriverMenu(Screen):
 
         GetError = GetFunction("GetErrorMessage", driverName)
 
-        HandleDriverIntegrity(driverName, GetError)
-
-
+        execution = HandleDriverIntegrity(driverName, GetError)
+        if(execution == Execution.Passed):
+            HandleDriverLaunch(driverName, GetError)
         Debug.End()
 # ------------------------------------------------------------------------
 

@@ -582,6 +582,16 @@ class DriverMenu(Screen):
         self.padding = 0
         self.spacing = 0
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Menus/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Menus/Light.png"))
+        #endregion
+
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
@@ -608,6 +618,7 @@ class DriverMenu(Screen):
             self.driversBox.add_widget(card)
         #endregion
 
+        self.add_widget(background)
         self.Layout.add_widget(self.scroll)
         self.Layout.add_widget(self.ToolBar.ToolBar)
         self.Layout.add_widget(self.ToolBar.NavDrawer)

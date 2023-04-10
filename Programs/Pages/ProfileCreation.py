@@ -551,6 +551,16 @@ class ProfileCreation_Step1(Screen):
 
         CreateScreenBase(self, _("Select a language"), "First")
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/Light.png"))
+        #endregion
+
         #region ---- Top Of Card
         self.HelloWorld = MDLabel(text=_("Hello, world!"),
                                  font_style = "H2",
@@ -589,6 +599,7 @@ class ProfileCreation_Step1(Screen):
         #endregion
 
         # Add widgets
+        self.add_widget(background)
         self.CardTop.add_widget(self.HelloWorld)
         self.CardTop.add_widget(self.SelectedLanguage)
         self.CardTop.add_widget(self.Separator)
@@ -691,6 +702,16 @@ class ProfileCreation_Step2(Screen):
         self.padding = 25
         self.spacing = 25
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        self.background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/DarkFlip.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/LightFlip.png"))
+        #endregion
+
         style = MDApp.get_running_app().theme_cls.theme_style
         primary = MDApp.get_running_app().theme_cls.primary_palette
         accent = MDApp.get_running_app().theme_cls.accent_palette
@@ -785,6 +806,7 @@ class ProfileCreation_Step2(Screen):
         Temporary[structureEnum.Theme.value][ProfileThemeEnum.Accent.value] = accent
 
         # Add widgets
+        self.add_widget(self.background)
         self.Card.add_widget(self.ThemeStyleLabel)
         self.Card.add_widget(self.ThemeStyleLayout)
         self.Card.add_widget(self.PrimaryLabel)
@@ -897,9 +919,15 @@ class ProfileCreation_Step2(Screen):
                 if(button.text == "Dark"):
                     CardBackground = (0.12,0.12,0.12,1)
                     TextColor = (1,1,1,1)
+                    from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+                    path = os.getcwd()
+                    self.background.source = AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/DarkFlip.png")
                 else:
                     CardBackground = (1,1,1,1)
                     TextColor = (0.12,0.12,0.12,1)
+                    from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+                    path = os.getcwd()
+                    self.background.source = AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/LightFlip.png")
 
                 self.PageTitle.theme_text_color = "Custom"
                 self.ThemeStyleLabel.theme_text_color = "Custom"
@@ -952,6 +980,17 @@ class ProfileCreation_Step3(Screen):
         Debug.Start("ProfileCreation_Step3: on_pre_enter")
         self.padding = 25
         self.spacing = 25
+
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/Light.png"))
+        #endregion
+
         Temporary = GetTemporary()
 
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
@@ -1070,6 +1109,7 @@ class ProfileCreation_Step3(Screen):
             Debug.Log(f"Temporary -> {Temporary}")
 
         # Add widgets
+        self.add_widget(background)
         self.RightCard.add_widget(self.RightCardTop)
         self.RightCard.add_widget(self.RightCardBottom)
         self.MiddleLayout.add_widget(self.LeftCard)
@@ -1341,6 +1381,16 @@ class ProfileCreation_Step4(Screen):
         self.padding = 25
         self.spacing = 25
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/DarkFlip.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/ProfileCreation/LightFlip.png"))
+        #endregion
+
         CreateScreenBase(self, _("Confirm your profile"), "Last")
 
         #region ---- RecycleView
@@ -1357,7 +1407,7 @@ class ProfileCreation_Step4(Screen):
         self.Card.add_widget(self.recycleView)
         self._FillRecycleView()
         #endregion
-
+        self.add_widget(background)
         self.MainLayout.add_widget(self.TopLayout)
         self.MainLayout.add_widget(self.Card)
         self.add_widget(self.MainLayout)

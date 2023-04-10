@@ -273,6 +273,15 @@ class AppLoading(Screen):
         self.padding = 25
         self.spacing = 25
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/AppLoading/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/AppLoading/Light.png"))
+        #endregion
         #region ---- Layouts
         self.Layout = MDFloatLayout()
         self.LoadingWheelLayout = MDBoxLayout()
@@ -314,6 +323,7 @@ class AppLoading(Screen):
         #endregion
 
         #region ---- add_widgets
+        self.add_widget(background)
         self.LoadingWheelLayout.add_widget(self.LoadingWheel)
         self.Layout.add_widget(self.LoadingWheelLayout)
         self.Layout.add_widget(self.KontrolLogo)

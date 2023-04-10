@@ -253,6 +253,15 @@ class BrSpandMenu(Screen):
 
         self.padding = 0
         self.spacing = 0
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Menus/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Menus/Light.png"))
+        #endregion
 
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
@@ -265,6 +274,7 @@ class BrSpandMenu(Screen):
         self.scroll.smooth_scroll_end = 10
 
         # Add widgets
+        self.add_widget(background)
         self.scroll.add_widget(self.cardBox)
         #endregion
         #region ---------------------------- ToolBar

@@ -347,6 +347,16 @@ class ProfileLogin(Screen):
             The login screen consists of a "Login" message as well as
             a card containing a username and password textfields.
         """
+        
+        #region ---- Background
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Login/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Login/Light.png"))
+        #endregion
+        
         try:
             self.padding = 25
             self.spacing = 25
@@ -391,6 +401,7 @@ class ProfileLogin(Screen):
             self.Login.on_release = self.LoginAttempt
 
             # Add widgets
+            self.add_widget(background)
             self.CancelLayout.add_widget(self.Cancel)
             self.LoginLayout.add_widget(self.Login)
             self.ButtonLayout.add_widget(self.LoginLayout)

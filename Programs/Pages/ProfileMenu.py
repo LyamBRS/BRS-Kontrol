@@ -164,6 +164,16 @@ class ProfileMenu(Screen):
         self.padding = 25
         self.spacing = 25
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/AppLoading/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/AppLoading/Light.png"))
+        #endregion
+
         self.Layout = MDBoxLayout(spacing=25, padding=(0,50,0,0), orientation="vertical")
         self.Layout.TitleLayout = MDBoxLayout(orientation="horizontal")
         self.Layout.ProfilesLayout = MDBoxLayout(spacing = "10sp", padding = "0sp")
@@ -188,6 +198,7 @@ class ProfileMenu(Screen):
         self.Layout.ProfilesLayout.scroll.smooth_scroll_end = 10
 
         # Add widgets
+        self.add_widget(background)
         self.Layout.ProfilesLayout.scroll.add_widget(self.Layout.ProfilesLayout.profileBox)
         self.Layout.ProfilesLayout.add_widget(self.Layout.ProfilesLayout.scroll)
         self.Layout.TitleLayout.add_widget(self.Layout.TitleLayout.Title)

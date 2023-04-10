@@ -23,6 +23,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.image import Image
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -32,9 +33,7 @@ from kivymd.uix.floatlayout import MDFloatLayout
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
-from Programs.Local.GUI.Navigation import AppNavigationBar
 from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
-from Programs.Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
 #====================================================================#
@@ -253,26 +252,28 @@ class DebuggerMenu(Screen):
         self.padding = 0
         self.spacing = 0
 
+        #region ---------------------------- Background
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        path = os.getcwd()
+        background = GetBackgroundImage(AppendPath(path, "/Local/Drivers/Debugger/Libraries/Backgrounds/Menu/Dark.png"),
+                                        AppendPath(path, "/Local/Drivers/Debugger/Libraries/Backgrounds/Menu/Light.png"))
+        #endregion
+
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
-        # Create a horizontal box layout offset by half the screen to center the first profile in view.
-        self.driversBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
-        self.driversBox.bind(minimum_width = self.driversBox.setter('width'))
+        self.cardBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
+        self.cardBox.bind(minimum_width = self.cardBox.setter('width'))
 
         # Create the scroll view and add the box layout to it
         self.scroll = MDScrollView(pos_hint = {'top': 1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
         self.scroll.smooth_scroll_end = 10
 
         # Add widgets
-        self.scroll.add_widget(self.driversBox)
-        #endregion
-        #region ---------------------------- ToolBar
-        self.ToolBar = AppNavigationBar(pageTitle=_("LAUNCH SUCCESSFUL"))
+        self.scroll.add_widget(self.cardBox)
         #endregion
 
+        self.add_widget(background)
         self.Layout.add_widget(self.scroll)
-        self.Layout.add_widget(self.ToolBar.ToolBar)
-        self.Layout.add_widget(self.ToolBar.NavDrawer)
         self.add_widget(self.Layout)
         Debug.End()
 # ------------------------------------------------------------------------

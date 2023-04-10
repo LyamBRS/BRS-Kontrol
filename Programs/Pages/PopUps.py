@@ -456,6 +456,15 @@ class PopUps(Screen):
         self.padding = 25
         self.spacing = 25
 
+        #region ---- Background
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/PopUps/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/PopUps/Light.png"))
+        #endregion
+
         #region ---- Main Layout
         self.Layout = MDBoxLayout()
         #endregion
@@ -479,6 +488,7 @@ class PopUps(Screen):
         #endregion
 
         #region ---- add_widgets
+        self.add_widget(background)
         self.Layout.ScrollView.add_widget(self.CardLayout)
         self.Layout.add_widget(self.Layout.ScrollView)
         self.add_widget(self.Layout)

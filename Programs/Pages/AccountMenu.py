@@ -409,6 +409,16 @@ class AccountMenu(Screen):
         self.padding = 0
         self.spacing = 0
 
+        #region ---- Background
+        import os
+        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+        path = os.getcwd()
+
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Menus/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Menus/Light.png"))
+        #endregion
+
         #region ---------------------------- Layouts
         Layout = MDFloatLayout()
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
@@ -443,6 +453,7 @@ class AccountMenu(Screen):
         cardBox.add_widget(LogOutCard)
         cardBox.add_widget(DeleteCard)
 
+        self.add_widget(background)
         self.add_widget(Layout)
         Debug.End()
 # ------------------------------------------------------------------------

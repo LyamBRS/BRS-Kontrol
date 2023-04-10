@@ -10,6 +10,7 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Programs.Pages.DriverMenu import DriverMenu_Screens
 LoadingLog.Start("Driver.py")
 #====================================================================#
 # Imports
@@ -47,9 +48,18 @@ def CheckIntegrity() -> FileIntegrity:
         integrity of itself and returns the resulted integrity.
     """
     Debug.Start("CheckIntegrity")
-    variables.errorMessage = "message"
+
+    #region ------------------------------------------- [0]
+    Debug.Log("[0]: Importing dependencies")
+    import os
+    from Local.Drivers.Debugger.Programs.FileHandler.SelfCheck import CheckContent
+    #endregion
+    #region ------------------------------------------- [1]
+    Debug.Log("[1]: Checking folders")
+    integrity = CheckContent()
+    #endregion
     Debug.End()
-    return FileIntegrity.Good
+    return integrity
 # -------------------------------------------------------------------
 def Launch() -> Execution:
     """
@@ -63,8 +73,21 @@ def Launch() -> Execution:
         It will return a value within the Execution enum.
     """
     Debug.Start("Launch")
+    #region [0]---------------------------------------- [IMPORT]
+    Debug.Log("[0]: Importing dependencies")
+    from Local.Drivers.Debugger.Pages.DebuggerMenu import DebuggerMenu_Screens
+    #endregion
+    #region [1]---------------------------------------- [SCREEN SETUP]
+    Debug.Log("[1]: Setting up DriverMenu for launch")
+    DebuggerMenu_Screens.SetCaller(DebuggerMenu_Screens, "DebuggerMenu")
+    DebuggerMenu_Screens.SetExiter(DebuggerMenu_Screens, "DebuggerMenu")
+    #endregion
+    #region [2]---------------------------------------- [LAUNCH]
+    Debug.Log("[2]: Launching DriverMenu")
+    DebuggerMenu_Screens.Call()
+    #endregion
     Debug.End()
-    return Execution.ByPassed
+    return Execution.Passed
 # -------------------------------------------------------------------
 def Update() -> Execution:
     """

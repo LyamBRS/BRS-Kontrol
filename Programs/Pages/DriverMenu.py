@@ -276,14 +276,14 @@ def HandleDriverLaunch(driverName, GetErrorMessageFunction) -> Execution:
         return Execution.Crashed
 
     Debug.Log("[1]: Executing Launch")
-    try:
-        execution = function()
-        Debug.Log(">>> SUCCESS")
-    except:
-        Debug.Error("Failed to execute the function.")
-        CallPopUps(_("A fatal error occured while executing this device driver's function: ") + "Launch")
-        Debug.End()
-        return Execution.Crashed
+    # try:
+    execution = function()
+    Debug.Log(">>> SUCCESS")
+    # except:
+        # Debug.Error("Failed to execute the function.")
+        # CallPopUps(_("A fatal error occured while executing this device driver's function: ") + "Launch")
+        # Debug.End()
+        # return Execution.Crashed
 
     Debug.Log("[2]: Getting error message")
     driverMessage = GetErrorMessageFunction()

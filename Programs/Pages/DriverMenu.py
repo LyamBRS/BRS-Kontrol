@@ -456,7 +456,7 @@ class DriverMenu_Screens:
         DriverMenu_Screens._callerDirection = direction
         return False
 
-    def _Exit() -> bool:
+    def _Exit(*args) -> bool:
         """
             Attempt to go to the specified screen that was set using :ref:`SetExiter`.
 
@@ -506,7 +506,7 @@ class DriverMenu_Screens:
         Debug.End()
         return False
 
-    def Call() -> bool:
+    def Call(*args) -> bool:
         """
             Attempt to go to the main screen that is being handled by this class.
 

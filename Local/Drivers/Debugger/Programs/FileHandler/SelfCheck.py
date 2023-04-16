@@ -27,7 +27,7 @@ LoadingLog.Import("Python")
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import CompareList
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import CompareList, IsPathValid
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -57,116 +57,118 @@ def CheckContent() -> FileIntegrity:
         Returns a value from the `FileIntegrity` enumeration.
     """
     Debug.Start("CheckFolders")
-    #region ------------------------------------- [0]
+    #region ------------------------------------- [0] - Imports
     import os
     from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath, CompareList
     from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
     from Local.Drivers.Debugger.Driver import variables
     #endregion
-    #region ------------------------------------- [1]
+    #region ------------------------------------- [1] - Define content & paths
     Debug.Log("[0]: Defining variables")
+
+    expectedContent = {
+        # Main content
+        "/Local/Drivers/Debugger/" : [
+            "Libraries",
+            "Local",
+            "Pages",
+            "Programs",
+            "__init__.py",
+            "Config.json",
+            "Driver.py"
+        ],
+
+        # Library folder content
+        "/Local/Drivers/Debugger/Libraries/" : [
+            "Backgrounds"
+        ],
+
+        # Backgrounds folder content
+        "/Local/Drivers/Debugger/Libraries/Backgrounds/" : [
+            "Menu"
+        ],
+
+        # Menu folder content
+        "/Local/Drivers/Debugger/Libraries/Backgrounds/Menu/" : [
+            "Dark.png",
+            "Light.png"
+        ],
+
+        # Page folder content
+        "/Local/Drivers/Debugger/Pages/" : [
+            "DebuggerMenu.py",
+            "DebuggerAbout.py",
+            "DebuggerAccount.py",
+            "DebuggerBluetooth.py",
+            "DebuggerBrSpand.py",
+            "DebuggerDevices.py",
+            "DebuggerKontrol.py",
+            "DebuggerNetwork.py",
+        ],
+
+        # Local folder content
+        "/Local/Drivers/Debugger/Local/" : [
+            "Cache",
+            "Languages",
+            "Profiles"
+        ],
+
+        # Program folder content
+        "/Local/Drivers/Debugger/Programs/" : [
+            "FileHandler",
+            "GUI"
+        ],
+
+        # FileHandler folder content
+        "/Local/Drivers/Debugger/Programs/FileHandler/" : [
+            "SelfCheck.py"
+        ],
+
+        # GUI folder content
+        "/Local/Drivers/Debugger/Programs/GUI/" : [
+            "Navigation.py"
+        ]
+    }
 
     exceptions = [
         "__pycache__"
     ]
 
-    wantedMainContent = [
-        "Libraries",
-        "Local",
-        "Pages",
-        "Programs",
-        "__init__.py",
-        "Config.json",
-        "Driver.py"
-    ]
-
-    wantedLibraryContent = [
-        "Backgrounds"
-    ]
-
-    wantedPagesContent = [
-        "DebuggerMenu.py"
-    ]
-
-    wantedLocalContent = [
-        "Cache",
-        "Languages",
-        "Profiles"
-    ]
-
-    wantedProgramContent = [
-        "FileHandler"
-    ]
     #endregion
-    #region ------------------------------------- [2]
-    Debug.Log("[1]: Getting paths")
-    mainContentPath     = AppendPath(os.getcwd(),       "/Local/Drivers/Debugger/")
-    libraryContentPath  = AppendPath(mainContentPath,   "Libraries/")
-    localContentPath    = AppendPath(mainContentPath,   "Local/")
-    pagesContentPath    = AppendPath(mainContentPath,   "Pages/")
-    programsContentPath = AppendPath(mainContentPath,   "Programs/")
-    #endregion
-    #region ------------------------------------- [3]
-    Debug.Log("[3]: Getting contents")
-    mainContent     = os.listdir(mainContentPath)
-    libraryContent  = os.listdir(libraryContentPath)
-    localContent    = os.listdir(localContentPath)
-    pagesContent    = os.listdir(pagesContentPath)
-    programsContent = os.listdir(programsContentPath)
-    #endregion
-    #region ------------------------------------- [4]
-    Debug.Log("Checking contents")
-
+    #region ------------------------------------- [2] - Compare lists with expected content
+    Debug.Log("[2]: Checking contents")
     variables.errorMessage = _("The driver's content did not match the expected content.")
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    execution = CompareList(wantedMainContent, mainContent, exceptions=exceptions)
-    if(execution != Execution.Passed):
-        Debug.Error(">>> mainContent:\t FAILED")
-        Debug.Log(f">>> Expected: {wantedMainContent}")
-        Debug.Log(f">>> Gotten:  {mainContent}")
-        return FileIntegrity.Corrupted
-    else:
-        Debug.Log(">>> mainContent:\t PASSED")
+    # For loop that checks each path's expected
+    # content with the actual content found at that
+    # path.
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    execution = CompareList(wantedLocalContent, localContent, exceptions=exceptions)
-    if(execution != Execution.Passed):
-        Debug.Error(">>> localContent:\t FAILED")
-        Debug.Log(f">>> Expected: {wantedLocalContent}")
-        Debug.Log(f">>> Gotten:  {localContent}")
-        Debug.End()
-        return FileIntegrity.Corrupted
-    else:
-        Debug.Log(">>> localContent:\t PASSED")
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    execution = CompareList(wantedLibraryContent, libraryContent, exceptions=exceptions)
-    if(execution != Execution.Passed):
-        Debug.Error(">>> libraryContent:\t FAILED")
-        Debug.Log(f">>> Expected: {wantedLibraryContent}")
-        Debug.Log(f">>> Gotten:  {libraryContent}")
-        Debug.End()
-        return FileIntegrity.Corrupted
-    else:
-        Debug.Log(">>> libraryContent:\t PASSED")
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    execution = CompareList(wantedPagesContent, pagesContent, exceptions=exceptions)
-    if(execution != Execution.Passed):
-        Debug.Error(">>> pagesContent:\t FAILED")
-        Debug.Log(f">>> Expected: {wantedPagesContent}")
-        Debug.Log(f">>> Gotten:  {pagesContent}")
-        Debug.End()
-        return FileIntegrity.Corrupted
-    else:
-        Debug.Log(">>> pagesContent:\t PASSED")
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    execution = CompareList(wantedProgramContent, programsContent, exceptions=exceptions)
-    if(execution != Execution.Passed):
-        Debug.Error(">>> programsContent:\t FAILED")
-        Debug.Log(f">>> Expected: {wantedProgramContent}")
-        Debug.Log(f">>> Gotten:  {programsContent}")
-        Debug.End()
-        return FileIntegrity.Corrupted
-    else:
-        Debug.Log(">>> programsContent:\t PASSED")
+    for path in expectedContent.keys():
+        # [0] --------------------------- Create path
+        key = path
+        path = AppendPath(os.getcwd(), path)
+
+        # [1] --------------------------- Path validity
+        valid = IsPathValid(path)
+        if(not valid):
+            Debug.Error(">>> INVALID PATH:")
+            Debug.Error(f">>> {path}")
+            Debug.End()
+            return FileIntegrity.Corrupted
+
+        # [3] --------------------------- Actual content
+        content = os.listdir(path)
+
+        # [2] --------------------------- List comparaison
+        execution = CompareList(expectedContent[key], content, exceptions=exceptions)
+        if(execution != Execution.Passed):
+            Debug.Error(f">>> {key}:\t FAILED")
+            Debug.Log(f">>> Expected: {expectedContent[key]}")
+            Debug.Log(f">>> Gotten:  {content}")
+            Debug.End()
+            return FileIntegrity.Corrupted
+        else:
+            Debug.Log(f">>> {key}:\t PASSED")
     #endregion
     Debug.End()
     return FileIntegrity.Good

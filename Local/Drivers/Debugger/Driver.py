@@ -159,7 +159,25 @@ def Quit() -> Execution:
         Function used to quit and close the device driver and return
         to Kontrol's GUI.
     """
-    Debug.Start("GetErrorMessage")
+    Debug.Start("Quit")
+    from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
+    from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+    from Programs.Pages.DriverMenu import DriverMenu_Screens
+    from Local.Drivers.Debugger.Pages.DebuggerMenu import DebuggerMenu_Screens
+
+    Debug.Log("Creating pop up message.")
+    PopUpsHandler.Clear()
+    PopUpsHandler.Add(PopUpTypeEnum.Question,
+                      Message = _("Do you really want to quit this device driver?"),
+                      ButtonAText = _("Yes"),
+                      ButtonBText = _("No"),
+                      ButtonAHandler = DriverMenu_Screens.Call,
+                      ButtonBHandler = DebuggerMenu_Screens.Call
+                      )
+    PopUps_Screens.SetCaller(DebuggerMenu_Screens, "DebuggerMenu")
+    PopUps_Screens.SetExiter(None, None)
+    PopUps_Screens.Call()
+
     Debug.End()
     return None
 #====================================================================#

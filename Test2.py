@@ -1,182 +1,41 @@
-# from kivy.lang import Builder
-# from kivy.properties import StringProperty, ListProperty
 
-# from kivymd.app import MDApp
-# from kivymd.theming import ThemableBehavior
-# from kivymd.uix.boxlayout import MDBoxLayout
-# from kivymd.uix.list import OneLineIconListItem, MDList
-# from kivymd.uix.toolbar import MDTopAppBar,MDBottomAppBar,toolbar
+# To change the kivy default settings
+# we use this module config
+from kivy.config import Config
 
-# KV = '''
-# # Menu item in the DrawerList list.
-# <ItemDrawer>:
-#     theme_text_color: "Custom"
-#     on_release: self.parent.set_color_item(self)
+# 0 being off 1 being on as in true / false
+# you can use 0 or 1 && True or False
+Config.set('graphics', 'resizable', '0')
 
-#     IconLeftWidget:
-#         id: icon
-#         icon: root.icon
-#         theme_text_color: "Custom"
-#         text_color: root.text_color
-
-
-# <ContentNavigationDrawer>:
-#     orientation: "vertical"
-#     padding: "8dp"
-#     spacing: "8dp"
-
-#     AnchorLayout:
-#         anchor_x: "left"
-#         size_hint_y: None
-#         height: avatar.height
-
-#         Image:
-#             id: avatar
-#             size_hint: None, None
-#             size: "56dp", "56dp"
-#             source: "data/logo/kivy-icon-256.png"
-
-#     MDLabel:
-#         text: "KivyMD library"
-#         font_style: "Button"
-#         adaptive_height: True
-
-#     MDLabel:
-#         text: "kivydevelopment@gmail.com"
-#         font_style: "Caption"
-#         adaptive_height: True
-
-#     ScrollView:
-
-#         DrawerList:
-#             id: md_list
-
-
-
-# MDScreen:
-
-#     MDNavigationLayout:
-
-#         ScreenManager:
-
-#             MDScreen:
-
-#                 MDBoxLayout:
-#                     orientation: 'vertical'
-
-#                     MDTopAppBar:
-#                         title: "Navigation Drawer"
-#                         elevation: 10
-#                         left_action_items: [['menu', lambda x: nav_drawer.set_state("open")]]
-
-#                     Widget:
-
-
-#         MDNavigationDrawer:
-#             id: nav_drawer
-
-#             ContentNavigationDrawer:
-#                 id: content_drawer
-# '''
-
-
-# class ContentNavigationDrawer(MDBoxLayout):
-#     pass
-
-
-# class ItemDrawer(OneLineIconListItem):
-#     icon = StringProperty()
-#     text_color = ListProperty((0, 0, 0, 1))
-
-
-# class DrawerList(ThemableBehavior, MDList):
-#     def set_color_item(self, instance_item):
-#         """Called when tap on a menu item."""
-
-#         # Set the color of the icon and text for the menu item.
-#         for item in self.children:
-#             if item.text_color == self.theme_cls.primary_color:
-#                 item.text_color = self.theme_cls.text_color
-#                 break
-#         instance_item.text_color = self.theme_cls.primary_color
-
-
-# class TestNavigationDrawer(MDApp):
-#     def build(self):
-#         return Builder.load_string(KV)
-
-#     def on_start(self):
-#         icons_item = {
-#             "folder": "My files",
-#             "account-multiple": "Shared with me",
-#             "star": "Starred",
-#             "history": "Recent",
-#             "checkbox-marked": "Shared with me",
-#             "upload": "Upload",
-#         }
-#         for icon_name in icons_item.keys():
-#             self.root.ids.content_drawer.ids.md_list.add_widget(
-#                 ItemDrawer(icon=icon_name, text=icons_item[icon_name])
-#             )
-
-
-# TestNavigationDrawer().run()
-from kivy.lang import Builder
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivymd.app import MDApp
-from kivymd.uix.button import MDFillRoundFlatButton
-from kivymd.uix.navigationdrawer import MDNavigationDrawer
-from kivymd.uix.toolbar import MDTopAppBar
-
-KV = '''
-<MainScreen>:
-    MDNavigationDrawer:
-        id: nav_drawer
-        orientation: "vertical"
-        padding: "8dp"
-        MDLabel:
-            text: "Navigation Drawer"
-            font_style: "H6"
-            size_hint_y: None
-            height: self.texture_size[1]
-
-    MDTopAppBar:
-        id: toolbar
-        pos_hint: {"top": 1}
-        title: "MDNavigationDrawer Example"
-        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
-        elevation: 10
-
-    BoxLayout:
-        orientation: "vertical"
-        padding: "8dp"
-
-        MDFillRoundFlatButton:
-            text: "Button 1"
-            on_release: print("Button 1 pressed")
-
-        MDFillRoundFlatButton:
-            text: "Button 2"
-            on_release: print("Button 2 pressed")
-
-        MDFillRoundFlatButton:
-            text: "Button 3"
-            on_release: print("Button 3 pressed")
-'''
-
-class MainScreen(FloatLayout):
-    pass
-
-class TestApp(MDApp):
+# fix the width of the window
+Config.set('graphics', 'width', '1024')
+Config.set('graphics', 'height', '600')
+ 
+# import kivy module
+import kivy
+ 
+# this restrict the kivy version i.e
+# below this kivy version you cannot use the app
+kivy.require("1.9.1")
+ 
+# base Class of your App inherits from the App class.
+# app:always refers to the instance of your application
+from kivy.app import App
+ 
+# if you not import label and use it through error
+from kivy.uix.label import Label
+ 
+# defining the App class
+class MyLabelApp(App):
     def build(self):
-        return Builder.load_string(KV)
-
-if __name__ == '__main__':
-    TestApp().run()
-
-
-
-
-
-
+        # label display the text on screen
+        # markup text with different colour
+        l2 = Label(text ="[color = ff3333][b]Hello !!!!!!!!!!![/b] [/color]\n [color = 3333ff]GFG !!:):):):)[/color]",
+                   font_size ='20sp', markup = True)    
+        return l2
+     
+# creating the object
+label = MyLabelApp()
+ 
+# run the window
+label.run()

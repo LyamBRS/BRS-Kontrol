@@ -9,6 +9,17 @@ LoadingLog.Start("Application.py")
 # Imports
 #===================================================================#
 LoadingLog.Import("Kivy")
+# To change the kivy default settings
+# we use this module config
+from kivy.config import Config
+
+# 0 being off 1 being on as in true / false
+# you can use 0 or 1 && True or False
+Config.set('graphics', 'resizable', '0')
+
+# fix the width of the window
+Config.set('graphics', 'width', '1024')
+Config.set('graphics', 'height', '600')
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 # -------------------------------------------------------------------
@@ -89,11 +100,11 @@ class Application(MDApp):
 
         # Set window to 3rd monitor.
         Debug.Log("Configuring window size and attributes")
-        Window.borderless = True
-        Window.resizable = True
-        Window.left = -1024
-        Window.top = 600
-        Window.fullscreen = "auto"
+        #Window.borderless = True
+        #Window.resizable = True
+        #Window.left = -1024
+        #Window.top = 600
+        #Window.fullscreen = "auto"
 
         # Create screen manager
         Debug.Log("Creating ScreenManager()")

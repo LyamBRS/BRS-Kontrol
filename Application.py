@@ -93,7 +93,7 @@ class Application(MDApp):
         #Window.resizable = True
         #Window.left = -1024
         #Window.top = 600
-        Window.fullscreen = True
+        #Window.fullscreen = False
 
         # Create screen manager
         Debug.Log("Creating ScreenManager()")

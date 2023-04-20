@@ -649,9 +649,14 @@ def EnvironementCheck() -> bool:
             Debug.End()
             return True
     #endregion
+    
+    #region ==== Comparing Window size
+    Debug.Log("Checking Window size...")
+    #endregion
+    
     Debug.Log(">>> SUCCESS")
-    LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Success
-    LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage] = _("Good")
+    LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.Success
+    LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("Good")
     Debug.End()
     return False
 

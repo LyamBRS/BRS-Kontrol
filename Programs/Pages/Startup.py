@@ -300,8 +300,17 @@ class Startup(Screen):
         #endregion
 
         #region ---- B R S & Kontrol images
-        icon_size = Window.width / 3
-        icon_size = str(icon_size) + "sp"
+
+        from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
+        Information.__init__(Information)
+
+
+        if(Information.usingWrongDisplay):
+            icon_size = Window.width / 4
+            icon_size = str(icon_size) + "sp"
+        else:
+            icon_size = Window.width / 3
+            icon_size = str(icon_size) + "sp"
 
         if(MDApp.get_running_app().theme_cls.theme_style == "Dark"):
             self.B = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_B.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)

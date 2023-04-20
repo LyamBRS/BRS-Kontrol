@@ -21,15 +21,13 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.screenmanager import Screen, SlideTransition
+from kivy.core.window import Window
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.card import MDCard
-from kivymd.uix.button import MDTextButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -296,6 +294,10 @@ class AboutMenu(Screen):
             _("Name") : str(Information.name),
             _("Description") : str(Information.description),
         }
+        Display = {
+            _("width") : str(Window.width),
+            _("height") : str(Window.height),
+        }
         #endregion
         #region ---------------------------- Cards
         # Card containing the project's name, description and host.
@@ -309,6 +311,9 @@ class AboutMenu(Screen):
         # Card containing the project's versions (hardware, software, python ect)
         self.VersionCard = ListCard(title=_("Versions"), dictionary=Versions)
         self.cardBox.add_widget(self.VersionCard)
+
+        self.DisplayCard = ListCard(title=_("Display"), dictionary=Display)
+        self.cardBox.add_widget(self.DisplayCard)
 
         self.GitHub = WidgetCard(name=_("GitHub"), icon="github")
         self.Discord = WidgetCard(name=_("Discord"), icon="server")

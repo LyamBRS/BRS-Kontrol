@@ -634,15 +634,15 @@ def EnvironementCheck() -> bool:
 
     #region ==== Comparing Processor
     Debug.Log("Checking if we are using a raspberry pi")
-    if(Information.processorType != "armv7l" and Information.platform != "armv6l" and Information.platform != "aarch64"):
+    if(Information.processorType != "armv7l" and Information.processorType != "armv6l" and Information.processorType != "aarch64"):
         Debug.Log(">>> Not using a raspberry pi")
         PopUpsHandler.Add(PopUpTypeEnum.Warning,
                           Icon="desktop-classic",
-                          Message = _("You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis") + ". " +_("Detected processor: ") + str(Information.platform), 
+                          Message = _("You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis") + ". " +_("Processor: ") + str(Information.processorType), 
                           CanContinue=True)
     else:
         Debug.Log(">>> Using a raspberry pi.")
-        if(Information.platform == "armv6l"):
+        if(Information.processorType == "armv6l"):
             Debug.Error(">>> Too old of a raspberry pi")
             LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorType] = ErrorTypeEnum.CriticalError
             LoadingSteps[LoadingStepsEnum.EnvironementCheck][ParamEnum.ErrorMessage] = _("Your raspberry pi is too old to be used by Kontrol.")

@@ -49,6 +49,29 @@ from kivy.config import Config
 # 0 being off 1 being on as in true / false
 
 
+def GetDebug() -> bool:
+    """
+        GetDebug()
+        ==========
+        Summary:
+        --------
+        This function will create a screen that displays some debug information
+        for your raspberry Pi. Especially useful when you just can't fucking
+        understand why your screen is always stretched AF.
+    """
+    Debug.Start("GetDebug")
+
+    from Programs.Local.GUI.Cards import ListCard
+
+    array = {
+        "width" : Window.width,
+        "height" : Window.height
+    }
+
+    listCard = ListCard(array, "Info")
+
+    Debug.End()
+    return listCard
 # you can use 0 or 1 && True or False
 #Config.set('graphics', 'resizable', '0')
 
@@ -135,9 +158,9 @@ class Application(MDApp):
         Startup_Screens.SetCaller(Application, "Application")
 
         Debug.Log("Calling startup screen")
-        Startup_Screens.Call()
+        #Startup_Screens.Call()
         Debug.End()
-        return AppManager.manager
+        return GetDebug()
 
     LoadingLog.Method("on_start")
     def on_start(self):
@@ -162,3 +185,6 @@ Application().run()
         # Cache.SaveFile()
 
 LoadingLog.End("Application.py")
+
+
+

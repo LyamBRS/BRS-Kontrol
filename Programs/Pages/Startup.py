@@ -306,7 +306,7 @@ class Startup(Screen):
 
 
         if(Information.usingWrongDisplay):
-            icon_size = Window.width / 4
+            icon_size = Window.width / 3.5
             icon_size = str(icon_size) + "sp"
         else:
             icon_size = Window.width / 3

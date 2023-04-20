@@ -11,26 +11,21 @@ LoadingLog.Start("AppLoading.py")
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
-from kivy.graphics import Color
 from kivy.animation import Animation
-from kivy.graphics import Canvas, Color, Rectangle, PushMatrix, PopMatrix, Rotate
+from kivy.graphics import PushMatrix, PopMatrix, Rotate
 # -------------------------------------------------------------------
 from kivymd.color_definitions import colors
 from kivymd.app import MDApp
 from kivymd.uix.label import MDLabel
-from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.button import MDIconButton
 # -------------------------------------------------------------------
-from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
-from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.buttons import Get_RaisedButton,TextButton
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.ValueDisplay import OutlineDial, LineGraph
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard,CreateCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Status.ValueDisplay import OutlineDial
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 # -------------------------------------------------------------------
 from ..Local.Loading.AppLoadingHandler import LoadApplication
 
@@ -273,6 +268,16 @@ class AppLoading(Screen):
         self.padding = 25
         self.spacing = 25
 
+        #defining variables sizes depending on weirdDisplay value
+        if(Information.usingWrongDisplay):
+            fontSize = 50
+            logoSize = Window.height/2.5
+            loadingWheelLayoutSize = Window.width/1.7
+        else:
+            fontSize = 100
+            logoSize = Window.height/2.5
+            loadingWheelLayoutSize = Window.width/2.5
+
         #region ---- Background
         import os
         from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
@@ -287,8 +292,8 @@ class AppLoading(Screen):
         self.LoadingWheelLayout = MDBoxLayout()
         self.LoadingWheelLayout.size_hint = (0.5,0.5)
         self.LoadingWheelLayout.pos_hint = {'center_x': 0.5, 'center_y':0.5}
-        self.LoadingWheelLayout.size_hint_max = (Window.width/2.5, Window.width/2.5)
-        self.LoadingWheelLayout.size_hint_min = (Window.width/2.5, Window.width/2.5)
+        self.LoadingWheelLayout.size_hint_max = (loadingWheelLayoutSize, loadingWheelLayoutSize)
+        self.LoadingWheelLayout.size_hint_min = (loadingWheelLayoutSize, loadingWheelLayoutSize)
         #endregion
 
         #region ---- Widgets
@@ -300,9 +305,9 @@ class AppLoading(Screen):
 
         # Centered Kontrol logo
         if(MDApp.get_running_app().theme_cls.theme_style == "Dark"):
-            self.KontrolLogo = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_K.png", font_style='Icon', font_size = "100sp", halign = "center", valign = "center", disabled = True, opacity=1)
+            self.KontrolLogo = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_K.png", font_style='Icon', font_size = fontSize, halign = "center", valign = "center", disabled = True, opacity=1)
         else:
-            self.KontrolLogo = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_K.png", font_style='Icon', font_size = "100sp", halign = "center", valign = "center", disabled = True, opacity=1)
+            self.KontrolLogo = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_K.png", font_style='Icon', font_size = fontSize, halign = "center", valign = "center", disabled = True, opacity=1)
 
         # self.LoadingWheel.UseCustomFillingColor = get_color_from_hex(colors[MDApp.get_running_app().theme_cls.primary_palette]["500"])
         self.LoadingWheel.UseCustomFillingColor = get_color_from_hex(colors[MDApp.get_running_app().theme_cls.primary_palette]["500"])
@@ -315,7 +320,7 @@ class AppLoading(Screen):
         self.LoadingStep.size_hint = (1,0.125)
         self.LoadingWheel.ShowShadow = False
         self.LoadingWheel.ShowBackground = False
-        self.KontrolLogo.icon_size = Window.height/2.5
+        self.KontrolLogo.icon_size = logoSize
         self.KontrolLogo.pos_hint = {'center_x': 0.5, 'center_y':0.5}
         #endregion
 

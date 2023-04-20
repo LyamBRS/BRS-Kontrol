@@ -50,11 +50,11 @@ from kivy.config import Config
 
 
 # you can use 0 or 1 && True or False
-#Config.set('graphics', 'resizable', '0')
+# Config.set('graphics', 'resizable', '0')
 
 # fix the width of the window
-#Config.set('graphics', 'width', '1024')
-#Config.set('graphics', 'height', '600')
+# Config.set('graphics', 'width', '720')
+# Config.set('graphics', 'height', '576')
 #====================================================================#
 # Classes
 #====================================================================#
@@ -106,6 +106,8 @@ class Application(MDApp):
         #Window.left = -1024
         #Window.top = 600
         #Window.fullscreen = False
+
+        Window.size = (720, 576)
 
         # Create screen manager
         Debug.Log("Creating ScreenManager()")

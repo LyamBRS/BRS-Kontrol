@@ -9,21 +9,11 @@ LoadingLog.Start("ProfileLogin.py")
 # Imports
 #====================================================================#
 import os
-from random import randint, random
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.slider import Slider
-from kivy.core.window import Window
 from kivy.animation import Animation
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
 # -------------------------------------------------------------------
-from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton,MDRectangleFlatButton,MDFillRoundFlatButton,MDIconButton
 from kivymd.uix.label import MDLabel
-from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.card import MDCard
 from kivymd.uix.textfield import MDTextField
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
@@ -31,19 +21,14 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
-from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.buttons import Get_RaisedButton,TextButton
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.ValueDisplay import OutlineDial, LineGraph
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
-from Libraries.BRS_Python_Libraries.BRS.Utilities.states import StatesColors,States
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, structureEnum
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 # from Programs.Pages.ProfileMenu import ProfileMenu
 # -------------------------------------------------------------------
-from ..Local.FileHandler import Profiles
 from ..Pages.PopUps import PopUpTypeEnum, PopUpsHandler,PopUps_Screens
 #====================================================================#
 # Functions
@@ -346,6 +331,12 @@ class ProfileLogin(Screen):
             Builds the login screen entirely.
             The login screen consists of a "Login" message as well as
             a card containing a username and password textfields.
+
+            The login screen consists of a card with "login" written above it.
+            The card contains a confirm and a cancel button as well as
+            2 fields labeled Password and username.
+
+            username is set by default.
         """
         
         #region ---- Background
@@ -360,9 +351,15 @@ class ProfileLogin(Screen):
         try:
             self.padding = 25
             self.spacing = 25
+            from kivy.core.window import Window
+
+            if(Information.usingWrongDisplay):
+                MainLayoutPadding = (Window.width/4,Window.height/8,Window.width/5,Window.height/8)
+            else:
+                MainLayoutPadding = (Window.width/4,Window.height/8,Window.width/5,Window.height/8)
 
             # Login card
-            self.MainLayout = MDBoxLayout(spacing=10, padding=("300sp","20sp","300sp","20sp"), orientation="vertical")
+            self.MainLayout = MDBoxLayout(spacing=10, padding=MainLayoutPadding, orientation="vertical")
             self.Card = MDCard(
                                 elevation = Shadow.Elevation.default,
                                 shadow_softness = Shadow.Smoothness.default,
@@ -371,18 +368,22 @@ class ProfileLogin(Screen):
                                 orientation = "vertical"
                                 )
 
-            self.UsernameTitle = MDLabel(text=_("Username") + ":")
-            self.PasswordTitle = MDLabel(text=_("Password") + ":")
-            self.Username = MDTextField(text=ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
+            # self.UsernameTitle = MDLabel(text=_("Username") + ":")
+            # self.PasswordTitle = MDLabel(text=_("Password") + ":")
+            # self.Username = MDTextField(text=ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
+            self.LockIcon = MDIconButton(text="lock", icon="lock", halign = "center", disabled=True)
+            self.LockIcon.icon_size = "100sp"
+            self.LockIcon.pos_hint={"center_x": 0.5, "center_y": 0.5}
             self.Password = MDTextField()
-            self.PasswordTitle.font_style = "H5"
-            self.UsernameTitle.font_style = "H5"
+            self.Password.font_size = 30
+            # self.PasswordTitle.font_style = "H5"
+            # self.UsernameTitle.font_style = "H5"
 
-            self.Username.hint_text = _("Username")
+            # self.Username.hint_text = _("Username")
             self.Password.hint_text = _("Password")
 
             # Page title
-            self.LoginTitle = MDLabel(text=_("Login"), font_style = "H1", halign = "center", size_hint_y = 0.25)
+            # self.LoginTitle = MDLabel(text=_("Password"), font_style = "H1", halign = "center", size_hint_y = 0.25)
 
             # Button Layout
             self.ButtonLayout = MDBoxLayout(spacing=20)
@@ -406,13 +407,14 @@ class ProfileLogin(Screen):
             self.LoginLayout.add_widget(self.Login)
             self.ButtonLayout.add_widget(self.LoginLayout)
             self.ButtonLayout.add_widget(self.CancelLayout)
-            self.Card.add_widget(self.UsernameTitle)
-            self.Card.add_widget(self.Username)
-            self.Card.add_widget(self.PasswordTitle)
+            # self.Card.add_widget(self.UsernameTitle)
+            # self.Card.add_widget(self.Username)
+            # self.Card.add_widget(self.PasswordTitle)
+            self.Card.add_widget(self.LockIcon)
             self.Card.add_widget(self.Password)
             self.Card.add_widget(self.ButtonLayout)
 
-            self.MainLayout.add_widget(self.LoginTitle)
+            # self.MainLayout.add_widget(self.LoginTitle)
             self.MainLayout.add_widget(self.Card)
             self.add_widget(self.MainLayout)
         except:
@@ -475,16 +477,16 @@ class ProfileLogin(Screen):
             Function called when attempting to log in with the specified
             password and username
         """
-        username = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
+        # username = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
         password = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Password.value]
 
-        if(username != self.Username.text):
-            self.Username.error = True
+        # if(username != self.Username.text):
+        #     self.Username.error = True
 
         if(password != self.Password.text):
             self.Password.error = True
 
-        if(self.Username.error or self.Password.error):
+        if(self.Password.error):
             pass
         else:
             ProfileLogins_Screens._GoodExit()

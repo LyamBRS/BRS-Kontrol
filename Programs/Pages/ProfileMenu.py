@@ -9,14 +9,7 @@ LoadingLog.Start("ProfileMenu.py")
 #====================================================================#
 # Imports
 #====================================================================#
-import os
-from random import randint, random
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.slider import Slider
 from kivy.core.window import Window
 from kivy.animation import Animation
 # -------------------------------------------------------------------
@@ -26,14 +19,12 @@ from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTr
 from kivymd.uix.boxlayout import MDBoxLayout
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
-from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.buttons import Get_RaisedButton,TextButton
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.ValueDisplay import OutlineDial, LineGraph
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.Indicators import SVGDisplay
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import WidgetCard,ProfileCard,CreateCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import ProfileCard,CreateCard
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import ProfileGenericEnum, ProfileHandler,CheckIntegrity, structureEnum
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 # -------------------------------------------------------------------
 from .ProfileLogin import ProfileLogins_Screens
 from .ProfileCreation import ProfileCreation_Screens
@@ -164,6 +155,16 @@ class ProfileMenu(Screen):
         self.padding = 25
         self.spacing = 25
 
+        # Debug.Log("Setting variables depending on wrongDisplay member")
+        if(Information.usingWrongDisplay):
+            cardOffset = 100
+            profileCardWidth = "200sp"
+            profileCardheight = "300sp"
+        else:
+            cardOffset = 100
+            profileCardWidth = "200sp"
+            profileCardheight = "300sp"
+
         #region ---- Background
         import os
         from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
@@ -189,7 +190,7 @@ class ProfileMenu(Screen):
         self.Layout.TitleLayout.Title.size_hint = (1,1)
 
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
-        windowWidth = str(Window.width/2) + "sp"
+        windowWidth = (Window.width/2) - cardOffset
         self.Layout.ProfilesLayout.profileBox = MDBoxLayout(orientation='horizontal', spacing="50sp", padding = (windowWidth,"100sp",windowWidth,"50sp"), size_hint_x=None)
         self.Layout.ProfilesLayout.profileBox.bind(minimum_width = self.Layout.ProfilesLayout.profileBox.setter('width'))
 
@@ -214,14 +215,14 @@ class ProfileMenu(Screen):
         # Add all available profiles as cards in the scrollview:
         Debug.Log("Creating profile cards...")
         for profile in Profiles.fileList:
-            card = ProfileCard(jsonPath, profile, CheckIntegrity, size = ("200sp","300sp"), size_hint_x = None)
+            card = ProfileCard(jsonPath, profile, CheckIntegrity, size = (profileCardWidth, profileCardheight), size_hint_x = None)
             card.SetAttributes(elevation=0)
             card.PressedEnd = self.ProfilesClicked
             self.Layout.ProfilesLayout.profileBox.add_widget(card)
         Debug.Log("All profile cards created")
 
         # Add the create new profile card at the end of the list
-        card = CreateCard(size = ("200sp","300sp"), size_hint_x = None)
+        card = CreateCard(size = (profileCardWidth, profileCardheight), size_hint_x = None)
         card.PressedEnd = self.CreateProfileClicked
         card._MDCard.Title.text = _("Create")
         self.Layout.ProfilesLayout.profileBox.add_widget(card)

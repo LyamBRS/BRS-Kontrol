@@ -638,7 +638,7 @@ def EnvironementCheck() -> bool:
         Debug.Log(">>> Not using a raspberry pi")
         PopUpsHandler.Add(PopUpTypeEnum.Warning,
                           Icon="desktop-classic",
-                          Message = _("You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis"), 
+                          Message = _("You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis") + ". " +_("Detected processor: ") + str(Information.platform), 
                           CanContinue=True)
     else:
         Debug.Log(">>> Using a raspberry pi.")

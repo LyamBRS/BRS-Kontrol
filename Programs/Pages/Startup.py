@@ -11,34 +11,18 @@ LoadingLog.Start("Startup.py")
 #====================================================================#
 import os
 from kivy.core.window import Window
-from random import randint, random
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.slider import Slider
-from kivy.core.window import Window
 from kivy.animation import Animation
-from kivy.graphics import Canvas, Color, Rectangle, PushMatrix, PopMatrix, Rotate
+from kivy.graphics import PushMatrix, PopMatrix, Rotate
 # -------------------------------------------------------------------
 from kivymd.uix.label import MDLabel
-from kivymd.uix.scrollview import MDScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
-from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.button import MDIconButton
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-# -------------------------------------------------------------------
-from Programs.Local.FileHandler.Profiles import ProfileHandler,CheckIntegrity
-from Programs.Local.FileHandler.Cache import Cache
-# -------------------------------------------------------------------
-from .ProfileLogin import ProfileLogin
-from .ProfileCreation import ProfileCreation_Step1
-from ..Local.FileHandler import Profiles
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 #====================================================================#
 # Screen Functions
 #====================================================================#
@@ -320,13 +304,13 @@ class Startup(Screen):
         icon_size = str(icon_size) + "sp"
 
         if(MDApp.get_running_app().theme_cls.theme_style == "Dark"):
-            self.B = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.R = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.S = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.B = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_B.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.R = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_R.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.S = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_S.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
         else:
-            self.B = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.R = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.S = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.B = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/Black_BRS_B.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.R = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/Black_BRS_R.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.S = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/Black_BRS_S.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
 
         self.B.icon_size = icon_size
         self.R.icon_size = icon_size

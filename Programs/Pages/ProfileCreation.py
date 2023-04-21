@@ -11,7 +11,6 @@ LoadingLog.Start("ProfileCreation.py")
 # Imports
 #====================================================================#
 import os
-import time
 from kivy.animation import Animation
 from kivy.properties import StringProperty
 # -------------------------------------------------------------------
@@ -19,6 +18,7 @@ from kivymd.uix.button import MDFillRoundFlatButton,MDIconButton
 from kivymd.uix.label import MDLabel
 from kivymd.uix.card import MDCard,MDSeparator
 from kivy.uix.screenmanager import Screen
+from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.textfield import MDTextField
@@ -701,6 +701,10 @@ class ProfileCreation_Step2(Screen):
         Debug.Start("ProfileCreation_Step2: on_pre_enter")
         self.padding = 25
         self.spacing = 25
+        Temporary = GetTemporary()
+        colorIconSize = Window.height / 35
+        colorIconFontSize = Window.height / 4
+        colorIconSpacing = (Window.width / 80) - 20
 
         #region ---- Background
         import os
@@ -715,7 +719,6 @@ class ProfileCreation_Step2(Screen):
         style = MDApp.get_running_app().theme_cls.theme_style
         primary = MDApp.get_running_app().theme_cls.primary_palette
         accent = MDApp.get_running_app().theme_cls.accent_palette
-        Temporary = GetTemporary()
 
         Debug.Log("Setting Temporary profile's themes to MDApp's current")
         Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
@@ -723,9 +726,9 @@ class ProfileCreation_Step2(Screen):
         CreateScreenBase(self, _("Select a theme"), "Middle")
 
         #region ---- Top Of Card
-        self.ThemeStyleLayout = MDBoxLayout(spacing=0,  padding=("0sp","0sp","0sp","0sp"), orientation="horizontal")
-        self.PrimaryLayout = MDBoxLayout(spacing=0,     padding=("0sp","0sp","0sp","0sp"), orientation="horizontal")
-        self.AccentLayout = MDBoxLayout(spacing=0,      padding=("0sp","0sp","0sp","0sp"), orientation="horizontal")
+        self.ThemeStyleLayout = MDBoxLayout(spacing=colorIconSpacing,  padding=(0,0,0,0), orientation="horizontal")
+        self.PrimaryLayout = MDBoxLayout(spacing=colorIconSpacing,     padding=(0,0,0,0), orientation="horizontal")
+        self.AccentLayout = MDBoxLayout(spacing=colorIconSpacing,      padding=(0,0,0,0), orientation="horizontal")
 
         self.ThemeStyleLabel = MDLabel(text=_("Theme"),
                                         font_style = "H5",
@@ -748,6 +751,9 @@ class ProfileCreation_Step2(Screen):
             Primary.theme_icon_color = "Custom"
             Primary.icon_color = get_color_from_hex(colors[color]["500"])
             Primary.line_width = 1.5
+            Primary.icon_size = colorIconSize
+            Primary.font_size = colorIconFontSize
+
 
             if color == primary:
                 Primary.line_color = Primary.icon_color
@@ -764,6 +770,7 @@ class ProfileCreation_Step2(Screen):
             Accent.theme_icon_color = "Custom"
             Accent.icon_color = get_color_from_hex(colors[color]["500"])
             Accent.line_width = 1.5
+            Accent.icon_size = colorIconSize
 
             if color == accent:
                 Accent.line_color = Accent.icon_color
@@ -779,6 +786,8 @@ class ProfileCreation_Step2(Screen):
         Dark = MDIconButton(text = "Dark", line_width = 1.5)
         Light.line_width = 1.5
         Dark.line_width = 1.5
+        Light.icon_size = colorIconSize
+        Dark.icon_size = colorIconSize
         Light.theme_icon_color = "Custom"
         Dark.theme_icon_color = "Custom"
         Light.icon_color = (0.8,0.8,0.8,1)
@@ -1020,7 +1029,7 @@ class ProfileCreation_Step3(Screen):
         self.LeftCardTop = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="vertical")
         self.LeftCardBottom = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
 
-        self.RightCardTop = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="vertical")
+        self.RightCardTop = MDBoxLayout(spacing=5, padding=("0sp","10sp","0sp","10sp"), orientation="vertical")
         self.RightCardTop.size_hint = (1, 0.25)
         self.RightCardBottom = MDBoxLayout(spacing=5, padding=("10sp","10sp","10sp","10sp"), orientation="horizontal")
 
@@ -1069,12 +1078,12 @@ class ProfileCreation_Step3(Screen):
         self.TopLayout.add_widget(self.Next)
 
         #region ---- SearchBar
-        self.MagnifyGlass = MDIconButton(icon = "magnify")
+        # self.MagnifyGlass = MDIconButton(icon = "magnify")
         self.SearchBar = MDTextField()
         self.SearchBar.hint_text = _("Search")
         self.SearchBar.bind(text=self.SearchIcons)
-        self.SearchLayout = MDBoxLayout(spacing=10, padding=("20sp","0sp","20sp","0sp"), orientation="horizontal")
-        self.SearchLayout.add_widget(self.MagnifyGlass)
+        self.SearchLayout = MDBoxLayout(spacing=10, padding=("0sp","0sp","10sp","0sp"), orientation="horizontal")
+        # self.SearchLayout.add_widget(self.MagnifyGlass)
         self.SearchLayout.add_widget(self.SearchBar)
         self.RightCardTop.add_widget(self.SearchLayout)
         #endregion

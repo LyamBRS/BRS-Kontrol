@@ -1,0 +1,74 @@
+{
+    "Version" : 1,
+    "DriverRepo" : "link_here",
+
+    "Information" : {
+        "Name" : "Kontrol",
+        "Description" : "Universal controller of devices and BrSpand cards",
+        "Company" : "BRS",
+        "Version" : "0.0",
+        "Type" : "Master"
+    },
+
+    "Functions" : [
+        {
+            "ID" : 0,
+            "Name" : "Ping",
+            "Description" : "Pings the other device",
+            "Parameters" : null,
+            "Answer" : {
+                "Names" : ["Pong"],
+                "Types" : ["bool"],
+                "Descriptions" : ["Returned ping"]
+            }
+        },
+        {
+            "ID" : 1,
+            "Name" : "GetSatus",
+            "Description" : "Gets the current status of the other end device.",
+            "Parameters" : null,
+            "Answer" : {
+                "Names" : ["Status"],
+                "Types" : ["unsigned char"],
+                "Descriptions" : ["Status of the device"]
+            }
+        },
+        {
+            "ID" : 2,
+            "Name" : "GetHandshake",
+            "Description" : "Gets the current status of the other end device.",
+            "Parameters" : {
+                "Names" : ["JSON"],
+                "Types" : ["string"],
+                "Descriptions" : ["The end device’s BFIO JSON string"]
+            },
+            "Answer" : {
+                "Names" : ["Status"],
+                "Types" : ["string"],
+                "Descriptions" : ["Status of the device"]
+            }
+        },
+        {
+            "ID" : 3,
+            "Name" : "GetErrorMessage",
+            "Description" : "Gets the device last error message.",
+            "Parameters" : null,
+            "Answer" : {
+                "Names" : ["Message"],
+                "Types" : ["string"],
+                "Descriptions" : ["The device’s error message."]
+            }
+        },
+        {
+            "ID" : 4,
+            "Name" : "GetType",
+            "Description" : "Gets the type of the other device",
+            "Parameters" : null,
+            "Answer" : {
+                "Names" : ["Type"],
+                "Types" : ["unsigned char"],
+                "Descriptions" : ["The end device’s type."]
+            }
+        }
+    ]
+}

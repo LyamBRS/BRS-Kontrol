@@ -1,3 +1,4 @@
 *.pyc
 *.json
 !Config.json
+!BFIO.json

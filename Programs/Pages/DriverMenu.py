@@ -20,6 +20,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppMan
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
+from Programs.Local.GUI.Cards import DeviceDriverInstallerCard
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -609,9 +610,12 @@ class DriverMenu(Screen):
         self.ToolBar = AppNavigationBar(pageTitle=_("Devices Driver"))
         #endregion
         #region ---------------------------- Drivers
+        DriverInstallerCard = DeviceDriverInstallerCard()
+
         path = AppendPath(os.getcwd(), "/Local/Drivers")
         drivers = GetDrivers()
 
+        self.driversBox.add_widget(DriverInstallerCard)
         for driver in drivers:
             card = DeviceDriverCard(driverName=driver)
             card.PressedEnd = self.DriverPressed

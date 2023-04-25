@@ -11,8 +11,11 @@
 #====================================================================#
 # Loading Logs
 #====================================================================#
+from cgitb import text
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 LoadingLog.Start("Cards.py")
 #====================================================================#
 # Imports
@@ -25,6 +28,7 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import ManualGitHub
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -43,6 +47,9 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.uix.button import MDFillRoundFlatIconButton
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.label import MDLabel
 #endregion
 LoadingLog.Import("Local")
 from ..FileHandler.deviceDriver import Get_OtherDeviceButton, GetJson, CheckIntegrity, Get_BluetoothButton, Get_BrSpandButton, Get_InternetButton, Get_KontrolButton, Get_OSButton, Get_ProcessorButton
@@ -99,6 +106,187 @@ class ButtonCard(BaseButton, Widget):
         self.Card.elevation = Shadow.Elevation.default
         self.Card.shadow_softness = Shadow.Smoothness.default
         self.Card.radius = Rounding.Cards.default
+        #endregion
+
+        self.add_widget(self.Card)
+        Debug.End()
+    #endregion
+    pass
+#====================================================================#
+LoadingLog.Class("DeviceDriverInstallerCard")
+class DeviceDriverInstallerCard(BaseButton, Widget):
+    #region   --------------------------- DOCSTRING
+    ''' 
+        DeviceDriverInstallerCard:
+        ===========
+        Summary:
+        --------
+        This class is a widget class that builds a search card used
+        to download device drivers from the internet to a specific
+        folder path on Kontrol.
+    '''
+    #endregion
+    #region   --------------------------- MEMBERS
+    #endregion
+    #region   --------------------------- METHODS
+    #region   -- Public
+
+    def CheckInternet(self, *args):
+        """
+            Function that checks if internet is available.
+            Updates the card according to the execution
+            result.
+        """
+        pass
+
+    def DownloadRepository(self, *args):
+        """
+            Function that checks if internet is available.
+            Then attempts to download the repository found
+            in it's search bar.
+        """
+        pass
+    #endregion
+    #region   -- Private
+    # ------------------------------------------------------
+    def _RippleHandling(self, object, finished):
+        if(finished):
+            # Check if WiFi is online
+            result = IsWebsiteOnline()
+            if(not result):
+                remaining = ManualGitHub.GetRequestsLeft()
+                Debug.Log(f"Requests left: {remaining}")
+                if(remaining > 0):
+                    self.Set_Normal()
+                else:
+                    self.Set_NoGitHubRequests()
+            else:
+                self.Set_NoWifi()
+            pass
+    # ------------------------------------------------------
+    def Set_NoWifi(self):
+        """
+            Updates the card to display no wifi
+        """
+        Debug.Start("Set_NoWifi")
+        self.BottomButton.icon = "reload"
+        self.BottomButton.text = _("Retry")
+        self.MiddleIcon.icon = "remove-wifi"
+        self.InformationLabel.text = _("No internet connection. Device drivers cannot be installed.")
+        self.SearchBox.disabled = True
+        self.SearchBox.text = ""
+        Debug.End()
+
+    def Set_Normal(self):
+        """
+            Updates the card to display regular
+            information.
+        """
+        Debug.Start("Set_Normal")
+        self.BottomButton.icon = "search-web"
+        self.BottomButton.text = _("Search GitHub")
+        self.MiddleIcon.icon = "github"
+        self.InformationLabel.text = _("Search GitHub for device drivers to install")
+        self.SearchBox.disabled = False
+        self.SearchBox.text = ""
+        Debug.End()
+
+    def Set_RepositoryNotFound(self):
+        """
+            Updates the card to display the fact
+            that no github repository could be
+            found based off the search field.
+        """
+        Debug.Start("Set_RepositoryNotFound")
+        self.BottomButton.icon = "magnify"
+        self.BottomButton.text = _("Search GitHub")
+        self.MiddleIcon.icon = "magnify-close"
+        self.InformationLabel.text = _("No repository could be found with that link.")
+        self.SearchBox.disabled = False
+        self.SearchBox.text = ""
+        Debug.End()
+
+    def Set_NoGitHubRequests(self):
+        """
+            Updates the card to display no Github
+            request.
+        """
+        Debug.Start("Set_NoGitHubRequests")
+        self.BottomButton.icon = "reload"
+        self.BottomButton.text = _("Retry")
+        self.MiddleIcon.icon = "github"
+        self.InformationLabel.text = _("You ran out of GitHub API requests. Wait up to an hour.")
+        self.SearchBox.disabled = True
+        self.SearchBox.text = ""
+        Debug.End()
+    #endregion
+    #endregion
+    #region   --------------------------- CONSTRUCTOR
+    def __init__(self,
+                 **kwargs):
+        super(DeviceDriverInstallerCard, self).__init__(**kwargs)
+        Debug.Start("DeviceDriverInstallerCard")
+        #region --------------------------- Initial check ups
+
+        self.padding = 0
+        self.spacing = 0
+
+        self.Card = MDCard()
+        self.Card.orientation = "vertical"
+        self.Card.elevation = Shadow.Elevation.default
+        self.Card.shadow_softness = Shadow.Smoothness.default
+        self.Card.radius = Rounding.Cards.default
+        self.size = (400,425)
+        self.ripple_alpha = 0
+        #endregion
+
+        #region --------------------------- Widgets
+        self.Layout = MDFloatLayout()
+        self.Layout.padding = 25
+        self.Layout.size_hint = (1,1)
+
+        self.BottomButton = MDFillRoundFlatIconButton(
+                                icon = "search-web",
+                                text = _("Search"),
+                                font_style = "H4",
+                            )
+        self.BottomButton.rounded_button = False
+        self.BottomButton.pos_hint = {'center_x': 0.5, 'center_y': 0.075}
+        self.BottomButton.size_hint = (1, None)
+        self.BottomButton.bind(_finishing_ripple = self._RippleHandling)
+
+        self.MiddleIcon = MDIconButton(
+                                icon = "github",
+                                disabled = True,
+                                icon_size = 150,
+                                pos_hint = {'center_x': 0.5, 'center_y': 0.75}
+                            )
+        self.MiddleIcon.pos_hint = {'center_x': 0.5, 'center_y': 0.60}
+
+        self.InformationLabel = MDLabel(
+                                text = _("Search for a device driver repository to download."),
+                                font_style = "H6",
+                            )
+        self.InformationLabel.pos_hint = {'center_x': 0.5, 'center_y': 0.25}
+        self.InformationLabel.size_hint = (0.75, None)
+
+        self.SearchBox = MDTextField(
+            hint_text = _("Search") + " GitHub",
+            pos_hint = {'center_x': 0.5, 'center_y': 0.925}
+        )
+        self.SearchBox.size_hint = (0.75, None)
+
+        self.Layout.add_widget(self.SearchBox)
+        self.Layout.add_widget(self.MiddleIcon)
+        self.Layout.add_widget(self.InformationLabel)
+        self.Layout.add_widget(self.BottomButton)
+        self.Card.add_widget(self.Layout)
+
+        if(Information.CanUse.Internet):
+            Debug.Log("internet can be used.")
+            self.Set_Normal()
+        else:
+            self.Set_NoWifi()
         #endregion
 
         self.add_widget(self.Card)
@@ -265,7 +453,6 @@ class DeviceDriverCard(BaseButton, Widget):
             elif(integrity == FileIntegrity.Blank):
                 pass
         #endregion
-
 
         self.Card.add_widget(self.RequirementsLayout)
         self.Layout.add_widget(self.Icon)

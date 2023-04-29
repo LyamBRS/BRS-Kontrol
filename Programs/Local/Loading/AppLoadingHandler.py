@@ -819,6 +819,18 @@ def KontrolGitHub() -> bool:
         return True
     #endregion
 
+    #region ====== Step 2 -> Compare found with current
+    result = GitHub.CheckIfBehind()
+    if(result == True):
+        Debug.Error("Repository is behind")
+        LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.Warning
+        LoadingSteps[step][ParamEnum.ErrorMessage] = _("Your version of Kontrol is behind. Updating is required to get the latest fixes and features.")
+        Debug.End()
+        return True
+    else:
+        Debug.Log("Kontrol is up to date with its Github repository")
+    #endregion
+
     Debug.Log("Kontrol's GitHub verified")
     LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.Success
     LoadingSteps[step][ParamEnum.ErrorMessage] = _("Good")

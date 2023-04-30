@@ -277,10 +277,10 @@ class AboutMenu(Screen):
         #endregion
         #region ---------------------------- Dictionaries
         Versions = {
-            _("Kontrol") : str(Information.version),
+            _("Kontrol") : str(Information.deviceVersion),
             _("Python") : str(Information.pythonVersion()),
-            _("Hardware") : "To Do",
-            _("Software") : "To Do"
+            _("Hardware") : str(Information.hardwareVersion),
+            _("Software") : str(Information.softwareVersion)
         }
         Technicalities = {
             _("OS") : str(Information.OS),

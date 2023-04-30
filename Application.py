@@ -60,7 +60,6 @@ from kivy.config import Config
 #====================================================================#
 # Classes
 #====================================================================#
-from Programs.Pages.DownloadProgress import DownloadProgress_Screens
 # ------------------------------------------------------------------------
 LoadingLog.Class("Application")
 class Application(MDApp):
@@ -93,9 +92,6 @@ class Application(MDApp):
 
         # Set default AppInfo informations
         Debug.Log("Setting Information")
-        Information.name = "BRS Kontrol"
-        Information.description = "Python program controlling BRS Kontrol's application"
-        Information.framework = "KivyMD"
 
         if(AppLanguage.Current == None):
             Information.CanUse.Languages = False

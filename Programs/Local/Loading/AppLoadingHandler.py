@@ -14,7 +14,7 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Programs.Local.Loading.KontrolInformation import SetKontrolInformation
-from Programs.Local.Updating.GitUpdating import CreateUpdatePopUp, DownloadLatestVersion
+from Programs.Local.Updating.GitUpdating import CreateUpdatePopUp, DownloadLatestVersion, HandleOldVersionsDeleting
 from Programs.Pages.DownloadProgress import DownloadProgress_Screens
 from Programs.Pages.ProfileMenu import ProfileMenu_Screens
 LoadingLog.Start("AppLoadingHandler.py")
@@ -627,6 +627,10 @@ def EnvironementCheck() -> bool:
 
     #region ==== Kontrol Information
     SetKontrolInformation()
+    #endregion
+
+    #region ==== Kontrol old version handling
+    HandleOldVersionsDeleting()
     #endregion
 
     #region ==== Comparing OS

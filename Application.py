@@ -6,6 +6,7 @@ import sys
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 from Programs.Local.Updating.GitUpdating import DownloadLatestVersion
+from Programs.Local.Updating.LaunchHandling import Shutdown
 LoadingLog.Start("Application.py")
 #===================================================================#
 # Imports
@@ -160,5 +161,7 @@ Application().run()
         # Cache.SetExit("Crashed")
         # Cache.SetDate("Exit")
         # Cache.SaveFile()
+
+Shutdown.ShutdownFunction()
 
 LoadingLog.End("Application.py")

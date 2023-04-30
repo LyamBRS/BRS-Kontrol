@@ -6,6 +6,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
 from Programs.Local.FileHandler.Profiles import ProfileThemeEnum
+from Programs.Local.Updating.LaunchHandling import CreateLaunchNewAppPopUp, CreateTransferDataPopUp
 from Programs.Pages.ProfileMenu import ProfileMenu_Screens
 LoadingLog.Start("DownloadProgress.py")
 #====================================================================#
@@ -78,6 +79,10 @@ class DownloadProgressHandler():
                       Type=PopUpTypeEnum.Remark)
         PopUps_Screens.SetCaller(DownloadProgress, "DownloadProgress")
         PopUps_Screens.SetExiter(ProfileMenu_Screens, "ProfileMenu")
+
+        CreateTransferDataPopUp()
+        CreateLaunchNewAppPopUp()
+
         PopUps_Screens.Call()
         pass
 

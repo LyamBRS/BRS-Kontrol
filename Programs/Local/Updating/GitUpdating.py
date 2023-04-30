@@ -328,6 +328,8 @@ def _DeleteOtherKontrolVersions(*args) -> Execution:
                     Debug.Log(">>> DELETED")
                 except:
                     Debug.Error(f"Failed to delete: {version}")
+                    PopUpsHandler.Add(Type=PopUpTypeEnum.FatalError,
+                                      Message=_("Kontrol failed to delete the following version: ")+version)
     else:
         Debug.Error("Running version not found in list of installed versions.")
         Debug.Error(f"List of versions: {installedVersions}")

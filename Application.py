@@ -4,6 +4,8 @@
 import os
 import sys
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
+from Programs.Local.Updating.GitUpdating import DownloadLatestVersion
 LoadingLog.Start("Application.py")
 #===================================================================#
 # Imports
@@ -58,6 +60,7 @@ from kivy.config import Config
 #====================================================================#
 # Classes
 #====================================================================#
+from Programs.Pages.DownloadProgress import DownloadProgress_Screens
 # ------------------------------------------------------------------------
 LoadingLog.Class("Application")
 class Application(MDApp):
@@ -106,7 +109,6 @@ class Application(MDApp):
         #Window.left = -1024
         #Window.top = 600
         #Window.fullscreen = False
-
         Window.size = (720, 576)
 
         # Create screen manager

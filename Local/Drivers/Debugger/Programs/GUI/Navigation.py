@@ -12,7 +12,6 @@
 #====================================================================#
 # Loading Logs
 #====================================================================#
-from msilib.schema import Icon
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("AppLoading.py")
 #====================================================================#

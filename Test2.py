@@ -1,41 +1,58 @@
+from kivymd.app import MDApp
+from kivymd.uix.progressbar import MDProgressBar
+import asyncio
+import git
+import threading
+from enum import Enum
 
-# To change the kivy default settings
-# we use this module config
-from kivy.config import Config
+class Execution(Enum):
+    Passed = 1
+    Failed = 2
 
-# 0 being off 1 being on as in true / false
-# you can use 0 or 1 && True or False
-Config.set('graphics', 'resizable', '0')
+async def download_git_repo_async(repo_url: str, local_path: str, callback_fn=None) -> Execution:
+    try:
+        # Clone the Git repository asynchronously
+        await asyncio.create_task(git.Repo.clone_from(repo_url, local_path, progress=callback_fn))
+        return Execution.Passed
+    except Exception as e:
+        print(f"Failed to download Git repo: {e}")
+        return Execution.Failed
 
-# fix the width of the window
-Config.set('graphics', 'width', '1024')
-Config.set('graphics', 'height', '600')
- 
-# import kivy module
-import kivy
- 
-# this restrict the kivy version i.e
-# below this kivy version you cannot use the app
-kivy.require("1.9.1")
- 
-# base Class of your App inherits from the App class.
-# app:always refers to the instance of your application
-from kivy.app import App
- 
-# if you not import label and use it through error
-from kivy.uix.label import Label
- 
-# defining the App class
-class MyLabelApp(App):
+def start_download_thread(repo_url: str, local_path: str, progress_bar: MDProgressBar, callback_fn=None):
+    # Define the function to run in the separate thread
+    def download_thread():
+        # Create a new event loop for this thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        # Define the progress update function for the callback
+        def update_progress(op_code, cur_count, max_count=None, message=''):
+            # Update the progress bar with the current progress
+            progress = cur_count / max_count if max_count else 0
+            progress_bar.value = progress * 100
+
+        # Call the download_git_repo_async function asynchronously with the progress update callback
+        loop.run_until_complete(download_git_repo_async(repo_url, local_path, update_progress))
+
+        # Stop the event loop
+        loop.stop()
+        loop.close()
+
+    # Start a new thread for the download function
+    thread = threading.Thread(target=download_thread)
+    thread.start()
+
+class MyApp(MDApp):
     def build(self):
-        # label display the text on screen
-        # markup text with different colour
-        l2 = Label(text ="[color = ff3333][b]Hello !!!!!!!!!!![/b] [/color]\n [color = 3333ff]GFG !!:):):):)[/color]",
-                   font_size ='20sp', markup = True)    
-        return l2
-     
-# creating the object
-label = MyLabelApp()
- 
-# run the window
-label.run()
+        # Create a progress bar to display the download progress
+        self.progress_bar = MDProgressBar(value=0, max=100)
+        return self.progress_bar
+
+    def on_start(self):
+        # Start the download function in a separate thread
+        start_download_thread(repo_url='https://github.com/username/repo.git',
+                               local_path='/path/to/local/folder',
+                               progress_bar=self.progress_bar)
+
+if __name__ == "__main__":
+    MyApp().run()

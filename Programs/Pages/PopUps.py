@@ -358,26 +358,26 @@ class PopUps_Screens:
         # Attempt to add the screen class as a widget of the AppManager
         if(len(PopUpsHandler.PopUps) > 0):
             Debug.Log("Some pop ups can be displayed.")
-            try:
+            # try:
                 # Check if exit class was specified
-                Debug.Log("Checking caller class")
-                if(PopUps_Screens._callerClass == None):
-                    Debug.Error("No caller class specified.")
-                    Debug.End()
-                    return True
-
-                Debug.Log("Checking caller name")
-                if(PopUps_Screens._callerName == None):
-                    Debug.Error("No caller name specified.")
-                    Debug.End()
-                    return True
-
-                Debug.Log("Adding widget")
-                AppManager.manager.add_widget(PopUps(name="PopUps"))
-            except:
-                Debug.Error("Exception occured while handling Call()")
+            Debug.Log("Checking caller class")
+            if(PopUps_Screens._callerClass == None):
+                Debug.Error("No caller class specified.")
                 Debug.End()
                 return True
+
+            Debug.Log("Checking caller name")
+            if(PopUps_Screens._callerName == None):
+                Debug.Error("No caller name specified.")
+                Debug.End()
+                return True
+
+            Debug.Log("Adding widget")
+            AppManager.manager.add_widget(PopUps(name="PopUps"))
+            # except:
+                # Debug.Error("Exception occured while handling Call()")
+                # Debug.End()
+                # return True
 
             # Attempt to call the added screen
             AppManager.manager.transition = PopUps_Screens._callerTransition()

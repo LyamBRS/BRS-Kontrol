@@ -13,6 +13,9 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Programs.Local.Updating.GitUpdating import CreateUpdatePopUp, DownloadLatestVersion
+from Programs.Pages.DownloadProgress import DownloadProgress_Screens
+from Programs.Pages.ProfileMenu import ProfileMenu_Screens
 LoadingLog.Start("AppLoadingHandler.py")
 #====================================================================#
 # Imports
@@ -834,6 +837,7 @@ def KontrolGitHub() -> bool:
     Debug.Log("Kontrol's GitHub verified")
     LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.Success
     LoadingSteps[step][ParamEnum.ErrorMessage] = _("Good")
+
     Debug.End()
     return False
 LoadingLog.Function("KontrolGitHub_CallBack")
@@ -866,6 +870,11 @@ def KontrolGitHub_CallBack() -> bool:
         if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Warning):
             Debug.Warn("Some things were not right. Appending warning windows for future display")
             PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = LoadingSteps[step][ParamEnum.ErrorMessage])
+
+            DownloadProgress_Screens.SetCaller(ProfileMenu_Screens, "ProfileMenu", _("Downloading latest version of Kontrol"), DownloadLatestVersion)
+            DownloadProgress_Screens.SetExiter(ProfileMenu_Screens, "ProfileMenu")
+            CreateUpdatePopUp(ProfileMenu_Screens)
+
             Debug.End()
             return False
 

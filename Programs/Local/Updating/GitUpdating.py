@@ -83,8 +83,8 @@ def CreateUpdatePopUp(cancelHandler=None) -> Execution:
                               Type=PopUpTypeEnum.Custom,
                               ButtonAText=_("Update"),
                               ButtonBText=_("Cancel"),
-                              ButtonAHandler=DownloadProgress_Screens,
-                              ButtonBHandler=cancelHandler
+                              ButtonAHandler=DownloadProgress_Screens.Call,
+                              ButtonBHandler=cancelHandler.Call
                               )
         else:
             Debug.Error("Versions match.")
@@ -132,7 +132,6 @@ def DownloadLatestVersion(progressBar:MDProgressBar, DownloadProgressHandler) ->
 
     Debug.Log("Creating new folder")
     directoryName = GitHub.LatestTag
-    directoryName = "0.0.0"
     directoryPath = os.path.join(parentPath, directoryName)
     Debug.Log(f"New folder's path: {directoryPath}")
 

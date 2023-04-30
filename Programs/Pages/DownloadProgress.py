@@ -5,6 +5,8 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
+from Programs.Local.FileHandler.Profiles import ProfileThemeEnum
+from Programs.Pages.ProfileMenu import ProfileMenu_Screens
 LoadingLog.Start("DownloadProgress.py")
 #====================================================================#
 # Imports
@@ -73,10 +75,9 @@ class DownloadProgressHandler():
         PopUpsHandler.Add(Icon="check-decagram",
                       Message=_("The download was successful and has installed successfully."),
                       ButtonAText="Ok",
-                      ButtonAHandler=DownloadProgress_Screens._exitClass,
-                      Type=PopUpTypeEnum.Custom)
+                      Type=PopUpTypeEnum.Remark)
         PopUps_Screens.SetCaller(DownloadProgress, "DownloadProgress")
-        PopUps_Screens.SetExiter(DownloadProgress, "DownloadProgress")
+        PopUps_Screens.SetExiter(ProfileMenu_Screens, "ProfileMenu")
         PopUps_Screens.Call()
         pass
 
@@ -92,10 +93,9 @@ class DownloadProgressHandler():
         PopUpsHandler.Add(Icon="check-decagram",
                         Message=_("The download failed and couldn't complete."),
                         ButtonAText="Damn",
-                        ButtonAHandler=DownloadProgress_Screens._exitClass,
-                        Type=PopUpTypeEnum.Custom)
+                        Type=PopUpTypeEnum.Remark)
         PopUps_Screens.SetCaller(DownloadProgress, "DownloadProgress")
-        PopUps_Screens.SetExiter(DownloadProgress, "DownloadProgress")
+        PopUps_Screens.SetExiter(ProfileMenu_Screens, "ProfileMenu")
         PopUps_Screens.Call()
         pass
 #====================================================================#

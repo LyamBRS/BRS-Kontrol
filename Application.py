@@ -2,7 +2,6 @@
 # File Information
 #====================================================================#
 import os
-import sys
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 # from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 # from Programs.Local.Updating.GitUpdating import DownloadLatestVersion

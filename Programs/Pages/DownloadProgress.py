@@ -80,7 +80,7 @@ class DownloadProgressHandler():
         PopUps_Screens.SetCaller(DownloadProgress, "DownloadProgress")
         PopUps_Screens.SetExiter(ProfileMenu_Screens, "ProfileMenu")
 
-        CreateTransferDataPopUp()
+        # CreateTransferDataPopUp()
         CreateLaunchNewAppPopUp()
 
         PopUps_Screens.Call()

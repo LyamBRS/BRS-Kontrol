@@ -4,21 +4,20 @@
 import os
 import sys
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
-from Programs.Local.Updating.GitUpdating import DownloadLatestVersion
-from Programs.Local.Updating.LaunchHandling import Shutdown
+# from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
+# from Programs.Local.Updating.GitUpdating import DownloadLatestVersion
 LoadingLog.Start("Application.py")
 #===================================================================#
 # Imports
 #===================================================================#
 LoadingLog.Import("Kivy")
 from kivy.core.window import Window
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
+from kivy.uix.screenmanager import ScreenManager
 # -------------------------------------------------------------------
 LoadingLog.Import("KivyMD")
 from kivymd.app import MDApp
-from kivymd.uix.button import MDRaisedButton
-from kivymd.theming import ThemeManager
+# from kivymd.uix.button import MDRaisedButton
+# from kivymd.theming import ThemeManager
 # -------------------------------------------------------------------
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.font import Font
@@ -34,6 +33,7 @@ from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
 from Programs.Pages.AppLoading import AppLoading,AppLoading_Screens
 from Programs.Pages.PopUps import PopUps,PopUps_Screens,PopUpsHandler,Keys,PopUpTypeEnum
+from Programs.Local.Updating.LaunchHandling import Shutdown
 #====================================================================#
 # Configuration
 #====================================================================#

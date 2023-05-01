@@ -12,8 +12,7 @@
 #====================================================================#
 import subprocess
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Programs.Local.Updating.GitUpdating import GetInstalledKontrolVersions
-from Programs.Pages.DownloadProgress import DownloadProgress_Screens
+# from Programs.Pages.DownloadProgress import DownloadProgress_Screens
 LoadingLog.Start("LaunchHandling.py")
 #====================================================================#
 # Imports
@@ -62,6 +61,7 @@ class Shutdown():
             This function's purpose is to execute when the app
             closes. By default it is empty.
         """
+        pass
 
     newAppPath:str = None
     """
@@ -72,7 +72,7 @@ class Shutdown():
 #====================================================================#
 # Functions
 #====================================================================#
-def CreateLaunchNewAppPopUp(cancelHandler) -> Execution:
+def CreateLaunchNewAppPopUp() -> Execution:
     """
         CreateLaunchNewAppPopUp:
         ========================
@@ -157,9 +157,9 @@ def QuitAndLaunchNewApp(*args) -> Execution:
         - This function does not clear pop ups
         - This function does NOT handle PopUps_Screens
         - This should be the last function you call.
-    """
-    Debug.Start()
-
+    # """
+    Debug.Start("QuitAndLaunchNewApp")
+    from Programs.Local.Updating.GitUpdating import GetInstalledKontrolVersions
     Debug.Log("Checking if multiple versions installed")
     installedVersions = GetInstalledKontrolVersions()
     if(installedVersions == Execution.Unecessary):
@@ -199,6 +199,8 @@ def QuitAndLaunchNewApp(*args) -> Execution:
         Debug.End()
         return Execution.Failed
 
+    Debug.Log(f"path found: {newPath}")
+    Shutdown.newAppPath = newPath
     Debug.Log("Checking if Application.py is available")
     files = os.listdir(newPath)
     if "Application.py" in files:
@@ -211,7 +213,7 @@ def QuitAndLaunchNewApp(*args) -> Execution:
         return Execution.Failed
 
     Debug.Log("Configurating Shutdown class.")
-    Shutdown.newAppPath = newPath
+    # Shutdown.newAppPath = newPath
     Shutdown.ShutdownFunction = _AppShutDownFunction
 
     Debug.Log("Shutting down KivyMD application.")
@@ -226,7 +228,7 @@ def _AppShutDownFunction(*args) -> Execution:
         Debug.Error("FAILED TO LAUNCH NEW APP DUE TO NO PATH BEING SPECIFIED")
     else:
         os.chdir(Shutdown.newAppPath)
-        result = subprocess.run(['python', os.path.basename(Shutdown.newAppPath)])
+        result = subprocess.run(['python', "Application.py"])
 
     Debug.End()
 LoadingLog.End("LaunchHandling.py")

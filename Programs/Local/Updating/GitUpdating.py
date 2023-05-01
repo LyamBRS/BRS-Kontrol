@@ -20,6 +20,7 @@ LoadingLog.Start("GitUpdating.py")
 LoadingLog.Import("Python")
 import os
 import shutil
+from git import rmtree
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
@@ -323,13 +324,14 @@ def _DeleteOtherKontrolVersions(*args) -> Execution:
                 versionPath = GetParentPath(os.getcwd()) + version
                 Debug.Log(f">>> Deleting: {version} ...")
 
-                try:
-                    shutil.rmtree(versionPath)
-                    Debug.Log(">>> DELETED")
-                except:
-                    Debug.Error(f"Failed to delete: {version}")
-                    PopUpsHandler.Add(Type=PopUpTypeEnum.FatalError,
-                                      Message=_("Kontrol failed to delete the following version: ")+version)
+                # try:
+                Debug.Log(f"Trying to remove: {versionPath}")
+                rmtree(versionPath)
+                Debug.Log(">>> DELETED")
+                # except:
+                    # Debug.Error(f"Failed to delete: {version}")
+                    # PopUpsHandler.Add(Type=PopUpTypeEnum.FatalError,
+                                    #   Message=_("Kontrol failed to delete the following version: ")+version)
     else:
         Debug.Error("Running version not found in list of installed versions.")
         Debug.Error(f"List of versions: {installedVersions}")

@@ -2,171 +2,159 @@ import subprocess
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Netsh_GetWiFiNetworks
 
-fakeNetwork = """
-Interface name : Wi-Fi
-There are 5 networks currently visible.
-
-SSID 1 : BELL310
-    Network type            : Infrastructure
-    Authentication          : WPA2-Personal
-    Encryption              : CCMP
-    BSSID 1                 : 0c:ac:8a:00:d6:0d
-         Signal             : 33%
-         Radio type         : 802.11ax
-         Channel            : 6
-         Basic rates (Mbps) : 1 2 5.5 11
-         Other rates (Mbps) : 6 9 12 18 24 36 48 54
-
-SSID 2 :
-    Network type            : Infrastructure
-    Authentication          : WPA2-Enterprise
-    Encryption              : CCMP
-    BSSID 1                 : 10:33:bf:ba:8f:da
-         Signal             : 40%
-         Radio type         : 802.11ac
-         Channel            : 157
-         Basic rates (Mbps) : 6
-         Other rates (Mbps) : 9 12 18 24 36 48 54
-    BSSID 2                 : 94:6a:77:e6:74:19
-         Signal             : 40%
-         Radio type         : 802.11n
-         Channel            : 6
-         Basic rates (Mbps) : 6
-         Other rates (Mbps) : 9 12 18 24 36 48 54
-    BSSID 3                 : 10:33:bf:9f:94:4d
-         Signal             : 85%
-         Radio type         : 802.11n
-         Channel            : 6
-         Basic rates (Mbps) : 6
-         Other rates (Mbps) : 9 12 18 24 36 48 54
-    BSSID 4                 : 10:33:bf:9f:94:57
-         Signal             : 80%
-         Radio type         : 802.11ac
-         Channel            : 157
-         Basic rates (Mbps) : 6
-         Other rates (Mbps) : 9 12 18 24 36 48 54
-
-SSID 3 : BELL653
-    Network type            : Infrastructure
-    Authentication          : WPA2-Personal
-    Encryption              : CCMP
-    BSSID 1                 : c0:3c:04:2a:62:ec
-         Signal             : 78%
-         Radio type         : 802.11ax
-         Channel            : 6
-         Basic rates (Mbps) : 1 2 5.5 11
-         Other rates (Mbps) : 6 9 12 18 24 36 48 54
-"""
-import re
 Debug.enableConsole = True
-text = fakeNetwork # Replace with your text
-networks = []
-current_network = {}
+Netsh_GetWiFiNetworks()
 
-for line in text.split("\n"):
-    line = line.strip()
-    if line.startswith("SSID"):
-        current_network = {}
-        current_network["ssid"] = line.split(":")[1].strip()
-        var = current_network["ssid"]
-        Debug.Log(f"SSID = {var}")
-
-    elif line.startswith("Authentication"):
-        current_network["authentication"] = line.split(":")[1].strip()
-        var = current_network["authentication"]
-        Debug.Log(f"authentication = {var}")
-
-    elif line.startswith("Encryption"):
-        current_network["encryption"] = line.split(":")[1].strip()
-        var = current_network["authentication"]
-        Debug.Log(f"encryption = {var}")
-
-    elif line.startswith("Signal"):
-        signal = line.split(":")[1].strip()
-        current_network["signal"] = signal
-        Debug.Log(f"signal = {signal}")
-
-    elif line.startswith("BSSID"):
-        bssid = line.split(":")[1].strip()
-
-        dataList:list = line.split(" ")
-        cleanedList = [x for x in dataList if (x and len(x)>5)]
-        Debug.Log(f"BSSID: {cleanedList}")
-
-        # current_network["bssid"] = bssid
-        # Debug.Log(f"bssid = {line}")
-        # bssid = line.split(":")[1].strip()
-        # var = bssid
-        # Debug.Log(f"bssid = {var}")
-# 
-        # signal_line = next(filter(lambda l: "Signal" in l, text.split("\n")), None)
-        # var = signal_line
-        # Debug.Log(f"signal_line = {var}")
-# 
-        # signal = re.search(r'\d+%', signal_line).group()
-        # bssid_dict = {"bssid": bssid, "signal": signal}
-        # if "bssids" in current_network:
-            # current_network["bssids"].append(bssid_dict)
-        # else:
-            # current_network["bssids"] = [bssid_dict]
-    elif line.startswith("Channel"):
-        current_network["channel"] = line.split(":")[1].strip()
-        networks.append(current_network)
-
-print(networks)
-
-
-# def Netsh_GetWiFiNetworks() -> list:
-#     """
-#         Netsh_GetWiFiNetworks:
-#         ======================
-#         Summary:
-#         --------
-#         Allows you to get a cleaned list of netsh wlan networks output.
-#         This function allows you to see all the networks that are
-#         available wirelessly.
-
-#         This is especially useful if you want to check which WiFi
-#         your WINDOWS device can access
-
-#         `Attention`:
-#         ------------
-#         Netsh commands only works on WINDOWS DEVICES. They
-#         do not work on Linux nor MacOS devices.
-
-#         Returns:
-#         ----------
-#         - `Execution.Incompatibility`: The function cannot be used due to your device's operating system.
-#         - `Execution.Failed`: Failed to run the command. wlan is not accessible.
-
-#         Examples of returned lists:
-#         -----------------------------
-#     """
-#     Debug.Start("Netsh_GetWiFiNetworks")
-
-#     if(Information.initialized):
-#         if(Information.platform != "Windows"):
-#             Debug.Error(f"Attempting to call a netsh function on a non windows based OS: {Information.OS}")
-#             Debug.End()
-#             return Execution.Incompatibility
-#         else:
-#             Debug.Log("Windows platform detected.")
-#     else:
-#         Debug.Warn("Warning, BRS's Information class is not initialized. This function cannot execute safety measures.")
-
-#     try:
-#         networks = subprocess.check_output(["netsh", "wlan", "show", "networks", "mode=bssid"])
-#         decodedNetworks = networks.decode("ascii")
-#         Debug.Log("Subprocess success")
-#     except:
-#         Debug.Error("Fatal error while running subprocess. You're either not using Windows or don't have any WiFi drivers.")
-#         Debug.End()
-#         return Execution.Crashed
-    
-
-
-# if __name__ == "__main__":
-#     Debug.enableConsole = True
-#     print(Netsh_GetWiFiNetworks())
-
+#fakeNetwork = """
+#Interface name : Wi-Fi
+#There are 5 networks currently visible.
+#
+#SSID 1 : BELL310
+#    Network type            : Infrastructure
+#    Authentication          : WPA2-Personal
+#    Encryption              : CCMP
+#    BSSID 1                 : 0c:ac:8a:00:d6:0d
+#         Signal             : 33%
+#         Radio type         : 802.11ax
+#         Channel            : 6
+#         Basic rates (Mbps) : 1 2 5.5 11
+#         Other rates (Mbps) : 6 9 12 18 24 36 48 54
+#
+#SSID 2 :
+#    Network type            : Infrastructure
+#    Authentication          : WPA2-Enterprise
+#    Encryption              : CCMP
+#    BSSID 1                 : 10:33:bf:ba:8f:da
+#         Signal             : 40%
+#         Radio type         : 802.11ac
+#         Channel            : 157
+#         Basic rates (Mbps) : 6
+#         Other rates (Mbps) : 9 12 18 24 36 48 54
+#    BSSID 2                 : 94:6a:77:e6:74:19
+#         Signal             : 40%
+#         Radio type         : 802.11n
+#         Channel            : 6
+#         Basic rates (Mbps) : 6
+#         Other rates (Mbps) : 9 12 18 24 36 48 54
+#    BSSID 3                 : 10:33:bf:9f:94:4d
+#         Signal             : 85%
+#         Radio type         : 802.11n
+#         Channel            : 6
+#         Basic rates (Mbps) : 6
+#         Other rates (Mbps) : 9 12 18 24 36 48 54
+#    BSSID 4                 : 10:33:bf:9f:94:57
+#         Signal             : 80%
+#         Radio type         : 802.11ac
+#         Channel            : 157
+#         Basic rates (Mbps) : 6
+#         Other rates (Mbps) : 9 12 18 24 36 48 54
+#
+#SSID 3 : BELL653
+#    Network type            : Infrastructure
+#    Authentication          : WPA2-Personal
+#    Encryption              : CCMP
+#    BSSID 1                 : c0:3c:04:2a:62:ec
+#         Signal             : 78%
+#         Radio type         : 802.11ax
+#         Channel            : 6
+#         Basic rates (Mbps) : 1 2 5.5 11
+#         Other rates (Mbps) : 6 9 12 18 24 36 48 54
+#"""
+#import re
+#Debug.enableConsole = True
+#text = fakeNetwork # Replace with your text
+#networks = []
+#current_network = {}
+#
+#for line in text.split("\n"):
+#    line = line.strip()
+#    if line.startswith("SSID"):
+#        current_network = {}
+#        current_network["ssid"] = line.split(":")[1].strip()
+#        var = current_network["ssid"]
+#        Debug.Log(f"SSID = {var}")
+#
+#    elif line.startswith("Authentication"):
+#        current_network["authentication"] = line.split(":")[1].strip()
+#        var = current_network["authentication"]
+#        Debug.Log(f"authentication = {var}")
+#
+#    elif line.startswith("Encryption"):
+#        current_network["encryption"] = line.split(":")[1].strip()
+#        var = current_network["authentication"]
+#        Debug.Log(f"encryption = {var}")
+#
+#    elif line.startswith("Signal"):
+#        signal = line.split(":")[1].strip()
+#        current_network["signal"] = signal
+#        Debug.Log(f"signal = {signal}")
+#
+#    elif line.startswith("BSSID"):
+#        bssid = line.split(":")[1].strip()
+#
+#        dataList:list = line.split(" ")
+#        cleanedList = [x for x in dataList if (x and len(x)>5)]
+#        Debug.Log(f"BSSID: {cleanedList}")
+#
+#    elif line.startswith("Channel"):
+#        current_network["channel"] = line.split(":")[1].strip()
+#        networks.append(current_network)
+#
+#print(networks)
+#
+#
+## def Netsh_GetWiFiNetworks() -> list:
+#    # """
+#        # Netsh_GetWiFiNetworks:
+#        # ======================
+#        # Summary:
+#        # --------
+#        # Allows you to get a cleaned list of netsh wlan networks output.
+#        # This function allows you to see all the networks that are
+#        # available wirelessly.
+#
+#        # This is especially useful if you want to check which WiFi
+#        # your WINDOWS device can access
+#
+#        # `Attention`:
+#        # ------------
+#        # Netsh commands only works on WINDOWS DEVICES. They
+#        # do not work on Linux nor MacOS devices.
+#
+#        # Returns:
+#        # ----------
+#        # - `Execution.Incompatibility`: The function cannot be used due to your device's operating system.
+#        # - `Execution.Failed`: Failed to run the command. wlan is not accessible.
+#
+#        # Examples of returned lists:
+#        # -----------------------------
+#    # """
+#    # Debug.Start("Netsh_GetWiFiNetworks")
+#
+#    # if(Information.initialized):
+#        # if(Information.platform != "Windows"):
+#            # Debug.Error(f"Attempting to call a netsh function on a non windows based OS: {Information.OS}")
+#            # Debug.End()
+#            # return Execution.Incompatibility
+#        # else:
+#            # Debug.Log("Windows platform detected.")
+#    # else:
+#        # Debug.Warn("Warning, BRS's Information class is not initialized. This function cannot execute safety measures.")
+#
+#    # try:
+#        # networks = subprocess.check_output(["netsh", "wlan", "show", "networks", "mode=bssid"])
+#        # decodedNetworks = networks.decode("ascii")
+#        # Debug.Log("Subprocess success")
+#    # except:
+#        # Debug.Error("Fatal error while running subprocess. You're either not using Windows or don't have any WiFi drivers.")
+#        # Debug.End()
+#        # return Execution.Crashed
+#    
+#
+#
+## if __name__ == "__main__":
+##     Debug.enableConsole = True
+##     print(Netsh_GetWiFiNetworks())
+#

@@ -44,6 +44,11 @@ from kivy.clock import Clock
 #region ------------------------------------------------------ KivyMD
 #endregion
 #====================================================================#
+# PopUp Debug
+#====================================================================#
+class test:
+    showAllPopUps = False
+#====================================================================#
 # Enums
 #====================================================================#
 LoadingLog.Class("LoadingStepsEnum")
@@ -491,6 +496,14 @@ def IntegrityCheck_CallBack() -> bool:
     """
     Debug.Start("IntegrityCheck_CallBack")
 
+    if(test.showAllPopUps == True):
+        Debug.Log("BRUUUUUH")
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", _("No language packs found. The application will only work in default english."), False)
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, "file-hidden", _("Critical file(s)/folder(s) missing: "))
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", _("Warning, cache was not found. Parameters will not be saved when quitting.: "), False)
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", _("Fatal loading error"))
+
+
     # Check if function was executed
     if(LoadingSteps[LoadingStepsEnum.IntegrityCheck][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
         Debug.Error("Callback executed while error type is default.")
@@ -592,6 +605,7 @@ def InternetCheck_CallBack() -> bool:
             PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="wifi-off", Message=LoadingSteps[LoadingStepsEnum.InternetCheck][ParamEnum.ErrorMessage])
             Debug.End()
             return True
+
 
     Debug.Log("Callback was called for no reasons.")
     Debug.End()
@@ -867,8 +881,6 @@ def KontrolGitHub_CallBack() -> bool:
     Debug.Start("KontrolGitHub_CallBack")
     step = LoadingStepsEnum.KontrolGitHub
 
-    Debug.Log(LoadingSteps[step][ParamEnum.ErrorType])
-
     # Check if function was executed
     if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
         Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
@@ -904,7 +916,6 @@ def KontrolGitHub_CallBack() -> bool:
             LoadingSteps[LoadingStepsEnum.DriversGitHub][ParamEnum.Skip] = True
             Debug.End()
             return False
-
     Debug.Log("Callback was called for no reasons.")
     Debug.End()
 #endregion
@@ -941,6 +952,23 @@ def LoadApplication(updateFunction, setMaxFunction) -> bool:
         or error screens that needs to be displayed to the user.
     """
     Debug.Start("LoadApplication")
+
+    if(test.showAllPopUps == True):
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = _("Your version of Kontrol is behind. Updating is required to get the latest fixes and features."))
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Icon="github", Message = _("Failed to verify if Kontrol is up to date. Error message: "))
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="github", Message = _("The GitHub API is out of requests. Please wait up to an hour to receive 60 API requests."))
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = _("The application failed to get your computer's information."))
+        PopUpsHandler.Add(PopUpTypeEnum.Warning,
+                          Icon="apple",
+                          Message = _("You are currently running Kontrol using untested hardware. Potential crashes may occur during the use of this application."), 
+                          CanContinue=True)
+        PopUpsHandler.Add(PopUpTypeEnum.Warning,
+                          Icon="desktop-classic",
+                          Message = _("You are running Kontrol on an unknown processor. Some features may not work or may be disabled. This application is made for Raspberry Pis") + ". " +_("Processor: ") + str(Information.processorType), 
+                          CanContinue=True)
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message = _("Your raspberry pi is too old to be used by Kontrol."))
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Icon="wifi-off", Message=_("Failed to verify internet connection."))
+
     Debug.Log("Setting max loading steps")
     setMaxFunction(len(LoadingSteps))
     count:dict = {0:0.0}

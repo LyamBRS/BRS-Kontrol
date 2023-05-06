@@ -35,7 +35,6 @@ LoadingLog.Import("Kivy")
 from kivy.uix.widget import Widget
 from kivy.utils import get_color_from_hex
 from kivy.graphics import Color, RoundedRectangle
-from kivy.graphics.instructions import InstructionGroup
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import('KivyMD')

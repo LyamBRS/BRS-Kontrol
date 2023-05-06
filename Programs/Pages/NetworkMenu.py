@@ -4,6 +4,8 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import GetWiFiNotAvailableCard
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import CanDeviceUseWiFi
 LoadingLog.Start("NetworkMenu.py")
 #====================================================================#
 # Imports
@@ -233,8 +235,8 @@ class NetworkMenu(Screen):
     """
         NetworkMenu:
         -----------
-        This class handles the screen of the account menu which shows
-        to the user some actions that they can do with their user profiles
+        This class handles the screen of the WiFi Selection which shows
+        to the user some actions that they can do with the WiFi
     """
     #region   --------------------------- MEMBERS
     ToolBar:AppNavigationBar = None
@@ -295,6 +297,16 @@ class NetworkMenu(Screen):
             will slowly elevate to the wanted value.
         """
         Debug.Start("NetworkMenu -> on_enter")
+
+        Debug.Log("Trying to access WiFi interfaces")
+        result = CanDeviceUseWiFi()
+        if(result != True):
+            Debug.Log("WiFi networks cannot be accessed.")
+            card = GetWiFiNotAvailableCard(_("Failed to get wireless WiFi networks. Your device may not support WiFi. Please use Ethernet if available."))
+            self.add_widget(card)
+        else:
+            Debug.Log("Wifi can be accessed")
+
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):

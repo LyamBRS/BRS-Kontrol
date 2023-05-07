@@ -24,6 +24,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
+from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
 #endregion
 #region ------------------------------------------------------ KivyMD
@@ -241,6 +242,30 @@ class NetworkMenu(Screen):
     """
     #region   --------------------------- MEMBERS
     ToolBar:AppNavigationBar = None
+    continueToUpdateWiFis:bool = False
+    """
+        continueToUpdateWiFis:
+        ======================
+        Summary:
+        --------
+        If `True`: the clock scheduler function will keep
+        executing the function that updates wifis. otherwise,
+        it will stop rescheduling itself.
+
+        Defaults to `False`
+    """
+    WiFiObjectList:list = None
+    """
+        WiFiObjectList:
+        ===============
+        Summary:
+        --------
+        List of dictionaries of WiFi created.
+
+        Dictionary layout:
+        ------------------
+        - `{"name": "ssid", "object": WiFiSelectionCard}`
+    """
     #endregion
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
@@ -291,6 +316,8 @@ class NetworkMenu(Screen):
         self.Layout.add_widget(self.NoWiFiCard)
         self.Layout.add_widget(self.ToolBar.NavDrawer)
         self.add_widget(self.Layout)
+
+        self.continueToUpdateWiFis = False
         Debug.End()
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
@@ -313,85 +340,13 @@ class NetworkMenu(Screen):
             Debug.Log("Getting WiFi networks")
             networks = GetWiFiNetworks()
 
-            # networks = [
-            #             {
-            #                 "ssid" : "test-0",
-            #                 "strength" : 0,
-            #                 "bssid" : "BSSID",
-            #                 "mode" : "lock",
-            #             },
-            #             {
-            #                 "ssid" : "test-10",
-            #                 "strength" : 10,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-20",
-            #                 "strength" : 20,
-            #                 "bssid" : "89:c5:73:aa:fa:b2",
-            #                 "mode" : "lock-open",
-            #             },
-            #             {
-            #                 "ssid" : "test-30",
-            #                 "strength" : 30,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-40",
-            #                 "strength" : 40,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : "alert",
-            #             },
-            #             {
-            #                 "ssid" : "test-50",
-            #                 "strength" : 50,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-60",
-            #                 "strength" : 60,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-70",
-            #                 "strength" : 70,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-80",
-            #                 "strength" : 80,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-90",
-            #                 "strength" : 90,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-100",
-            #                 "strength" : 100,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            #             {
-            #                 "ssid" : "test-off",
-            #                 "strength" : 30,
-            #                 "bssid" : "94:b9:7e:6a:f7:b1",
-            #                 "mode" : None,
-            #             },
-            # ]
-
             Debug.Log("Creating WiFi network cards.")
             for network in networks:
                 WiFiCard = WiFiSelectionCard(network)
                 self.cardBox.add_widget(WiFiCard)
+
+        Clock.schedule_once(self.UpdateWiFis, 10)
+        self.continueToUpdateWiFis = True
 
         self.animation2 = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
         self.animation2.start(self.cardBox)
@@ -408,6 +363,7 @@ class NetworkMenu(Screen):
             objects and instances it created.
         """
         Debug.Start("NetworkMenu -> on_pre_leave")
+        self.continueToUpdateWiFis = False
         Debug.End()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
@@ -429,5 +385,19 @@ class NetworkMenu(Screen):
         """
         pass
 # ------------------------------------------------------------------------
+    def UpdateWiFis(self, *args):
+        """
+            UpdateWiFis:
+            ============
+            Summary:
+            --------
+            This function updates the displayed WiFis with a list
+            of new WiFis each 10 seconds.
+        """
+        Debug.Start("UpdateWiFis")
 
+        if(self.continueToUpdateWiFis == True):
+            Clock.schedule_once(self.UpdateWiFis, 10)
+
+        Debug.End()
 LoadingLog.End("NetworkMenu.py")

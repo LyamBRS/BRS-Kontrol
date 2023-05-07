@@ -4,8 +4,8 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import GetWiFiNotAvailableCard
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import CanDeviceUseWiFi
+from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import GetWiFiNotAvailableCard, WiFiSelectionCard
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import CanDeviceUseWiFi, GetWiFiNetworks
 LoadingLog.Start("NetworkMenu.py")
 #====================================================================#
 # Imports
@@ -34,6 +34,7 @@ from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.button import MDTextButton
+from kivy.animation import Animation
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -269,11 +270,11 @@ class NetworkMenu(Screen):
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
         # Create a horizontal box layout offset by half the screen to center the first profile in view.
-        self.cardBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': 1, 'left': 0}, orientation='horizontal', spacing="100sp", padding = (50,50,50,50), size_hint_x=None)
-        self.cardBox.bind(minimum_width = self.cardBox.setter('width'))
+        self.cardBox = MDBoxLayout(size_hint=(1,1), pos_hint = {'top': -1, 'left': 0}, orientation='vertical', spacing="50sp", padding = (50,100,50,50), size_hint_y=None)
+        self.cardBox.bind(minimum_height = self.cardBox.setter('height'))
 
         # Create the scroll view and add the box layout to it
-        self.scroll = MDScrollView(pos_hint = {'top': 1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
+        self.scroll = MDScrollView(pos_hint = {'top': -1, 'left': 0}, scroll_type=['bars','content'], size_hint = (1,1))
         self.scroll.smooth_scroll_end = 10
 
         # Add widgets
@@ -286,6 +287,8 @@ class NetworkMenu(Screen):
         self.add_widget(background)
         self.Layout.add_widget(self.scroll)
         self.Layout.add_widget(self.ToolBar.ToolBar)
+        self.NoWiFiCard = GetWiFiNotAvailableCard(_("Failed to get wireless WiFi networks. Your device may not support WiFi. Please use Ethernet if available."))
+        self.Layout.add_widget(self.NoWiFiCard)
         self.Layout.add_widget(self.ToolBar.NavDrawer)
         self.add_widget(self.Layout)
         Debug.End()
@@ -300,12 +303,100 @@ class NetworkMenu(Screen):
 
         Debug.Log("Trying to access WiFi interfaces")
         result = CanDeviceUseWiFi()
+
         if(result != True):
             Debug.Log("WiFi networks cannot be accessed.")
-            card = GetWiFiNotAvailableCard(_("Failed to get wireless WiFi networks. Your device may not support WiFi. Please use Ethernet if available."))
-            self.add_widget(card)
+            anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+            anim.start(self.NoWiFiCard)
         else:
             Debug.Log("Wifi can be accessed")
+            Debug.Log("Getting WiFi networks")
+            networks = GetWiFiNetworks()
+
+            networks = [
+                        {
+                            "ssid" : "test-0",
+                            "strength" : 0,
+                            "bssid" : "BSSID",
+                            "mode" : "lock",
+                        },
+                        {
+                            "ssid" : "test-10",
+                            "strength" : 10,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-20",
+                            "strength" : 20,
+                            "bssid" : "89:c5:73:aa:fa:b2",
+                            "mode" : "lock-open",
+                        },
+                        {
+                            "ssid" : "test-30",
+                            "strength" : 30,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-40",
+                            "strength" : 40,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : "alert",
+                        },
+                        {
+                            "ssid" : "test-50",
+                            "strength" : 50,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-60",
+                            "strength" : 60,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-70",
+                            "strength" : 70,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-80",
+                            "strength" : 80,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-90",
+                            "strength" : 90,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-100",
+                            "strength" : 100,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+                        {
+                            "ssid" : "test-off",
+                            "strength" : 30,
+                            "bssid" : "94:b9:7e:6a:f7:b1",
+                            "mode" : None,
+                        },
+            ]
+
+            for network in networks:
+                WiFiCard = WiFiSelectionCard(network)
+                self.cardBox.add_widget(WiFiCard)
+
+        self.animation2 = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
+        self.animation2.start(self.cardBox)
+
+        self.animation = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
+        self.animation.start(self.scroll)
 
         Debug.End()
 # ------------------------------------------------------------------------

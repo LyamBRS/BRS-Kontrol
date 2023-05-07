@@ -9,7 +9,7 @@ from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import GetNetworkInter
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import WiFiSelectionCard
 from Programs.Pages.NetworkMenu import NetworkMenu, NetworkMenu_Screens
 
-
+resultedList = []
 wifiDictionary = {
     "ssid" : "wifi_name",
     "strength" : 50,
@@ -17,18 +17,32 @@ wifiDictionary = {
     "mode" : None,
 }
 
-interfaces = GetNetworkInterfaces()
+resultedList.append(wifiDictionary)
+print(str(resultedList))
 
-Debug.Log(interfaces)
+wifiDictionary = {}
 
-class Example(MDApp):
-    def build(self):
-        self.theme_cls.theme_style = "Light"
-        self.theme_cls.primary_palette = "Orange"
+wifiDictionary = {
+    "ssid" : "wifi_name",
+    "strength" : 50,
+    "bssid" : "c0:3c:04:2a:62:ec",
+    "mode" : None,
+}
+resultedList.append(wifiDictionary)
+print(str(resultedList))
 
-        screen = NetworkMenu_Screens.Call()
+# interfaces = GetNetworkInterfaces()
 
-        return screen
+# Debug.Log(interfaces)
+
+# class Example(MDApp):
+    # def build(self):
+        # self.theme_cls.theme_style = "Light"
+        # self.theme_cls.primary_palette = "Orange"
+
+        # screen = NetworkMenu_Screens.Call()
+
+        # return screen
 
 
-Example().run()
+# Example().run()

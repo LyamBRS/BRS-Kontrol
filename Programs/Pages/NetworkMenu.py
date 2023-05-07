@@ -388,6 +388,7 @@ class NetworkMenu(Screen):
             #             },
             # ]
 
+            Debug.Log("Creating WiFi network cards.")
             for network in networks:
                 WiFiCard = WiFiSelectionCard(network)
                 self.cardBox.add_widget(WiFiCard)

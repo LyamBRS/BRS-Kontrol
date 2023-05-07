@@ -313,80 +313,80 @@ class NetworkMenu(Screen):
             Debug.Log("Getting WiFi networks")
             networks = GetWiFiNetworks()
 
-            networks = [
-                        {
-                            "ssid" : "test-0",
-                            "strength" : 0,
-                            "bssid" : "BSSID",
-                            "mode" : "lock",
-                        },
-                        {
-                            "ssid" : "test-10",
-                            "strength" : 10,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-20",
-                            "strength" : 20,
-                            "bssid" : "89:c5:73:aa:fa:b2",
-                            "mode" : "lock-open",
-                        },
-                        {
-                            "ssid" : "test-30",
-                            "strength" : 30,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-40",
-                            "strength" : 40,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : "alert",
-                        },
-                        {
-                            "ssid" : "test-50",
-                            "strength" : 50,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-60",
-                            "strength" : 60,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-70",
-                            "strength" : 70,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-80",
-                            "strength" : 80,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-90",
-                            "strength" : 90,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-100",
-                            "strength" : 100,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-                        {
-                            "ssid" : "test-off",
-                            "strength" : 30,
-                            "bssid" : "94:b9:7e:6a:f7:b1",
-                            "mode" : None,
-                        },
-            ]
+            # networks = [
+            #             {
+            #                 "ssid" : "test-0",
+            #                 "strength" : 0,
+            #                 "bssid" : "BSSID",
+            #                 "mode" : "lock",
+            #             },
+            #             {
+            #                 "ssid" : "test-10",
+            #                 "strength" : 10,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-20",
+            #                 "strength" : 20,
+            #                 "bssid" : "89:c5:73:aa:fa:b2",
+            #                 "mode" : "lock-open",
+            #             },
+            #             {
+            #                 "ssid" : "test-30",
+            #                 "strength" : 30,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-40",
+            #                 "strength" : 40,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : "alert",
+            #             },
+            #             {
+            #                 "ssid" : "test-50",
+            #                 "strength" : 50,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-60",
+            #                 "strength" : 60,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-70",
+            #                 "strength" : 70,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-80",
+            #                 "strength" : 80,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-90",
+            #                 "strength" : 90,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-100",
+            #                 "strength" : 100,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            #             {
+            #                 "ssid" : "test-off",
+            #                 "strength" : 30,
+            #                 "bssid" : "94:b9:7e:6a:f7:b1",
+            #                 "mode" : None,
+            #             },
+            # ]
 
             for network in networks:
                 WiFiCard = WiFiSelectionCard(network)

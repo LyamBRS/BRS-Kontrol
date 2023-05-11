@@ -75,4 +75,4 @@ while True:
         pixels[2] = (int(cycledRed2), int(cycledGreen2), int(cycledBlue2))
 
         pixels.show()
-        time.sleep(1)
+        time.sleep(0.1)

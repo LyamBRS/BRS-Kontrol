@@ -846,6 +846,7 @@ def KontrolGitHub() -> bool:
     #endregion
 
     #region ====== Step 2 -> Compare found with current
+    Debug.Log("Step 2 -> Compare found with current")
     result = GitHub.CheckIfBehind()
     if(result == True):
         Debug.Error("Repository is behind")

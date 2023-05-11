@@ -97,18 +97,26 @@ class Cache():
             Cache.jsonData = JSONdata("Cache", path)
             if(Cache.jsonData.jsonData == None):
                 Debug.Error("FAILED TO LOAD EXISTING JSON CACHE")
+                Cache.loaded = False
                 Debug.End()
                 return True
             else:
                 Debug.Log("JSONdata loaded from existing cache")
                 Cache.SetDate("Open")
+
+            # Cache has been loaded. External cache values may be loaded from now on.
+            Cache.loaded = True
         else:
             Debug.Log("No JSON files were found.")
             Debug.Log("Creating Cache.json")
-            Cache.CreateNew()
-
-        # Cache has been loaded. External cache values may be loaded from now on.
-        Cache.loaded = True
+            if(Cache.CreateNew()):
+                Debug.Error("FILE COULD NOT BE CREATED")
+                Cache.loaded = False
+                Debug.End()
+                return True
+            else:
+                Debug.Log("A new cache file was created and loaded.")
+                Cache.loaded = True
 
         # Load cached theme
         if(Cache.LoadTheme()):
@@ -123,7 +131,7 @@ class Cache():
             Debug.Log("Cached language loaded")
         Debug.End()
     #-----------------------------------------------------------------
-    def CreateNew():
+    def CreateNew() -> bool:
         """
             CreateNew:
             ----------
@@ -133,6 +141,11 @@ class Cache():
     
             It will attempt to create it no matter what happens, potentially crashing the application in the event
             where it absolutely cannot be created at all.
+
+            Returns:
+            --------
+            - `True`: Error occured
+            - `False` : Worked.
         """
         Debug.Start("Cache: CreateNew")
         Cache.jsonData = JSONdata("Cache",AppendPath(os.getcwd(), "/Local/Cache/"))
@@ -142,10 +155,12 @@ class Cache():
             Debug.Log("File created successfully")
             Cache.SetDate("Creation")
             Cache.SetDate("Open")
+            Debug.End()
+            return False
         else:
             Debug.Error("FAILED TO CREATE JSON FILE")
-        Debug.End()
-        pass
+            Debug.End()
+            return True
     #-----------------------------------------------------------------
     def SaveFile():
         """

@@ -1,46 +1,87 @@
-from kivy.lang import Builder
+import os
+import ast
 
-from kivymd.app import MDApp
-from kivymd.uix.button import MDFloatingActionButton
+directory = os.getcwd()
+used_libraries = set()
 
-KV = '''
-MDScreen:
-    md_bg_color: "#f7f2fa"
+def check_file_for_libraries(file_path):
+    with open(file_path, "r") as file:
+        tree = ast.parse(file.read())
 
-    MDBoxLayout:
-        id: box
-        spacing: "56dp"
-        adaptive_size: True
-        pos_hint: {"center_x": .5, "center_y": .5}
-'''
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for name in node.names:
+                if name.name == "git":
+                    used_libraries.add("gitpython")
+                if name.name == "github":
+                    used_libraries.add("PyGitHub")
 
+# Recursive iteration through files in the directory
+for root, _, files in os.walk(directory):
+    for file_name in files:
+        print(f"CHECKING >>> {file_name}")
+        if file_name.endswith(".py"):  # Process only Python files
+            file_path = os.path.join(root, file_name)
+            check_file_for_libraries(file_path)
 
-class Example(MDApp):
-    def build(self):
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Orange"
-        self.theme_cls.material_style = "M3"
-        return Builder.load_string(KV)
-
-    def on_start(self):
-        data = {
-            "standard": {"md_bg_color": "#fefbff", "text_color": "#6851a5"},
-            "small": {"md_bg_color": "#e9dff7", "text_color": "#211c29"},
-            "large": {"md_bg_color": "#f8d7e3", "text_color": "#311021"},
-        }
-        for type_button in data.keys():
-            self.root.ids.box.add_widget(
-                MDFloatingActionButton(
-                    icon="pencil",
-                    type=type_button,
-                    theme_icon_color="Custom",
-                    md_bg_color=data[type_button]["md_bg_color"],
-                    icon_color=data[type_button]["text_color"],
-                )
-            )
+print("\n")
+print(used_libraries)
 
 
-Example().run()
+
+
+
+
+
+
+
+
+
+
+
+# from kivy.lang import Builder
+# 
+# from kivymd.app import MDApp
+# from kivymd.uix.button import MDFloatingActionButton
+# 
+# KV = '''
+# MDScreen:
+    # md_bg_color: "#f7f2fa"
+# 
+    # MDBoxLayout:
+        # id: box
+        # spacing: "56dp"
+        # adaptive_size: True
+        # pos_hint: {"center_x": .5, "center_y": .5}
+# '''
+# 
+# 
+# class Example(MDApp):
+    # def build(self):
+        # self.theme_cls.theme_style = "Dark"
+        # self.theme_cls.primary_palette = "Orange"
+        # self.theme_cls.material_style = "M3"
+        # return Builder.load_string(KV)
+# 
+    # def on_start(self):
+        # data = {
+            # "standard": {"md_bg_color": "#fefbff", "text_color": "#6851a5"},
+            # "small": {"md_bg_color": "#e9dff7", "text_color": "#211c29"},
+            # "large": {"md_bg_color": "#f8d7e3", "text_color": "#311021"},
+        # }
+        # for type_button in data.keys():
+            # self.root.ids.box.add_widget(
+                # MDFloatingActionButton(
+                    # icon="pencil",
+                    # type=type_button,
+                    # theme_icon_color="Custom",
+                    # md_bg_color=data[type_button]["md_bg_color"],
+                    # icon_color=data[type_button]["text_color"],
+                # )
+            # )
+# 
+# 
+# Example().run()
 
 #fakeNetwork = """
 #Interface name : Wi-Fi

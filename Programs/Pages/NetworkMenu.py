@@ -5,7 +5,10 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import GetWiFiNotAvailableCard, WiFiSelectionCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import CanDeviceUseWiFi, GetWiFiNetworks
+from Programs.Pages.PopUps import PopUpTypeEnum, PopUps_Screens, PopUpsHandler
+from Programs.Pages.WiFiLogin import WiFiLogin_Screens
 LoadingLog.Start("NetworkMenu.py")
 #====================================================================#
 # Imports
@@ -26,16 +29,14 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
 LoadingLog.Import("Kivy")
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.animation import Animation
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.card import MDCard
-from kivymd.uix.button import MDTextButton
-from kivy.animation import Animation
+from kivymd.uix.spinner import MDSpinner
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -309,9 +310,15 @@ class NetworkMenu(Screen):
         self.ToolBar = AppNavigationBar(pageTitle=_("Network Parameters"))
         #endregion
 
+        #region ---------------------------- Spinner
+        self.LoadingSpinner = MDSpinner(pos_hint = {'center_x': 0.5, 'center_y': 0.50}, size_hint = (0.5,0.5))
+        self.LoadingSpinner.color = GetAccentColor()
+        #endregion
+
         self.add_widget(background)
         self.Layout.add_widget(self.scroll)
         self.Layout.add_widget(self.ToolBar.ToolBar)
+        self.Layout.add_widget(self.LoadingSpinner)
         self.NoWiFiCard = GetWiFiNotAvailableCard(_("Failed to get wireless WiFi networks. Your device may not support WiFi. Please use Ethernet if available."))
         self.Layout.add_widget(self.NoWiFiCard)
         self.Layout.add_widget(self.ToolBar.NavDrawer)
@@ -331,6 +338,22 @@ class NetworkMenu(Screen):
         Debug.Log("Trying to access WiFi interfaces")
         result = CanDeviceUseWiFi()
 
+        # result = True
+        # networks = [
+            # {
+                # "ssid" : "wifi_name",
+                # "strength" : 50,
+                # "bssid" : "c0:3c:04:2a:62:ec",
+                # "mode" : None,
+            # },
+            # {
+                # "ssid" : "Batiscan",
+                # "strength" : 100,
+                # "bssid" : "aa:bb:cc:dd:ee:ff",
+                # "mode" : None,
+            # }
+        # ]
+
         if(result != True):
             Debug.Log("WiFi networks cannot be accessed.")
             anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
@@ -338,13 +361,19 @@ class NetworkMenu(Screen):
         else:
             Debug.Log("Wifi can be accessed")
             Debug.Log("Getting WiFi networks")
-            networks = GetWiFiNetworks()
+            # networks = GetWiFiNetworks()
+
+            Debug.Log("Configurating WiFiLogin Screens.")
+            WiFiLogin_Screens.SetBadExiter(NetworkMenu_Screens, "NetworkMenu")
+            WiFiLogin_Screens.SetGoodExiter(NetworkMenu_Screens, "NetworkMenu")
 
             Debug.Log("Creating WiFi network cards.")
             for network in networks:
                 WiFiCard = WiFiSelectionCard(network)
+                WiFiCard.PressedEnd = self.GoToWiFiConnectionScreen
                 self.cardBox.add_widget(WiFiCard)
 
+        Debug.Log("Starting WiFi Updater")
         Clock.schedule_once(self.UpdateWiFis, 10)
         self.continueToUpdateWiFis = True
 
@@ -353,6 +382,9 @@ class NetworkMenu(Screen):
 
         self.animation = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
         self.animation.start(self.scroll)
+
+        Debug.Log("Stopping spinner")
+        self.LoadingSpinner.active = False
 
         Debug.End()
 # ------------------------------------------------------------------------
@@ -374,6 +406,7 @@ class NetworkMenu(Screen):
         Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
         AppManager.manager.remove_widget(self)
+        self.continueToUpdateWiFis = False
         Debug.End()
         self.clear_widgets()
 # ------------------------------------------------------------------------
@@ -398,6 +431,46 @@ class NetworkMenu(Screen):
 
         if(self.continueToUpdateWiFis == True):
             Clock.schedule_once(self.UpdateWiFis, 10)
+
+        Debug.End()
+# ------------------------------------------------------------------------
+    def GoToWiFiConnectionScreen(self, *args):
+        """
+            GoToWiFiConnectionScreen:
+            =========================
+            Summary:
+            --------
+            This is a callback function
+            that is executed when a WiFiCard
+            is released. it sets the SSID
+            of the WiFiLogin screen
+            and attempts to call it.
+        """
+        Debug.Start("GoToWiFiConnectionScreen")
+
+        Debug.Log("Extracting card from passed arguments...")
+        PopUps_Screens.SetCaller(NetworkMenu_Screens, "NetworkMenu")
+        PopUps_Screens.SetExiter(NetworkMenu_Screens, "NetworkMenu")
+
+        try:
+            card:WiFiSelectionCard = args[0]
+            ssid = card.Name.text
+            Debug.Log("Success.")
+        except:
+            Debug.Error("Something fucked up. WRONG ARGUMENTS")
+            PopUpsHandler.Clear()
+            PopUpsHandler.Add(Type = PopUpTypeEnum.FatalError,
+                              Icon = "wifi",
+                              Message=_("An error occured when attempting to get elements when the widget was pressed."),
+                              ButtonAText=_("Ok"),
+                              ButtonBText=_("Cancel"))
+            PopUps_Screens.Call()
+            Debug.Log("Pop up called")
+            Debug.End()
+            return
+
+        WiFiLogin_Screens.SetCaller(NetworkMenu_Screens, "NetworkMenu", ssid)
+        WiFiLogin_Screens.Call()
 
         Debug.End()
 LoadingLog.End("NetworkMenu.py")

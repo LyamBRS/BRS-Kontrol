@@ -62,13 +62,13 @@ while True:
         cycledBlue = GetCycleBlue(tick, 628.0, 0)
         cycledGreen = GetCycleGreen(tick, 628.0, 0)
 
-        cycledRed1 = GetCycleRed(tick, 628.0, 1)
-        cycledBlue1 = GetCycleBlue(tick, 628.0, 1)
-        cycledGreen1 = GetCycleGreen(tick, 628.0, 1)
+        cycledRed1 = GetCycleRed(tick, 628.0, 0.5)
+        cycledBlue1 = GetCycleBlue(tick, 628.0, 0.5)
+        cycledGreen1 = GetCycleGreen(tick, 628.0, 0.5)
 
-        cycledRed2 = GetCycleRed(tick, 628.0, -1)
-        cycledBlue2 = GetCycleBlue(tick, 628.0, -1)
-        cycledGreen2 = GetCycleGreen(tick, 628.0, -1)
+        cycledRed2 = GetCycleRed(tick, 628.0, -0.5)
+        cycledBlue2 = GetCycleBlue(tick, 628.0, -0.5)
+        cycledGreen2 = GetCycleGreen(tick, 628.0, -0.5)
 
         pixels[0] = (int(cycledRed), int(cycledGreen), int(cycledBlue))
         pixels[1] = (int(cycledRed1), int(cycledGreen1), int(cycledBlue1))

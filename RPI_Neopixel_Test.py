@@ -58,17 +58,17 @@ def GetCycleGreen(tick, animationDuration, offset) -> float:
 while True:
 
     for tick in range(628):
-        cycledRed = GetCycleRed(tick, 628.0, 0)
-        cycledBlue = GetCycleBlue(tick, 628.0, 0)
-        cycledGreen = GetCycleGreen(tick, 628.0, 0)
+        cycledRed = GetCycleRed(tick, 628.0, -0.5)
+        cycledBlue = GetCycleBlue(tick, 628.0, -0.5)
+        cycledGreen = GetCycleGreen(tick, 628.0, -0.5)
 
-        cycledRed1 = GetCycleRed(tick, 628.0, 0.5)
-        cycledBlue1 = GetCycleBlue(tick, 628.0, 0.5)
-        cycledGreen1 = GetCycleGreen(tick, 628.0, 0.5)
+        cycledRed1 = GetCycleRed(tick, 628.0, 0)
+        cycledBlue1 = GetCycleBlue(tick, 628.0, 0)
+        cycledGreen1 = GetCycleGreen(tick, 628.0, 0)
 
-        cycledRed2 = GetCycleRed(tick, 628.0, -0.5)
-        cycledBlue2 = GetCycleBlue(tick, 628.0, -0.5)
-        cycledGreen2 = GetCycleGreen(tick, 628.0, -0.5)
+        cycledRed2 = GetCycleRed(tick, 628.0, 0.5)
+        cycledBlue2 = GetCycleBlue(tick, 628.0, 0.5)
+        cycledGreen2 = GetCycleGreen(tick, 628.0, 0.5)
 
         pixels[0] = (int(cycledRed), int(cycledGreen), int(cycledBlue))
         pixels[1] = (int(cycledRed1), int(cycledGreen1), int(cycledBlue1))

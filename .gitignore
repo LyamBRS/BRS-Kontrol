@@ -1,4 +1,5 @@
 *.pyc
 *.json
+*.xml
 !Config.json
 !BFIO.json

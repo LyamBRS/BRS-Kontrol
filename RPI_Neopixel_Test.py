@@ -5,6 +5,7 @@
 import time
 import board
 import neopixel
+import math
 
 
 # Choose an open pin connected to the Data In of the NeoPixel strip, i.e. board.D18
@@ -12,7 +13,7 @@ import neopixel
 pixel_pin = board.D18
 
 # The number of NeoPixels
-num_pixels = 30
+num_pixels = 3
 
 # The order of the pixel colors - RGB or GRB. Some NeoPixels have red and green reversed!
 # For RGBW NeoPixels, simply change the ORDER to RGBW or GRBW.
@@ -23,57 +24,55 @@ pixels = neopixel.NeoPixel(
 )
 
 
-def wheel(pos):
-    # Input a value 0 to 255 to get a color value.
-    # The colours are a transition r - g - b - back to r.
-    if pos < 0 or pos > 255:
-        r = g = b = 0
-    elif pos < 85:
-        r = int(pos * 3)
-        g = int(255 - pos * 3)
-        b = 0
-    elif pos < 170:
-        pos -= 85
-        r = int(255 - pos * 3)
-        g = 0
-        b = int(pos * 3)
-    else:
-        pos -= 170
-        r = 0
-        g = int(pos * 3)
-        b = int(255 - pos * 3)
-    return (r, g, b) if ORDER in (neopixel.RGB, neopixel.GRB) else (r, g, b, 0)
+def GetCycleRed(tick, animationDuration, offset) -> float:
+    temporary = 0
+    ratio = tick / animationDuration
+    ratio = ratio * 6.28
 
+    temporary = math.sin(ratio + offset)
+    temporary = math.pow(temporary, 4) * 255
 
-def rainbow_cycle(wait):
-    for j in range(255):
-        for i in range(num_pixels):
-            pixel_index = (i * 256 // num_pixels) + j
-            pixels[i] = wheel(pixel_index & 255)
-        pixels.show()
-        time.sleep(wait)
+    return temporary
+
+def GetCycleBlue(tick, animationDuration, offset) -> float:
+    temporary = 0
+    ratio = tick / animationDuration
+    ratio = ratio * 6.28
+
+    temporary = math.sin(ratio + offset + 2.09)
+    temporary = math.pow(temporary, 4) * 255
+
+    return temporary
+
+def GetCycleGreen(tick, animationDuration, offset) -> float:
+    temporary = 0
+    ratio = tick / animationDuration
+    ratio = ratio * 6.28
+
+    temporary = math.sin(ratio + offset - 2.09)
+    temporary = math.pow(temporary, 4) * 255
+
+    return temporary
 
 
 while True:
-    # Comment this line out if you have RGBW/GRBW NeoPixels
-    pixels.fill((255, 0, 0))
-    # Uncomment this line if you have RGBW/GRBW NeoPixels
-    # pixels.fill((255, 0, 0, 0))
-    pixels.show()
-    time.sleep(1)
 
-    # Comment this line out if you have RGBW/GRBW NeoPixels
-    pixels.fill((0, 255, 0))
-    # Uncomment this line if you have RGBW/GRBW NeoPixels
-    # pixels.fill((0, 255, 0, 0))
-    pixels.show()
-    time.sleep(1)
+    for tick in range(628):
+        cycledRed = GetCycleRed(tick, 628, 0)
+        cycledBlue = GetCycleBlue(tick, 628, 0)
+        cycledGreen = GetCycleGreen(tick, 628, 0)
 
-    # Comment this line out if you have RGBW/GRBW NeoPixels
-    pixels.fill((0, 0, 255))
-    # Uncomment this line if you have RGBW/GRBW NeoPixels
-    # pixels.fill((0, 0, 255, 0))
-    pixels.show()
-    time.sleep(1)
+        cycledRed1 = GetCycleRed(tick, 628, 2.09)
+        cycledBlue1 = GetCycleBlue(tick, 628, 2.09)
+        cycledGreen1 = GetCycleGreen(tick, 628, 2.09)
 
-    rainbow_cycle(0.001)  # rainbow cycle with 1ms delay per step
+        cycledRed2 = GetCycleRed(tick, 628, -2.09)
+        cycledBlue2 = GetCycleBlue(tick, 628, -2.09)
+        cycledGreen2 = GetCycleGreen(tick, 628, -2.09)
+
+        pixels[0] = (cycledRed, cycledGreen, cycledBlue)
+        pixels[1] = (cycledRed1, cycledGreen1, cycledBlue1)
+        pixels[2] = (cycledRed2, cycledGreen2, cycledBlue2)
+
+        pixels.show()
+        time.sleep(1)

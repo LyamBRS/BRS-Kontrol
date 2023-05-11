@@ -11,6 +11,7 @@ LoadingLog.Start("Application.py")
 #===================================================================#
 LoadingLog.Import("Kivy")
 from kivy.core.window import Window
+from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager
 # -------------------------------------------------------------------
 LoadingLog.Import("KivyMD")
@@ -76,6 +77,10 @@ class Application(MDApp):
         """
         Debug.enableConsole = True
         Debug.Start("build")
+
+        Debug.Log("Turning off aliasing")
+        Config.set("graphics", "multisamples", 0)
+        Config.write()
 
         Debug.Log("Setting default application's theme.")
         self.theme_cls.material_style = 'M3'

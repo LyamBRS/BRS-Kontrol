@@ -74,5 +74,7 @@ while True:
         pixels[1] = (int(cycledRed1), int(cycledGreen1), int(cycledBlue1))
         pixels[2] = (int(cycledRed2), int(cycledGreen2), int(cycledBlue2))
 
+        pixels
+
         pixels.show()
         time.sleep(0.001)

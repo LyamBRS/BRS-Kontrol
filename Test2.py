@@ -1,31 +1,40 @@
-import os
-import ast
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
 
-directory = os.getcwd()
-used_libraries = set()
+Debug.enableConsole = True
+RGB.StartDriver()
 
-def check_file_for_libraries(file_path):
-    with open(file_path, "r") as file:
-        tree = ast.parse(file.read())
 
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for name in node.names:
-                if name.name == "git":
-                    used_libraries.add("gitpython")
-                if name.name == "github":
-                    used_libraries.add("PyGitHub")
 
-# Recursive iteration through files in the directory
-for root, _, files in os.walk(directory):
-    for file_name in files:
-        print(f"CHECKING >>> {file_name}")
-        if file_name.endswith(".py"):  # Process only Python files
-            file_path = os.path.join(root, file_name)
-            check_file_for_libraries(file_path)
 
-print("\n")
-print(used_libraries)
+# import os
+# import ast
+
+# directory = os.getcwd()
+# used_libraries = set()
+
+# def check_file_for_libraries(file_path):
+#     with open(file_path, "r") as file:
+#         tree = ast.parse(file.read())
+
+#     for node in ast.walk(tree):
+#         if isinstance(node, ast.Import):
+#             for name in node.names:
+#                 if name.name == "git":
+#                     used_libraries.add("gitpython")
+#                 if name.name == "github":
+#                     used_libraries.add("PyGitHub")
+
+# # Recursive iteration through files in the directory
+# for root, _, files in os.walk(directory):
+#     for file_name in files:
+#         print(f"CHECKING >>> {file_name}")
+#         if file_name.endswith(".py"):  # Process only Python files
+#             file_path = os.path.join(root, file_name)
+#             check_file_for_libraries(file_path)
+
+# print("\n")
+# print(used_libraries)
 
 
 

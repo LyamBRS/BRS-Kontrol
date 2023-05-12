@@ -41,8 +41,8 @@ from kivymd.uix.spinner import MDSpinner
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
-from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
-from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
+# from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
+# from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #endregion
 #====================================================================#
 # Functions
@@ -361,7 +361,7 @@ class NetworkMenu(Screen):
         else:
             Debug.Log("Wifi can be accessed")
             Debug.Log("Getting WiFi networks")
-            # networks = GetWiFiNetworks()
+            networks = GetWiFiNetworks()
 
             Debug.Log("Configurating WiFiLogin Screens.")
             WiFiLogin_Screens.SetBadExiter(NetworkMenu_Screens, "NetworkMenu")

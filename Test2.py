@@ -1,8 +1,11 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
 
+import time
 Debug.enableConsole = True
 RGB.StartDriver()
+time.sleep(10)
+RGB.StopDriver()
 
 
 

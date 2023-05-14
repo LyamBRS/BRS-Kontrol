@@ -1,19 +1,39 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.driver import RGBModes
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
 
 import time
 Debug.enableConsole = False
 RGB.StartDriver()
-Debug.Log("Test2.py -> Waiting 10 seconds...")
-Debug.Log("Test2.py -> Waiting 10 seconds...")
-Debug.Log("Test2.py -> Waiting 10 seconds...")
-Debug.Log("Test2.py -> Waiting 10 seconds...")
-time.sleep(10)
-Debug.Log("Test2.py -> Finished waiting")
-Debug.Log("Test2.py -> Finished waiting")
-Debug.Log("Test2.py -> Finished waiting")
-Debug.Log("Test2.py -> Finished waiting")
+
+Debug.Log("Test2.py -> Waiting 1 seconds...")
+time.sleep(1)
+
+print("\n######################################################")
+print("TESTING: Static, B=(255,0,0), R=(0,255,0), B=(0,0,255)")
+print("######################################################")
+RGB.SetAttributes(colors=[[255,0,0], [0,255,0], [0,0,255]], mode = RGBModes.static)
+time.sleep(5)
+
+print("\n######################################################")
+print("TESTING: Static, colors = (255,255,255)")
+print("######################################################")
+RGB.SetAttributes(colors=[255,255,255], mode = RGBModes.static)
+time.sleep(5)
+
+print("\n######################################################")
+print("TESTING: Cycling, colors = (255,255,255)")
+print("######################################################")
+RGB.SetAttributes(colors=[255,255,255], mode = RGBModes.cycling)
+time.sleep(5)
+print("\n######################################################")
+print("TESTING: ENDING")
+print("######################################################")
 RGB.StopDriver()
+time.sleep(2)
+print("\n######################################################")
+print("TESTING: ENDED")
+print("######################################################")
 
 
 

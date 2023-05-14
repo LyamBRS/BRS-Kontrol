@@ -2,7 +2,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
 
 import time
-Debug.enableConsole = True
+Debug.enableConsole = False
 RGB.StartDriver()
 Debug.Log("Test2.py -> Waiting 10 seconds...")
 Debug.Log("Test2.py -> Waiting 10 seconds...")

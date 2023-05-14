@@ -10,10 +10,10 @@ Debug.Log("Test2.py -> Waiting 1 seconds...")
 time.sleep(1)
 
 print("\n######################################################")
-print("TESTING: 10s: Static, B=(255,0,0), R=(0,255,0), S=(0,0,255)")
+print("TESTING: 5s: Static, B=(255,0,0), R=(0,255,0), S=(0,0,255)")
 print("######################################################")
 RGB.SetAttributes(colors=[[255,0,0], [0,255,0], [0,0,255]], rgbMode = RGBModes.static)
-time.sleep(10)
+time.sleep(5)
 
 print("\n######################################################")
 print("TESTING: 3s: Static, colors = (255,255,255)")

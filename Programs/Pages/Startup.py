@@ -416,8 +416,6 @@ class Startup(Screen):
             self.animationB = Animation(pos_hint={'center_x': 0.17, 'center_y':0.5}, opacity=1, duration=self.letterFallDuration, t=self.letterTransition)
             self.animationB.bind(on_progress = self._animationStep1)
             self.animationB.start(self.B)
-
-            KontrolRGB.StartUpAnimation(0)
 # ------------------------------------------------------------------------
     def _animationStep1(self, *args):
         if(args[2] > self.letterFallAfter and self.Step2Called == False):
@@ -427,7 +425,7 @@ class Startup(Screen):
             self.animationR.bind(on_progress = self._animationStep2)
             self.animationR.start(self.R)
 
-            KontrolRGB.StartUpAnimation(1)
+            KontrolRGB.StartUpAnimation(0)
 # ------------------------------------------------------------------------
     def _animationStep2(self, *args):
         if(args[2] > self.letterFallAfter and self.Step3Called == False):
@@ -437,11 +435,12 @@ class Startup(Screen):
             self.animationS.bind(on_progress = self._animationStep3)
             self.animationS.start(self.S)
 
-            KontrolRGB.StartUpAnimation(2)
+            KontrolRGB.StartUpAnimation(1)
 # ------------------------------------------------------------------------
     def _animationStep3(self, *args):
         if(args[2] > 0.95 and self.Step4Called == False):
             print("CALLING STEP 4")
+            KontrolRGB.StartUpAnimation(2)
             self.Step4Called = True
 
             self.animationB = Animation(pos_hint={'center_x': -0.5, 'center_y':0.5}, opacity=0, duration=self.letterFallDuration, t=self.letterTransition)
@@ -457,6 +456,7 @@ class Startup(Screen):
 # ------------------------------------------------------------------------
     def _animationStep4(self, *args):
         if(args[2] > 0.95 and self.Step5Called == False):
+            KontrolRGB.StartUpAnimation(3)
             print("CALLING STEP 5")
             self.Step5Called = True
             self.animationS = Animation(pos_hint={'center_x': 0.5, 'center_y':0.5}, opacity=2, duration=self.letterFallDuration, t="in_out_expo")

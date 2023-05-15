@@ -312,6 +312,40 @@ class KontrolRGB:
             Debug.End()
             return Execution.ByPassed
     # -----------------------------------
+    def FastLoadingAnimation():
+        """
+            FastLoadingAnimation:
+            ====================
+            Summary:
+            --------
+            When you get on screens that
+            take a while to load in, this
+            is the loading animation to
+            display.
+        """
+        Debug.Start("FastLoadingAnimation")
+
+        if(KontrolRGB.canBeUsed):
+            Debug.Log("Getting accent colors")
+            accent = GetAccentColor()
+
+            red   = int(accent[0]*255)
+            green = int(accent[1]*255)
+            blue  = int(accent[2]*255)
+
+            RGB.SetAttributes(colors=[red,green,blue],
+                            rgbMode=RGBModes.loading,
+                            lerpDelta=1,
+                            animationDuration=0.5
+                            )
+
+            Debug.End()
+            return Execution.Passed
+        else:
+            Debug.Error("CLASS CANNOT BE USED")
+            Debug.End()
+            return Execution.ByPassed
+    # -----------------------------------tttt
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

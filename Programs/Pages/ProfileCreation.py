@@ -864,6 +864,7 @@ class ProfileCreation_Step2(Screen):
         AppManager.manager.add_widget(ProfileCreation_Step3(name="ProfileCreation_Step3"))
         AppManager.manager.transition.direction = "left"
         AppManager.manager.current = "ProfileCreation_Step3"
+        KontrolRGB.FastLoadingAnimation()
 # ------------------------------------------------------------------------
     def PrimaryPressed(self, *args):
         """
@@ -1143,7 +1144,7 @@ class ProfileCreation_Step3(Screen):
         pass
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
-        KontrolRGB.DisplayDefaultColor()
+        # KontrolRGB.DisplayDefaultColor()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
@@ -1404,7 +1405,7 @@ class ProfileCreation_Step4(Screen):
         #endregion
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
-        # KontrolRGB.DisplayDefaultColor()
+        KontrolRGB.DisplayDefaultColor()
         pass
 # ------------------------------------------------------------------------
     def on_pre_enter(self, *args):

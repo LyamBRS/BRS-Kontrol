@@ -3,7 +3,7 @@ from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import GetWiFiNetworks
 
 
 Debug.enableConsole = True
-result = GetWiFiNetworks()
+result = GetWiFiNetworks(DontDebug=False)
 Debug.Log(str(result))
 
 # import module

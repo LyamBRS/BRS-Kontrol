@@ -336,7 +336,7 @@ class KontrolRGB:
             RGB.SetAttributes(colors=[red,green,blue],
                             rgbMode=RGBModes.loading,
                             lerpDelta=1,
-                            animationDuration=0.5
+                            animationDuration=0.25
                             )
 
             Debug.End()

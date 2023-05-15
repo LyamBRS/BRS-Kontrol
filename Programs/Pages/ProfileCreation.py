@@ -853,6 +853,7 @@ class ProfileCreation_Step2(Screen):
         """
             Function to go back to `ProfileCreation_Step1.py`
         """
+        KontrolRGB.FastLoadingAnimation()
         AppManager.manager.add_widget(ProfileCreation_Step1(name="ProfileCreation_Step1"))
         AppManager.manager.transition.direction = "right"
         AppManager.manager.current = "ProfileCreation_Step1"
@@ -861,10 +862,10 @@ class ProfileCreation_Step2(Screen):
         """
             Function to go back to `ProfileCreation_Step3.py`
         """
+        KontrolRGB.FastLoadingAnimation()
         AppManager.manager.add_widget(ProfileCreation_Step3(name="ProfileCreation_Step3"))
         AppManager.manager.transition.direction = "left"
         AppManager.manager.current = "ProfileCreation_Step3"
-        KontrolRGB.FastLoadingAnimation()
 # ------------------------------------------------------------------------
     def PrimaryPressed(self, *args):
         """
@@ -1160,6 +1161,7 @@ class ProfileCreation_Step3(Screen):
         """
             Function to go back to `ProfileCreation_Step1.py`
         """
+        KontrolRGB.FastLoadingAnimation()
         AppManager.manager.add_widget(ProfileCreation_Step2(name="ProfileCreation_Step2"))
         AppManager.manager.transition.direction = "right"
         AppManager.manager.current = "ProfileCreation_Step2"

@@ -372,6 +372,7 @@ class NetworkMenu(Screen):
                 WiFiCard = WiFiSelectionCard(network)
                 WiFiCard.PressedEnd = self.GoToWiFiConnectionScreen
                 self.cardBox.add_widget(WiFiCard)
+            KontrolRGB.DisplayDefaultColor()
 
         Debug.Log("Starting WiFi Updater")
         Clock.schedule_once(self.UpdateWiFis, 10)
@@ -385,7 +386,6 @@ class NetworkMenu(Screen):
 
         Debug.Log("Stopping spinner")
         self.LoadingSpinner.active = False
-        KontrolRGB.DisplayDefaultColor()
 
         Debug.End()
 # ------------------------------------------------------------------------

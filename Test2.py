@@ -3,8 +3,10 @@ from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.driver import RGBModes
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
 
 import time
+
+from Programs.Local.Hardware.RGB import KontrolRGB
 Debug.enableConsole = False
-RGB.StartDriver()
+KontrolRGB.Initialize()
 
 Debug.Log("Test2.py -> Waiting 1 seconds...")
 time.sleep(1)
@@ -64,15 +66,21 @@ time.sleep(1)
 # time.sleep(5)
 
 print("\n######################################################")
-print("TESTING: 12s: Loading, [0,255,255], [0,255,255], [0,255,255]")
+print("TESTING: 5s: DisplayDefaultColor")
 print("######################################################")
-RGB.SetAttributes(colors=[[0,50,50], [0,50,50], [0,50,50]], rgbMode= RGBModes.loading, animationDuration=1, lerpDelta=1)
+KontrolRGB.DisplayDefaultColor()
 time.sleep(12)
+
+print("\n######################################################")
+print("TESTING: 5s: FastLoadingAnimation")
+print("######################################################")
+KontrolRGB.FastLoadingAnimation()
+time.sleep(5)
 
 print("\n######################################################")
 print("TESTING: ENDING")
 print("######################################################")
-RGB.StopDriver()
+KontrolRGB.Uninitialize()
 time.sleep(2)
 print("\n######################################################")
 print("TESTING: ENDED")

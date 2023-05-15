@@ -3,6 +3,9 @@
 #====================================================================#
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+from Programs.Local.Hardware.RGB import KontrolRGB
 # from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 # from Programs.Local.Updating.GitUpdating import DownloadLatestVersion
 LoadingLog.Start("Application.py")
@@ -129,6 +132,9 @@ class Application(MDApp):
         # PopUpsHandler.Add(PopUpTypeEnum.Remark, "bug", "This is a debugging pop up. It exist solely because without at least 1 pop up, the application would softlock.", True)
         # PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", "Where's my money, bitch?! I ain't gonna keep asking nice. Yo, alright? I want my money and my dope. Come on! What, what! What do you wanna say? Shut up! Shut... up! \nWhat business? The business you put me on, asshole! What, you already forgot? THIS business. Huh? That uh jog your memory, son of a bitch? Hey, you said... you said handle it, so you know what, I handled it. Didn't mean to kill somebody? Well, too late you know cause, dude's dead. Way dead. Oh, and hey, hey. Here's your money. Yeah, forty-six hundred and sixty bucks. Your half. Spend it in good health, you miserable son of bitch. \nI didn't say I killed him. Dude's wife crushed his head with an ATM machine. Crushed his head... with an ATM machine... right in front of me. I mean, crushed it like... Oh my god, the sound... it's still in my ears. You know and the the blood, like everywhere. Like there was so much you would not believe.", True)
 
+        Debug.Log("Trying to start RGB class.")
+        KontrolRGB.Initialize()
+
         Debug.Log("Setting transistion screen's callers and exiters.")
         AppLoading_Screens.SetExiter(PopUps_Screens, "PopUps")
         AppLoading_Screens.SetCaller(Startup_Screens, "Startup")
@@ -167,5 +173,6 @@ Application().run()
         # Cache.SaveFile()
 
 Shutdown.ShutdownFunction()
+KontrolRGB.Uninitialize()
 
 LoadingLog.End("Application.py")

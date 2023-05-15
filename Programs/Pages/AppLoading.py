@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("AppLoading.py")
 #====================================================================#
 # Imports
@@ -350,6 +351,9 @@ class AppLoading(Screen):
         """
         Debug.Start("AppLoading.py: on_enter")
         self.LoadingWheel.animated = True
+
+        #Starting the loading RGB animation
+        KontrolRGB.ApploadingAnimation()
 
         #starting the spinning animation
         self.KontrolLogo.opacity = 1

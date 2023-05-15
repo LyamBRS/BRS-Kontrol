@@ -1144,7 +1144,7 @@ class ProfileCreation_Step3(Screen):
         pass
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
-        # KontrolRGB.DisplayDefaultColor()
+        KontrolRGB.DisplayDefaultColor()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """

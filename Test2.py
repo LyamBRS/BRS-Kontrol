@@ -1,3 +1,4 @@
+from distutils.util import rfc822_escape
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.driver import RGBModes
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
@@ -75,6 +76,12 @@ print("\n######################################################")
 print("TESTING: 5s: FastLoadingAnimation")
 print("######################################################")
 KontrolRGB.FastLoadingAnimation()
+time.sleep(5)
+
+print("\n######################################################")
+print("TESTING: 5s: FastLoadingAnimation")
+print("######################################################")
+RGB.SetAttributes(colors=[[50,0,0], [0,50,0], [0,0,50]], animationDuration=0.5, lerpDelta=1, rgbMode=RGBModes.loading)
 time.sleep(5)
 
 print("\n######################################################")

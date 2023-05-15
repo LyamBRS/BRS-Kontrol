@@ -294,6 +294,8 @@ class KontrolRGB:
         if(KontrolRGB.canBeUsed):
             Debug.Log("Getting accent colors")
             accent = GetAccentColor(variant="A700")
+            if(accent[0] == 0 and accent[1] == 0 and accent[2] == 0):
+                accent = GetAccentColor(variant="900")
 
             red   = int(accent[0]*255)
             green = int(accent[1]*255)
@@ -328,6 +330,8 @@ class KontrolRGB:
         if(KontrolRGB.canBeUsed):
             Debug.Log("Getting accent colors")
             accent = GetAccentColor(variant="A700")
+            if(accent[0] == 0 and accent[1] == 0 and accent[2] == 0):
+                accent = GetAccentColor(variant="900")
 
             red   = int(accent[0]*255)
             green = int(accent[1]*255)

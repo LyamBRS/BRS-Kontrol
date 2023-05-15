@@ -66,7 +66,7 @@ time.sleep(5)
 print("\n######################################################")
 print("TESTING: 12s: Loading, [0,255,255], [0,255,255], [0,255,255]")
 print("######################################################")
-RGB.SetAttributes(colors=[[0,255,255], [0,255,255], [0,255,255]], rgbMode= RGBModes.loading, animationDuration=3)
+RGB.SetAttributes(colors=[[0,50,50], [0,50,50], [0,50,50]], rgbMode= RGBModes.loading, animationDuration=3)
 time.sleep(12)
 
 print("\n######################################################")

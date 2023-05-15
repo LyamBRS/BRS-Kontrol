@@ -1476,7 +1476,7 @@ class ProfileCreation_Step4(Screen):
         KontrolRGB.FastLoadingAnimation()
         Temporary = GetTemporary()
         Debug.Log("Creating profile")
-t
+
         if(ProfileCreation_Screens.Mode == "Editing"):
             Debug.Warn("Deleting profile")
             ProfileHandler.Delete()

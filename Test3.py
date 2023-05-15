@@ -1,10 +1,17 @@
-from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import GetWiFiNetworks
+import os
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 
+icon_path = AppendPath("Libraries", "/Icons/Logo/Black_BRS_B.png")
+if os.path.exists(icon_path) and os.access(icon_path, os.R_OK):
+    print("Black Icon file exists and is readable")
+else:
+    print("Black Icon file does not exist or is not readable")
 
-Debug.enableConsole = True
-result = GetWiFiNetworks(DontDebug=False)
-Debug.Log(str(result))
+icon_path = AppendPath("Libraries", "/Icons/Logo/White_BRS_B.png")
+if os.path.exists(icon_path) and os.access(icon_path, os.R_OK):
+    print("White Icon file exists and is readable")
+else:
+    print("White Icon file does not exist or is not readable")
 
 # import module
 # import os

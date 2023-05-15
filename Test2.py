@@ -16,9 +16,15 @@ RGB.SetAttributes(colors=[[255,0,0], [0,255,0], [0,0,255]], rgbMode = RGBModes.s
 time.sleep(5)
 
 print("\n######################################################")
+print("TESTING: 1s: Static, B=(0,255,0), R=(0,0,255), S=(255,0,0) HIGH LERP")
+print("######################################################")
+RGB.SetAttributes(colors=[[255,0,0], [0,255,0], [0,0,255]], lerpDelta=1)
+time.sleep(1)
+
+print("\n######################################################")
 print("TESTING: 3s: Static, colors = (255,255,255)")
 print("######################################################")
-RGB.SetAttributes(colors=[255,255,255], rgbMode = RGBModes.static)
+RGB.SetAttributes(colors=[255,255,255], rgbMode = RGBModes.static, lerpDelta=0.02)
 time.sleep(3)
 
 print("\n######################################################")

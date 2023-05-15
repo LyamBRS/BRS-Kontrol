@@ -64,10 +64,10 @@ RGB.SetAttributes(colors=[[50,0,0], [0,50,0], [0,0,50]], animationDuration=1)
 time.sleep(5)
 
 print("\n######################################################")
-print("TESTING: 5s: Loading, B=(50,0,50), R=(50,50,0), S=(0,50,50)")
+print("TESTING: 12s: Loading, [0,255,255], [0,255,255], [0,255,255]")
 print("######################################################")
-RGB.SetAttributes(colors=[[50,0,50], [50,50,0], [0,50,50]], rgbMode= RGBModes.loading)
-time.sleep(5)
+RGB.SetAttributes(colors=[[0,255,255], [0,255,255], [0,255,255]], rgbMode= RGBModes.loading, animationDuration=3)
+time.sleep(12)
 
 print("\n######################################################")
 print("TESTING: ENDING")

@@ -5,7 +5,7 @@ from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler impor
 import time
 
 from Programs.Local.Hardware.RGB import KontrolRGB
-Debug.enableConsole = False
+Debug.enableConsole = True
 KontrolRGB.Initialize()
 
 Debug.Log("Test2.py -> Waiting 1 seconds...")

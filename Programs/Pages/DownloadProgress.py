@@ -36,9 +36,8 @@ from kivymd.uix.progressbar import MDProgressBar
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
-from ..Local.GUI.Navigation import AppNavigationBar
-from ..Local.GUI.Cards import DeviceDriverCard
 from ..Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
+from ..Local.Hardware.RGB import KontrolRGB
 #endregion
 #====================================================================#
 # thread class
@@ -382,8 +381,10 @@ class DownloadProgress(Screen):
         result = DownloadProgress_Screens._downloadFunction(self.progressBar, DownloadProgressHandler)
         if(result != Execution.Passed):
             Debug.Error("Failed to launch download")
+            KontrolRGB.DisplayUserError()
         else:
             Debug.Log("Download started")
+            KontrolRGB.ApploadingAnimation()
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):

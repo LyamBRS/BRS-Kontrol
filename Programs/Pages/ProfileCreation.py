@@ -1404,7 +1404,8 @@ class ProfileCreation_Step4(Screen):
         #endregion
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
-        KontrolRGB.DisplayDefaultColor()
+        # KontrolRGB.DisplayDefaultColor()
+        pass
 # ------------------------------------------------------------------------
     def on_pre_enter(self, *args):
         """

@@ -41,8 +41,7 @@ from kivymd.uix.spinner import MDSpinner
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
-# from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
-# from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
+from ..Local.Hardware.RGB import KontrolRGB
 #endregion
 #====================================================================#
 # Functions
@@ -279,7 +278,7 @@ class NetworkMenu(Screen):
         """
         """
         Debug.Start("NetworkMenu -> on_pre_enter")
-
+        KontrolRGB.FastLoadingAnimation()
         self.padding = 0
         self.spacing = 0
 
@@ -358,6 +357,7 @@ class NetworkMenu(Screen):
             Debug.Log("WiFi networks cannot be accessed.")
             anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
             anim.start(self.NoWiFiCard)
+            KontrolRGB.DisplayMinorProblem()
         else:
             Debug.Log("Wifi can be accessed")
             Debug.Log("Getting WiFi networks")
@@ -385,6 +385,7 @@ class NetworkMenu(Screen):
 
         Debug.Log("Stopping spinner")
         self.LoadingSpinner.active = False
+        KontrolRGB.DisplayDefaultColor()
 
         Debug.End()
 # ------------------------------------------------------------------------

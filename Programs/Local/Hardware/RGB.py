@@ -432,6 +432,34 @@ class KontrolRGB:
             return Execution.ByPassed        
 
         Debug.End()
+    # -----------------------------------
+    def DisplayMinorProblem():
+        """
+            DisplayMinorProblem:
+            ===================
+            Summary:
+            --------
+            Shows a slow pulsing
+            orange color as an
+            indicator that there
+            has been a minor problem
+            of some sort.
+        """
+        Debug.Start("DisplayMinorProblem")
+
+        if(KontrolRGB.canBeUsed):
+            RGB.SetAttributes(colors=[255,128,0],
+                            rgbMode=RGBModes.pulse,
+                            lerpDelta=0.04,
+                            animationDuration=3
+                            )
+
+            Debug.End()
+            return Execution.Passed
+        else:
+            Debug.Error("CLASS CANNOT BE USED")
+            Debug.End()
+            return Execution.ByPassed
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

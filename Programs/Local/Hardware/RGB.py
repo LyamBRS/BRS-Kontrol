@@ -350,6 +350,88 @@ class KontrolRGB:
             Debug.End()
             return Execution.ByPassed
     # -----------------------------------
+    def DisplayPopUpAnimation(PopUpType):
+        """
+            DisplayPopUpAnimation:
+            ======================
+            Summary:
+            --------
+            This method's purpose is
+            to display a pulsing
+            RGB animation of a specific
+            color depending on the
+            PopUp type that is currently
+            displayed to the user.
+
+            Arguments:
+            ----------
+            - `PopUpType`: Says which type of pop up to display.
+        """
+        Debug.Start("DisplayPopUpAnimation")
+        from ...Pages.PopUps import PopUpTypeEnum
+
+        if(KontrolRGB.canBeUsed):
+            Debug.Log("Getting accent colors")
+
+            if(PopUpType == PopUpTypeEnum.FatalError):
+                Debug.Log("Displaying FATAL ERROR")
+                RGB.SetAttributes(colors=[255,0,0],
+                                rgbMode=RGBModes.pulse,
+                                lerpDelta=0.04,
+                                animationDuration=0.5
+                                )
+                Debug.End()
+                return Execution.Passed
+
+            if(PopUpType == PopUpTypeEnum.Warning):
+                Debug.Log("Displaying Warning")
+                RGB.SetAttributes(colors=[255,128,0],
+                                rgbMode=RGBModes.pulse,
+                                lerpDelta=0.04,
+                                animationDuration=1.5
+                                )
+                Debug.End()
+                return Execution.Passed
+                
+            if(PopUpType == PopUpTypeEnum.Question):
+                Debug.Log("Displaying Question")
+                RGB.SetAttributes(colors=[0,0,255],
+                                rgbMode=RGBModes.pulse,
+                                lerpDelta=0.04,
+                                animationDuration=1.5
+                                )
+                Debug.End()
+                return Execution.Passed
+
+            if(PopUpType == PopUpTypeEnum.Remark):
+                Debug.Log("Displaying remark")
+                RGB.SetAttributes(colors=[0,128,255],
+                                rgbMode=RGBModes.pulse,
+                                lerpDelta=0.04,
+                                animationDuration=3
+                                )
+                Debug.End()
+                return Execution.Passed
+                
+            if(PopUpType == PopUpTypeEnum.Custom):
+                Debug.Log("Displaying Custom")
+                RGB.SetAttributes(colors=[128,128,128],
+                                rgbMode=RGBModes.pulse,
+                                lerpDelta=0.04,
+                                animationDuration=3
+                                )
+                Debug.End()
+                return Execution.Passed
+
+            Debug.Warn("Seems like your pop up type doesn't exist mate.")
+            Debug.End()
+            return Execution.ByPassed
+        else:
+            Debug.Error("CLASS CANNOT BE USED")
+            Debug.End()
+            return Execution.ByPassed        
+
+        Debug.End()
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

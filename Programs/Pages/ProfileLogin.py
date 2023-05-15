@@ -10,13 +10,11 @@ LoadingLog.Start("ProfileLogin.py")
 #====================================================================#
 import os
 from kivy.animation import Animation
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
+from kivy.uix.screenmanager import Screen,SlideTransition
 # -------------------------------------------------------------------
-from kivymd.uix.button import MDRaisedButton,MDRectangleFlatButton,MDFillRoundFlatButton,MDIconButton
-from kivymd.uix.label import MDLabel
+from kivymd.uix.button import MDIconButton
 from kivymd.uix.card import MDCard
 from kivymd.uix.textfield import MDTextField
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 # -------------------------------------------------------------------
@@ -30,6 +28,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 # from Programs.Pages.ProfileMenu import ProfileMenu
 # -------------------------------------------------------------------
 from ..Pages.PopUps import PopUpTypeEnum, PopUpsHandler,PopUps_Screens
+from ..Local.Hardware.RGB import KontrolRGB
 #====================================================================#
 # Functions
 #====================================================================#
@@ -428,14 +427,15 @@ class ProfileLogin(Screen):
         """
             Animate all the widgets into view once the screen is fully present.
         """
-        print("Login: on_enter")
+        Debug.Log("Login: on_enter")
 
-
+        KontrolRGB.DisplayDefaultColor()
         # Start Animation
         # self.animation.stop_all(self)
         # self.animation = Animation(progress = 1, duration = 0.5)
         # self.animation.bind(on_progress = self._Animating)
         # self.animation.start(self)
+        Debug.End()
         pass
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
@@ -485,6 +485,7 @@ class ProfileLogin(Screen):
 
         if(password != self.Password.text):
             self.Password.error = True
+            KontrolRGB.DisplayUserError()
 
         if(self.Password.error):
             pass

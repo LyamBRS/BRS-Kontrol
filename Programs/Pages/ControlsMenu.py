@@ -16,28 +16,29 @@ import os
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
+# from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-from kivymd.uix.label import MDLabel
+# from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.card import MDCard
-from kivymd.uix.button import MDTextButton
+# from kivymd.uix.card import MDCard
+# from kivymd.uix.button import MDTextButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
-from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
-from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
+from ..Local.Hardware.RGB import KontrolRGB
+# from ..Local.GUI.Cards import ButtonCard, DeviceDriverCard
+# from ..Local.FileHandler.deviceDriver import GetDrivers, CheckIntegrity
 #endregion
 #====================================================================#
 # Functions
@@ -250,7 +251,7 @@ class ControlMenu(Screen):
         """
         """
         Debug.Start("ControlMenu -> on_pre_enter")
-
+        KontrolRGB.FastLoadingAnimation()
         self.padding = 0
         self.spacing = 0
 
@@ -296,6 +297,7 @@ class ControlMenu(Screen):
             will slowly elevate to the wanted value.
         """
         Debug.Start("ControlMenu -> on_enter")
+        KontrolRGB.DisplayDefaultColor()
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):

@@ -1002,8 +1002,6 @@ class ProfileCreation_Step3(Screen):
         self.padding = 25
         self.spacing = 25
 
-        KontrolRGB.ApploadingAnimation()
-
         #region ---- Background
         import os
         from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
@@ -1478,7 +1476,7 @@ class ProfileCreation_Step4(Screen):
         KontrolRGB.FastLoadingAnimation()
         Temporary = GetTemporary()
         Debug.Log("Creating profile")
-
+t
         if(ProfileCreation_Screens.Mode == "Editing"):
             Debug.Warn("Deleting profile")
             ProfileHandler.Delete()

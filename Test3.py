@@ -1,10 +1,9 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_GetWiFiNetworks
 
 
 Debug.enableConsole = True
-result = Lniux_GetWiFiNetworks()
+result = Linux_GetWiFiNetworks()
 Debug.Log(str(result))
 
 # import module

@@ -52,9 +52,15 @@ RGB.SetAttributes(colors=[255,255,255], rgbMode = RGBModes.cycling)
 time.sleep(5)
 
 print("\n######################################################")
+print("TESTING: 5s: Cycling, colors = (255,255,255). 4 seconds duration.")
+print("######################################################")
+RGB.SetAttributes(colors=[255,255,255], animationDuration=4)
+time.sleep(5)
+
+print("\n######################################################")
 print("TESTING: 5s: Cycling, B=(50,0,0), R=(0,50,0), S=(0,0,50)")
 print("######################################################")
-RGB.SetAttributes(colors=[[50,0,0], [0,50,0], [0,0,50]], rgbMode = RGBModes.cycling)
+RGB.SetAttributes(colors=[[50,0,0], [0,50,0], [0,0,50]], animationDuration=1)
 time.sleep(5)
 
 print("\n######################################################")

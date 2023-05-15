@@ -1475,6 +1475,7 @@ class ProfileCreation_Step4(Screen):
             _screen.
         """
         Debug.Start("ConfirmProfile")
+        KontrolRGB.FastLoadingAnimation()
         Temporary = GetTemporary()
         Debug.Log("Creating profile")
 

@@ -293,7 +293,7 @@ class KontrolRGB:
 
         if(KontrolRGB.canBeUsed):
             Debug.Log("Getting accent colors")
-            accent = GetAccentColor()
+            accent = GetAccentColor(variant="800")
 
             red   = int(accent[0]*255)
             green = int(accent[1]*255)
@@ -327,7 +327,7 @@ class KontrolRGB:
 
         if(KontrolRGB.canBeUsed):
             Debug.Log("Getting accent colors")
-            accent = GetAccentColor()
+            accent = GetAccentColor(variant="800")
 
             red   = int(accent[0]*255)
             green = int(accent[1]*255)
@@ -335,7 +335,7 @@ class KontrolRGB:
 
             RGB.SetAttributes(colors=[red,green,blue],
                             rgbMode=RGBModes.loading,
-                            lerpDelta=1,
+                            lerpDelta=0.1,
                             animationDuration=0.5
                             )
 
@@ -345,7 +345,7 @@ class KontrolRGB:
             Debug.Error("CLASS CANNOT BE USED")
             Debug.End()
             return Execution.ByPassed
-    # -----------------------------------tttt
+    # -----------------------------------
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

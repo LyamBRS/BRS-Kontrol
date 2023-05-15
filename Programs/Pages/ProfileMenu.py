@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Programs.Local.Hardware.RGB import KontrolRGB
 from Programs.Pages.Startup import Startup_Screens
 LoadingLog.Start("ProfileMenu.py")
 #====================================================================#
@@ -152,6 +153,7 @@ class ProfileMenu(Screen):
             per available profiles.
         """
         Debug.Start("ProfileMenu.py: on_pre_enter")
+
         self.padding = 25
         self.spacing = 25
 
@@ -241,6 +243,8 @@ class ProfileMenu(Screen):
         self.animation = Animation(progress = 1, duration = 0.5)
         self.animation.bind(on_progress = self._Animating)
         self.animation.start(self)
+
+        KontrolRGB.DisplayDefaultColor()
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):

@@ -248,6 +248,70 @@ class KontrolRGB:
             Debug.Error("CLASS CANNOT BE USED")
             Debug.End()
             return Execution.ByPassed
+    # -----------------------------------
+    def DisplayUserError():
+        """
+            DisplayUserError:
+            =================
+            Summary:
+            --------
+            Shows a slow cycling red
+            color to the user to help
+            indicate that their passwords
+            or given information is not OK.
+        """
+        Debug.Start("DisplayUserError")
+
+        if(KontrolRGB.canBeUsed):
+            Debug.Log("Displaying User error")
+            RGB.SetAttributes(colors=[255,0,0],
+                            rgbMode=RGBModes.cycling,
+                            lerpDelta=0.04,
+                            animationDuration=5
+                            )
+
+            Debug.End()
+            return Execution.Passed
+        else:
+            Debug.Error("CLASS CANNOT BE USED")
+            Debug.End()
+            return Execution.ByPassed
+    # -----------------------------------
+    def DisplayDefaultColor():
+        """
+            DisplayDefaultColor:
+            =================
+            Summary:
+            --------
+            Shows the user's
+            accent color static as a
+            default color when there
+            isn't anything that is
+            happenning.
+        """
+        Debug.Start("DisplayDefaultColor")
+
+        if(KontrolRGB.canBeUsed):
+            Debug.Log("Getting accent colors")
+            accent = GetAccentColor()
+
+            red   = int(accent[0]*255)
+            green = int(accent[1]*255)
+            blue  = int(accent[2]*255)
+
+            RGB.SetAttributes(colors=[red,green,blue],
+                            rgbMode=RGBModes.static,
+                            lerpDelta=0.04,
+                            animationDuration=1
+                            )
+
+            Debug.End()
+            return Execution.Passed
+        else:
+            Debug.Error("CLASS CANNOT BE USED")
+            Debug.End()
+            return Execution.ByPassed
+    # -----------------------------------
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

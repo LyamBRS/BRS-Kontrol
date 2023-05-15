@@ -6,6 +6,7 @@
 from profile import Profile
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
+from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("ProfileCreation.py")
 #====================================================================#
 # Imports
@@ -614,6 +615,9 @@ class ProfileCreation_Step1(Screen):
         Debug.End()
         pass
 # ------------------------------------------------------------------------
+    def on_enter(self, *args):
+        KontrolRGB.DisplayDefaultColor()
+# ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
             Function called when the screen is fully left.
@@ -842,6 +846,9 @@ class ProfileCreation_Step2(Screen):
         AppManager.manager.remove_widget(self)
         Debug.End()
 # ------------------------------------------------------------------------
+    def on_enter(self, *args):
+        KontrolRGB.DisplayDefaultColor()
+
     def GoToPrevious(self, *args):
         """
             Function to go back to `ProfileCreation_Step1.py`
@@ -901,6 +908,9 @@ class ProfileCreation_Step2(Screen):
 
                 Temporary[structureEnum.Theme.value][ProfileThemeEnum.Accent.value] = button.text
                 Debug.Log(f"Accent color is now: {button.text}")
+
+        Debug.Log("Updating RGB LEDs")
+        KontrolRGB.DisplayDefaultColor()
         SetTemporary(Temporary)
         Debug.End()
 # ------------------------------------------------------------------------
@@ -989,6 +999,8 @@ class ProfileCreation_Step3(Screen):
         Debug.Start("ProfileCreation_Step3: on_pre_enter")
         self.padding = 25
         self.spacing = 25
+
+        KontrolRGB.ApploadingAnimation()
 
         #region ---- Background
         import os
@@ -1129,6 +1141,9 @@ class ProfileCreation_Step3(Screen):
         self.add_widget(self.MainLayout)
         Debug.End()
         pass
+# ------------------------------------------------------------------------
+    def on_enter(self, *args):
+        KontrolRGB.DisplayDefaultColor()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
@@ -1299,6 +1314,7 @@ class ProfileCreation_Step3(Screen):
                 self.Username.error = False
                 self.UpdateScreenForErrors()
                 self.Username.hint_text = _("Username")
+                KontrolRGB.DisplayDefaultColor()
 
             Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value] = self.Username.text
         else:
@@ -1307,6 +1323,7 @@ class ProfileCreation_Step3(Screen):
                 self.Username.error = True
                 self.usernameError = True
                 self.UpdateScreenForErrors()
+                KontrolRGB.DisplayUserError()
 
             self.Username.hint_text = _(error)
         SetTemporary(Temporary)
@@ -1328,6 +1345,7 @@ class ProfileCreation_Step3(Screen):
                 self.passwordError = True
                 self.Password.error = True
                 self.UpdateScreenForErrors()
+                KontrolRGB.DisplayUserError()
             self.Password.hint_text = _(error)
         else:
             if(self.passwordError == True):
@@ -1335,6 +1353,7 @@ class ProfileCreation_Step3(Screen):
                 self.Password.error = False
                 self.UpdateScreenForErrors()
                 self.Password.hint_text = _("Password")
+                KontrolRGB.DisplayDefaultColor()
             Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value] = self.Password.text
         SetTemporary(Temporary)
 # ------------------------------------------------------------------------
@@ -1354,6 +1373,7 @@ class ProfileCreation_Step3(Screen):
                 self.biographyError = True
                 self.Biography.error = True
                 self.UpdateScreenForErrors()
+                KontrolRGB.DisplayUserError()
             self.Biography.hint_text = _(error)
         else:
             if(self.biographyError == True):
@@ -1361,6 +1381,7 @@ class ProfileCreation_Step3(Screen):
                 self.Biography.error = False
                 self.UpdateScreenForErrors()
                 self.Biography.hint_text = _("Biography")
+                KontrolRGB.DisplayDefaultColor()
 
             Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value] = self.Biography.text
         SetTemporary(Temporary)
@@ -1381,6 +1402,9 @@ class ProfileCreation_Step4(Screen):
         Debug.Start("ProfileCreation_Step4", DontDebug=True)
         Debug.End(ContinueDebug=True)
         #endregion
+# ------------------------------------------------------------------------
+    def on_enter(self, *args):
+        KontrolRGB.DisplayDefaultColor()
 # ------------------------------------------------------------------------
     def on_pre_enter(self, *args):
         """

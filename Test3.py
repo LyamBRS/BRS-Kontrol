@@ -1,10 +1,96 @@
-import os
+import time
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 Debug.enableConsole = True
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
-from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAxes, SoftwareButtons
+from Libraries.BRS_Python_Libraries.BRS.Hardware.Accelerometer.ADXL343 import ADXL343
 
 NAME_OF_HARDWARE = "GamePad"
+
+Debug.Log("Starting driver?")
+ADXL343.StartDriver()
+Debug.Log("driver doing stuff...")
+time.sleep(3)
+print(ADXL343.GetAccelerometerValues())
+time.sleep(1)
+time.sleep(3)
+print(ADXL343.GetAccelerometerValues())
+time.sleep(1)
+Debug.Log("5 seconds is over.")
+ADXL343.StopDriver()
+time.sleep(1)
+Debug.Log("It stopped right?")
+
+
+# import threading
+# import time
+
+# class CounterThread:
+
+#     thread = None
+#     stop_event = threading.Event()
+
+#     def _counter_thread():
+#         counter = 0
+#         while counter <= 25:
+#             if CounterThread.stop_event.is_set():
+#                 break
+#             print("Counter:", counter)
+#             counter += 1
+#             time.sleep(0.5)
+
+#     def start():
+#         if not CounterThread.thread or not CounterThread.thread.is_alive():
+#             CounterThread.stop_event.clear()
+#             CounterThread.thread = threading.Thread(target=CounterThread._counter_thread)
+#             CounterThread.thread.start()
+
+#     def stop():
+#         CounterThread.stop_event.set()
+#         if CounterThread.thread and CounterThread.thread.is_alive():
+#             CounterThread.thread.join()
+
+# Example usage:
+# CounterThread.start()
+# print("Application can still execute stuff!")
+# Main application continues executing while the counter thread runs
+
+# Perform other tasks in the main application
+# time.sleep(1)
+# print("Yup this works")
+# time.sleep(2)
+
+# Stop the counter thread
+# CounterThread.stop()
+
+# Continue with other tasks in the main application
+# time.sleep(1)
+# print("Application continues executing.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # import module
 # import os
 # 

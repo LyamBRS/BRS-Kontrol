@@ -1,18 +1,10 @@
 import os
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+Debug.enableConsole = True
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAxes, SoftwareButtons
 
-icon_path = AppendPath("Libraries", "/Icons/Logo/Black_BRS_B.png")
-if os.path.exists(icon_path) and os.access(icon_path, os.R_OK):
-    print("Black Icon file exists and is readable")
-else:
-    print("Black Icon file does not exist or is not readable")
-
-icon_path = AppendPath("Libraries", "/Icons/Logo/White_BRS_B.png")
-if os.path.exists(icon_path) and os.access(icon_path, os.R_OK):
-    print("White Icon file exists and is readable")
-else:
-    print("White Icon file does not exist or is not readable")
-
+NAME_OF_HARDWARE = "GamePad"
 # import module
 # import os
 # 

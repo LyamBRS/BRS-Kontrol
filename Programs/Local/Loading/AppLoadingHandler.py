@@ -836,7 +836,11 @@ def KontrolGitHub() -> bool:
     Debug.Log("Step 1 -> Checking LyamBRS repository")
     step = LoadingStepsEnum.KontrolGitHub
 
-    error = GitHub.GetAll("LyamBRS")
+    try:
+        error = GitHub.GetAll("LyamBRS")
+    except:
+        Debug.Error("Some shit went wrong in the GitHub. do more try catches bruh.")
+        error = "gitHub class crashed."
     if(error != None):
         Debug.Error("Could not check if your device is up to date. ")
         LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.CriticalError

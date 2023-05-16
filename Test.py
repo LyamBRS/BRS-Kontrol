@@ -82,7 +82,7 @@ from kivymd.icon_definitions import md_icons
 from kivymd.app import MDApp
 from kivymd.uix.list import OneLineIconListItem
 
-Debug.enableConsole = True
+Debug.enableConsole = False
 Debug.Start("Application")
 Debug.Log("Builder loading KV lang string")
 Builder.load_string(

@@ -33,6 +33,7 @@ from kivymd.uix.floatlayout import MDFloatLayout
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
 from ..Local.GUI.Cards import ListCard, WidgetCard
+from ..Local.Hardware.RGB import KontrolRGB
 #endregion
 #====================================================================#
 # Functions
@@ -246,6 +247,7 @@ class AboutMenu(Screen):
         """
         Debug.Start("AboutMenu -> on_pre_enter")
 
+        KontrolRGB.FastLoadingAnimation()
         self.padding = 0
         self.spacing = 0
 
@@ -336,6 +338,7 @@ class AboutMenu(Screen):
             will slowly elevate to the wanted value.
         """
         Debug.Start("AboutMenu -> on_enter")
+        KontrolRGB.DisplayDefaultColor()
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):

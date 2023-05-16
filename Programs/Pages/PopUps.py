@@ -15,7 +15,6 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding, Shadow
 # from Programs.Pages.AppLoading import AppLoading, AppLoading_Screens
 LoadingLog.Start("PopUps.py")
 #====================================================================#
@@ -25,19 +24,19 @@ LoadingLog.Start("PopUps.py")
 LoadingLog.Import("Python")
 import os
 from enum import Enum
-from functools import partial
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding, Shadow
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
+LoadingLog.Import("KontrolRGB")
+from ..Local.Hardware.RGB import KontrolRGB
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
-from kivy.clock import Clock
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
+from kivy.uix.screenmanager import Screen,SlideTransition
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
@@ -45,11 +44,10 @@ from kivy.utils import get_color_from_hex
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
 from kivymd.color_definitions import colors
-from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.card import MDCard
-from kivymd.uix.button import MDIconButton,MDRaisedButton,MDFillRoundFlatButton
+from kivymd.uix.button import MDIconButton,MDFillRoundFlatButton
 from kivymd.uix.label import MDLabel
 #endregion
 #====================================================================#
@@ -132,6 +130,11 @@ class PopUpsHandler:
     #region   --------------------------- MEMBERS
     PopUps:list = []
     _PopUpsWidgets:list = []
+    _PopUpTypes:list = []
+    """
+        Used to keep track of the PopUp type
+        being currently displayed.
+    """
     #endregion
     #region   --------------------------- METHODS
     LoadingLog.Method("Clear")
@@ -480,10 +483,17 @@ class PopUps(Screen):
         #endregion
 
         #region ---- Widgets
+        firstPopUp:bool = False
         for popup in PopUpsHandler.PopUps:
             Debug.Log("Adding new pop up.")
+            if(not firstPopUp):
+                firstPopUp = True
+                KontrolRGB.DisplayPopUpAnimation(popup[Keys.Type])
             Card = GetPopUpCard(popup)
             self.CardLayout.add_widget(Card)
+
+            # For RGB displays when pop up changes.
+            PopUpsHandler._PopUpTypes.append(popup[Keys.Type])
             PopUpsHandler._AddWidget(Card)
         #endregion
 
@@ -656,6 +666,10 @@ def AutoDestruction(self, *args):
     Debug.Log("Removing self from list of pop up widgets.")
     try:
         PopUpsHandler._PopUpsWidgets.remove(Card)
+        PopUpsHandler._PopUpTypes.pop(0)
+
+        newType = PopUpsHandler._PopUpTypes[0]
+        KontrolRGB.DisplayPopUpAnimation(newType)
     except:
         Debug.Error(">>> NO CARD TO REMOVE")
 

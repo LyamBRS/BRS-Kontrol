@@ -19,7 +19,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppMan
 # from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Programs.Local.GUI.Cards import WidgetCard
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import ControlsCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import ControlsCard, ControlsCardData
 from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareButtons, SoftwareAxes
 #endregion
 #region -------------------------------------------------------- Kivy
@@ -37,6 +37,7 @@ from kivymd.uix.floatlayout import MDFloatLayout
 # from kivymd.uix.button import MDTextButton
 from kivymd.uix.swiper import MDSwiper, MDSwiperItem
 from kivymd.uix.card import MDCard
+from kivymd.uix.button import MDFillRoundFlatButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -620,21 +621,50 @@ class ButtonMenu(Screen):
                                                 size_hint=(1, None),
                                                 orientation='lr-tb')
         self.RecyleBoxLayout.padding = 25
-        self.RecyleBoxLayout.spacing = 25
+        self.RecyleBoxLayout.spacing = 5
         self.RecyleBoxLayout.cols = 1
         # self.RecyleBoxLayout.orientation
         self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
 
-        self.recycleView = RecycleView()
-        self.recycleView.add_widget(self.RecyleBoxLayout)
-        self.recycleView.viewclass = ControlsCard
-        self.Layout.add_widget(self.recycleView)
-
-        self.recycleView.data = [
-            {'item': (name, dictionary)}
+        ControlsCardData.dataList = [
+            {"name":name, "dictionary":dictionary}
             for name, dictionary in Controls._buttons.items()
         ]
-        Debug.Log(str(self.recycleView.data))
+        amountOfCard = len(ControlsCardData.dataList)
+        Debug.Log(f"There is {amountOfCard} cards to display: {ControlsCardData.dataList}")
+
+        self.recycleView = RecycleView()
+        self.recycleView.add_widget(self.RecyleBoxLayout)
+        self.recycleView.viewclass = MDFillRoundFlatButton
+        self.Layout.add_widget(self.recycleView)
+
+        Controls.BindButton("GamePad", SoftwareButtons.explode, "switch-1")
+
+        for name,dictionary in Controls._buttons.items():
+
+            text = f"[{name}]:"
+            while len(text) < 15:
+                text += "   "
+
+            if(dictionary["binded"] == True):
+                theFuckerThatBindedIt = dictionary["bindedTo"]
+                whatItBindedItAs = dictionary["bindedAs"]
+                text = f"{text} is used by {theFuckerThatBindedIt} as ({whatItBindedItAs})"
+            else:
+                text = text + "Available"
+            self.recycleView.data.insert(0,
+                                         {
+                                             "text" : text,
+                                             "halign" : "left"
+                                         })
+
+
+
+
+        # self.recycleView.data = [
+            # {"name":, "dictionary":dictionary}
+            # for name, dictionary in Controls._buttons.items()
+        # ]
         Debug.End()
 # ------------------------------------------------------------------------
 LoadingLog.End("ControlMenu.py")

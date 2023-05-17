@@ -17,6 +17,7 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -48,6 +49,7 @@ def DeleteAccount(*args):
     """
     Debug.Start("DeleteAccount")
     #region --------------------- Deleting profile
+    Addons.ClearProfile(ProfileHandler.currentName)
     ProfileHandler.Delete()
     #endregion
     #region ------------------- Imports

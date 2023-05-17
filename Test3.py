@@ -1,25 +1,18 @@
 import time
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 Debug.enableConsole = True
-from Libraries.BRS_Python_Libraries.BRS.Hardware.Accelerometer.ADXL343 import ADXL343
+from Programs.Local.Loading.HardwareAddonsLauncher import InitializeAllHardwareAddons
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 
-NAME_OF_HARDWARE = "GamePad"
+InitializeAllHardwareAddons()
 
-Debug.Log("Starting driver?")
-ADXL343.StartDriver()
-Debug.Log("driver doing stuff...")
-time.sleep(3)
-print(ADXL343.GetAccelerometerValues())
-time.sleep(1)
-time.sleep(3)
-print(ADXL343.GetAccelerometerValues())
-time.sleep(1)
-Debug.Log("5 seconds is over.")
-ADXL343.StopDriver()
-time.sleep(1)
-Debug.Log("It stopped right?")
-
-
+Debug.Log("\n\n\n")
+Debug.Log("Checking if Addons now has Accelerometer:")
+Debug.Log(f"{Addons._listedAddons}")
+Debug.Log("\n\n\n")
+Debug.Log("Can we use anything in it?:")
+result = Addons._listedAddons["Accelerometer"]["GetState"]()
+Debug.Log(f"result: {result}")
 # import threading
 # import time
 

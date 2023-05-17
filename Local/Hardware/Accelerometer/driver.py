@@ -29,6 +29,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Accelerometer import ADXL343
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata, AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import AddonFoundations, AddonInfoHandler, Addons
 #endregion
 #region -------------------------------------------------------- Kivy
 # LoadingLog.Import("Kivy")
@@ -43,7 +44,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata, A
 #====================================================================#
 # Classes
 #====================================================================#
-class Accelerometer:
+class Accelerometer(AddonFoundations):
     #region   --------------------------- DOCSTRING
     """
         Accelerometer:
@@ -56,9 +57,9 @@ class Accelerometer:
     """
     #endregion
     #region   --------------------------- MEMBERS
-    isRunning:bool = False
-
     profileData:JSONdata = None
+
+    addonInformation:AddonInfoHandler = None
     #endregion
     #region   --------------------------- METHODS
     def Launch() -> Execution:
@@ -79,20 +80,50 @@ class Accelerometer:
         """
         Debug.Start("Launch")
 
+        Debug.Log("Creating AddonInfoHandler")
+        Accelerometer.addonInformation = AddonInfoHandler(
+            "Accelerometer",
+            "ADXL343 on board accelerometer hardware extension.",
+            "0.0.1",
+            "hardware",
+            None,
+            True,
+            False,
+            Accelerometer.Launch,
+            Accelerometer.Stop,
+            Accelerometer.Uninstall,
+            Accelerometer.Update,
+            Accelerometer.GetState,
+            Accelerometer.ClearProfile,
+            Accelerometer.SaveProfile,
+            Accelerometer.ChangeProfile,
+            Accelerometer.LoadProfile,
+            Accelerometer.GetAllHardwareControls,
+            Accelerometer.GetAllSoftwareActions,
+            Accelerometer.ChangeButtonActionBinding,
+            Accelerometer.ChangeAxisBinding,
+            Accelerometer.ChangeButtonActionBinding,
+            Accelerometer.ChangeAxisActionBinding
+        )
+
         result = Accelerometer.VerifyForExecution()
         if(result != Execution.Passed):
             Debug.Error("The addon cannot run on your device.")
+            Debug.Log("Adding addon to application...")
+            Accelerometer.addonInformation.DockAddonToApplication(False)
             Debug.End()
-            return Execution.Failed
+            return result
 
         Debug.Log("Addon started successfully.")
-        Accelerometer.isRunning = True
+        Debug.Log("Adding addon to application...")
+        Accelerometer.addonInformation.DockAddonToApplication(True)
+        Accelerometer.state = True
         Debug.End()
         return Execution.Passed
-
-    def StopAddon() -> Execution:
+    # -----------------------------------
+    def Stop() -> Execution:
         """
-            StopAddon:
+            Stop:
             ==========
             Summary:
             --------
@@ -101,68 +132,67 @@ class Accelerometer:
             Gone, reduced to atoms.
             Oh, and it unbinds stuff too.
         """
-        Debug.Start("StopAddon")
-
+        Debug.Start("Stop")
         Debug.End()
 
-    def Set(
-            oldProfileName:str = None,
-            newProfileName:str = None,
-            SoftwareBindX_Positive:str = None,
-            SoftwareBindX_Negative:str = None,
-            SoftwareBindY_Positive:str = None,
-            SoftwareBindY_Negative:str = None,
-            ) -> Execution:
-        """
-            Set:
-            ====
-            Summary:
-            --------
-            This method sets parameters
-            into a profile such as what
-            to bind X and Y axis to.
-            You can also rename a profile.
+    # def Set(
+    #         oldProfileName:str = None,
+    #         newProfileName:str = None,
+    #         SoftwareBindX_Positive:str = None,
+    #         SoftwareBindX_Negative:str = None,
+    #         SoftwareBindY_Positive:str = None,
+    #         SoftwareBindY_Negative:str = None,
+    #         ) -> Execution:
+    #     """
+    #         Set:
+    #         ====
+    #         Summary:
+    #         --------
+    #         This method sets parameters
+    #         into a profile such as what
+    #         to bind X and Y axis to.
+    #         You can also rename a profile.
 
-            Arguments:
-            ----------
-            - `oldProfileName:str` = The old profile that will be replaced with :ref:`newProfileName` Both need to be specified to change em.
-            - `newProfileName:str` = The new profile that will replace with :ref:`oldProfileName` Both need to be specified to change em.
-            - `SoftwareBindX_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's X axis.
-            - `SoftwareBindX_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's X axis.
-            - `SoftwareBindY_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's Y axis.
-            - `SoftwareBindY_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's Y axis.
-        """
-        Debug.Start("Set")
-        Debug.End()
+    #         Arguments:
+    #         ----------
+    #         - `oldProfileName:str` = The old profile that will be replaced with :ref:`newProfileName` Both need to be specified to change em.
+    #         - `newProfileName:str` = The new profile that will replace with :ref:`oldProfileName` Both need to be specified to change em.
+    #         - `SoftwareBindX_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's X axis.
+    #         - `SoftwareBindX_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's X axis.
+    #         - `SoftwareBindY_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's Y axis.
+    #         - `SoftwareBindY_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's Y axis.
+    #     """
+    #     Debug.Start("Set")
+    #     Debug.End()
 
-    def ProfileLoggedIn(ProfileLoggedIn:str) -> Execution:
-        """
-            ProfileLoggedIn:
-            ================
-            Summary:
-            --------
-            Loads settings from a specific
-            profile into the class and other
-            hardware handling classes.
+    # def ProfileLoggedIn(ProfileLoggedIn:str) -> Execution:
+    #     """
+    #         ProfileLoggedIn:
+    #         ================
+    #         Summary:
+    #         --------
+    #         Loads settings from a specific
+    #         profile into the class and other
+    #         hardware handling classes.
 
-            If the profile does not exist,
-            errors will be returned.
-        """
-        Debug.Start("ProfileLoggedIn")
+    #         If the profile does not exist,
+    #         errors will be returned.
+    #     """
+    #     Debug.Start("ProfileLoggedIn")
 
-        Debug.End()
+    #     Debug.End()
 
-    def ClearProfileCache(profileThatGotDeleted:str) -> Execution:
-        """
-            ClearProfileCache:
-            ==================
-            Summary:
-            --------
-            Clears a profile from a cache.
-        """
-        Debug.Start("ClearProfileCache")
+    # def ClearProfileCache(profileThatGotDeleted:str) -> Execution:
+    #     """
+    #         ClearProfileCache:
+    #         ==================
+    #         Summary:
+    #         --------
+    #         Clears a profile from a cache.
+    #     """
+    #     Debug.Start("ClearProfileCache")
 
-        Debug.End()
+    #     Debug.End()
     
     def VerifyForExecution() -> Execution:
         """
@@ -181,48 +211,47 @@ class Accelerometer:
             Debug.Error("Information class is not initialized")
             Debug.End()
             return Execution.Failed
-        
+
         if(Information.platform != "Linux"):
             Debug.Error("This addon only works on Linux.")
             Debug.End()
             return Execution.Incompatibility
-        
-        Debug.Log("Seems alright.")
 
+        Debug.Log("Seems alright.")
         Debug.End()
         return Execution.Passed
 
-    def _CreateOrLoadJSON() -> Execution:
-        """
-            _CreateOrLoadJSON:
-            ==================
-            Summary:
-            --------
-            Handles the creation and
-            loading of the addon's JSON
-            file. Creates the JSON
-            if none exists.
-        """
-        Debug.Start("_CreateOrLoadJSON")
+    # def _CreateOrLoadJSON() -> Execution:
+    #     """
+    #         _CreateOrLoadJSON:
+    #         ==================
+    #         Summary:
+    #         --------
+    #         Handles the creation and
+    #         loading of the addon's JSON
+    #         file. Creates the JSON
+    #         if none exists.
+    #     """
+    #     Debug.Start("_CreateOrLoadJSON")
 
-        import os
-        path = os.getcwd()
-        path = AppendPath(path, "/Local/Hardware/Accelerometer")
-        Accelerometer.profileData = JSONdata("Config", path)
+    #     import os
+    #     path = os.getcwd()
+    #     path = AppendPath(path, "/Local/Hardware/Accelerometer")
+    #     Accelerometer.profileData = JSONdata("Config", path)
 
-        if(Accelerometer.profileData.jsonData == None):
-            Debug.Error("Failed to load Config.json")
-            Debug.Log("Creating JSON")
+    #     if(Accelerometer.profileData.jsonData == None):
+    #         Debug.Error("Failed to load Config.json")
+    #         Debug.Log("Creating JSON")
 
-            Accelerometer.profileData.CreateFile({})
-            Accelerometer.profileData = JSONdata("Config", path)
+    #         Accelerometer.profileData.CreateFile({})
+    #         Accelerometer.profileData = JSONdata("Config", path)
 
-            if(Accelerometer.profileData.jsonData == None):
-                Debug.Error("Failed to create JSON after second try.")
-                Debug.End()
-                return Execution.Failed
+    #         if(Accelerometer.profileData.jsonData == None):
+    #             Debug.Error("Failed to create JSON after second try.")
+    #             Debug.End()
+    #             return Execution.Failed
 
-        Debug.End()
+    #     Debug.End()
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

@@ -462,6 +462,17 @@ class ProfileHandler:
         `None` or unwanted values.
     """
 
+    currentName:str = None
+    """
+        currentName:
+        ============
+        Summary:
+        --------
+        Holds the current name
+        of the profile that is
+        currently loaded.
+    """
+
     rawJson:JSONdata = None
     """
         The raw data loaded from the profile's json. Defaults to `None`.
@@ -487,8 +498,8 @@ class ProfileHandler:
             ProfileHandler.rawJson = jsonData
 
             # Load profile's CLS theme into the application
-            error = ProfileHandler.LoadCLSTheme()
-            if(error):
+            noError = ProfileHandler.LoadCLSTheme()
+            if(noError):
                 Debug.Log("Profile initialized successfully")
                 ProfileHandler.initialized = True
 
@@ -496,6 +507,8 @@ class ProfileHandler:
 
                 Debug.Log("Setting new dates")
                 ProfileHandler.SetDate(Dates.Open)
+
+                ProfileHandler.currentName = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
 
                 Debug.Log("Setting Cache")
                 Debug.Error("TO DO")
@@ -527,6 +540,7 @@ class ProfileHandler:
             ProfileHandler.SetDate(Dates.Exit)
             ProfileHandler.rawJson = None
             ProfileHandler.initialized = False
+            ProfileHandler.currentName = None
         else:
             Debug.Log("No profile to unload")
 
@@ -565,6 +579,7 @@ class ProfileHandler:
         else:
             Debug.Error("Profile could not be saved.", FileName="Profiles.py", Line=487)
 
+        ProfileHandler.currentName = profileStructure[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
         Debug.End()
     #------------------------------------
     def SetDate(dateType:Dates):
@@ -621,6 +636,7 @@ class ProfileHandler:
             except:
                 Debug.Error(">>> NO PROFILE TO DELETE")
                 Debug.Error(f"Path: {path}")
+            ProfileHandler.currentName = None
         else:
             Debug.Error("Cannot delete a profile that is not initialized")
 

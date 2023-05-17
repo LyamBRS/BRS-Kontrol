@@ -176,6 +176,7 @@ class Accelerometer(AddonFoundations):
             None,
             True,
             False,
+            "integrated-circuit-chip",
             Accelerometer.Launch,
             Accelerometer.Stop,
             Accelerometer.Uninstall,
@@ -442,8 +443,9 @@ class Accelerometer(AddonFoundations):
                 Debug.Log(">>> SKIPPED: not specified.")
             else:
                 bindedTo = data["bindedTo"]
+                getter = data["getter"]
                 
-                result = Controls.BindAxis("Kontrol", bindedTo, hardwareAxis)
+                result = Controls.BindAxis("Kontrol", bindedTo, hardwareAxis, getter)
                 if(result != Execution.Passed):
                     Debug.Warn(f"Failed to bind {hardwareAxis} to {bindedTo} as Kontrol")
                     Accelerometer.hardwareControls["axes"][hardwareAxis]["binded"] = False,

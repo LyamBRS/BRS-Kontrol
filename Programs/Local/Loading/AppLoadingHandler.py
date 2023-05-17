@@ -36,6 +36,7 @@ from ...Pages.PopUps import PopUpsHandler,Keys,PopUpTypeEnum
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Programs.Local.Loading.HardwareAddonsLauncher import InitializeAllHardwareAddons
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -96,17 +97,23 @@ class LoadingStepsEnum(Enum):
         If drivers are available, their github repositories are checked
         then checked for any new releases available.
     """
-    BrSpandCheck:int = 8
+    HardwareAddons:int = 8
+    """
+        Step that launches all
+        the hardware addons
+        installed on your Kontrol. 
+    """
+    BrSpandCheck:int = 9
     """
         Step that checks if Kontrol has any BrSpand card's drivers
         downloaded
     """
-    BrSpandGitHub:int = 9
+    BrSpandGitHub:int = 10
     """
         Step that check if the downloaded BrSpand card drivers have
         GitHub repositories and if they are up to date.
     """
-    GPIOConnectionCheck:int = 10
+    GPIOConnectionCheck:int = 11
     """
         Steps that checks if the Raspberry pi's GPIO bus is connected to 
         a BRS Kontrol PCB.
@@ -924,6 +931,87 @@ def KontrolGitHub_CallBack() -> bool:
     Debug.Log("Callback was called for no reasons.")
     Debug.End()
 #endregion
+#--------------------------------------------------------------------
+#region ---- HardwareAddons
+LoadingLog.Function("HardwareAddons")
+def HardwareAddons() -> bool:
+    #region ---- DocString
+    """
+        HardwareAddons:
+        ===============
+        Summary:
+        --------
+        This loading function attempts to load all the
+        hardware addons installed on your Kontrol.
+        This can take a while.
+        
+        Returns:
+            `bool`: `True`: Fatal error occured. `False`: Nothing fucked up.
+    """
+    #endregion
+    Debug.Start("HardwareAddons")
+
+    step = LoadingStepsEnum.HardwareAddons
+    error = None
+    #region ====== Step 1
+    Debug.Log("Step 1 -> Initializing All Addons...")
+
+    try:
+        InitializeAllHardwareAddons(CreatePopUps=True)
+        Debug.Log("Function executed successfully.")
+    except:
+        Debug.Error("Epic fail occured when executing InitializeAllHardwareAddons")
+        error = "InitializeAllHardwareAddons crashed. Please submit a bug report to BRS, or uninstall recently installed addons."
+
+    if(error != None):
+        Debug.Error("Fatal error occured when initializing all hardware addons.")
+        LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.CriticalError
+        LoadingSteps[step][ParamEnum.ErrorMessage] = _("Critical software error occured when initializing hardware addons. Error message: ") + _(error)
+        Debug.End()
+        return True
+    #endregion
+
+
+    Debug.Log("Hardware addons launched.")
+    LoadingSteps[step][ParamEnum.ErrorType] = ErrorTypeEnum.Success
+    LoadingSteps[step][ParamEnum.ErrorMessage] = _("Good")
+
+    Debug.End()
+    return False
+LoadingLog.Function("HardwareAddons_CallBack")
+def HardwareAddons_CallBack() -> bool:
+    """
+        IntegrityCheck_CallBack:
+        ------------------------
+        This function is the error call back function of that specific
+        loading step function. It's goal is to handle the `ErrorType`
+        received and decide if the application can continue.
+
+        It handles if other steps should be skipped, appends warning
+        pop ups, error pop ups and so on.
+
+        Returns:
+            - `bool`: `True`: Application must be stopped. `False`: Application can continue
+    """
+    Debug.Start("HardwareAddons_CallBack")
+    step = LoadingStepsEnum.HardwareAddons
+
+    # Check if function was executed
+    if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.Default):
+        Debug.Error("Callback executed while error type is default. Function needs to be executed prior to callback")
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message = _("Fatal loading error"), CanContinue=False)
+        Debug.End()
+        return True
+    else:
+        if(LoadingSteps[step][ParamEnum.ErrorType] == ErrorTypeEnum.CriticalError):
+            Debug.Error("Critical Fatal error happened.")
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message = LoadingSteps[step][ParamEnum.ErrorMessage], CanContinue=True)
+            Debug.End()
+            return False
+    Debug.Log("Callback was called for no reasons.")
+    Debug.End()
+    return False
+#endregion
 
 #====================================================================#
 # Main Function
@@ -1039,6 +1127,14 @@ LoadingSteps = {
         ParamEnum.ErrorType : ErrorTypeEnum.Default,
         ParamEnum.ErrorCallBackFunction : EnvironementCheck_CallBack,
         ParamEnum.Function : EnvironementCheck,
+        ParamEnum.Skip : False,
+    },
+    LoadingStepsEnum.HardwareAddons: {
+        ParamEnum.DisplayName : "Launching installed hardware addons",
+        ParamEnum.ErrorMessage : "Not done",
+        ParamEnum.ErrorType : ErrorTypeEnum.Default,
+        ParamEnum.ErrorCallBackFunction : HardwareAddons_CallBack,
+        ParamEnum.Function : HardwareAddons,
         ParamEnum.Skip : False,
     },
     LoadingStepsEnum.InternetCheck : {

@@ -28,7 +28,8 @@ import importlib.util
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath, FilesFinder
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -36,6 +37,7 @@ LoadingLog.Import("Kivy")
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import('KivyMD')
 #endregion
+from Programs.Pages.PopUps import PopUpTypeEnum, PopUpsHandler
 #====================================================================#
 # Functions
 #====================================================================#
@@ -78,6 +80,9 @@ def InitializeAllHardwareAddons(CreatePopUps:bool = False) -> Execution:
         result = LaunchAddonAtPath(addon, pathToAddons)
         if(result != Execution.Passed):
             Debug.Warn(f"Seems like {addon} failed to launch.")
+
+            if(CreatePopUps == True):
+                CreatePopUpMessage(addon, result)
     Debug.End()
 #====================================================================#
 def GetNamesOfInstalledAddons(pathToAddons:str) -> list:
@@ -152,6 +157,58 @@ def LaunchAddonAtPath(nameOfAddon:str, pathOfAddonsFolder:str):
         Debug.Error(f"Failed to get {nameOfAddon}'s driver.py")
         Debug.End()
         return Execution.Failed
+#====================================================================#
+def CreatePopUpMessage(nameOfTheAddon:str, executionReturnedByLaunch:Execution) -> Execution:
+    """
+        CreatePopUpMessage:
+        ===================
+        Summary:
+        --------
+        This function will create a normalized pop up containing
+        informations about why that addon couldn't execute.
+    """
+    Debug.Start("CreatePopUpMessage")
+
+    if(executionReturnedByLaunch == Execution.Crashed):
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message=_("A critical error occured when Kontrol attempted to launch the following hardware extension addon: ") + nameOfTheAddon)
+        Debug.Log("Pop up created")
+        Debug.End()
+        return Execution.Passed
+    
+    if(executionReturnedByLaunch == Execution.Failed):
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon failed to launch for some reasons: ") + nameOfTheAddon)
+        Debug.Log("Pop up created")
+        Debug.End()
+        return Execution.Passed
+    
+    if(executionReturnedByLaunch == Execution.Incompatibility):
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon cannot operate on your hardware: ") + nameOfTheAddon)
+        Debug.Log("Pop up created")
+        Debug.End()
+        return Execution.Passed
+    
+    if(executionReturnedByLaunch == Execution.NoConnection):
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon failed to launch due to a connection error: ") + nameOfTheAddon)
+        Debug.Log("Pop up created")
+        Debug.End()
+        return Execution.Passed
+    
+    if(executionReturnedByLaunch == Execution.ByPassed):
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message=_("The following hardware extension addon bypassed its launch function: ") + nameOfTheAddon)
+        Debug.Log("Pop up created")
+        Debug.End()
+        return Execution.Passed
+    
+    if(executionReturnedByLaunch == Execution.Unecessary):
+        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon said it was unecessary to launch it when Kontrol attempted to do so: ") + nameOfTheAddon)
+        Debug.Log("Pop up created")
+        Debug.End()
+        return Execution.Passed
+
+    Debug.Log("Seems like you called this function for nothing...")
+    Debug.Warn(f"This function does not support pop ups for executions of type: {executionReturnedByLaunch}")
+    Debug.End()
+    return Execution.ByPassed
 #====================================================================#
 # Classes
 #====================================================================#

@@ -62,6 +62,21 @@ class Accelerometer:
     #endregion
     #region   --------------------------- METHODS
     def Launch() -> Execution:
+        """
+            Launch:
+            =======
+            Summary:
+            --------
+            Launches the accelerometer addon.
+            returns Execution to indicate how
+            the launch went.
+
+            Returns:
+            --------
+            - `Execution.Passed` = Addon was launched.
+            - `Execution.Failed` = Error occured
+            - `Execution.Incompatibility` = Failed to verify for compatibility.
+        """
         Debug.Start("Launch")
 
         result = Accelerometer.VerifyForExecution()
@@ -76,13 +91,27 @@ class Accelerometer:
         return Execution.Passed
 
     def StopAddon() -> Execution:
-        pass
+        """
+            StopAddon:
+            ==========
+            Summary:
+            --------
+            Stops the addon from running.
+            Closes the thread that is running it.
+            Gone, reduced to atoms.
+            Oh, and it unbinds stuff too.
+        """
+        Debug.Start("StopAddon")
+
+        Debug.End()
 
     def Set(
             oldProfileName:str = None,
             newProfileName:str = None,
-            SoftwareBindX:str = None,
-            SoftwareBindY:str = None
+            SoftwareBindX_Positive:str = None,
+            SoftwareBindX_Negative:str = None,
+            SoftwareBindY_Positive:str = None,
+            SoftwareBindY_Negative:str = None,
             ) -> Execution:
         """
             Set:
@@ -93,6 +122,15 @@ class Accelerometer:
             into a profile such as what
             to bind X and Y axis to.
             You can also rename a profile.
+
+            Arguments:
+            ----------
+            - `oldProfileName:str` = The old profile that will be replaced with :ref:`newProfileName` Both need to be specified to change em.
+            - `newProfileName:str` = The new profile that will replace with :ref:`oldProfileName` Both need to be specified to change em.
+            - `SoftwareBindX_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's X axis.
+            - `SoftwareBindX_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's X axis.
+            - `SoftwareBindY_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's Y axis.
+            - `SoftwareBindY_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's Y axis.
         """
         Debug.Start("Set")
         Debug.End()
@@ -170,7 +208,19 @@ class Accelerometer:
         import os
         path = os.getcwd()
         path = AppendPath(path, "/Local/Hardware/Accelerometer")
-        Accelerometer.profileData = JSONdata("Config", )
+        Accelerometer.profileData = JSONdata("Config", path)
+
+        if(Accelerometer.profileData.jsonData == None):
+            Debug.Error("Failed to load Config.json")
+            Debug.Log("Creating JSON")
+
+            Accelerometer.profileData.CreateFile({})
+            Accelerometer.profileData = JSONdata("Config", path)
+
+            if(Accelerometer.profileData.jsonData == None):
+                Debug.Error("Failed to create JSON after second try.")
+                Debug.End()
+                return Execution.Failed
 
         Debug.End()
     #endregion

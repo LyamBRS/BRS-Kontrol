@@ -29,6 +29,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLang
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 # -------------------------------------------------------------------
 LoadingLog.Import("Local")
 from Programs.Local.FileHandler.Cache import Cache
@@ -174,5 +175,6 @@ Application().run()
 
 Shutdown.ShutdownFunction()
 KontrolRGB.Uninitialize()
+Addons.StopAll()
 
 LoadingLog.End("Application.py")

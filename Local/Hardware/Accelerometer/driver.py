@@ -78,22 +78,22 @@ profileExample = {
                     "axes" : { 
                                 "x-positive" : {  "binded" : False, 
                                                   "bindedTo" : None,
-                                                  "getter" : ADXL343.GetValue_X_Positive},
+                                                  "getter" : None},
                                 "x-negative" : { "binded" : False, 
                                                  "bindedTo" : None,
-                                                 "getter" : ADXL343.GetValue_X_Negative},
+                                                 "getter" : None},
                                 "y-positive" : {  "binded" : False, 
                                                   "bindedTo" : None,
-                                                  "getter" : ADXL343.GetValue_Y_Positive},
+                                                  "getter" : None},
                                 "y-negative" : { "binded" : False, 
                                                   "bindedTo" : None,
-                                                  "getter" : ADXL343.GetValue_Y_Negative},
+                                                  "getter" : None},
                                 "z-positive" : { "binded" : False, 
                                                   "bindedTo" : None,
-                                                  "getter" : ADXL343.GetValue_Z_Positive},
+                                                  "getter" : None},
                                 "z-negative" : { "binded" : False, 
                                                   "bindedTo" : None,
-                                                  "getter" : ADXL343.GetValue_Z_Negative}
+                                                  "getter" : None}
                             },
                     "buttons" : {
                     } 
@@ -236,6 +236,7 @@ class Accelerometer(AddonFoundations):
                 Debug.End()
                 return Execution.Failed
             Debug.Log("ADXL343 is now OFF")
+            Accelerometer.profileData.SaveFile()
             Debug.End()
             return Execution.Passed
         else:
@@ -352,6 +353,35 @@ class Accelerometer(AddonFoundations):
         Debug.End()
         return Execution.Passed
     # -----------------------------------
+    def ClearProfile(profileToClear: str) -> Execution:
+        """
+            ClearProfile:
+            =============
+            Summary:
+            --------
+            Attempts to clear a given profile
+            from the cache of this addon.
+        """
+        Debug.Start("ClearProfile")
+        if(Accelerometer.profileData.jsonData == None):
+            Debug.Error("No json is loaded. Accelerometer cannot delete anything.")
+            Debug.End()
+            return Execution.ByPassed
+        
+        existing = Accelerometer._DoesProfileExist(profileToClear)
+        if(not existing):
+            Debug.Warn(f"Accelerometer has no cached data for {profileToClear}")
+            Debug.End()
+            return Execution.Unecessary
+        
+        savedProfiles:dict = Accelerometer.profileData.jsonData["saved-profiles"]
+        savedProfiles.pop(profileToClear)
+        Debug.Log(f"{profileToClear} no longer exists in Accelerometer's cached profiles.")
+        Accelerometer.profileData.jsonData["saved-profiles"] = savedProfiles
+        Accelerometer.profileData.SaveFile()
+        Debug.End()
+        return Execution.Passed
+    # -----------------------------------
     def _InitializeProfileJson() -> Execution:
         """
             _InitializeProfileJson:
@@ -364,7 +394,7 @@ class Accelerometer(AddonFoundations):
         Debug.Start("_InitializeProfileJson")
 
         path = os.getcwd()
-        path = AppendPath(path, "/Local/Hardware/Accelerometer")
+        path = AppendPath(path, "/Local/Hardware/Accelerometer/")
 
         Accelerometer.profileData = JSONdata("Profiles", path)
         if(Accelerometer.profileData.jsonData == None):
@@ -405,7 +435,7 @@ class Accelerometer(AddonFoundations):
         profile = Accelerometer.profileData.jsonData["saved-profiles"][Accelerometer.loadedProfileName]
         hardwareAxes = profile["hardware"]["axes"]
 
-        for hardwareAxis, data in hardwareAxes:
+        for hardwareAxis, data in hardwareAxes.items():
             Debug.Log(f"Loading {hardwareAxis}...")
 
             if(data["bindedTo"] == None):
@@ -469,7 +499,9 @@ class Accelerometer(AddonFoundations):
             Does not check if it exists.
         """
         Debug.Start("_PutBindsInProfile")
-        Accelerometer.profileData.jsonData["saved-profile"][profileToSaveBinds]["hardware"]["axes"] = Accelerometer.hardwareControls["axes"]
+        for axis in Accelerometer.profileData.jsonData["saved-profiles"][profileToSaveBinds]["hardware"]["axes"]:
+            Accelerometer.profileData.jsonData["saved-profiles"][profileToSaveBinds]["hardware"]["axes"][axis]["binded"] = Accelerometer.hardwareControls["axes"][axis]["binded"]
+            Accelerometer.profileData.jsonData["saved-profiles"][profileToSaveBinds]["hardware"]["axes"][axis]["bindedTo"] = Accelerometer.hardwareControls["axes"][axis]["bindedTo"]
         Debug.End()
     # def Set(
     #         oldProfileName:str = None,
@@ -548,10 +580,10 @@ class Accelerometer(AddonFoundations):
             Debug.End()
             return Execution.Failed
 
-        if(Information.platform != "Linux"):
-            Debug.Error("This addon only works on Linux.")
-            Debug.End()
-            return Execution.Incompatibility
+        # if(Information.platform != "Linux"):
+            # Debug.Error("This addon only works on Linux.")
+            # Debug.End()
+            # return Execution.Incompatibility
 
         result = Accelerometer._InitializeProfileJson()
         if(result != Execution.Passed):

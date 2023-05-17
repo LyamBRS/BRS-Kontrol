@@ -1,8 +1,0 @@
-{
-    "test" : {
-        "x_positive" : "forward",
-        "x_negative" : "backward",
-        "y_positive" : "left",
-        "y_negative" : "right"
-    }
-}

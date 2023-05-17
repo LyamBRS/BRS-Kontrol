@@ -33,6 +33,7 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen, SlideTransition
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding,Shadow
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage, _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -1478,6 +1479,8 @@ class ProfileCreation_Step4(Screen):
         Debug.Log("Creating profile")
 
         if(ProfileCreation_Screens.Mode == "Editing"):
+            Debug.Warn("Changing profiles of addons")
+            Addons.ChangeProfile(Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value], ProfileHandler.currentName)
             Debug.Warn("Deleting profile")
             ProfileHandler.Delete()
 
@@ -1487,6 +1490,7 @@ class ProfileCreation_Step4(Screen):
             Debug.Warn("Loading new profile")
             if(ProfileHandler.LoadProfile(ProfileHandler.rawJson) == FileIntegrity.Good):
                 Debug.Log(">>> LOADING SUCCESS")
+                Addons.LoadProfile(ProfileHandler.currentName)
             else:
                 Debug.Error("FAILED TO LOAD PROFILE.")
                 Debug.Error(f"Tried to load: {ProfileHandler.rawJson}")

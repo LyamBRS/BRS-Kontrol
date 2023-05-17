@@ -25,6 +25,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, structureEnum
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 # from Programs.Pages.ProfileMenu import ProfileMenu
 # -------------------------------------------------------------------
 from ..Pages.PopUps import PopUpTypeEnum, PopUpsHandler,PopUps_Screens
@@ -477,7 +478,7 @@ class ProfileLogin(Screen):
             Function called when attempting to log in with the specified
             password and username
         """
-        # username = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
+        username = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value]
         password = ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Password.value]
 
         # if(username != self.Username.text):
@@ -490,6 +491,7 @@ class ProfileLogin(Screen):
         if(self.Password.error):
             pass
         else:
+            Addons.LoadProfile(username)
             ProfileLogins_Screens._GoodExit()
 
 LoadingLog.End("ProfileLogin.py")

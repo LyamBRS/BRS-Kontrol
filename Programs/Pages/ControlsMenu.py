@@ -30,6 +30,7 @@ LoadingLog.Import("Kivy")
 from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.recyclegridlayout import RecycleGridLayout
+from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -1713,6 +1714,7 @@ class BindSelectMenu(Screen):
         """
         Debug.Start("BindSelectMenu -> on_enter")
         KontrolRGB.DisplayDefaultColor()
+        Clock.schedule_once(self.UpdateShownValues, 1)
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
@@ -1760,7 +1762,6 @@ class BindSelectMenu(Screen):
 
         Debug.Log(f"Getting hardware controls from {HeldData.whoIsTryingToBindIt}")
         hardwareData = Addons._listedAddons[HeldData.whoIsTryingToBindIt][AddonEnum.GetAllHardwareControls]()
-
         for name,dictionary in hardwareData[HeldData.whatIsBeingBinded].items():
 
             try:
@@ -1833,5 +1834,44 @@ class BindSelectMenu(Screen):
         Debug.Start("GoToPrevious")
         BinderSelector_Screens.Call()
         Debug.End
+# ------------------------------------------------------------------------
+    def UpdateShownValues(self, *args):
+        """
+            UpdateShownValues:
+            ==================
+            Summary:
+            --------
+            This method updates the third text
+            shown in each of the ThreeLinesIconWidget
+            displayed in the binder.
+        """
+        Debug.Start("UpdateShownValues")
 
+        if(AppManager.manager.current == "BindSelectMenu"):
+            current = 0
+            hardwareData = Addons._listedAddons[HeldData.whoIsTryingToBindIt][AddonEnum.GetAllHardwareControls]()
+            for name,dictionary in hardwareData[HeldData.whatIsBeingBinded].items():
+
+                try:
+                    currentValue = dictionary["getter"]()
+                    currentValue = str(currentValue)
+                    currentValue = _("value: ") + currentValue
+                except:
+                    currentValue = "GETTER ERROR"
+
+                if(dictionary["bindedTo"] != None):
+                    secondaryText:str = _("Binded to: ") + dictionary["bindedTo"]
+                else:
+                    secondaryText:str = _("Available")
+
+                self.recycleView.data[current]["text"] = name
+                self.recycleView.data[current]["secondary_text"] = secondaryText
+                self.recycleView.data[current]["tertiary_text"] = currentValue
+                current = current + 1
+
+            self.recycleView.refresh_from_data()
+            Clock.schedule_once(self.UpdateShownValues, 1)
+        else:
+            Debug.Warn("Stopping value updates.")
+        Debug.End()
 LoadingLog.End("ControlMenu.py")

@@ -49,6 +49,7 @@ def DeleteAccount(*args):
     """
     Debug.Start("DeleteAccount")
     #region --------------------- Deleting profile
+    Addons.UnloadProfile(ProfileHandler.currentName)
     Addons.ClearProfile(ProfileHandler.currentName)
     ProfileHandler.Delete()
     #endregion

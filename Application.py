@@ -3,11 +3,7 @@
 #====================================================================#
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Hardware.Neopixel.rgbDriverHandler import RGB
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Programs.Local.Hardware.RGB import KontrolRGB
-# from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GitHub
-# from Programs.Local.Updating.GitUpdating import DownloadLatestVersion
 LoadingLog.Start("Application.py")
 #===================================================================#
 # Imports
@@ -19,8 +15,6 @@ from kivy.uix.screenmanager import ScreenManager
 # -------------------------------------------------------------------
 LoadingLog.Import("KivyMD")
 from kivymd.app import MDApp
-# from kivymd.uix.button import MDRaisedButton
-# from kivymd.theming import ThemeManager
 # -------------------------------------------------------------------
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.font import Font
@@ -35,8 +29,8 @@ LoadingLog.Import("Local")
 from Programs.Local.FileHandler.Cache import Cache
 from Programs.Pages.ProfileMenu import ProfileMenu
 from Programs.Pages.Startup import Startup_Screens
-from Programs.Pages.AppLoading import AppLoading,AppLoading_Screens
-from Programs.Pages.PopUps import PopUps,PopUps_Screens,PopUpsHandler,Keys,PopUpTypeEnum
+from Programs.Pages.AppLoading import AppLoading_Screens
+from Programs.Pages.PopUps import PopUps_Screens
 from Programs.Local.Updating.LaunchHandling import Shutdown
 #====================================================================#
 # Configuration

@@ -12,6 +12,7 @@
 #====================================================================#
 # Loading Logs
 #====================================================================#
+from token import EXACT_TOKEN_TYPES
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("driver.py")
 #====================================================================#
@@ -30,7 +31,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.Accelerometer.ADXL343 import ADXL343
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata, AppendPath
-from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import AddonFoundations, AddonInfoHandler
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import AddonFoundations, AddonInfoHandler, AddonEnum
 from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls
 #endregion
 #region -------------------------------------------------------- Kivy
@@ -122,25 +123,25 @@ class Accelerometer(AddonFoundations):
     profileData:JSONdata = None
 
     hardwareControls:dict = {
-        "axes" : { 
-                    "x-positive" : {  "binded" : False, 
+        "axes" : {
+                    "x-positive" : {  "binded" : False,
                                      "bindedTo" : None,
                                      "getter" : ADXL343.GetValue_X_Positive},
-                    "x-negative" : { "binded" : False, 
+                    "x-negative" : { "binded" : False,
                                      "bindedTo" : None,
                                      "getter" : ADXL343.GetValue_X_Negative},
-                    "y-positive" : {  "binded" : False, 
+                    "y-positive" : {  "binded" : False,
                                      "bindedTo" : None,
                                      "getter" : ADXL343.GetValue_Y_Positive},
-                    "y-negative" : { "binded" : False, 
+                    "y-negative" : { "binded" : False,
                                      "bindedTo" : None,
                                      "getter" : ADXL343.GetValue_Y_Negative},
-                    "z-positive" : { "binded" : False, 
+                    "z-positive" : { "binded" : False,
                                      "bindedTo" : None,
                                      "getter" : ADXL343.GetValue_Z_Positive},
-                    "z-negative" : { "binded" : False, 
+                    "z-negative" : { "binded" : False,
                                      "bindedTo" : None,
-                                     "getter" : ADXL343.GetValue_Z_Negative},        
+                                     "getter" : ADXL343.GetValue_Z_Negative}
                  }
     }
 
@@ -149,6 +150,7 @@ class Accelerometer(AddonFoundations):
     addonInformation:AddonInfoHandler = None
     #endregion
     #region   --------------------------- METHODS
+    #region ----------------------- ADDON
     def Launch() -> Execution:
         """
             Launch:
@@ -174,7 +176,9 @@ class Accelerometer(AddonFoundations):
             "0.0.1",
             "hardware",
             None,
+            False,
             True,
+            False,
             False,
             "integrated-circuit-chip",
             Accelerometer.Launch,
@@ -186,10 +190,13 @@ class Accelerometer(AddonFoundations):
             Accelerometer.SaveProfile,
             Accelerometer.ChangeProfile,
             Accelerometer.LoadProfile,
+            Accelerometer.UnloadProfile,
             Accelerometer.GetAllHardwareControls,
             Accelerometer.GetAllSoftwareActions,
             Accelerometer.ChangeButtonActionBinding,
             Accelerometer.ChangeAxisBinding,
+            Accelerometer.UnbindButtonBinding,
+            Accelerometer.UnbindAxisBinding,
             Accelerometer.ChangeButtonActionBinding,
             Accelerometer.ChangeAxisActionBinding
         )
@@ -313,6 +320,36 @@ class Accelerometer(AddonFoundations):
             Debug.End()
             return Execution.ByPassed
     # -----------------------------------
+    def UnloadProfile(profileToUnload: str) -> Execution:
+        """
+            UnloadProfile:
+            ============
+            Summary:
+            --------
+            Unloads a specified profile from
+            the addon. This does not turn off
+            the addon.
+
+            Usually used when someone is logging
+            out of their profiles.
+        """
+        Debug.Start("Accelerometer -> UnloadProfile")
+
+        if(Accelerometer.state == True):
+            Debug.Log(f"Unloading the current profile.")
+            result = Accelerometer._UnbindEverything()
+            if(result != Execution.Passed):
+                Debug.Error(f"_UnbindEverything returned error code: {result}")
+                Debug.End()
+                return result
+
+            Debug.Log("Clearing saved profile's name.")
+            Accelerometer.loadedProfileName = None
+        else:
+            Debug.Warn("Accelerometer is not running.")
+            Debug.End()
+            return Execution.ByPassed
+    # -----------------------------------
     def SaveProfile(profileToSave: str = None) -> Execution:
         """
             SaveProfile:
@@ -383,6 +420,232 @@ class Accelerometer(AddonFoundations):
         Debug.End()
         return Execution.Passed
     # -----------------------------------
+    def ChangeAxisBinding(nameOfSoftwareAxis: str, nameOfHardwareAxis: str) -> Execution:
+        """
+            ChangeAxisBinding:
+            ==================
+            Summary:
+            --------
+            This method attempts to firstly
+            un-bind anything binded to
+            :ref:`nameOfHardwareAxis` then
+            tries to bind it to :ref:`nameOfSoftwareAxis`
+
+            Arguments:
+            ----------
+            - `nameOfSoftwareAxis` : Axis taken from SoftwareAxis in controls.py
+            - `nameOfHardwareAxis` : Hardware axis to bind to :ref:`nameOfSoftwareAxis`
+        """
+        Debug.Start(AddonEnum.ChangeAxisBinding)
+
+        result = Accelerometer.UnbindAxisBinding(nameOfSoftwareAxis)
+        if(result != Execution.Passed and result != Execution.Unecessary):
+            Debug.Error(f"Failed to unbind software axis: {nameOfSoftwareAxis}")
+            Debug.End()
+            return Execution.Failed
+
+        result = Accelerometer._UnbindHardwareAxis(nameOfHardwareAxis)
+        if(result != Execution.Passed and result != Execution.Unecessary):
+            Debug.Error(f"Failed to unbind hardware axis: {nameOfHardwareAxis}")
+            Debug.End()
+            return Execution.Failed
+
+        Debug.Log(f"The accelerometer no longer holds bindings for the software axis: {nameOfSoftwareAxis} as well as the hardware axis: {nameOfHardwareAxis}")
+
+        result = Accelerometer._BindAxis(nameOfSoftwareAxis, nameOfHardwareAxis)
+        if(result != Execution.Passed):
+            Debug.Error(f"Something went wrong when trying to bind {nameOfHardwareAxis} to {nameOfSoftwareAxis}")
+            Debug.End()
+            return result
+
+        Debug.Log(f"Saving {Accelerometer.loadedProfileName}'s new binds.")
+        Accelerometer._PutBindsInProfile(Accelerometer.loadedProfileName)
+
+        saved = Accelerometer.profileData.SaveFile()
+        if(not saved):
+            Debug.Log("Failed to save Profile.json")
+            Debug.End()
+            return Execution.Crashed
+
+        Debug.Log(">>> Success")
+        Debug.End()
+        return Execution.Passed
+    # -----------------------------------
+    def UnbindAxisBinding(nameOfSoftwareAxis:str) -> Execution:
+        """
+            UnbindAxisBinding:
+            ==================
+            Summary:
+            --------
+            This method attempts to
+            un-bind anything binded to
+            :ref:`nameOfSoftwareAxis`.
+
+            Arguments:
+            ----------
+            - `nameOfSoftwareAxis` : Axis taken from SoftwareAxis in controls.py that needs to be unbinded.
+        """
+        Debug.Start(AddonEnum.UnbindAxisBinding)
+
+        if(Accelerometer.state):
+            whateverAxisHadItBinded = Accelerometer._WhoHasThatAxisBinded(nameOfSoftwareAxis)
+            if(whateverAxisHadItBinded == Execution.Unecessary):
+                Debug.Log(f"{nameOfSoftwareAxis} isn't currently binded by the Accelerometer.")
+                Debug.End()
+                return Execution.Unecessary
+
+            result = Accelerometer._UnbindSoftwareAxis(nameOfSoftwareAxis, whateverAxisHadItBinded)
+            if(result != Execution.Passed):
+                Debug.Log(f"Error occured when unbinding {nameOfSoftwareAxis}. Return code: {result}")
+
+            Debug.Log("Updating profile with new informations.")
+            Accelerometer._PutBindsInProfile(Accelerometer.loadedProfileName)
+            Accelerometer.profileData.SaveFile()
+            Debug.Log(">>> Success")
+            Debug.End()
+            return Execution.Passed
+        else:
+            Debug.Warn("Accelerometer is not running.")
+            Debug.End()
+            return Execution.ByPassed
+
+    #endregion
+    #region --------------------- PRIVATE
+    def _UnbindEverything():
+        """
+            _UnbindEverything:
+            ===================
+            Summary:
+            --------
+            This private method's goal is
+            to unload all the binds as
+            well as the current profile.
+        """
+        Debug.Start("_UnbindEverything")
+
+        for hardwareAxis, data in Accelerometer.hardwareControls["axes"].items():
+            Debug.Log(f"Unbinding {hardwareAxis} from the Accelerometer.")
+            result = Accelerometer._UnbindHardwareAxis(hardwareAxis)
+            if(result != Execution.Passed and result != Execution.Unecessary):
+                Debug.Error(f"Fatal error occured when trying to unbind {hardwareAxis}. Return code: {result}")
+                Debug.End()
+                return Execution.Failed
+
+        Debug.Log("Everything has been un-binded.")
+        Debug.End()
+        return Execution.Passed
+    # -----------------------------------
+    def _UnbindHardwareAxis(nameOfHardwareAxis:str):
+        """
+            _UnbindHardwareAxis:
+            ============
+            Summary:
+            --------
+            This method tries to unbind
+            a given hardware axis both from
+            local dictionaries as well as from
+            the Controls class.
+        """
+        Debug.Start("_UnbindHardwareAxis")
+
+        Debug.Log(f"Getting what is binded to {nameOfHardwareAxis}")
+        whatItsBindedTo = Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["bindedTo"]
+        if(whatItsBindedTo == None):
+            Debug.Log(f"{nameOfHardwareAxis} isn't binded to any software axis.")
+            Debug.End()
+            return Execution.Passed
+
+        Debug.Log(f"Unbinding {nameOfHardwareAxis} from {whatItsBindedTo}")
+        result = Controls.UnbindAxis("Accelerometer", nameOfSoftwareAxis=whatItsBindedTo)
+        if(result != Execution.Passed):
+            Debug.Log(f"Failed to unbind {nameOfHardwareAxis} from {whatItsBindedTo}")
+            Debug.End()
+            return result
+
+        Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["binded"] = False
+        Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["bindedTo"] = None
+        Debug.Log(f"{nameOfHardwareAxis} is now default values.")
+
+        Debug.End()
+        return Execution.Passed
+    # -----------------------------------
+    def _UnbindSoftwareAxis(nameOfSoftwareAxis:str, nameOfHardwareAxis:str):
+        """
+            _UnbindSoftwareAxis:
+            ============
+            Summary:
+            --------
+            This method tries to unbind
+            a given hardware axis both from
+            local dictionaries as well as from
+            the Controls class.
+        """
+        Debug.Start("_UnbindSoftwareAxis")
+
+        Debug.Log(f"Unbinding {nameOfHardwareAxis} from {nameOfSoftwareAxis} in the Controls class.")
+        result = Controls.UnbindAxis("Accelerometer", nameOfSoftwareAxis=nameOfSoftwareAxis)
+        if(result != Execution.Passed):
+            Debug.Log(f"Failed to unbind {nameOfHardwareAxis} from {nameOfSoftwareAxis}")
+            Debug.End()
+            return result
+
+        Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["binded"] = False
+        Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["bindedTo"] = None
+        Debug.Log(f"{nameOfHardwareAxis} is now default values.")
+
+        Debug.End()
+        return Execution.Passed
+    # -----------------------------------
+    def _BindAxis(nameOfSoftwareAxis:str, nameOfHardwareAxis:str):
+        """
+            _BindAxis:
+            ============
+            Summary:
+            --------
+            This method tries to bind
+            a given hardware axis both from
+            local dictionaries as well as from
+            the Controls class.
+        """
+        Debug.Start("_BindAxis")
+
+        Debug.Log(f"Binding {nameOfHardwareAxis} to {nameOfSoftwareAxis} in Controls class.")
+        result = Controls.BindAxis("Accelerometer", nameOfSoftwareAxis, nameOfHardwareAxis, Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["getter"])
+        if(result != Execution.Passed):
+            Debug.Log(f"Failed to bind {nameOfHardwareAxis} to {nameOfSoftwareAxis} with error code: {result}")
+            Debug.End()
+            return result
+
+        Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["binded"] = True
+        Accelerometer.hardwareControls["axes"][nameOfHardwareAxis]["bindedTo"] = nameOfSoftwareAxis
+        Debug.Log(f"{nameOfHardwareAxis} is now binded to {nameOfSoftwareAxis}.")
+
+        Debug.End()
+        return Execution.Passed
+    # -----------------------------------
+    def _WhoHasThatAxisBinded(nameOfSoftwareAxis:str):
+        """
+            _WhoHasThatAxisBinded:
+            ======================
+            Summary:
+            --------
+            Checks if any of the hardware
+            axis binded that software axis.
+            If so, the name of the hardware
+            axis is returned.
+        """
+        Debug.Start("_WhoHasThatAxisBinded")
+
+        for hardwareAxis, axisData in Accelerometer.hardwareControls["axes"].items():
+            if(axisData["bindedTo"] == nameOfSoftwareAxis):
+                Debug.Log(f"{nameOfSoftwareAxis} is binded to {hardwareAxis}")
+                Debug.End()
+                return hardwareAxis
+
+        Debug.Log(f"No axis has {nameOfSoftwareAxis} binded to them.")
+        Debug.End()
+        return Execution.Unecessary
+    # -----------------------------------
     def _InitializeProfileJson() -> Execution:
         """
             _InitializeProfileJson:
@@ -444,8 +707,8 @@ class Accelerometer(AddonFoundations):
             else:
                 bindedTo = data["bindedTo"]
                 getter = data["getter"]
-                
-                result = Controls.BindAxis("Kontrol", bindedTo, hardwareAxis, getter)
+
+                result = Controls.BindAxis("Accelerometer", bindedTo, hardwareAxis, getter)
                 if(result != Execution.Passed):
                     Debug.Warn(f"Failed to bind {hardwareAxis} to {bindedTo} as Kontrol")
                     Accelerometer.hardwareControls["axes"][hardwareAxis]["binded"] = False,
@@ -501,69 +764,12 @@ class Accelerometer(AddonFoundations):
             Does not check if it exists.
         """
         Debug.Start("_PutBindsInProfile")
+        Debug.Log(f"Updating {profileToSaveBinds}'s bindings")
         for axis in Accelerometer.profileData.jsonData["saved-profiles"][profileToSaveBinds]["hardware"]["axes"]:
             Accelerometer.profileData.jsonData["saved-profiles"][profileToSaveBinds]["hardware"]["axes"][axis]["binded"] = Accelerometer.hardwareControls["axes"][axis]["binded"]
             Accelerometer.profileData.jsonData["saved-profiles"][profileToSaveBinds]["hardware"]["axes"][axis]["bindedTo"] = Accelerometer.hardwareControls["axes"][axis]["bindedTo"]
         Debug.End()
-    # def Set(
-    #         oldProfileName:str = None,
-    #         newProfileName:str = None,
-    #         SoftwareBindX_Positive:str = None,
-    #         SoftwareBindX_Negative:str = None,
-    #         SoftwareBindY_Positive:str = None,
-    #         SoftwareBindY_Negative:str = None,
-    #         ) -> Execution:
-    #     """
-    #         Set:
-    #         ====
-    #         Summary:
-    #         --------
-    #         This method sets parameters
-    #         into a profile such as what
-    #         to bind X and Y axis to.
-    #         You can also rename a profile.
-
-    #         Arguments:
-    #         ----------
-    #         - `oldProfileName:str` = The old profile that will be replaced with :ref:`newProfileName` Both need to be specified to change em.
-    #         - `newProfileName:str` = The new profile that will replace with :ref:`oldProfileName` Both need to be specified to change em.
-    #         - `SoftwareBindX_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's X axis.
-    #         - `SoftwareBindX_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's X axis.
-    #         - `SoftwareBindY_Positive:str` = The software axis to bind to the positive value returned from the ADXL343's Y axis.
-    #         - `SoftwareBindY_Negative:str` = The software axis to bind to the negative value returned from the ADXL343's Y axis.
-    #     """
-    #     Debug.Start("Set")
-    #     Debug.End()
-
-    # def ProfileLoggedIn(ProfileLoggedIn:str) -> Execution:
-    #     """
-    #         ProfileLoggedIn:
-    #         ================
-    #         Summary:
-    #         --------
-    #         Loads settings from a specific
-    #         profile into the class and other
-    #         hardware handling classes.
-
-    #         If the profile does not exist,
-    #         errors will be returned.
-    #     """
-    #     Debug.Start("ProfileLoggedIn")
-
-    #     Debug.End()
-
-    # def ClearProfileCache(profileThatGotDeleted:str) -> Execution:
-    #     """
-    #         ClearProfileCache:
-    #         ==================
-    #         Summary:
-    #         --------
-    #         Clears a profile from a cache.
-    #     """
-    #     Debug.Start("ClearProfileCache")
-
-    #     Debug.End()
-    
+    # -----------------------------------
     def VerifyForExecution() -> Execution:
         """
             VerifyForExecution:
@@ -596,7 +802,7 @@ class Accelerometer(AddonFoundations):
         Debug.Log("Seems alright.")
         Debug.End()
         return Execution.Passed
-
+    #endregion
     #endregion
     #region   --------------------------- CONSTRUCTOR
     #endregion

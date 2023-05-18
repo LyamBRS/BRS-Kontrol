@@ -534,18 +534,18 @@ class WidgetCard(BaseButton, Widget):
         Icon = MDIconButton(icon = icon, halign = "center", icon_size = 200)
         Icon.pos_hint = { 'center_x': 0.5, 'center_y': 0.60 }
 
-        Name = MDLabel(text=name, font_style = "H4", halign = "center")
-        Name.pos_hint = { 'center_x': 0.5, 'center_y': 0.25 }
+        self.Name = MDLabel(text=name, font_style = "H4", halign = "center")
+        self.Name.pos_hint = { 'center_x': 0.5, 'center_y': 0.25 }
 
         if(error):
             # icons and text should be red
-            Name.theme_text_color = "Error"
+            self.Name.theme_text_color = "Error"
             Icon.theme_text_color = "Error"
             Icon.theme_icon_color = "Error"
 
 
         Layout.add_widget(Icon)
-        Layout.add_widget(Name)
+        Layout.add_widget(self.Name)
         Card.add_widget(Layout)
         self.add_widget(Card)
 

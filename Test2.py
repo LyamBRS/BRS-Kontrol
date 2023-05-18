@@ -1,38 +1,42 @@
-from kivy.app import App
-from kivy.clock import Clock
-from kivy.metrics import dp
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.recycleboxlayout import RecycleBoxLayout
-from kivy.uix.recycleview import RecycleView
+from kivymd.app import MDApp
+from kivymd.uix.list import IRightBodyTouch, OneLineAvatarIconListItem
+from kivymd.uix.selectioncontrol import MDCheckbox
+from kivymd.uix.scrollview import MDScrollView
+from kivymd.uix.list import MDList, IconLeftWidget, IconRightWidget
+from kivymd.icon_definitions import md_icons
 
 
-class MainWidget(FloatLayout):
+class RightCheckbox(IRightBodyTouch, MDCheckbox):
+    '''Custom right container.'''
 
-    def create_layouts(self):
-        self.create_recycle_view()
-
-    def create_recycle_view(self):
-        recycle_box_layout = RecycleBoxLayout(default_size=(None, dp(56)), default_size_hint=(1, None),
-                                              size_hint=(1, None), orientation='vertical')
-        recycle_box_layout.bind(minimum_height=recycle_box_layout.setter("height"))
-        recycle_view = RecycleView()
-        recycle_view.add_widget(recycle_box_layout)
-        recycle_view.viewclass = 'Label'
-        self.add_widget(recycle_view)
-        recycle_view.data = [{'text': str(x)} for x in range(20)]
-
-
-class MainApp(App):
+class Example(MDApp):
     def build(self):
-        Clock.schedule_once(self.add_rv)
-        return MainWidget()
+        self.theme_cls.theme_style = "Dark"
+        return (
+            MDScrollView(
+                MDList(
+                    id="scroll"
+                )
+            )
+        )
 
-    def add_rv(self, dt):
-        self.root.create_layouts()
+    def on_start(self):
+        icons = list(md_icons.keys())
+        for i in range(30):
+            self.root.ids.scroll.add_widget(
+                OneLineAvatarIconListItem(
+                    IconLeftWidget(
+                        icon="plus"
+                    ),
+                    IconRightWidget(
+                        icon="minus"
+                    ),
+                    text="Single-line item with avatar",
+                )
+            )
 
 
-MainApp().run()
-
+Example().run()
 
 
 

@@ -4,6 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 from Programs.Local.Hardware.RGB import KontrolRGB
 from Programs.Pages.Startup import Startup_Screens
 LoadingLog.Start("ProfileMenu.py")
@@ -228,6 +229,9 @@ class ProfileMenu(Screen):
         card.PressedEnd = self.CreateProfileClicked
         card._MDCard.Title.text = _("Create")
         self.Layout.ProfilesLayout.profileBox.add_widget(card)
+
+        Debug.Log("Clearing profiles from addons.")
+        Addons.UnloadProfile(ProfileHandler.currentName)
 
         Debug.End()
 # ------------------------------------------------------------------------

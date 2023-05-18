@@ -1,42 +1,25 @@
-from kivymd.app import MDApp
-from kivymd.uix.list import IRightBodyTouch, OneLineAvatarIconListItem
-from kivymd.uix.selectioncontrol import MDCheckbox
-from kivymd.uix.scrollview import MDScrollView
-from kivymd.uix.list import MDList, IconLeftWidget, IconRightWidget
-from kivymd.icon_definitions import md_icons
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+Debug.enableConsole = True
+from Libraries.BRS_Python_Libraries.BRS.Hardware.Accelerometer.ADXL343 import ADXL343
+import time
 
-
-class RightCheckbox(IRightBodyTouch, MDCheckbox):
-    '''Custom right container.'''
-
-class Example(MDApp):
-    def build(self):
-        self.theme_cls.theme_style = "Dark"
-        return (
-            MDScrollView(
-                MDList(
-                    id="scroll"
-                )
-            )
-        )
-
-    def on_start(self):
-        icons = list(md_icons.keys())
-        for i in range(30):
-            self.root.ids.scroll.add_widget(
-                OneLineAvatarIconListItem(
-                    IconLeftWidget(
-                        icon="plus"
-                    ),
-                    IconRightWidget(
-                        icon="minus"
-                    ),
-                    text="Single-line item with avatar",
-                )
-            )
-
-
-Example().run()
+ADXL343.StartDriver()
+time.sleep(0.5)
+values = ADXL343.GetAccelerometerValues()
+Debug.Log(values)
+time.sleep(0.5)
+values = ADXL343.GetAccelerometerValues()
+Debug.Log(values)
+time.sleep(0.5)
+values = ADXL343.GetAccelerometerValues()
+Debug.Log(values)
+time.sleep(0.5)
+values = ADXL343.GetAccelerometerValues()
+Debug.Log(values)
+time.sleep(0.5)
+values = ADXL343.GetAccelerometerValues()
+Debug.Log(values)
+ADXL343.StopDriver()
 
 
 

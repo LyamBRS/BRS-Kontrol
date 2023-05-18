@@ -51,6 +51,7 @@ DefaultIconBannedWords = {
     "abjad",
     "access",
     "align",
+    "apple-safari", # Causes crashes
     "alert",
     "alphabet",
     "archive",
@@ -130,9 +131,10 @@ for key in md_icons.keys():
     keyWordList = key.split("-")
     isBanned = False
     for banned in DefaultIconBannedWords:
-        if banned in keyWordList:
+        if (key == banned) or (banned in keyWordList):
             isBanned = True
-    
+            break
+
     if(not isBanned):
         ProfileIcons.append(key)
 #====================================================================#

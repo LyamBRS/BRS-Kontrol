@@ -267,9 +267,14 @@ class Accelerometer(AddonFoundations):
             - `Execution.Failed` = Something fucked up.
             - `dict` see :ref:`hardwareControls`
         """
-        Debug.Start("Accelerometer -> GetAllHardwareControls")
-        Debug.End()
-        return Accelerometer.hardwareControls
+        if(Accelerometer.state == True):
+            Debug.Start("Accelerometer -> GetAllHardwareControls")
+            Debug.End()
+            return Accelerometer.hardwareControls
+        else:
+            Debug.Log("Unecessary. ADXL343 is not running.")
+            Debug.End()
+            return Execution.ByPassed
     # -----------------------------------
     def LoadProfile(profileToLoad: str) -> Execution:
         """
@@ -363,33 +368,38 @@ class Accelerometer(AddonFoundations):
         """
         Debug.Start("SaveProfile")
 
-        if(Accelerometer.loadedProfileName == None and profileToSave == None):
-            Debug.Error("No profiles were loaded in the class.")
+        if(Accelerometer.state == True):
+            if(Accelerometer.loadedProfileName == None and profileToSave == None):
+                Debug.Error("No profiles were loaded in the class.")
+                Debug.End()
+                return Execution.Failed
+
+            if(profileToSave == None):
+                Debug.Log("Saving loaded profile.")
+                profileToSave = Accelerometer.loadedProfileName
+
+            existing = Accelerometer._DoesProfileExist(profileToSave)
+            if(not existing):
+                Debug.Log(f"{profileToSave} does not exist. Creating it.")
+                Accelerometer._AddNewProfile(profileToSave)
+                Accelerometer._PutBindsInProfile(profileToSave)
+            else:
+                Debug.Log(f"Putting live binds in {profileToSave}")
+                Accelerometer._PutBindsInProfile(profileToSave)
+
+            saved = Accelerometer.profileData.SaveFile()
+            if(not saved):
+                Debug.Error("Saving failed.")
+                Debug.End()
+                return Execution.Failed
+
+            Debug.Log(">>> SUCCESS")
             Debug.End()
-            return Execution.Failed
-
-        if(profileToSave == None):
-            Debug.Log("Saving loaded profile.")
-            profileToSave = Accelerometer.loadedProfileName
-
-        existing = Accelerometer._DoesProfileExist(profileToSave)
-        if(not existing):
-            Debug.Log(f"{profileToSave} does not exist. Creating it.")
-            Accelerometer._AddNewProfile(profileToSave)
-            Accelerometer._PutBindsInProfile(profileToSave)
+            return Execution.Passed
         else:
-            Debug.Log(f"Putting live binds in {profileToSave}")
-            Accelerometer._PutBindsInProfile(profileToSave)
-
-        saved = Accelerometer.profileData.SaveFile()
-        if(not saved):
-            Debug.Error("Saving failed.")
+            Debug.Log("Unecessary. ADXL343 is not running.")
             Debug.End()
-            return Execution.Failed
-
-        Debug.Log(">>> SUCCESS")
-        Debug.End()
-        return Execution.Passed
+            return Execution.ByPassed
     # -----------------------------------
     def ClearProfile(profileToClear: str) -> Execution:
         """
@@ -405,13 +415,13 @@ class Accelerometer(AddonFoundations):
             Debug.Error("No json is loaded. Accelerometer cannot delete anything.")
             Debug.End()
             return Execution.ByPassed
-        
+
         existing = Accelerometer._DoesProfileExist(profileToClear)
         if(not existing):
             Debug.Warn(f"Accelerometer has no cached data for {profileToClear}")
             Debug.End()
             return Execution.Unecessary
-        
+
         savedProfiles:dict = Accelerometer.profileData.jsonData["saved-profiles"]
         savedProfiles.pop(profileToClear)
         Debug.Log(f"{profileToClear} no longer exists in Accelerometer's cached profiles.")
@@ -438,38 +448,43 @@ class Accelerometer(AddonFoundations):
         """
         Debug.Start(AddonEnum.ChangeAxisBinding)
 
-        result = Accelerometer.UnbindAxisBinding(nameOfSoftwareAxis)
-        if(result != Execution.Passed and result != Execution.Unecessary):
-            Debug.Error(f"Failed to unbind software axis: {nameOfSoftwareAxis}")
+        if(Accelerometer.state == True):
+            result = Accelerometer.UnbindAxisBinding(nameOfSoftwareAxis)
+            if(result != Execution.Passed and result != Execution.Unecessary):
+                Debug.Error(f"Failed to unbind software axis: {nameOfSoftwareAxis}")
+                Debug.End()
+                return Execution.Failed
+
+            result = Accelerometer._UnbindHardwareAxis(nameOfHardwareAxis)
+            if(result != Execution.Passed and result != Execution.Unecessary):
+                Debug.Error(f"Failed to unbind hardware axis: {nameOfHardwareAxis}")
+                Debug.End()
+                return Execution.Failed
+
+            Debug.Log(f"The accelerometer no longer holds bindings for the software axis: {nameOfSoftwareAxis} as well as the hardware axis: {nameOfHardwareAxis}")
+
+            result = Accelerometer._BindAxis(nameOfSoftwareAxis, nameOfHardwareAxis)
+            if(result != Execution.Passed):
+                Debug.Error(f"Something went wrong when trying to bind {nameOfHardwareAxis} to {nameOfSoftwareAxis}")
+                Debug.End()
+                return result
+
+            Debug.Log(f"Saving {Accelerometer.loadedProfileName}'s new binds.")
+            Accelerometer._PutBindsInProfile(Accelerometer.loadedProfileName)
+
+            saved = Accelerometer.profileData.SaveFile()
+            if(not saved):
+                Debug.Log("Failed to save Profile.json")
+                Debug.End()
+                return Execution.Crashed
+
+            Debug.Log(">>> Success")
             Debug.End()
-            return Execution.Failed
-
-        result = Accelerometer._UnbindHardwareAxis(nameOfHardwareAxis)
-        if(result != Execution.Passed and result != Execution.Unecessary):
-            Debug.Error(f"Failed to unbind hardware axis: {nameOfHardwareAxis}")
+            return Execution.Passed
+        else:
+            Debug.Log("Unecessary. ADXL343 is not running.")
             Debug.End()
-            return Execution.Failed
-
-        Debug.Log(f"The accelerometer no longer holds bindings for the software axis: {nameOfSoftwareAxis} as well as the hardware axis: {nameOfHardwareAxis}")
-
-        result = Accelerometer._BindAxis(nameOfSoftwareAxis, nameOfHardwareAxis)
-        if(result != Execution.Passed):
-            Debug.Error(f"Something went wrong when trying to bind {nameOfHardwareAxis} to {nameOfSoftwareAxis}")
-            Debug.End()
-            return result
-
-        Debug.Log(f"Saving {Accelerometer.loadedProfileName}'s new binds.")
-        Accelerometer._PutBindsInProfile(Accelerometer.loadedProfileName)
-
-        saved = Accelerometer.profileData.SaveFile()
-        if(not saved):
-            Debug.Log("Failed to save Profile.json")
-            Debug.End()
-            return Execution.Crashed
-
-        Debug.Log(">>> Success")
-        Debug.End()
-        return Execution.Passed
+            return Execution.ByPassed
     # -----------------------------------
     def UnbindAxisBinding(nameOfSoftwareAxis:str) -> Execution:
         """
@@ -508,7 +523,6 @@ class Accelerometer(AddonFoundations):
             Debug.Warn("Accelerometer is not running.")
             Debug.End()
             return Execution.ByPassed
-
     #endregion
     #region --------------------- PRIVATE
     def _UnbindEverything():
@@ -788,10 +802,10 @@ class Accelerometer(AddonFoundations):
             Debug.End()
             return Execution.Failed
 
-        # if(Information.platform != "Linux"):
-            # Debug.Error("This addon only works on Linux.")
-            # Debug.End()
-            # return Execution.Incompatibility
+        if(Information.platform != "Linux"):
+            Debug.Error("This addon only works on Linux.")
+            Debug.End()
+            return Execution.Incompatibility
 
         result = Accelerometer._InitializeProfileJson()
         if(result != Execution.Passed):

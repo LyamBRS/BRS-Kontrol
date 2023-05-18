@@ -3,7 +3,7 @@ import board
 import busio
 import adafruit_adxl34x
 
-i2c = busio.I2C(board.SCL, board.SDA)
+i2c = busio.I2C(board.SCL, board.SDA, 10)
 
 detected = i2c.scan()
 

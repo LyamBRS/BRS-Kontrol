@@ -1557,7 +1557,7 @@ class BinderSelectorMenu(Screen):
         #region ---------------------------- Cards
         if(HeldData.whatIsBeingBinded == "axes"):
             for addonName, addonData in Addons._listedAddons.items():
-                if(addonData[AddonEnum.information][AddonEnum.Information.hasHardwareAxes]):
+                if(addonData[AddonEnum.information][AddonEnum.Information.hasHardwareAxes] and addonData[AddonEnum.information][AddonEnum.Information.isCompatible]):
                     swiperLayout = MDSwiperItem()
                     swiperLayout.padding = 40
                     card = WidgetCard(icon=addonData[AddonEnum.information][AddonEnum.Information.MDIcon], name=addonName)
@@ -1566,7 +1566,7 @@ class BinderSelectorMenu(Screen):
                     self.SwiperLayout.add_widget(swiperLayout)
         else:
             for addonName, addonData in Addons._listedAddons.items():
-                if(addonData[AddonEnum.information][AddonEnum.Information.hasHardwareButtons]):
+                if(addonData[AddonEnum.information][AddonEnum.Information.hasHardwareButtons] and addonData[AddonEnum.information][AddonEnum.Information.isCompatible]):
                     swiperLayout = MDSwiperItem()
                     swiperLayout.padding = 40
                     card = WidgetCard(icon=addonData[AddonEnum.information][AddonEnum.Information.MDIcon], name=addonName)

@@ -55,7 +55,7 @@ from kivy.config import Config
 
 # fix the width of the window
 # Config.set('graphics', 'width', '720')
-# Config.set('graphics', 'height', '576')
+# Config. set('graphics', 'height', '576')
 #====================================================================#
 # Classes
 #====================================================================#

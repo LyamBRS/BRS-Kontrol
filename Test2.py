@@ -1,72 +1,25 @@
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, PrintPlane
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import VarTypes
 Debug.enableConsole = True
-from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-LoadingLog.useANSI = True
-LoadingLog.Start("Test2.py")
 
-LoadingLog.Import("Config")
-from kivy.config import Config
-Config.set('graphics', 'window_state', 'maximized')
-LoadingLog.Import("App")
-from kivy.app import App
-LoadingLog.Import("Joystick")
-from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
-LoadingLog.Import("FloatLayout")
-from kivy.uix.floatlayout import FloatLayout
+classes = [
+    VarTypes.Bool,
+    VarTypes.Bool,
+    VarTypes.Bool,
+    VarTypes.Bool
+]
 
-LoadingLog.Class("JoystickDemo")
-class JoystickDemo(FloatLayout):
-    pass
+variables = [
+    True,
+    False,
+    True,
+    False
+]
 
-LoadingLog.Class("JoystickDemoApp")
-class JoystickDemoApp(App):
-  LoadingLog.Method("build")
-  def build(self):
-    Debug.Start("JoystickDemoApp-> build")
-    self.root = JoystickDemo()
-    self._bind_joysticks()
-    Debug.End()
+plane = Plane(128, variables=variables, wantedClasses=classes)
 
-  LoadingLog.Method("_bind_joysticks")
-  def _bind_joysticks(self):
-    Debug.Start("JoystickDemoApp-> _bind_joysticks")
-    joysticks = self._get_joysticks(self.root)
-    Debug.Log(f"Found these joysticks: {joysticks}")
-    for joystick in joysticks:
-      joystick.bind(pad=self._update_pad_display)
-    Debug.End()
-
-  LoadingLog.Method("_get_joysticks")
-  def _get_joysticks(self, parent):
-    Debug.Start("JoystickDemoApp-> _get_joysticks")
-    joysticks = []
-    if isinstance(parent, Joystick):
-      Debug.Log("Appending joystick parent or something")
-      joysticks.append(parent)
-    elif hasattr(parent, 'children'):
-      Debug.Log("parent has attributes children")
-      for child in parent.children:
-        Debug.Log("Extending joysticks?")
-        joysticks.extend(self._get_joysticks(child))
-    Debug.End()
-    return joysticks
-
-  LoadingLog.Method("_update_pad_display")
-  def _update_pad_display(self, instance, pad):
-    Debug.Start("JoystickDemoApp-> _update_pad_display")
-    x, y = pad
-    x, y = (str(x)[0:5], str(y)[0:5])
-    x, y = (('x: ' + x), ('\ny: ' + y))
-    r = "radians: " + str(instance.radians)[0:5]
-    m = "\nmagnitude: " + str(instance.magnitude)[0:5]
-    a = "\nangle: " + str(instance.angle)[0:5]
-    self.root.ids.pad_display_xy.text = "".join([x, y])
-    self.root.ids.pad_display_rma.text = "".join([r, m, a])
-    Debug.End()
-
-LoadingLog.End("Test2.py")
-JoystickDemoApp().run()
-
+PrintPlane(plane)
 
 
 # from kivy.uix.boxlayout import BoxLayout

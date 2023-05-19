@@ -802,10 +802,10 @@ class Accelerometer(AddonFoundations):
             Debug.End()
             return Execution.Failed
 
-        if(Information.platform != "Linux"):
-            Debug.Error("This addon only works on Linux.")
-            Debug.End()
-            return Execution.Incompatibility
+        # if(Information.platform != "Linux"):
+            # Debug.Error("This addon only works on Linux.")
+            # Debug.End()
+            # return Execution.Incompatibility
 
         result = Accelerometer._InitializeProfileJson()
         if(result != Execution.Passed):

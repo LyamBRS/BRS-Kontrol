@@ -119,7 +119,8 @@ def CheckContent() -> FileIntegrity:
 
         # GUI folder content
         "/Local/Drivers/Batiscan/Programs/GUI/" : [
-            "Navigation.py"
+            "Navigation.py",
+            "joystick"
         ]
     }
 
@@ -153,7 +154,7 @@ def CheckContent() -> FileIntegrity:
         content = os.listdir(path)
 
         # [2] --------------------------- List comparaison
-        execution = CompareList(expectedContent[key], content, exceptions=exceptions)
+        execution = CompareList(expectedContent[key], content, exceptions=exceptions, DontDebug=False)
         if(execution != Execution.Passed):
             Debug.Error(f">>> {key}:\t FAILED")
             Debug.Log(f">>> Expected: {expectedContent[key]}")

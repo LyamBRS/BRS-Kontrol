@@ -4,7 +4,6 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
 LoadingLog.Start("BatiscanMenu.py")
 #====================================================================#
 # Imports
@@ -19,6 +18,9 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -29,9 +31,14 @@ LoadingLog.Import("KivyMD")
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.uix.card import MDCard
+    
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
+from Programs.Local.Hardware.RGB import KontrolRGB
+from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
 # from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
 # from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
@@ -225,6 +232,69 @@ class BatiscanMenu_Screens:
 #====================================================================#
 # Classes
 #====================================================================#
+LoadingLog.Class("NavigationButton")
+class NavigationButton(MDIconButton):
+    """
+        NavigationButton:
+        =================
+        Summary:
+        --------
+        This is a custom widget class which was
+        made to be put in a bottom card acting as
+        a sort of bottom navigation.
+    """
+    def __init__(self, **kwargs):
+        super(NavigationButton, self).__init__(**kwargs)
+        self.valign = "center"
+        self.halign = "center"
+        self.pos_hint = {"center_x":0.5, "center_y":0.5}
+        self.size_hint = (1,1)
+        self.icon_size = self.size[1]
+
+LoadingLog.Class("BottomButtons")
+class BottomButtons(MDCard):
+   """
+        BottomButtons:
+        ==============
+        Summary:
+        --------
+        This class is an MDCard spinoff
+        that is made to hold :ref:`NavigationButton`
+   """
+   def __init__(self, **kwargs):
+        super(BottomButtons, self).__init__(**kwargs)
+        self.shadow_softness = Shadow.Smoothness.default
+        self.elevation = Shadow.Elevation.default
+        self.shadow_radius = Shadow.Radius.default
+        self.radius = Rounding.default
+
+class JoystickCard(MDCard):
+   Joystick:Joystick = None
+   def __init__(self, **kwargs):
+        super(JoystickCard, self).__init__(**kwargs)
+        Debug.Start("JoystickCard")
+        self.Joystick = Joystick(size_hint = (0.75, 0.75), pos_hint = {"center_x":0.5, "center_y":0.5})
+        self.Joystick.outer_size                = 0.9
+        self.Joystick.inner_size                = 0.55
+        self.Joystick.pad_size                  = 0.68
+        self.Joystick.outer_line_width          = 0.01
+        self.Joystick.inner_line_width          = 0.01
+        self.Joystick.pad_line_width            = 0.01
+        self.Joystick.outer_background_color    = GetAccentColor("200")#(0.75, 0.75, 0.75, 1)
+        self.Joystick.outer_line_color          = GetAccentColor("700")#(0.25, 0.25, 0.25, 1)
+        self.Joystick.inner_background_color    = GetAccentColor("400")#(0.5,  0.5,  0.5,  1)
+        self.Joystick.inner_line_color          = GetAccentColor("300")#(0.7,  0.7,  0.7,  1)
+        self.Joystick.pad_background_color      = GetAccentColor("600")#(0.3,  0.3,  0.3,  1)
+        self.Joystick.pad_line_color            = GetAccentColor("500")#(0.4,  0.4,  0.4,  1)
+
+        self.shadow_softness = Shadow.Smoothness.default
+        self.elevation = Shadow.Elevation.default
+        self.shadow_radius = Shadow.Radius.default
+        self.radius = Rounding.default
+
+        self.add_widget(self.Joystick)
+        Debug.End()
+
 LoadingLog.Class("BatiscanMenu")
 class BatiscanMenu(Screen):
     """
@@ -247,7 +317,7 @@ class BatiscanMenu(Screen):
         """
         """
         Debug.Start("BatiscanMenu -> on_pre_enter")
-
+        KontrolRGB.FastLoadingAnimation()
         self.padding = 0
         self.spacing = 0
 
@@ -260,29 +330,45 @@ class BatiscanMenu(Screen):
 
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
-
-        self.bottomLayout = MDBoxLayout(orientation = "horizontal", size_hint = (1,0.25))
-
-        self.LightButton        = MDIconButton(icon="car-light-high", halign = "center", valign = "center")
-        self.FillBallastButton  = MDIconButton(icon="basket-fill", halign = "center", valign = "center")
-        self.EmptyBallastButton = MDIconButton(icon="basket-unfill", halign = "center", valign = "center")
-        self.SurfaceButton      = MDIconButton(icon="waves-arrow-up", halign = "center", valign = "center")
-        self.CameraButton       = MDIconButton(icon="video-off", halign = "center", valign = "center")
-
-        self.bottomLayout.add_widget(self.FillBallastButton)
-        self.bottomLayout.add_widget(self.LightButton)
-        self.bottomLayout.add_widget(self.SurfaceButton)
-        self.bottomLayout.add_widget(self.CameraButton)
-        self.bottomLayout.add_widget(self.EmptyBallastButton)
+        self.RightJoystickLayout = MDBoxLayout(size_hint = (0.25,0.25), pos_hint = {'center_x': 0.125,'center_y': 0.5})
+        self.LeftJoystickLayout = MDBoxLayout(size_hint = (0.25, 0.25), pos_hint = {'center_x': 0.875,'center_y': 0.5})
+        self.ActionButtonCardLayout = MDBoxLayout(size_hint = (1,0.125))
         #endregion
 
+        #region ---------------------------- Buttons
+        self.FillBallastButton  = NavigationButton(icon="basket-fill")
+        self.LightButton        = NavigationButton(icon="car-light-high")
+        self.SurfaceButton      = NavigationButton(icon="waves-arrow-up")
+        self.CameraButton       = NavigationButton(icon="video-off")
+        self.EmptyBallastButton = NavigationButton(icon="basket-unfill")
+        #endregion
+
+        #region ---------------------------- Bottom Action Buttons
+        self.ActionButtonsCard = BottomButtons()
+        self.ActionButtonsCard.add_widget(self.FillBallastButton)
+        self.ActionButtonsCard.add_widget(self.LightButton)
+        self.ActionButtonsCard.add_widget(self.SurfaceButton)
+        self.ActionButtonsCard.add_widget(self.CameraButton)
+        self.ActionButtonsCard.add_widget(self.EmptyBallastButton)
+        self.ActionButtonCardLayout.add_widget(self.ActionButtonsCard)
+        #endregion
 
         #region ---------------------------- ToolBar
         from Local.Drivers.Batiscan.Programs.GUI.Navigation import DebugNavigationBar
         self.ToolBar = DebugNavigationBar(pageTitle=_("Batiscan"))
         #endregion
 
-        self.Layout.add_widget(self.bottomLayout)
+        #region ---------------------------- Joystick
+        self.LeftJoystickCard = JoystickCard()
+        self.RightJoystickCard = JoystickCard()
+
+        self.LeftJoystickLayout.add_widget(self.LeftJoystickCard)
+        self.RightJoystickLayout.add_widget(self.RightJoystickCard)
+        #endregion
+
+        self.Layout.add_widget(self.ActionButtonCardLayout)
+        self.Layout.add_widget(self.LeftJoystickLayout)
+        self.Layout.add_widget(self.RightJoystickLayout)
         self.Layout.add_widget(self.ToolBar.ToolBar)
         self.Layout.add_widget(self.ToolBar.NavDrawer)
         self.add_widget(background)
@@ -296,6 +382,7 @@ class BatiscanMenu(Screen):
             will slowly elevate to the wanted value.
         """
         Debug.Start("BatiscanMenu -> on_enter")
+        KontrolRGB.DisplayDefaultColor()
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):

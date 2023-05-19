@@ -1,27 +1,129 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 Debug.enableConsole = True
-from Libraries.BRS_Python_Libraries.BRS.Hardware.Accelerometer.ADXL343 import ADXL343
-import time
-from kivymd.uix.pickers import MDDatePicker
+from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+LoadingLog.useANSI = True
+LoadingLog.Start("Test2.py")
 
-ADXL343.StartDriver()
-time.sleep(0.5)
-values = ADXL343.GetAccelerometerValues()
-Debug.Log(values)
-time.sleep(0.5)
-values = ADXL343.GetAccelerometerValues()
-Debug.Log(values)
-time.sleep(0.5)
-values = ADXL343.GetAccelerometerValues()
-Debug.Log(values)
-time.sleep(0.5)
-values = ADXL343.GetAccelerometerValues()
-Debug.Log(values)
-time.sleep(0.5)
-values = ADXL343.GetAccelerometerValues()
-Debug.Log(values)
-ADXL343.StopDriver()
+LoadingLog.Import("Config")
+from kivy.config import Config
+Config.set('graphics', 'window_state', 'maximized')
+LoadingLog.Import("App")
+from kivy.app import App
+LoadingLog.Import("Joystick")
+from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
+LoadingLog.Import("FloatLayout")
+from kivy.uix.floatlayout import FloatLayout
 
+LoadingLog.Class("JoystickDemo")
+class JoystickDemo(FloatLayout):
+    pass
+
+LoadingLog.Class("JoystickDemoApp")
+class JoystickDemoApp(App):
+  LoadingLog.Method("build")
+  def build(self):
+    Debug.Start("JoystickDemoApp-> build")
+    self.root = JoystickDemo()
+    self._bind_joysticks()
+    Debug.End()
+
+  LoadingLog.Method("_bind_joysticks")
+  def _bind_joysticks(self):
+    Debug.Start("JoystickDemoApp-> _bind_joysticks")
+    joysticks = self._get_joysticks(self.root)
+    Debug.Log(f"Found these joysticks: {joysticks}")
+    for joystick in joysticks:
+      joystick.bind(pad=self._update_pad_display)
+    Debug.End()
+
+  LoadingLog.Method("_get_joysticks")
+  def _get_joysticks(self, parent):
+    Debug.Start("JoystickDemoApp-> _get_joysticks")
+    joysticks = []
+    if isinstance(parent, Joystick):
+      Debug.Log("Appending joystick parent or something")
+      joysticks.append(parent)
+    elif hasattr(parent, 'children'):
+      Debug.Log("parent has attributes children")
+      for child in parent.children:
+        Debug.Log("Extending joysticks?")
+        joysticks.extend(self._get_joysticks(child))
+    Debug.End()
+    return joysticks
+
+  LoadingLog.Method("_update_pad_display")
+  def _update_pad_display(self, instance, pad):
+    Debug.Start("JoystickDemoApp-> _update_pad_display")
+    x, y = pad
+    x, y = (str(x)[0:5], str(y)[0:5])
+    x, y = (('x: ' + x), ('\ny: ' + y))
+    r = "radians: " + str(instance.radians)[0:5]
+    m = "\nmagnitude: " + str(instance.magnitude)[0:5]
+    a = "\nangle: " + str(instance.angle)[0:5]
+    self.root.ids.pad_display_xy.text = "".join([x, y])
+    self.root.ids.pad_display_rma.text = "".join([r, m, a])
+    Debug.End()
+
+LoadingLog.End("Test2.py")
+JoystickDemoApp().run()
+
+
+
+# from kivy.uix.boxlayout import BoxLayout
+# from kivymd.app import MDApp
+# from kivymd.uix.toolbar import MDTopAppBar
+# from kivymd.uix.button import MDIconButton
+# from kivymd.uix.gridlayout import MDGridLayout
+# 
+# from kivymd.uix.bottomnavigation import MDBottomNavigation, MDBottomNavigationItem
+# from kivy.uix.boxlayout import BoxLayout
+# from kivymd.app import MDApp
+# from kivymd.uix.toolbar import MDTopAppBar
+# from kivymd.uix.button import MDIconButton
+# from kivymd.uix.label import MDLabel
+# from kivy.uix.anchorlayout import AnchorLayout
+# from kivymd.uix.card import MDCard
+# 
+# from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
+# 
+# 
+# class NavigationButton(MDIconButton):
+    # def __init__(self, **kwargs):
+        # super(NavigationButton, self).__init__(**kwargs)
+        # self.name = "Quit"
+        # self.text = "Quit"
+        # self.icon = "android"
+        # self.valign = "center"
+        # self.halign = "center"
+        # self.pos_hint = {"center_x":0.5, "center_y":0.5}
+        # self.size_hint = (1,1)
+        # self.icon_size = self.size[1]
+# 
+# class BottomButtons(MDCard):
+#    def __init__(self, **kwargs):
+        # super(BottomButtons, self).__init__(**kwargs)
+        # self.shadow_softness = Shadow.Smoothness.default
+        # self.elevation = Shadow.Elevation.default
+        # self.shadow_radius = Shadow.Radius.default
+        # self.radius = Rounding.default
+        # self.add_widget(NavigationButton())
+        # self.add_widget(NavigationButton())  
+        # self.add_widget(NavigationButton())  
+        # self.add_widget(NavigationButton())  
+        # self.add_widget(NavigationButton())  
+# 
+# class Test(MDApp):
+    # def build(self):
+        # layout = BoxLayout(orientation="vertical", padding = 10)
+        # layout.size_hint = (1,0.125)
+# 
+        # top_toolbar = BottomButtons()
+# 
+        # layout.add_widget(top_toolbar)
+        # return layout
+
+
+# Test().run()
 
 
 

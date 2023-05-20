@@ -3,6 +3,8 @@ import time
 import subprocess
 import socket
 import inspect
+import binascii
+import wifi
 
 def Print(message):
     frame = inspect.currentframe().f_back
@@ -14,21 +16,27 @@ def Print(message):
 # ======================================================================
 def ConnectToIt(ssid: str, password: str):
     try:
+        print(f">>> Transforming {password} to hexadecimal")
+
         # Turn off Wi-Fi
-        Print(">>> Turning off WiFi")
-        subprocess.check_output(['sudo', 'ifconfig', 'wlan0', 'down'])
+        print(">>> Turning off WiFi")
+        wifi.disconnect()
 
         # Wait for Wi-Fi to turn off
         time.sleep(2)
 
         # Connect to the network
-        Print(f">>> Connecting to {ssid} using password {password}")
-        password = f"s:{password}"
-        subprocess.check_output(['sudo', 'iwconfig', 'wlan0', 'essid', ssid, 'key', password])
+        print(f">>> Connecting to {ssid} using password {password}")
+        wifi.connect(ssid=ssid, password=password)
 
-        Print(f">>>>>> Successfully connected to {ssid}")
-    except subprocess.CalledProcessError as e:
-        Print(f">>>> Error occurred: {str(e.output)}")
+        if wifi.is_connected():
+            Print(f">>> Successfully connected to {ssid}")
+        else:
+            Print(f">>>> Failed to connect to {ssid}")
+
+        print(f">>>>>> Successfully connected to {ssid}")
+    except Exception as e:
+        print(f">>>> Error occurred: {str(e)}")
 
 # ======================================================================
 def GetCurrentSSID() -> str:

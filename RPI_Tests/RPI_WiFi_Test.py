@@ -2,12 +2,19 @@ import os
 import time
 import subprocess
 import socket
+import inspect
+
+def Print(message):
+    frame = inspect.currentframe().f_back
+    line = frame.f_lineno
+    Print(f"[{line}] -> {message}")
+
 # ======================================================================
 # ======================================================================
 # ======================================================================
 def ConnectToIt(ssid:str, password:str):
-    result = os.system('iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
-    print(f">>> command ran with return code {result}")
+    result = os.system('sudo' + 'iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
+    Print(f">>> command ran with return code {result}")
 # ======================================================================
 def GetCurrentSSID() -> str:
     try:
@@ -30,10 +37,10 @@ def GetInternetConnection() -> bool:
         time.sleep(1)
         connected = TestInternetConnection()
         if(connected):
-            print(f">>> Internet connection verified after {ping} pings.")
+            Print(f">>> Internet connection verified after {ping} pings.")
             return True
         else:
-            print(f">>> [{ping}/10] - Failed to reach google.com")
+            Print(f">>> [{ping}/10] - Failed to reach google.com")
     return False
 # ======================================================================
 def SendUDPMessage(ip_address, port, message:str):
@@ -46,17 +53,17 @@ def SendUDPMessage(ip_address, port, message:str):
 
         # Close the socket
         sock.close()
-        print(f">>> {message} was sent to {ip_address} on port {port}")
+        Print(f">>> {message} was sent to {ip_address} on port {port}")
         return True
     except Exception as e:
-        print(">>> Error occurred:", str(e))
+        Print(">>> Error occurred:", str(e))
         return False
 # ======================================================================
 def TurnOnBatiscanLight() -> bool:
     message = "1111111111111"
     ipAddress = "192.168.4.1"
     port = "4210"
-    print(f">>> Sending {message} to {ipAddress} on port {port}...")
+    Print(f">>> Sending {message} to {ipAddress} on port {port}...")
     sent = SendUDPMessage(ipAddress, port, message)
     return sent
 # ======================================================================
@@ -64,7 +71,7 @@ def TurnOffBatiscanLight() -> bool:
     message = "0000000000000"
     ipAddress = "192.168.4.1"
     port = "4210"
-    print(f">>> Sending {message} to {ipAddress} on port {port}...")
+    Print(f">>> Sending {message} to {ipAddress} on port {port}...")
     sent = SendUDPMessage(ipAddress, port, message)
     return sent
 # ======================================================================
@@ -72,65 +79,65 @@ def TurnOffBatiscanLight() -> bool:
 # ======================================================================
 # ======================================================================
 
-print("=====================================")
-print("START - START - START - START - START")
-print("=====================================")
+Print("=====================================")
+Print("START - START - START - START - START")
+Print("=====================================")
 ###################################################################################################
 currentNetwork = GetCurrentSSID()
-print(f"Your network is {currentNetwork}")
+Print(f"Your network is {currentNetwork}")
 time.sleep(1)
 ###################################################################################################
 ssid = "Batiscan"
 password = "BATISCAN"
-print(f"Attempting to connect to {ssid} with {password} for its password")
+Print(f"Attempting to connect to {ssid} with {password} for its password")
 ConnectToIt("Batiscan", "BATISCAN")
 ###################################################################################################
-print("Testing the internet connection of that WiFi...")
+Print("Testing the internet connection of that WiFi...")
 maybeConnected = "connected" if GetInternetConnection() == True else "not connected"
-print(f">>> You are {maybeConnected} to the internet.")
+Print(f">>> You are {maybeConnected} to the internet.")
 ###################################################################################################
 thisNetwork = GetCurrentSSID()
-print(f"Your network is now {thisNetwork}")
+Print(f"Your network is now {thisNetwork}")
 time.sleep(1)
 ###################################################################################################
-print(f"Attempting to send some messages to Batiscan...")
+Print(f"Attempting to send some messages to Batiscan...")
 
 wantedLightState:bool = False
 for messageNumber in range(20):
     wantedLightState = not wantedLightState
-    print(f"[{messageNumber}/20] - Sending {wantedLightState} to Batiscan.")
+    Print(f"[{messageNumber}/20] - Sending {wantedLightState} to Batiscan.")
 
     if(wantedLightState == True):
         result = TurnOnBatiscanLight()
         if(not result):
-            print(f"Something failed during ON transmission! Stopping messages.")
+            Print(f"Something failed during ON transmission! Stopping messages.")
             break
     else:
         result = TurnOffBatiscanLight()
         if(not result):
-            print(f"Something failed during OFF transmission! Stopping messages.")
+            Print(f"Something failed during OFF transmission! Stopping messages.")
             break
     time.sleep(1)
 ###################################################################################################
-print("\n\n")
+Print("\n\n")
 currentNetwork = GetCurrentSSID()
-print(f"Your network is {currentNetwork}")
+Print(f"Your network is {currentNetwork}")
 time.sleep(1)
 ###################################################################################################
 ssid = "Andromeda"
 password = "pianofeuillearmoirewhisky5G"
-print(f"Attempting to connect to {ssid} using password {password}")
+Print(f"Attempting to connect to {ssid} using password {password}")
 result = ConnectToIt(ssid, password)
 time.sleep(1)
 ###################################################################################################
 currentNetwork = GetCurrentSSID()
-print(f"Your network is now {currentNetwork}")
+Print(f"Your network is now {currentNetwork}")
 time.sleep(1)
 ###################################################################################################
-print("Testing the internet connection of that WiFi...")
+Print("Testing the internet connection of that WiFi...")
 maybeConnected = "connected" if GetInternetConnection() == True else "not connected"
-print(f">>> You are {maybeConnected} to the internet.")
+Print(f">>> You are {maybeConnected} to the internet.")
 ###################################################################################################
-print("=======================================")
-print("END - END - END - END - END - END - END")
-print("=======================================")
+Print("=======================================")
+Print("END - END - END - END - END - END - END")
+Print("=======================================")

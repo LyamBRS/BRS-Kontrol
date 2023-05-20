@@ -12,17 +12,21 @@ def Print(message):
 # ======================================================================
 # ======================================================================
 # ======================================================================
-def ConnectToIt(ssid:str, password:str):
+def ConnectToIt(ssid: str, password: str):
+    try:
+        # Turn off Wi-Fi
+        subprocess.check_output(['sudo', 'ifconfig', 'wlan0', 'down'])
 
-    Print(f">>> Turning off WiFi...")
-    code = os.system('sudo iwconfig wlan0 essid off')
-    Print(f">>>>>> Command ran with return code {code}")
+        # Wait for Wi-Fi to turn off
+        time.sleep(2)
 
-    time.sleep(2)
+        # Connect to the network
+        subprocess.check_output(['sudo', 'iwconfig', 'wlan0', 'essid', ssid, 'key', password])
 
-    Print(f">>> Attempting to connect to {ssid} with password {password}")
-    code = os.system('sudo ' + 'iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
-    Print(f">>>>>> Command ran with return code {code}")
+        Print(f">>> Successfully connected to {ssid}")
+    except subprocess.CalledProcessError as e:
+        Print(f">>>> Error occurred: {str(e.output)}")
+
 # ======================================================================
 def GetCurrentSSID() -> str:
     try:

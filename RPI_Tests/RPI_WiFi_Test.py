@@ -7,14 +7,22 @@ import inspect
 def Print(message):
     frame = inspect.currentframe().f_back
     line = frame.f_lineno
-    print(f"[{line}] -> {message}")
+    print(f"[{line}]\t{message}")
 
 # ======================================================================
 # ======================================================================
 # ======================================================================
 def ConnectToIt(ssid:str, password:str):
-    result = os.system('sudo ' + 'iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
-    Print(f">>> command ran with return code {result}")
+
+    Print(f">>> Turning off WiFi...")
+    code = os.system('sudo iwconfig wlan0 essid off')
+    Print(f">>>>>> Command ran with return code {code}")
+
+    time.sleep(2)
+
+    Print(f">>> Attempting to connect to {ssid} with password {password}")
+    code = os.system('sudo ' + 'iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
+    Print(f">>>>>> Command ran with return code {code}")
 # ======================================================================
 def GetCurrentSSID() -> str:
     try:

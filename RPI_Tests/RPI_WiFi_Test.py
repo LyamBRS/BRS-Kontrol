@@ -15,15 +15,17 @@ def Print(message):
 def ConnectToIt(ssid: str, password: str):
     try:
         # Turn off Wi-Fi
+        Print(">>> Turning off WiFi")
         subprocess.check_output(['sudo', 'ifconfig', 'wlan0', 'down'])
 
         # Wait for Wi-Fi to turn off
         time.sleep(2)
 
         # Connect to the network
+        Print(f">>> Connecting to {ssid} using password {password}")
         subprocess.check_output(['sudo', 'iwconfig', 'wlan0', 'essid', ssid, 'key', password])
 
-        Print(f">>> Successfully connected to {ssid}")
+        Print(f">>>>>> Successfully connected to {ssid}")
     except subprocess.CalledProcessError as e:
         Print(f">>>> Error occurred: {str(e.output)}")
 

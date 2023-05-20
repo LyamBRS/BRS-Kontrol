@@ -23,6 +23,7 @@ def ConnectToIt(ssid: str, password: str):
 
         # Connect to the network
         Print(f">>> Connecting to {ssid} using password {password}")
+        password = f"s:{password}"
         subprocess.check_output(['sudo', 'iwconfig', 'wlan0', 'essid', ssid, 'key', password])
 
         Print(f">>>>>> Successfully connected to {ssid}")

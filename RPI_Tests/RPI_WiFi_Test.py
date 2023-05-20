@@ -7,7 +7,7 @@ import inspect
 def Print(message):
     frame = inspect.currentframe().f_back
     line = frame.f_lineno
-    Print(f"[{line}] -> {message}")
+    print(f"[{line}] -> {message}")
 
 # ======================================================================
 # ======================================================================

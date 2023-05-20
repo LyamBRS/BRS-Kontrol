@@ -14,30 +14,113 @@ def Print(message):
 # ======================================================================
 # ======================================================================
 # ======================================================================
-def ConnectToIt(ssid: str, password: str):
-    try:
-        print(f">>> Transforming {password} to hexadecimal")
+#region ---------------------------------------------------------------- WiFi
+def Search():
+    wifilist = []
 
-        # Turn off Wi-Fi
-        print(">>> Turning off WiFi")
-        wifi.disconnect()
+    cells = wifi.Cell.all('wlan0')
 
-        # Wait for Wi-Fi to turn off
-        time.sleep(2)
+    for cell in cells:
+        wifilist.append(cell)
+    Print(f">>>>>> WiFi list created.")
+    return wifilist
 
-        # Connect to the network
-        print(f">>> Connecting to {ssid} using password {password}")
-        wifi.connect(ssid=ssid, password=password)
+def FindFromSearchList(ssid):
+    wifilist = Search()
 
-        if wifi.is_connected():
-            Print(f">>> Successfully connected to {ssid}")
+    for cell in wifilist:
+        if cell.ssid == ssid:
+            Print(f">>>>>> {ssid} found in search list")
+            return cell
+    Print(f">>>>>> {ssid} not found in search list: {wifilist}")
+    return False
+
+def FindFromSavedList(ssid):
+    cell = wifi.Scheme.find('wlan0', ssid)
+
+    if cell:
+        Print(">>>>>> WiFi found in saved wifis")
+        return cell
+    Print(">>>>>> FindFromSavedList failed")
+    return False
+
+def Connect(ssid, password=None):
+    cell = FindFromSearchList(ssid)
+
+    if cell:
+        savedcell = FindFromSavedList(cell.ssid)
+
+        # Already Saved from Setting
+        if savedcell:
+            savedcell.activate()
+            Print(f">>>>>> WiFi cell activated")
+            return cell
+
+        # First time to connect
         else:
-            Print(f">>>> Failed to connect to {ssid}")
+            if cell.encrypted:
+                if password:
+                    scheme = Add(cell, password)
 
-        print(f">>>>>> Successfully connected to {ssid}")
-    except Exception as e:
-        print(f">>>> Error occurred: {str(e)}")
+                    try:
+                        scheme.activate()
+                        Print(f">>>>>> WiFi scheme activated")
 
+                    # Wrong Password
+                    except wifi.exceptions.ConnectionError:
+                        Print(f">>>>>> Connection error occured. {password} isn't valid for {ssid}?")
+                        Delete(ssid)
+                        return False
+
+                    return cell
+                else:
+                    Print(f">>>>>> No password required")
+                    return False
+            else:
+                scheme = Add(cell)
+
+                try:
+                    scheme.activate()
+                    Print(f">>>>>> WiFi scheme activated")
+                except wifi.exceptions.ConnectionError:
+                    Print(f">>>>>> Connection error occured")
+                    Delete(ssid)
+                    return False
+
+                return cell
+    Print(f">>>>>> Connect failed")
+    return False
+
+def Add(cell, password=None):
+    if not cell:
+        Print(f">>>>>> Add failed")
+        return False
+
+    scheme = wifi.Scheme.for_cell('wlan0', cell.ssid, cell, password)
+    scheme.save()
+    Print(f">>>>>> scheme returned")
+    return scheme
+
+def Delete(ssid):
+    if not ssid:
+        Print(f">>>>>> {ssid} not deleted")
+        return False
+
+    cell = FindFromSavedList(ssid)
+
+    if cell:
+        cell.delete()
+        Print(f">>>>>> {ssid} deleted")
+        return True
+
+    Print(f">>>>>> {ssid} not deleted")
+    return False
+
+def ConnectToIt(ssid:str, password:str):
+    Print(f">>> Trying to connect to {ssid} using password {password}...")
+    result = Connect(ssid, password)
+    Print(f">>> Function returned {result}")
+#endregion
 # ======================================================================
 def GetCurrentSSID() -> str:
     try:

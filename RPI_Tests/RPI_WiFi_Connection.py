@@ -1,89 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import wifi
 import subprocess
 import time
-
-
-def Search():
-    wifilist = []
-
-    cells = wifi.Cell.all('wlan0')
-
-    for cell in cells:
-        wifilist.append(cell)
-
-    return wifilist
-
-
-def FindFromSearchList(ssid):
-    wifilist = Search()
-
-    for cell in wifilist:
-        if cell.ssid == ssid:
-            return cell
-
-    return False
-
-
-def FindFromSavedList(ssid):
-    cell = wifi.Scheme.find('wlan0', ssid)
-
-    if cell:
-        return cell
-
-    return False
-
-
-def Connect(ssid, password=None):
-    cell = FindFromSearchList(ssid)
-
-    if cell:
-        savedcell = FindFromSavedList(cell.ssid)
-
-        # Already Saved from Setting
-        if savedcell:
-            savedcell.activate()
-            return cell
-
-        # First time to conenct
-        else:
-            if cell.encrypted:
-                if password:
-                    scheme = Add(cell, password)
-
-                    try:
-                        scheme.activate()
-
-                    # Wrong Password
-                    except wifi.exceptions.ConnectionError:
-                        Delete(ssid)
-                        return False
-
-                    return cell
-                else:
-                    return False
-            else:
-                scheme = Add(cell)
-
-                try:
-                    scheme.activate()
-                except wifi.exceptions.ConnectionError:
-                    Delete(ssid)
-                    return False
-
-                return cell
-
-    return False
-
-
-def Add(cell, password=None):
-    if not cell:
-        return False
-
-    scheme = wifi.Scheme.for_cell('wlan0', cell.ssid, cell, password)
-    scheme.save()
-    return scheme
+import os
 
 def GetCurrentSSID() -> str:
     try:
@@ -93,31 +12,44 @@ def GetCurrentSSID() -> str:
     except subprocess.CalledProcessError:
         return None
 
-def Delete(ssid):
-    if not ssid:
-        return False
+def ConnectToIt(ssid, password):
+    print(f"Creating config lines with {ssid} and {password}... Hoping nothing fucks up.")
+    config_lines = [
+        'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev',
+        'update_config=1',
+        '\n',
+        'network={',
+        '\tssid="{}"'.format(ssid),
+        '\tpsk="{}"'.format(password),
+        '}'
+        ]
+    config = '\n'.join(config_lines)
 
-    cell = FindFromSavedList(ssid)
+    #give access and writing. may have to do this manually beforehand
+    print(f"Changing permissions of wpa_supplicant.conf")
+    os.popen("sudo chmod a+w /etc/wpa_supplicant/wpa_supplicant.conf")
 
-    if cell:
-        cell.delete()
-        return True
+    #writing to file
+    print(f"Writing new things in wpa_supplicant.conf")
+    with open("/etc/wpa_supplicant/wpa_supplicant.conf", "w") as wifi:
+        wifi.write(config)
+        print("Success!")
+        wifi.close()
 
-    return False
-
+    print("Wifi config added. Refreshing configs...")
+    ## refresh configs
+    os.popen("sudo wpa_cli -i wlan0 reconfigure")
 
 if __name__ == '__main__':
-    # Search WiFi and return WiFi list
-    print(f"Search: {Search()}")
 
     print(f"Current network: {GetCurrentSSID()}")
-    time.sleep(5)
+    time.sleep(2)
     # Connect WiFi with password & without password")
-    print (f"Connecting to Batiscan = {Connect('Batiscan', 'BATISCAN')}")
+    print (f"Connecting to Batiscan = {ConnectToIt('Batiscan', 'BATISCAN')}")
     time.sleep(5)
     print(f"Current network: {GetCurrentSSID()}")
-    time.sleep(5)
+    time.sleep(2)
 
-    print (f"Connecting to Andromeda = {Connect('Andromeda', 'pianofeuillearmoirewhisky5G')}")
+    print (f"Connecting to Andromeda = {ConnectToIt('Andromeda', 'pianofeuillearmoirewhisky5G')}")
     time.sleep(5)
     print(f"Current network: {GetCurrentSSID()}")

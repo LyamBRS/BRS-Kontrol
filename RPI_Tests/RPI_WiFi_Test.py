@@ -13,7 +13,7 @@ def Print(message):
 # ======================================================================
 # ======================================================================
 def ConnectToIt(ssid:str, password:str):
-    result = os.system('sudo' + 'iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
+    result = os.system('sudo ' + 'iwconfig ' + "wlan0" + ' essid ' + ssid + ' key ' + password)
     Print(f">>> command ran with return code {result}")
 # ======================================================================
 def GetCurrentSSID() -> str:
@@ -56,7 +56,7 @@ def SendUDPMessage(ip_address, port, message:str):
         Print(f">>> {message} was sent to {ip_address} on port {port}")
         return True
     except Exception as e:
-        Print(">>> Error occurred:", str(e))
+        Print(f">>> An error occurred: {str(e)}")
         return False
 # ======================================================================
 def TurnOnBatiscanLight() -> bool:

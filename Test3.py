@@ -1,71 +1,131 @@
+from kivymd.app import MDApp
+from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.uix.button import MDIconButton
+from kivymd.uix.label import MDLabel
+from kivy.uix.boxlayout import BoxLayout
+from Programs.Local.GUI.Navigation import AppNavigationBar
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
+from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 Debug.enableConsole = True
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi, Linux_VerifyInternetConnection
-import time
 
-Debug.Log("Starting thread... Trying to connect to Batiscan...")
-Linux_ConnectWiFi.StartConnecting("Batiscan", "BATISCAN")
+class MainApp(MDApp):
+    def build(self):
+        WiFiStatusUpdater.StartUpdating()
+        layout = BoxLayout(orientation='vertical')
 
-for currentAttempt in range(60):
-    result = Linux_ConnectWiFi.GetConnectionStatus()
-    connected = result[0]
-    timeTaken = result[2]
-    networkConnected = result[3]
-    # Debug.Log(f"{currentAttempt}: {result}")
+        # Create the toolbar
+        toolbar = AppNavigationBar("Test")
 
-    if(Linux_ConnectWiFi.connected or connected or networkConnected=="Batiscan"):
-        Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
-        break
-    print(currentAttempt)
-    time.sleep(1)
-Linux_ConnectWiFi.StopConnecting()
+        # Add the toolbar to the layout
+        layout.add_widget(toolbar.ToolBar)
 
-Debug.Log("Starting thread... Trying to connect to the internet.")
-Linux_VerifyInternetConnection.StartPinging()
-for currentAttempt in range(10):
-    result = Linux_VerifyInternetConnection.GetConnectionStatus()
-    connected = result[0]
-    timeTaken = result[2]
+        return layout
 
-    if(Linux_VerifyInternetConnection.hasInternet or connected):
-        Debug.Log(f"It took {timeTaken} seconds to connect to the internet.")
-        break
-    print(currentAttempt)
-    time.sleep(1)
-Linux_VerifyInternetConnection.StopPinging()
+    def menu_button_pressed(self, instance):
+        print("Menu button pressed!")
 
-time.sleep(5)
 
-Debug.Log("Starting thread... Trying to connect to Andromeda...")
-Linux_ConnectWiFi.StartConnecting("Andromeda", "pianoarmoirefeuillewhisky5G")
+if __name__ == "__main__":
+    MainApp().run()
+    WiFiStatusUpdater.StopUpdating()
+    KillPython()
+KillPython()
 
-for currentAttempt in range(60):
-    result = Linux_ConnectWiFi.GetConnectionStatus()
-    connected = result[0]
-    timeTaken = result[2]
-    networkConnected = result[3]
-    # Debug.Log(f"{currentAttempt}: {result}")
 
-    if(Linux_ConnectWiFi.connected or connected or networkConnected=="Andromeda"):
-        Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
-        break
-    print(currentAttempt)
-    time.sleep(1)
-Linux_ConnectWiFi.StopConnecting()
 
-Debug.Log("Starting thread... Trying to connect to the internet.")
-Linux_VerifyInternetConnection.StartPinging()
-for currentAttempt in range(10):
-    result = Linux_VerifyInternetConnection.GetConnectionStatus()
-    connected = result[0]
-    timeTaken = result[2]
 
-    if(Linux_VerifyInternetConnection.hasInternet or connected):
-        Debug.Log(f"It took {timeTaken} seconds to connect to the internet.")
-        break
-    print(currentAttempt)
-    time.sleep(1)
-Linux_VerifyInternetConnection.StopPinging()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+# Debug.enableConsole = True
+# from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi, Linux_VerifyInternetConnection
+# import time
+
+# Debug.Log("Starting thread... Trying to connect to Batiscan...")
+# Linux_ConnectWiFi.StartConnecting("Batiscan", "BATISCAN")
+
+# for currentAttempt in range(60):
+#     result = Linux_ConnectWiFi.GetConnectionStatus()
+#     connected = result[0]
+#     timeTaken = result[2]
+#     networkConnected = result[3]
+#     # Debug.Log(f"{currentAttempt}: {result}")
+
+#     if(Linux_ConnectWiFi.connected or connected or networkConnected=="Batiscan"):
+#         Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
+#         break
+#     print(currentAttempt)
+#     time.sleep(1)
+# Linux_ConnectWiFi.StopConnecting()
+
+# Debug.Log("Starting thread... Trying to connect to the internet.")
+# Linux_VerifyInternetConnection.StartPinging()
+# for currentAttempt in range(10):
+#     result = Linux_VerifyInternetConnection.GetConnectionStatus()
+#     connected = result[0]
+#     timeTaken = result[2]
+
+#     if(Linux_VerifyInternetConnection.hasInternet or connected):
+#         Debug.Log(f"It took {timeTaken} seconds to connect to the internet.")
+#         break
+#     print(currentAttempt)
+#     time.sleep(1)
+# Linux_VerifyInternetConnection.StopPinging()
+
+# time.sleep(5)
+
+# Debug.Log("Starting thread... Trying to connect to Andromeda...")
+# Linux_ConnectWiFi.StartConnecting("Andromeda", "pianoarmoirefeuillewhisky5G")
+
+# for currentAttempt in range(60):
+#     result = Linux_ConnectWiFi.GetConnectionStatus()
+#     connected = result[0]
+#     timeTaken = result[2]
+#     networkConnected = result[3]
+#     # Debug.Log(f"{currentAttempt}: {result}")
+
+#     if(Linux_ConnectWiFi.connected or connected or networkConnected=="Andromeda"):
+#         Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
+#         break
+#     print(currentAttempt)
+#     time.sleep(1)
+# Linux_ConnectWiFi.StopConnecting()
+
+# Debug.Log("Starting thread... Trying to connect to the internet.")
+# Linux_VerifyInternetConnection.StartPinging()
+# for currentAttempt in range(10):
+#     result = Linux_VerifyInternetConnection.GetConnectionStatus()
+#     connected = result[0]
+#     timeTaken = result[2]
+
+#     if(Linux_VerifyInternetConnection.hasInternet or connected):
+#         Debug.Log(f"It took {timeTaken} seconds to connect to the internet.")
+#         break
+#     print(currentAttempt)
+#     time.sleep(1)
+# Linux_VerifyInternetConnection.StopPinging()
 
 # import threading
 # import time

@@ -141,8 +141,8 @@ class Application(MDApp):
         PopUps_Screens.SetExiter(ProfileMenu, "ProfileMenu")
         PopUps_Screens.SetCaller(AppLoading_Screens, "AppLoading")
 
-        # Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
-        # Startup_Screens.SetCaller(Application, "Application")
+        Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
+        Startup_Screens.SetCaller(Application, "Application")
 
         WiFiLogin_Screens.SetCaller(AppLoading_Screens, "AppLoading", "test")
         WiFiLogin_Screens.SetGoodExiter(AppLoading_Screens, "AppLoading")

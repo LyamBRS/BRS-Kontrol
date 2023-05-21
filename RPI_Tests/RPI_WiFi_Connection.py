@@ -19,10 +19,11 @@ def WaitTillConnected(wantedSSID:str, maxConnectionAttempts:int = 10, delayBetwe
         time.sleep(delayBetweenAttemps)
         currentNetwork = GetCurrentSSID()
         if(currentNetwork != wantedSSID):
-            print(f"[{currentAttempt/maxConnectionAttempts}] - Current network is {currentNetwork} instead of {wantedSSID}...")
+            print(f"[{currentAttempt}/{maxConnectionAttempts}] - Current network is {currentNetwork} instead of {wantedSSID}...")
         else:
             timeTaken = currentAttempt * delayBetweenAttemps
             print(f"after {currentAttempt} over a period of {timeTaken} seconds, {wantedSSID} is seen as connected.")
+            break
 
     timeTaken = currentAttempt * delayBetweenAttemps
     print(f"{wantedSSID} is not the current network after {maxConnectionAttempts} tries over a period of {timeTaken}")
@@ -71,7 +72,7 @@ if __name__ == '__main__':
     time.sleep(1)
 
     print("\n")
-    result = WaitTillConnected("Batiscan", 10, 2)
+    result = WaitTillConnected("Batiscan", 20, 2)
     time.sleep(5)
     print(f"Current network: {GetCurrentSSID()}")
     time.sleep(5)
@@ -79,9 +80,9 @@ if __name__ == '__main__':
     print (f"Connecting to Andromeda...")
     ConnectToIt('Andromeda', 'pianoarmoirefeuillewhisky5G')
     time.sleep(5)
-    
+
     print("\n")
-    result = WaitTillConnected("Batiscan", 10, 2)
+    result = WaitTillConnected("Andromeda", 10, 2)
     time.sleep(5)
     print(f"Current network: {GetCurrentSSID()}")
     time.sleep(5)

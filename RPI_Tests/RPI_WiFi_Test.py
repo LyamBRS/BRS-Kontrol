@@ -90,7 +90,7 @@ def GetCurrentSSID() -> str:
 def TestInternetConnection() -> bool:
     try:
         # Run the ping command
-        subprocess.check_output(['ping', '-c', '1', 'google.com'])
+        subprocess.run(['ping', '-c', '1', 'google.com'])
         return True
     except subprocess.CalledProcessError:
         return False
@@ -125,7 +125,7 @@ def SendUDPMessage(ip_address, port, message:str):
 def TurnOnBatiscanLight() -> bool:
     message = "1111111111111"
     ipAddress = "192.168.4.1"
-    port = "4210"
+    port = 4210
     Print(f">>> Sending {message} to {ipAddress} on port {port}...")
     sent = SendUDPMessage(ipAddress, port, message)
     return sent
@@ -133,7 +133,7 @@ def TurnOnBatiscanLight() -> bool:
 def TurnOffBatiscanLight() -> bool:
     message = "0000000000000"
     ipAddress = "192.168.4.1"
-    port = "4210"
+    port = 4210
     Print(f">>> Sending {message} to {ipAddress} on port {port}...")
     sent = SendUDPMessage(ipAddress, port, message)
     return sent

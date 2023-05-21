@@ -1,18 +1,25 @@
-import time
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 Debug.enableConsole = True
-from Programs.Local.Loading.HardwareAddonsLauncher import InitializeAllHardwareAddons
-from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi
+import time
 
-InitializeAllHardwareAddons()
+Debug.Log("Starting thread... Trying to connect to Batiscan...")
+Linux_ConnectWiFi.StartConnecting("Batiscan", "BATISCAN")
 
-Debug.Log("\n\n\n")
-Debug.Log("Checking if Addons now has Accelerometer:")
-Debug.Log(f"{Addons._listedAddons}")
-Debug.Log("\n\n\n")
-Debug.Log("Can we use anything in it?:")
-result = Addons._listedAddons["Accelerometer"]["GetState"]()
-Debug.Log(f"result: {result}")
+for currentAttempt in range(60):
+    result = Linux_ConnectWiFi.GetConnectionStatus()
+    connected = result[0]
+    timeTaken = result[2]
+    networkConnected = result[3]
+    Debug.Log(result)
+
+    if(Linux_ConnectWiFi.connected or connected):
+        Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
+        Linux_ConnectWiFi.StopConnecting()
+        break
+    time.sleep(1)
+
+
 # import threading
 # import time
 

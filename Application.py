@@ -32,6 +32,8 @@ from Programs.Pages.Startup import Startup_Screens
 from Programs.Pages.AppLoading import AppLoading_Screens
 from Programs.Pages.PopUps import PopUps_Screens
 from Programs.Local.Updating.LaunchHandling import Shutdown
+
+from Programs.Pages.WiFiLogin import WiFiConnecting_Screens, WiFiLogin_Screens
 #====================================================================#
 # Configuration
 #====================================================================#
@@ -137,11 +139,16 @@ class Application(MDApp):
         PopUps_Screens.SetExiter(ProfileMenu, "ProfileMenu")
         PopUps_Screens.SetCaller(AppLoading_Screens, "AppLoading")
 
-        Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
-        Startup_Screens.SetCaller(Application, "Application")
+        # Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
+        # Startup_Screens.SetCaller(Application, "Application")
+
+        WiFiLogin_Screens.SetCaller(AppLoading_Screens, "AppLoading", "test")
+        WiFiLogin_Screens.SetGoodExiter(AppLoading_Screens, "AppLoading")
+        WiFiLogin_Screens.SetBadExiter(AppLoading_Screens, "AppLoading")
 
         Debug.Log("Calling startup screen")
-        Startup_Screens.Call()
+        # Startup_Screens.Call()
+        WiFiLogin_Screens.Call()
         Debug.End()
         return AppManager.manager
 

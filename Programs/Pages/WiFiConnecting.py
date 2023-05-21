@@ -246,6 +246,7 @@ class WiFiConnecting_Screens:
         Debug.End()
         return False
     #endregion
+
 #====================================================================#
 # Classes
 #====================================================================#
@@ -323,7 +324,7 @@ class WiFiConnecting(Screen):
         KontrolRGB.ApploadingAnimation()
         Debug.Log("Starting WiFi threads")
 
-        Linux_ConnectWiFi.StartConnecting()
+        Linux_ConnectWiFi.StartConnecting(WiFiConnecting_Screens._ssid, WiFiConnecting_Screens._password)
         Linux_VerifyInternetConnection.StartPinging()
         Clock.schedule_once(self.CheckCurrentWiFi, 1)
 

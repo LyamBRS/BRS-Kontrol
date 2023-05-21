@@ -487,7 +487,7 @@ class WiFiLogin(Screen):
         password = self.Password.text
         ssid     = self.SSIDTextField.text
 
-        if(Information.platform == "Windows"):
+        if(Information.platform == "Linux"):
             result = ConnectToAWiFiNetwork(ssid, password)
             if(result):
                 PopUpsHandler.Clear()

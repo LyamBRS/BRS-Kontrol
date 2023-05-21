@@ -4,6 +4,7 @@
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi, Linux_VerifyInternetConnection
+from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
 from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("Application.py")
 #===================================================================#
@@ -51,24 +52,6 @@ ButtonFont.size = "32sp"
 from kivy.config import Config
 
 # 0 being off 1 being on as in true / false
-
-def CloseAllPossibleThreads():
-    """
-        CloseAllPossibleThreads:
-        ========================
-        Summary:
-        --------
-        This function's purpose
-        is to force close all the
-        python threads that could
-        still be running if the
-        application crashes.
-    """
-    Debug.Start()
-    import os
-    import signal
-    os.kill(os.getpid(), signal.SIGINT)
-    Debug.End()
 
 
 # you can use 0 or 1 && True or False
@@ -198,6 +181,6 @@ KontrolRGB.Uninitialize()
 Addons.StopAll()
 
 Debug.Log("KILLING PYTHON PROCESS")
-CloseAllPossibleThreads()
+KillPython()
 
 LoadingLog.End("Application.py")

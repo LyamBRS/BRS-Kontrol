@@ -12,21 +12,22 @@ def GetCurrentSSID() -> str:
     except subprocess.CalledProcessError:
         return None
 
-def WaitTillConnected(wantedSSID:str, maxConnectionAttempts:int = 10, delayBetweenAttemps:int = 2) -> bool:
+def WaitTillConnected(wantedSSID:str, maxConnectionAttempts:int = 10, delayBetweenAttempts:int = 2) -> bool:
     print(f"Waiting until connected to {wantedSSID}. Max tries: {maxConnectionAttempts}")
 
     for currentAttempt in range(maxConnectionAttempts):
-        time.sleep(delayBetweenAttemps)
+        time.sleep(delayBetweenAttempts)
         currentNetwork = GetCurrentSSID()
         if(currentNetwork != wantedSSID):
             print(f"[{currentAttempt}/{maxConnectionAttempts}] - Current network is {currentNetwork} instead of {wantedSSID}...")
         else:
-            timeTaken = currentAttempt * delayBetweenAttemps
+            timeTaken = currentAttempt * delayBetweenAttempts
             print(f"after {currentAttempt} over a period of {timeTaken} seconds, {wantedSSID} is seen as connected.")
-            break
+            return True
 
-    timeTaken = currentAttempt * delayBetweenAttemps
+    timeTaken = currentAttempt * delayBetweenAttempts
     print(f"{wantedSSID} is not the current network after {maxConnectionAttempts} tries over a period of {timeTaken}")
+    return False
 
 def ConnectToIt(ssid, password):
     print(f">>> Creating config lines with {ssid} and {password}... Hoping nothing fucks up.")
@@ -64,9 +65,11 @@ def ConnectToIt(ssid, password):
 
 if __name__ == '__main__':
 
+    print("\n")
     print(f"Current network: {GetCurrentSSID()}")
     time.sleep(5)
     # Connect WiFi with password & without password")
+    print("\n")
     print (f"Connecting to Batiscan...")
     ConnectToIt('Batiscan', 'BATISCAN')
     time.sleep(1)
@@ -77,6 +80,7 @@ if __name__ == '__main__':
     print(f"Current network: {GetCurrentSSID()}")
     time.sleep(5)
 
+    print("\n")
     print (f"Connecting to Andromeda...")
     ConnectToIt('Andromeda', 'pianoarmoirefeuillewhisky5G')
     time.sleep(5)

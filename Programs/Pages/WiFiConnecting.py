@@ -303,7 +303,8 @@ class WiFiConnecting(Screen):
         #endregion
 
         #region ---------------------------- Label
-        self.WhatsHappenningLabel = MDLabel(halign = "center", valign="center", pos_hint = {'center_x': 0.5,'center_y': 0.5})
+        self.WhatsHappenningLabel = MDLabel(halign = "center", pos_hint = {'center_x': 0.5,'center_y': 0.125}, size_hint = (1, 0.25))
+        self.WhatsHappenningLabel.font_style = "H4"
         #endregion
 
         Clock.schedule_once(self.CheckCurrentWiFi, 1)
@@ -369,7 +370,7 @@ class WiFiConnecting(Screen):
 
         if(ssidConnection[0] == True):
             if(internetConnection[0] == False):
-                self.WhatsHappenningLabel.text = _("Time taken to connect to the internet") + f": {WiFiConnecting_Screens.currentInternetAttempt} seconds"
+                self.WhatsHappenningLabel.text = f"[{WiFiConnecting_Screens.currentInternetAttempt} / 10] " + _("Time taken to connect to the internet") + f": {internetConnection[2]} seconds"
                 WiFiConnecting_Screens.currentInternetAttempt = WiFiConnecting_Screens.currentInternetAttempt + 1
                 if(WiFiConnecting_Screens.currentInternetAttempt > 10):
                     Information.CanUse.Internet = False
@@ -395,7 +396,7 @@ class WiFiConnecting(Screen):
                 Linux_VerifyInternetConnection.StopPinging()
                 return
         else:
-            self.WhatsHappenningLabel.text = _("Time taken to connect to") + ": " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
+            self.WhatsHappenningLabel.text = f"[{WiFiConnecting_Screens.currentSSIDAttempt} / 60] " + _("Time taken to connect to") + " " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
             WiFiConnecting_Screens.currentSSIDAttempt = WiFiConnecting_Screens.currentSSIDAttempt + 1
             if(WiFiConnecting_Screens.currentSSIDAttempt > 60):
                 PopUpsHandler.Clear()

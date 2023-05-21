@@ -20,6 +20,25 @@ for currentAttempt in range(60):
     time.sleep(1)
 Linux_ConnectWiFi.StopConnecting()
 
+time.sleep(5)
+
+Debug.Log("Starting thread... Trying to connect to Andromeda...")
+Linux_ConnectWiFi.StartConnecting("Andromeda", "pianoarmoirefeuillewhisky5G")
+
+for currentAttempt in range(60):
+    result = Linux_ConnectWiFi.GetConnectionStatus()
+    connected = result[0]
+    timeTaken = result[2]
+    networkConnected = result[3]
+    # Debug.Log(f"{currentAttempt}: {result}")
+
+    if(Linux_ConnectWiFi.connected or connected or networkConnected=="Andromeda"):
+        Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
+        break
+    print(currentAttempt)
+    time.sleep(1)
+Linux_ConnectWiFi.StopConnecting()
+
 
 # import threading
 # import time

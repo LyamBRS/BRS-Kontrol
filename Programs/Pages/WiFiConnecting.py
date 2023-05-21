@@ -395,7 +395,7 @@ class WiFiConnecting(Screen):
                 Linux_VerifyInternetConnection.StopPinging()
                 return
         else:
-            self.WhatsHappenningLabel.text = _("Time taken to connect to") + ": " + WiFiConnecting_Screens._ssid + f": {WiFiConnecting_Screens.currentSSIDAttempt} seconds"
+            self.WhatsHappenningLabel.text = _("Time taken to connect to") + ": " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
             WiFiConnecting_Screens.currentSSIDAttempt = WiFiConnecting_Screens.currentSSIDAttempt + 1
             if(WiFiConnecting_Screens.currentSSIDAttempt > 60):
                 PopUpsHandler.Clear()

@@ -13,7 +13,7 @@ for currentAttempt in range(60):
     networkConnected = result[3]
     # Debug.Log(f"{currentAttempt}: {result}")
 
-    if(Linux_ConnectWiFi.connected or connected):
+    if(Linux_ConnectWiFi.connected or connected or networkConnected=="Batiscan"):
         Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
         break
     print(currentAttempt)

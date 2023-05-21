@@ -153,7 +153,7 @@ time.sleep(1)
 ssid = "Batiscan"
 password = "BATISCAN"
 Print(f"Attempting to connect to {ssid} with {password} for its password")
-connected = ConnectToIt("Batiscan", "BATISCAN")
+connected = ConnectToIt('Batiscan', 'BATISCAN', maxConnectionAttempts=20)
 ###################################################################################################
 Print("Testing the internet connection of that WiFi...")
 maybeConnected = "connected" if GetInternetConnection() == True else "not connected"

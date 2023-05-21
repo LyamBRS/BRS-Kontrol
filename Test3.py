@@ -11,13 +11,15 @@ for currentAttempt in range(60):
     connected = result[0]
     timeTaken = result[2]
     networkConnected = result[3]
-    Debug.Log(result)
+    # Debug.Log(f"{currentAttempt}: {result}")
 
     if(Linux_ConnectWiFi.connected or connected):
         Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
         Linux_ConnectWiFi.StopConnecting()
         break
+    print("", end=".")
     time.sleep(1)
+Linux_ConnectWiFi.StopConnecting()
 
 
 # import threading

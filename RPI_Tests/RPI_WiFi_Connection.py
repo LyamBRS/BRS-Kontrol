@@ -56,6 +56,9 @@ def ConnectToIt(ssid, password):
         print("Success!")
         wifi.close()
 
+    print(f">>> Changing permissions of wpa_supplicant.conf")
+    os.popen("sudo chmod a+w /etc/wpa_supplicant/wpa_supplicant.conf")
+
     print(">>> Wifi config added. Refreshing configs...")
     ## refresh configs
     os.popen("sudo wpa_cli -i wlan0 reconfigure")

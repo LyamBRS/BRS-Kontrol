@@ -3,8 +3,6 @@ import time
 import subprocess
 import socket
 import inspect
-import binascii
-import wifi
 
 def Print(message):
     frame = inspect.currentframe().f_back
@@ -14,15 +12,62 @@ def Print(message):
 # ======================================================================
 # ======================================================================
 # ======================================================================
-def ConnectToIt(ssid:str, password:str):
-    Print(f">>> Trying to connect to {ssid} using password {password}...")
-    try:
-        # Run the ping command
-        subprocess.check_output(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password])
-        return True
-    except subprocess.CalledProcessError:
-        return False
-    Print(f">>> Function returned {result}")
+def WaitTillConnected(wantedSSID:str, maxConnectionAttempts:int = 10, delayBetweenAttempts:int = 2) -> bool:
+    Print(f">>> Waiting until connected to {wantedSSID}. Max tries: {maxConnectionAttempts}")
+
+    for currentAttempt in range(maxConnectionAttempts):
+        currentNetwork = GetCurrentSSID()
+        if(currentNetwork != wantedSSID):
+            Print(f">>>>>> [{currentAttempt}/{maxConnectionAttempts}] - Current network is {currentNetwork} instead of {wantedSSID}")
+        else:
+            timeTaken = currentAttempt * delayBetweenAttempts
+            Print(f">>>>>> After {currentAttempt} over a period of {timeTaken} seconds, {wantedSSID} is seen as connected.")
+            return True
+        time.sleep(delayBetweenAttempts)
+
+    timeTaken = currentAttempt * delayBetweenAttempts
+    print(f">>>>>> {wantedSSID} is not the current network after {maxConnectionAttempts} tries over a period of {timeTaken}")
+    return False
+# ======================================================================
+def ConnectToIt(ssid, password, maxConnectionAttempts:int = 10, delayBetweenAttempts:int = 2):
+    # print(f">>> Creating config lines with {ssid} and {password}... Hoping nothing fucks up.")
+    config_lines = [
+        'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev',
+        'update_config=1',
+        '\n',
+        'network={',
+        '\tssid="{}"'.format(ssid),
+        '\tpsk="{}"'.format(password),
+        '}'
+        ]
+    config = '\n'.join(config_lines)
+
+    #give access and writing. may have to do this manually beforehand
+    # print(f">>> Changing permissions of wpa_supplicant.conf")
+    os.popen("sudo chmod a+w /etc/wpa_supplicant/wpa_supplicant.conf")
+
+    # Print(f">>> Turning off WiFi")
+    os.popen("sudo ifconfig wlan0 down")
+
+    #writing to file
+    # print(f">>> Writing new things in wpa_supplicant.conf")
+    with open("/etc/wpa_supplicant/wpa_supplicant.conf", "w") as wifi:
+        wifi.write(config)
+        print("Success!")
+        wifi.close()
+
+    # print(f">>> Changing permissions of wpa_supplicant.conf")
+    os.popen("sudo chmod a+w /etc/wpa_supplicant/wpa_supplicant.conf")
+
+    # print(">>> Wifi config added. Refreshing configs...")
+    ## refresh configs
+    os.popen("sudo wpa_cli -i wlan0 reconfigure")
+
+    # Print(f">>> Turning on WiFi")
+    os.popen("sudo ifconfig wlan0 up")
+
+    result = WaitTillConnected(ssid, maxConnectionAttempts=maxConnectionAttempts, delayBetweenAttempts=delayBetweenAttempts)
+    return result
 # ======================================================================
 def EnableWiFi() -> bool:
     try:
@@ -108,7 +153,7 @@ time.sleep(1)
 ssid = "Batiscan"
 password = "BATISCAN"
 Print(f"Attempting to connect to {ssid} with {password} for its password")
-ConnectToIt("Batiscan", "BATISCAN")
+connected = ConnectToIt("Batiscan", "BATISCAN")
 ###################################################################################################
 Print("Testing the internet connection of that WiFi...")
 maybeConnected = "connected" if GetInternetConnection() == True else "not connected"
@@ -117,6 +162,7 @@ Print(f">>> You are {maybeConnected} to the internet.")
 thisNetwork = GetCurrentSSID()
 Print(f"Your network is now {thisNetwork}")
 time.sleep(1)
+print("\n")
 ###################################################################################################
 Print(f"Attempting to send some messages to Batiscan...")
 
@@ -143,7 +189,7 @@ Print(f"Your network is {currentNetwork}")
 time.sleep(1)
 ###################################################################################################
 ssid = "Andromeda"
-password = "pianofeuillearmoirewhisky5G"
+password = "pianoarmoirefeuillewhisky5G"
 Print(f"Attempting to connect to {ssid} using password {password}")
 result = ConnectToIt(ssid, password)
 time.sleep(1)

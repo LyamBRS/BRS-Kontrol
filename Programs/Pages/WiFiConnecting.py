@@ -287,8 +287,8 @@ class WiFiConnecting(Screen):
         from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
         from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
         path = os.getcwd()
-        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Menus/Dark.png"),
-                                        AppendPath(path, "/Libraries/Backgrounds/Menus/Light.png"))
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Login/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Login/Light.png"))
         #endregion
 
         #region ---------------------------- Layouts
@@ -300,11 +300,12 @@ class WiFiConnecting(Screen):
         self.spinner = MDSpinner()
         self.spinner.size_hint = (0.25, 0.25)
         self.spinner.pos_hint = {"center_x":0.5, "center_y":0.5}
+        self.spinner.line_width = 5
         #endregion
 
         #region ---------------------------- Label
         self.WhatsHappenningLabel = MDLabel(halign = "center", pos_hint = {'center_x': 0.5,'center_y': 0.125}, size_hint = (1, 0.25))
-        self.WhatsHappenningLabel.font_style = "H4"
+        self.WhatsHappenningLabel.font_style = "H5"
         #endregion
 
         Clock.schedule_once(self.CheckCurrentWiFi, 1)
@@ -374,6 +375,7 @@ class WiFiConnecting(Screen):
                 WiFiConnecting_Screens.currentInternetAttempt = WiFiConnecting_Screens.currentInternetAttempt + 1
                 if(WiFiConnecting_Screens.currentInternetAttempt > 10):
                     Information.CanUse.Internet = False
+                    Information.CanUse.WiFi = True
                     PopUpsHandler.Clear()
                     PopUpsHandler.Add(PopUpTypeEnum.FatalError,
                                     Message=_("Failed to connect to the internet after") + f" {WiFiConnecting_Screens.currentSSIDAttempt} " + _("seconds") + ". " + _("The wifi is connected successfully but does not provide internet access."))
@@ -391,6 +393,8 @@ class WiFiConnecting(Screen):
                 PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
                 PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
                 PopUps_Screens.Call()
+                Information.CanUse.Internet = True
+                Information.CanUse.WiFi = True
 
                 Linux_ConnectWiFi.StopConnecting()
                 Linux_VerifyInternetConnection.StopPinging()
@@ -405,6 +409,9 @@ class WiFiConnecting(Screen):
                 PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
                 PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
                 PopUps_Screens.Call()
+
+                Information.CanUse.Internet = False
+                Information.CanUse.WiFi = False
 
                 Linux_ConnectWiFi.StopConnecting()
                 Linux_VerifyInternetConnection.StopPinging()

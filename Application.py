@@ -3,7 +3,7 @@
 #====================================================================#
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi, Linux_VerifyInternetConnection
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
 from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
 from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("Application.py")
@@ -125,6 +125,9 @@ class Application(MDApp):
         else:
             Debug.Log("CACHE LOAD SUCCESS")
 
+        Debug.Log("Starting slow network information updater")
+        WiFiStatusUpdater.StartUpdating()
+
         #Temporary pop up test
         # PopUpsHandler.Add(PopUpTypeEnum.Question, "help", "This is the question pop up. Among us among us", True)
         # PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", "This is the Fatal Error pop up.", True)
@@ -143,10 +146,6 @@ class Application(MDApp):
 
         Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
         Startup_Screens.SetCaller(Application, "Application")
-
-        WiFiLogin_Screens.SetCaller(AppLoading_Screens, "AppLoading", "test")
-        WiFiLogin_Screens.SetGoodExiter(AppLoading_Screens, "AppLoading")
-        WiFiLogin_Screens.SetBadExiter(AppLoading_Screens, "AppLoading")
 
         Debug.Log("Calling startup screen")
         Startup_Screens.Call()
@@ -179,6 +178,7 @@ Application().run()
 Shutdown.ShutdownFunction()
 KontrolRGB.Uninitialize()
 Addons.StopAll()
+WiFiStatusUpdater.StopUpdating()
 
 Debug.Log("KILLING PYTHON PROCESS")
 KillPython()

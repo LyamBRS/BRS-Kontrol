@@ -12,6 +12,8 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.networks import GetWifiIcon
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
 LoadingLog.Start("AppLoading.py")
 #====================================================================#
 # Imports
@@ -29,7 +31,8 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition, SwapTransition, ShaderTransition
+from kivy.uix.screenmanager import SlideTransition
+from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -40,8 +43,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.recycleview import MDRecycleView
 from kivymd.uix.button import MDFillRoundFlatIconButton
 #endregion
-LoadingLog.Import("Local")
-from ..FileHandler.deviceDriver import CheckIntegrity, GetDrivers
+# LoadingLog.Import("Local")
 #====================================================================#
 # Functions
 #====================================================================#
@@ -239,9 +241,15 @@ class AppNavigationBar():
         self.ToolBar.headline_text = "Headline"
         self.ToolBar.anchor_title = "left"
         self.ToolBar.left_action_items = [["menu", lambda x: self.NavDrawer.set_state("open"), "Menu", "Overflow"]]
+        self.ToolBar.right_action_items = [["earth-off", self.Callback, _("No internet")], ["wifi-strength-outline", self.Callback, _("No WiFi")]]
+
+        self.UpdateNetworkIcons()
+
         self.ToolBar.elevation = Shadow.Elevation.default
         self.ToolBar.shadow_softness = Shadow.Smoothness.default
         self.ToolBar.shadow_radius = Shadow.Radius.default
+
+        Clock.schedule_once(self.UpdateNetworkIcons, 0)
 
         self.NavDrawer.set_state("close")
         Debug.End()
@@ -257,6 +265,52 @@ class AppNavigationBar():
     LoadingLog.Method("Callback")
     def Callback(self, *args):
         pass
+
+    def UpdateNetworkIcons(self, *args):
+        """
+            UpdateNetworkIcons:
+            ===================
+            Summary:
+            --------
+            Callback function executed each 5 seconds
+            that attempts to update the icons displayed
+            in the toolbar that says if we have internet
+            access.
+        """
+        try:
+            networkInfo = WiFiStatusUpdater.GetConnectionStatus()
+
+            networkName:str = networkInfo[0]
+            hasInternet:bool = networkInfo[1]
+            signalStrength:int = networkInfo[2]
+
+            internetIcon:str = "web-off"
+            internetToolTip:str = _("No internet")
+            wifiIcon:str = "wifi-strength-outline"
+            wifiToolTip:str = _("No wifi")
+
+            if(hasInternet):
+                internetIcon = "web-check"
+                internetToolTip = _("Internet connected")
+
+            if(networkName != "ERROR"):
+
+                if(networkName == None or networkName == ""):
+                    wifiIcon = "wifi-strength-off-outline"
+                    wifiToolTip = _("WiFi disconnected")
+                else:
+                    wifiToolTip = networkName
+                    wifiIcon = GetWifiIcon(signalStrength, None)
+            else:
+                internetIcon = "web-cancel"
+                wifiIcon = "wifi-cancel"
+                wifiToolTip = _("error")
+                internetToolTip = _("error")
+
+            self.ToolBar.right_action_items = [[internetIcon, self.Callback, internetToolTip], [wifiIcon, self.Callback, wifiToolTip]]
+            Clock.schedule_once(self.UpdateNetworkIcons, 5)
+        except:
+            Debug.Error("TOOLBAR ERROR FAILED TO ADD RIGHT ICON WIDGETS")
     # ----------------------------------------------------------------
     #endregion
 #====================================================================#

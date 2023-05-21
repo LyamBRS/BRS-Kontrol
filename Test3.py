@@ -15,7 +15,6 @@ for currentAttempt in range(60):
 
     if(Linux_ConnectWiFi.connected or connected):
         Debug.Log(f"It took {timeTaken} seconds to connect to {networkConnected}")
-        Linux_ConnectWiFi.StopConnecting()
         break
     print("", end=".")
     time.sleep(1)

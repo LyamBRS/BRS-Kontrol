@@ -78,7 +78,7 @@ if __name__ == '__main__':
     time.sleep(1)
 
     print("\n")
-    result = WaitTillConnected("Batiscan", 20, 2)
+    result = WaitTillConnected("Batiscan", 10, 5)
     time.sleep(5)
     print(f"Current network: {GetCurrentSSID()}")
     time.sleep(5)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     time.sleep(5)
 
     print("\n")
-    result = WaitTillConnected("Andromeda", 10, 2)
+    result = WaitTillConnected("Andromeda", 10, 5)
     time.sleep(5)
     print(f"Current network: {GetCurrentSSID()}")
     time.sleep(5)

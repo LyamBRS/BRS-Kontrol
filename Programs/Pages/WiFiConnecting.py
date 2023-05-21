@@ -400,9 +400,9 @@ class WiFiConnecting(Screen):
                 Linux_VerifyInternetConnection.StopPinging()
                 return
         else:
-            self.WhatsHappenningLabel.text = f"[{WiFiConnecting_Screens.currentSSIDAttempt} / 60] " + _("Time taken to connect to") + " " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
+            self.WhatsHappenningLabel.text = f"[{WiFiConnecting_Screens.currentSSIDAttempt} / 120] " + _("Time taken to connect to") + " " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
             WiFiConnecting_Screens.currentSSIDAttempt = WiFiConnecting_Screens.currentSSIDAttempt + 1
-            if(WiFiConnecting_Screens.currentSSIDAttempt > 60):
+            if(WiFiConnecting_Screens.currentSSIDAttempt > 120):
                 PopUpsHandler.Clear()
                 PopUpsHandler.Add(PopUpTypeEnum.FatalError,
                                   Message=_("Failed to connect to") + ": " + WiFiConnecting_Screens._ssid + " " + _("after") + f" {WiFiConnecting_Screens.currentSSIDAttempt} " + _("seconds"))

@@ -5,13 +5,14 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import ConnectToAWiFiNetwork
+from Programs.Pages.DriverMenu import DriverMenu_Screens
 LoadingLog.Start("WiFiLogin.py")
 #====================================================================#
 # Imports
 #====================================================================#
 import os
 from kivy.animation import Animation
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 # -------------------------------------------------------------------
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.card import MDCard
@@ -24,9 +25,8 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Programs.Local.FileHandler.Profiles import ProfileHandler, ProfileGenericEnum, structureEnum
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
-# from Programs.Pages.ProfileMenu import ProfileMenu
+from Programs.Pages.WiFiConnecting import WiFiConnecting_Screens
 # -------------------------------------------------------------------
 from .PopUps import PopUpTypeEnum, PopUpsHandler,PopUps_Screens
 #====================================================================#
@@ -487,31 +487,35 @@ class WiFiLogin(Screen):
         password = self.Password.text
         ssid     = self.SSIDTextField.text
 
-        result = ConnectToAWiFiNetwork(ssid, password)
-
-        if(result):
-            PopUpsHandler.Clear()
-            PopUpsHandler.Add(
-                                Type = PopUpTypeEnum.Custom,
-                                Icon = "wifi-check",
-                                Message=_("You successfully connected to: ") + ssid,
-                                ButtonBText="None"
-                             )
-            PopUps_Screens.Call()
+        if(Information.platform == "Windows"):
+            result = ConnectToAWiFiNetwork(ssid, password)
+            if(result):
+                PopUpsHandler.Clear()
+                PopUpsHandler.Add(
+                                    Type = PopUpTypeEnum.Custom,
+                                    Icon = "wifi-check",
+                                    Message=_("You successfully connected to: ") + ssid,
+                                    ButtonBText="None"
+                                )
+                PopUps_Screens.Call()
+            else:
+                PopUpsHandler.Clear()
+                PopUpsHandler.Add(
+                                    Type = PopUpTypeEnum.Custom,
+                                    Icon = "wifi-cancel",
+                                    Message=_("An error occurred while attempting to connect to: ") + ssid + _(" with password: ") + password,
+                                    ButtonBHandler=WiFiLogin_Screens.Call,
+                                    ButtonAText=_("Cancel"),
+                                    ButtonBText=_("Retry")
+                                )
+                WiFiLogin_Screens._goodExitDirection = "down"
+                WiFiLogin_Screens._badExitDirection = "down"
+                WiFiLogin_Screens._callerDirection = "down"
+                PopUps_Screens.Call()
         else:
-            PopUpsHandler.Clear()
-            PopUpsHandler.Add(
-                                Type = PopUpTypeEnum.Custom,
-                                Icon = "wifi-cancel",
-                                Message=_("An error occurred while attempting to connect to: ") + ssid + _(" with password: ") + password,
-                                ButtonBHandler=WiFiLogin_Screens.Call,
-                                ButtonAText=_("Cancel"),
-                                ButtonBText=_("Retry")
-                             )
-            WiFiLogin_Screens._goodExitDirection = "down"
-            WiFiLogin_Screens._badExitDirection = "down"
-            WiFiLogin_Screens._callerDirection = "down"
-            PopUps_Screens.Call()
+            WiFiConnecting_Screens.SetCaller(WiFiLogin_Screens, "WiFiLogin", ssid, password)
+            WiFiConnecting_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+            WiFiConnecting_Screens.Call()
 
         Debug.End()
 

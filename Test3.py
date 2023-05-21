@@ -1,36 +1,3 @@
-from kivymd.app import MDApp
-from kivymd.uix.toolbar import MDTopAppBar
-from kivymd.uix.button import MDIconButton
-from kivymd.uix.label import MDLabel
-from kivy.uix.boxlayout import BoxLayout
-from Programs.Local.GUI.Navigation import AppNavigationBar
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
-from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
-from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-Debug.enableConsole = True
-
-class MainApp(MDApp):
-    def build(self):
-        WiFiStatusUpdater.StartUpdating()
-        layout = BoxLayout(orientation='vertical')
-
-        # Create the toolbar
-        toolbar = AppNavigationBar("Test")
-
-        # Add the toolbar to the layout
-        layout.add_widget(toolbar.ToolBar)
-
-        return layout
-
-    def menu_button_pressed(self, instance):
-        print("Menu button pressed!")
-
-
-if __name__ == "__main__":
-    MainApp().run()
-    WiFiStatusUpdater.StopUpdating()
-    KillPython()
-KillPython()
 
 
 

@@ -1,6 +1,6 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 Debug.enableConsole = True
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import Linux_ConnectWiFi, Linux_VerifyInternetConnection
 import time
 
 Debug.Log("Starting thread... Trying to connect to Batiscan...")
@@ -19,6 +19,20 @@ for currentAttempt in range(60):
     print(currentAttempt)
     time.sleep(1)
 Linux_ConnectWiFi.StopConnecting()
+
+Debug.Log("Starting thread... Trying to connect to the internet.")
+Linux_VerifyInternetConnection.StartPinging()
+for currentAttempt in range(10):
+    result = Linux_VerifyInternetConnection.GetConnectionStatus()
+    connected = result[0]
+    timeTaken = result[2]
+
+    if(Linux_VerifyInternetConnection.hasInternet or connected):
+        Debug.Log(f"It took {timeTaken} seconds to connect to the internet.")
+        break
+    print(currentAttempt)
+    time.sleep(1)
+Linux_VerifyInternetConnection.StopPinging()
 
 time.sleep(5)
 
@@ -39,6 +53,19 @@ for currentAttempt in range(60):
     time.sleep(1)
 Linux_ConnectWiFi.StopConnecting()
 
+Debug.Log("Starting thread... Trying to connect to the internet.")
+Linux_VerifyInternetConnection.StartPinging()
+for currentAttempt in range(10):
+    result = Linux_VerifyInternetConnection.GetConnectionStatus()
+    connected = result[0]
+    timeTaken = result[2]
+
+    if(Linux_VerifyInternetConnection.hasInternet or connected):
+        Debug.Log(f"It took {timeTaken} seconds to connect to the internet.")
+        break
+    print(currentAttempt)
+    time.sleep(1)
+Linux_VerifyInternetConnection.StopPinging()
 
 # import threading
 # import time

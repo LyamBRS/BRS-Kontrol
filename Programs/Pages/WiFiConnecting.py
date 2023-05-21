@@ -378,7 +378,7 @@ class WiFiConnecting(Screen):
                     Information.CanUse.WiFi = True
                     PopUpsHandler.Clear()
                     PopUpsHandler.Add(PopUpTypeEnum.FatalError,
-                                    Message=_("Failed to connect to the internet after") + f" {WiFiConnecting_Screens.currentSSIDAttempt} " + _("seconds") + ". " + _("The wifi is connected successfully but does not provide internet access."))
+                                    Message=_("Failed to connect to the internet after") + f" {internetConnection[2]} " + _("seconds") + ". " + _("The wifi is connected successfully but does not provide internet access."))
                     PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
                     PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
                     PopUps_Screens.Call()
@@ -405,7 +405,7 @@ class WiFiConnecting(Screen):
             if(WiFiConnecting_Screens.currentSSIDAttempt > 120):
                 PopUpsHandler.Clear()
                 PopUpsHandler.Add(PopUpTypeEnum.FatalError,
-                                  Message=_("Failed to connect to") + ": " + WiFiConnecting_Screens._ssid + " " + _("after") + f" {WiFiConnecting_Screens.currentSSIDAttempt} " + _("seconds"))
+                                  Message=_("Failed to connect to") + ": " + WiFiConnecting_Screens._ssid + " " + _("after") + f" {ssidConnection[2]} " + _("seconds"))
                 PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
                 PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
                 PopUps_Screens.Call()

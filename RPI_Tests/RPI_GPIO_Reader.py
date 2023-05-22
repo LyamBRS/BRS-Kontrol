@@ -14,6 +14,8 @@ output = """
     GPIO 9: level=1 fsel=0 alt=0 func=INPUT pull=DOWN
 """
 
+abolishedGPIONumbers = [34,42]
+
 
 def GetGpioNumber(line:str):
 
@@ -27,7 +29,11 @@ def GetGpioNumber(line:str):
         line = line.split(":")[0]
         line = line.replace("GPIO","")
         line = int(line)
-        return line
+
+        if line not in abolishedGPIONumbers:
+            return line
+        else:
+            return None
     except:
         return None
 
@@ -138,7 +144,6 @@ def GetAllGPIOInformation() -> list:
         if(information != None):
             resultedList.append(information)
     return resultedList
-
 
 def CompareAndPrintGPIODict(oldDict:dict, newDict:dict):
 

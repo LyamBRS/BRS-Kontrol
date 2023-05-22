@@ -14,7 +14,7 @@ from kivy.uix.screenmanager import Screen,SlideTransition
 # -------------------------------------------------------------------
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.card import MDCard
-from kivymd.uix.textfield import MDTextField
+from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.textfield import VirtualKeyboardTextField
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 # -------------------------------------------------------------------
@@ -370,11 +370,11 @@ class ProfileLogin(Screen):
 
             # self.UsernameTitle = MDLabel(text=_("Username") + ":")
             # self.PasswordTitle = MDLabel(text=_("Password") + ":")
-            # self.Username = MDTextField(text=ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
+            # self.Username = VirtualKeyboardTextField(text=ProfileHandler.rawJson.jsonData[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
             self.LockIcon = MDIconButton(text="lock", icon="lock", halign = "center", disabled=True)
             self.LockIcon.icon_size = "100sp"
             self.LockIcon.pos_hint={"center_x": 0.5, "center_y": 0.5}
-            self.Password = MDTextField()
+            self.Password = VirtualKeyboardTextField()
             self.Password.font_size = 30
             # self.PasswordTitle.font_style = "H5"
             # self.UsernameTitle.font_style = "H5"

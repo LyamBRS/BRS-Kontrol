@@ -11,7 +11,7 @@ LoadingLog.Start("WiFiConnecting.py")
 # Imports
 #====================================================================#
 #region ------------------------------------------------------ Python
-LoadingLog.Import("Python")
+# LoadingLog.Import("Python")
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
@@ -30,7 +30,7 @@ LoadingLog.Import("KivyMD")
 from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.spinner import MDSpinner
-from kivymd.uix.progressbar import MDProgressBar
+from kivymd.uix.button import MDFillRoundFlatButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -263,7 +263,7 @@ class WiFiConnecting(Screen):
         left to a download function through callbacks and threadings.
     """
     #region   --------------------------- MEMBERS
-    progressBar:MDProgressBar = None
+    continueUpdates:bool = False
     #endregion
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
@@ -281,6 +281,7 @@ class WiFiConnecting(Screen):
 
         self.padding = 0
         self.spacing = 0
+        self.continueUpdates = True
 
         #region ---- Background
         import os
@@ -308,11 +309,16 @@ class WiFiConnecting(Screen):
         self.WhatsHappenningLabel.font_style = "H5"
         #endregion
 
+        self.CancelButton = MDFillRoundFlatButton(pos_hint={"center_x":0.5, "center_y":0.5}, text=_("Cancel"))
+        self.CancelButton.font_style = "H4"
+        self.CancelButton.on_release = self.StopTrying
+
         Clock.schedule_once(self.CheckCurrentWiFi, 1)
 
         self.add_widget(background)
         self.Layout.add_widget(self.spinner)
         self.Layout.add_widget(self.WhatsHappenningLabel)
+        self.Layout.add_widget(self.CancelButton)
         self.add_widget(self.Layout)
         Debug.End()
 # ------------------------------------------------------------------------
@@ -354,6 +360,31 @@ class WiFiConnecting(Screen):
         Linux_VerifyInternetConnection.StopPinging()
         Debug.End()
         self.clear_widgets()
+
+    def StopTrying(self, *args):
+        """
+            StopTrying:
+            ===========
+            Function called when the
+            user wants to stop trying
+            to connect to a specific
+            network.
+        """
+        Debug.Start("StopTrying")
+
+        Debug.Log("Stopping threads")
+        Linux_ConnectWiFi.StopConnecting()
+        Linux_VerifyInternetConnection.StopPinging()
+
+        Debug.Log("Calling pop up")
+        PopUpsHandler.Clear()
+        PopUpsHandler.Add(PopUpTypeEnum.Warning,
+                        Message=_("Current WiFi network is now") + f" {WiFiConnecting_Screens._ssid} " + _("but the connection to this network or the internet could not be verified due to early aborting by the user."))
+        PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.Call()
+        Debug.End()
+
 # ------------------------------------------------------------------------
     def CheckCurrentWiFi(self, *args):
         """
@@ -400,23 +431,10 @@ class WiFiConnecting(Screen):
                 Linux_VerifyInternetConnection.StopPinging()
                 return
         else:
-            self.WhatsHappenningLabel.text = f"[{WiFiConnecting_Screens.currentSSIDAttempt} / 120] " + _("Time taken to connect to") + " " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
+            self.WhatsHappenningLabel.text = _("Time taken to connect to") + " " + WiFiConnecting_Screens._ssid + f": {ssidConnection[2]} seconds"
             WiFiConnecting_Screens.currentSSIDAttempt = WiFiConnecting_Screens.currentSSIDAttempt + 1
-            if(WiFiConnecting_Screens.currentSSIDAttempt > 120):
-                PopUpsHandler.Clear()
-                PopUpsHandler.Add(PopUpTypeEnum.FatalError,
-                                  Message=_("Failed to connect to") + ": " + WiFiConnecting_Screens._ssid + " " + _("after") + f" {ssidConnection[2]} " + _("seconds"))
-                PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
-                PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
-                PopUps_Screens.Call()
 
-                Information.CanUse.Internet = False
-                Information.CanUse.WiFi = False
-
-                Linux_ConnectWiFi.StopConnecting()
-                Linux_VerifyInternetConnection.StopPinging()
-                return
-
-        Clock.schedule_once(self.CheckCurrentWiFi, 1)
+        if(self.continueUpdates):
+            Clock.schedule_once(self.CheckCurrentWiFi, 1)
         # Debug.End()
 LoadingLog.End("DriverMenu.py")

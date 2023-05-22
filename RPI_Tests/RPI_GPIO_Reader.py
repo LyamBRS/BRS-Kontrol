@@ -164,7 +164,7 @@ def CompareAndPrintGPIODict(oldDict:dict, newDict:dict):
     if(oldLevel != newLevel):
         changesOccured = True
         level = "HIGH" if newLevel==1 else "LOW"
-        print(f"GPIO {newNumber} is now {newNumber}")
+        print(f"GPIO {newNumber}'s level is now {newLevel}")
 
     if(oldPullMode != newPullMode):
         changesOccured = True

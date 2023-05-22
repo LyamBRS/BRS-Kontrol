@@ -3,7 +3,6 @@
 #====================================================================#
 
 #====================================================================#
-from profile import Profile
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 from Programs.Local.Hardware.RGB import KontrolRGB
@@ -22,7 +21,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.textfield import MDTextField
+from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.textfield import VirtualKeyboardTextField
 from kivymd.icon_definitions import md_icons
 from kivymd.color_definitions import palette,colors
 from kivymd.app import MDApp
@@ -1052,9 +1051,9 @@ class ProfileCreation_Step3(Screen):
         self.UsernameTitle = MDLabel(text=_("Username") + ":")
         self.PasswordTitle = MDLabel(text=_("Password") + ":")
         self.BiographyTitle = MDLabel(text=_("Biography") + ":")
-        self.Username  = MDTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
-        self.Password  = MDTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value])
-        self.Biography = MDTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value])
+        self.Username  = VirtualKeyboardTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Username.value])
+        self.Password  = VirtualKeyboardTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Password.value])
+        self.Biography = VirtualKeyboardTextField(text=Temporary[structureEnum.Generic.value][ProfileGenericEnum.Biography.value])
         self.Username.bind(text = self.UsernameTextChanged)
         self.Password.bind(text = self.PasswordTextChanged)
         self.Biography.bind(text = self.BiographyTextChanged)
@@ -1094,7 +1093,7 @@ class ProfileCreation_Step3(Screen):
 
         #region ---- SearchBar
         # self.MagnifyGlass = MDIconButton(icon = "magnify")
-        self.SearchBar = MDTextField()
+        self.SearchBar = VirtualKeyboardTextField()
         self.SearchBar.hint_text = _("Search")
         self.SearchBar.bind(text=self.SearchIcons)
         self.SearchLayout = MDBoxLayout(spacing=10, padding=("0sp","0sp","10sp","0sp"), orientation="horizontal")
@@ -1337,7 +1336,7 @@ class ProfileCreation_Step3(Screen):
         """
             PasswordTextChanged:
             --------------------
-            Callback function executed when the password MDtextfield
+            Callback function executed when the password VirtualKeyboardTextField
             changes. This compares the new password with the
             :ref: CheckPassword function.
         """
@@ -1365,7 +1364,7 @@ class ProfileCreation_Step3(Screen):
         """
             BiographyTextChanged:
             --------------------
-            Callback function executed when the biography MDtextfield
+            Callback function executed when the biography VirtualKeyboardTextField
             changes.This compares the new username with the
             :ref: CheckBiography function.
         """

@@ -80,6 +80,9 @@ class Application(MDApp):
         Debug.enableConsole = True
         Debug.Start("build")
 
+        Debug.Log("Turning off cursor")
+        Window.show_cursor = False
+
         Debug.Log("Turning off aliasing")
         Config.set("graphics", "multisamples", 0)
         Config.write()

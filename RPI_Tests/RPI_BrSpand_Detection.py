@@ -278,7 +278,6 @@ def IsLeftBrSpandUsable(gpioList:list) -> bool:
         elif(gpio["gpio"] == 27):
             gpio27Level = gpio["level"]
 
-    print(f"Left: 13:{gpio13Level}, 12:{gpio12Level}, 26:{gpio26Level}, 27:{gpio27Level}")
     if(gpio13Level == 0 and gpio12Level == 0 and gpio26Level == 0 and gpio27Level == 0):
         # Card cannot be used
         return False
@@ -293,8 +292,9 @@ while True:
     print("==============================")
     rightIsOccupied = IsRightBrSpandOccupied(currentGPIO)
     leftIsOccupied = IsLeftBrSpandOccupied(currentGPIO)
-    rightCanBeUsed = IsRightBrSpandOccupied(currentGPIO)
-    leftCanBeUsed = IsLeftBrSpandOccupied(currentGPIO)
+
+    rightCanBeUsed = IsRightBrSpandUsable(currentGPIO)
+    leftCanBeUsed = IsLeftBrSpandUsable(currentGPIO)
 
     if(rightIsOccupied):
         if(rightCanBeUsed):

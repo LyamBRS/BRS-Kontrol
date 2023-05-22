@@ -548,6 +548,7 @@ class ProfileCreation_Step1(Screen):
         self.spacing = 25
 
         Temporary = GetTemporary()
+        KontrolRGB.FastLoadingAnimation()
 
         Debug.Log("Setting Temporary profile's language to AppLanguage.Current")
         Temporary[structureEnum.Generic.value][ProfileGenericEnum.Language.value] = AppLanguage.Current
@@ -711,6 +712,8 @@ class ProfileCreation_Step2(Screen):
         colorIconSize = Window.height / 35
         colorIconFontSize = Window.height / 4
         colorIconSpacing = (Window.width / 80) - 20
+
+        KontrolRGB.FastLoadingAnimation()
 
         #region ---- Background
         import os
@@ -1145,7 +1148,8 @@ class ProfileCreation_Step3(Screen):
         pass
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
-        KontrolRGB.DisplayDefaultColor()
+        if(not self.usernameError and not self.passwordError and not self.BiographyError):
+            KontrolRGB.DisplayDefaultColor()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """

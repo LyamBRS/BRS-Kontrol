@@ -202,6 +202,9 @@ class LeftBrSpand(AddonFoundations):
             the levels of the GPIOs used
             by this BrSpand card port.
         """
+        Debug.Start("_GetCurrentGPIOLevels")
+         
+        Debug.End()
     # -----------------------------------
     # -----------------------------------
     def VerifyForExecution() -> Execution:

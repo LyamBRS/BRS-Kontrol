@@ -198,6 +198,7 @@ def IsRightBrSpandOccupied(gpioList:list) -> bool:
         elif(gpio["gpio"] == 21):
             gpio21Level = gpio["level"]
 
+    print(f"Right: 19:{gpio19Level}, 20:{gpio20Level}, 21:{gpio21Level}")
     if(gpio19Level == 1 and gpio20Level == 1 and gpio21Level == 1):
         # Nothing is connected at all.
         return False
@@ -277,6 +278,7 @@ def IsLeftBrSpandUsable(gpioList:list) -> bool:
         elif(gpio["gpio"] == 27):
             gpio27Level = gpio["level"]
 
+    print(f"Left: 13:{gpio13Level}, 12:{gpio12Level}, 26:{gpio26Level}, 27:{gpio27Level}")
     if(gpio13Level == 0 and gpio12Level == 0 and gpio26Level == 0 and gpio27Level == 0):
         # Card cannot be used
         return False
@@ -288,12 +290,12 @@ def IsLeftBrSpandUsable(gpioList:list) -> bool:
 while True:
     currentGPIO = GetAllGPIOInformation()
 
+    print("==============================")
     rightIsOccupied = IsRightBrSpandOccupied(currentGPIO)
     leftIsOccupied = IsLeftBrSpandOccupied(currentGPIO)
     rightCanBeUsed = IsRightBrSpandOccupied(currentGPIO)
     leftCanBeUsed = IsLeftBrSpandOccupied(currentGPIO)
 
-    print("==============================")
     if(rightIsOccupied):
         if(rightCanBeUsed):
             print("Right: A valid BrSpand card is plugged in.")

@@ -16,7 +16,7 @@ from kivy.uix.screenmanager import Screen, SlideTransition
 # -------------------------------------------------------------------
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.card import MDCard
-from kivymd.uix.textfield import MDTextField
+from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.textfield import VirtualKeyboardTextField
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 # -------------------------------------------------------------------
@@ -380,11 +380,11 @@ class WiFiLogin(Screen):
         self.LockIcon = MDIconButton(text="lock", icon="wifi-lock", halign = "center", disabled=True)
         self.LockIcon.icon_size = "100sp"
         self.LockIcon.pos_hint={"center_x": 0.5, "center_y": 0.5}
-        self.Password = MDTextField()
+        self.Password = VirtualKeyboardTextField()
         self.Password.font_size = 30
         self.Password.hint_text = _("Password")
 
-        self.SSIDTextField = MDTextField()
+        self.SSIDTextField = VirtualKeyboardTextField()
         self.SSIDTextField.font_size = 30
         self.SSIDTextField.hint_text = _("SSID")
         self.SSIDTextField.text = WiFiLogin_Screens.savedSSID

@@ -1,4 +1,40 @@
+from kivymd.app import MDApp
+from kivymd.uix.dialog.dialog import MDDialog
+from kivymd.uix.button import MDRaisedButton, MDFlatButton
 
+
+class MainApp(MDApp):
+    def show_dialog(self):
+        dialog = MDDialog(
+            title="BrSpand Cards",
+            text="A card has been detected on the left port. Do you wish to initiate a connection? This will stop any processes currently on going and can thus cause crashes.",
+            type = "custom",
+            buttons=[
+                MDFlatButton(text="CANCEL"),
+                MDRaisedButton(text="BEGIN PROCESS")
+            ]
+        )
+        dialog.open()
+
+        dialog = MDDialog(
+            title="BrSpand Cards",
+            text="An unusable card has been detected on the right port. This can be normal if a dual card that uses only one port has been connected.",
+            type = "custom",
+            buttons=[
+                MDFlatButton(text="OK"),
+            ]
+        )
+        dialog.open()
+
+    def dismiss_dialog(self, dialog):
+        dialog.dismiss()
+
+    def build(self):
+        self.show_dialog()
+
+
+if __name__ == "__main__":
+    MainApp().run()
 
 
 

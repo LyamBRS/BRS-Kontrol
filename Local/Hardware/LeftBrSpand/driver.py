@@ -57,6 +57,7 @@ class LeftBrSpand(AddonFoundations):
     #region   --------------------------- MEMBERS
     addonInformation:AddonInfoHandler = None
     oldConnectionStatus:bool = False
+    gpioLevels:list = []
     """
         Used to keep track of when a card
         disconnects / connects
@@ -203,8 +204,16 @@ class LeftBrSpand(AddonFoundations):
             by this BrSpand card port.
         """
         Debug.Start("_GetCurrentGPIOLevels")
-         
+        list = GPIO.GetList()
+
+        gpio12 = GPIO.GetGPIOLevel(12)
+        gpio13 = GPIO.GetGPIOLevel(13)
+        gpio26 = GPIO.GetGPIOLevel(26)
+        gpio27 = GPIO.GetGPIOLevel(27)
+        Debug.Log(f"Current GPIO levels are {[gpio12, gpio13, gpio26, gpio27]}")
+        LeftBrSpand.gpioLevels = [gpio12, gpio13, gpio26, gpio27]
         Debug.End()
+        return [gpio12, gpio13, gpio26, gpio27]
     # -----------------------------------
     # -----------------------------------
     def VerifyForExecution() -> Execution:

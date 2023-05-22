@@ -1,37 +1,30 @@
 from kivymd.app import MDApp
-from kivymd.uix.dialog.dialog import MDDialog
-from kivymd.uix.button import MDRaisedButton, MDFlatButton
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFillRoundFlatButton
+from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.textfield import VirtualKeyboardTextField
+
 
 
 class MainApp(MDApp):
-    def show_dialog(self):
-        dialog = MDDialog(
-            title="BrSpand Cards",
-            text="A card has been detected on the left port. Do you wish to initiate a connection? This will stop any processes currently on going and can thus cause crashes.",
-            type = "custom",
-            buttons=[
-                MDFlatButton(text="CANCEL"),
-                MDRaisedButton(text="BEGIN PROCESS")
-            ]
-        )
-        dialog.open()
-
-        dialog = MDDialog(
-            title="BrSpand Cards",
-            text="An unusable card has been detected on the right port. This can be normal if a dual card that uses only one port has been connected.",
-            type = "custom",
-            buttons=[
-                MDFlatButton(text="OK"),
-            ]
-        )
-        dialog.open()
-
-    def dismiss_dialog(self, dialog):
-        dialog.dismiss()
 
     def build(self):
-        self.show_dialog()
+        layout = MDBoxLayout(padding = 50, orientation="vertical")
+        self.textField = VirtualKeyboardTextField(pos_hint={"center_x":0.5, "center_y":0.5}, text="current text")
+        self.textField.hint_text = "Enter some text"
 
+        self.changeBehaviorButton = MDFillRoundFlatButton(pos_hint={"center_x":0.5, "center_y":0.5}, text="only on linux", on_release=self.changeBehaviour)
+
+        layout.add_widget(self.textField)
+        layout.add_widget(self.changeBehaviorButton)
+        return layout
+
+    def changeBehaviour(self, *args):
+        self.textField.alwaysDisplayKeyboard = not self.textField.alwaysDisplayKeyboard
+
+        if(self.textField.alwaysDisplayKeyboard):
+            self.changeBehaviorButton.text = "always pop up"
+        else:
+            self.changeBehaviorButton.text = "only on linux"
 
 if __name__ == "__main__":
     MainApp().run()

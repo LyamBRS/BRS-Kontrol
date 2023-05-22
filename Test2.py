@@ -1,26 +1,30 @@
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, PrintPlane
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, PrintPlane, NewArrival
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import VarTypes
 Debug.enableConsole = True
 
 classes = [
     VarTypes.Bool,
-    VarTypes.Bool,
-    VarTypes.Bool,
-    VarTypes.Bool
+    VarTypes.String,
+    VarTypes.Float,
+    VarTypes.Int
 ]
 
 variables = [
     True,
-    False,
-    True,
-    False
+    "Among us",
+    0.123456789,
+    4096
 ]
 
 plane = Plane(128, variables=variables, wantedClasses=classes)
 
 PrintPlane(plane)
 
+print("\n\n\n")
+
+arrivedPlane = NewArrival(plane.passengers, classes)
+PrintPlane(arrivedPlane)
 
 # from kivy.uix.boxlayout import BoxLayout
 # from kivymd.app import MDApp

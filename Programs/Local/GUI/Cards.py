@@ -47,7 +47,7 @@ from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.button import MDFillRoundFlatIconButton
-from kivymd.uix.textfield import MDTextField
+from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.textfield import VirtualKeyboardTextField
 from kivymd.uix.label import MDLabel
 #endregion
 LoadingLog.Import("Local")
@@ -269,7 +269,7 @@ class DeviceDriverInstallerCard(BaseButton, Widget):
         self.InformationLabel.pos_hint = {'center_x': 0.5, 'center_y': 0.25}
         self.InformationLabel.size_hint = (0.75, None)
 
-        self.SearchBox = MDTextField(
+        self.SearchBox = VirtualKeyboardTextField(
             hint_text = _("Search") + " GitHub",
             pos_hint = {'center_x': 0.5, 'center_y': 0.925}
         )

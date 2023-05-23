@@ -243,7 +243,7 @@ class LeftBrSpand(AddonFoundations):
         connectedAndValid = [True, True, False, False]
         connectedAndInvalid = [False, False, False, False]
 
-        if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+        if(LeftBrSpand.gpioLevels == connectedAndValid):
             LeftBrSpand.currentConnectionStatus = True
             Debug.Log("Card is connected")
             Debug.End()

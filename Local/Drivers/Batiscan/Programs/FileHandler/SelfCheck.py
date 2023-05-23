@@ -97,6 +97,7 @@ def CheckContent() -> FileIntegrity:
         # Page folder content
         "/Local/Drivers/Batiscan/Pages/" : [
             "BatiscanMenu.py",
+            "DebuggerMenu.py"
         ],
 
         # Local folder content
@@ -109,7 +110,9 @@ def CheckContent() -> FileIntegrity:
         # Program folder content
         "/Local/Drivers/Batiscan/Programs/" : [
             "FileHandler",
-            "GUI"
+            "GUI",
+            "Communications",
+            "Controls"
         ],
 
         # FileHandler folder content

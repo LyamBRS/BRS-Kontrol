@@ -73,7 +73,26 @@ def GoTo_Network(*args):
         pop up in case it fails for X reason.
     """
     Debug.Start("GoTo_Network")
+    from Local.Drivers.Batiscan.Pages.BatiscanMenu import BatiscanMenu_Screens
+    BatiscanMenu_Screens.SetCaller(BatiscanMenu_Screens, "BatiscanMenu")
+    BatiscanMenu_Screens.SetExiter(BatiscanMenu_Screens, "BatiscanMenu")
+    BatiscanMenu_Screens.Call()
     Debug.End()
+# ----------------------------------------------------------------
+def GoTo_CommunicationDebugger(*args):
+    """
+        GoTo_CommunicationDebugger:
+        ===========================
+        Summary:
+        --------
+        This function's purpose is to
+        launch the communication debug
+        menu of Batiscan.
+    """
+    from Local.Drivers.Batiscan.Pages.DebuggerMenu import DebuggerMenu_Screens
+    DebuggerMenu_Screens.SetCaller(None, "BatiscanMenu")
+    DebuggerMenu_Screens.SetExiter(None, "BatiscanMenu")
+    DebuggerMenu_Screens.Call()
 #====================================================================#
 # Classes
 #====================================================================#
@@ -123,7 +142,7 @@ class DebugNavigationBar():
         #endregion
         #region ------------------------------------------ NavDrawer
         Debug.Log("NavDrawer")
-        self.NavDrawer.add_widget(MDIconButton(icon = "bug", halign = "center", icon_size = 60))
+        self.NavDrawer.add_widget(MDIconButton(icon = "submarine", halign = "center", pos_hint = {"center_x" : 0.5}, icon_size = 60))
         self.NavDrawer.add_widget(self.recycleView)
         self.NavDrawer.orientation = "vertical"
         self.NavDrawer.elevation = Shadow.Elevation.default
@@ -166,6 +185,11 @@ SettingMenuButtons = [
         "name" : _("Network"),
         "icon" : "wifi-cog",
         "function" : GoTo_Network
+    },
+    {
+        "name" : _("Debug"),
+        "icon" : "bug",
+        "function" : GoTo_CommunicationDebugger
     },
     {
         "name" : _("Quit"),

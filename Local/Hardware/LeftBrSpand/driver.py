@@ -245,15 +245,18 @@ class LeftBrSpand(AddonFoundations):
 
         if(LeftBrSpand.gpioLevels == connectedAndInvalid):
             LeftBrSpand.currentConnectionStatus = True
+            Debug.Log("Card is connected")
             Debug.End()
             return True
 
         if(LeftBrSpand.gpioLevels == connectedAndInvalid):
             LeftBrSpand.currentConnectionStatus = True
+            Debug.Log("Card is connected")
             Debug.End()
             return True
 
         LeftBrSpand.currentConnectionStatus = False
+        Debug.Log("Card is NOT connected")
         Debug.End()
         return False
 

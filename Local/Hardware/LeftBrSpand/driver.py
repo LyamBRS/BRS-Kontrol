@@ -193,8 +193,8 @@ class LeftBrSpand(AddonFoundations):
                     title=_("BrSpand Detected"),
                     text=_("A BrSpand card was detected. Do you want to start the connection process? This may cause crashes and unknown behaviors if the application is currently executing tasks and processes. Make sure you are in a main menu before connecting a BrSpand card."),
                     buttons=[
-                        MDFlatButton(text=_("Cancel"), font_style="H4"),
-                        MDFillRoundFlatButton(text=_("Start"), font_style="H4")
+                        MDFlatButton(text=_("Cancel"), font_style="H6"),
+                        MDFillRoundFlatButton(text=_("Start"), font_style="H6")
                     ]
                 )
                 dialog.open()
@@ -273,7 +273,7 @@ class LeftBrSpand(AddonFoundations):
         connectedAndValid = [True, True, False, False]
         connectedAndInvalid = [False, False, False, False]
 
-        if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+        if(LeftBrSpand.gpioLevels == connectedAndValid):
             Debug.End()
             return True
 

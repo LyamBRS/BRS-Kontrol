@@ -14,6 +14,7 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
+from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("driver.py")
 #====================================================================#
 # Imports
@@ -179,6 +180,7 @@ class LeftBrSpand(AddonFoundations):
         usable = LeftBrSpand._IsCardUsable()
 
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
+            KontrolRGB.DisplayUserError()
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 
             if(connected and usable):
@@ -237,13 +239,16 @@ class LeftBrSpand(AddonFoundations):
         connectedAndInvalid = [False, False, False, False]
 
         if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+            LeftBrSpand.currentConnectionStatus = True
             Debug.End()
             return True
 
         if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+            LeftBrSpand.currentConnectionStatus = True
             Debug.End()
             return True
 
+        LeftBrSpand.currentConnectionStatus = False
         Debug.End()
         return False
 

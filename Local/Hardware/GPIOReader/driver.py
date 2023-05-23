@@ -99,6 +99,7 @@ class GPIOReader(AddonFoundations):
             GPIOReader.ChangeProfile,
             GPIOReader.LoadProfile,
             GPIOReader.UnloadProfile,
+            GPIOReader.PeriodicCallback,
             GPIOReader.GetAllHardwareControls,
             GPIOReader.GetAllSoftwareActions,
             GPIOReader.ChangeButtonActionBinding,

@@ -30,12 +30,14 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
+from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
-LoadingLog.Import('KivyMD')
+# LoadingLog.Import('KivyMD')
 #endregion
 from Programs.Pages.PopUps import PopUpTypeEnum, PopUpsHandler
 #====================================================================#
@@ -63,7 +65,7 @@ def InitializeAllHardwareAddons(CreatePopUps:bool = False) -> Execution:
         - `failedAddons` : List of addons that failed to launch.
     """
     Debug.Start("InitializeAllHardwareAddons")
-    
+
     Debug.Log("Getting path of addons folder")
     pathToAddons = os.getcwd()
     pathToAddons = AppendPath(pathToAddons, "/Local/Hardware")
@@ -83,6 +85,9 @@ def InitializeAllHardwareAddons(CreatePopUps:bool = False) -> Execution:
 
             if(CreatePopUps == True):
                 CreatePopUpMessage(addon, result)
+
+    Debug.Log("Starting periodic updater callback.")
+    Clock.schedule_once(PeriodicCallbackExecuter, 5)
     Debug.End()
 #====================================================================#
 def GetNamesOfInstalledAddons(pathToAddons:str) -> list:
@@ -209,6 +214,19 @@ def CreatePopUpMessage(nameOfTheAddon:str, executionReturnedByLaunch:Execution) 
     Debug.Warn(f"This function does not support pop ups for executions of type: {executionReturnedByLaunch}")
     Debug.End()
     return Execution.ByPassed
+#====================================================================#
+def PeriodicCallbackExecuter(*args):
+    """
+        PeriodicCallbackExecuter:
+        =========================
+        Summary:
+        --------
+        This is a callback function executed each 5 seconds
+        by Kivy.clock. Don't execute this manually
+        unless you really know what you're doing.
+    """
+    Addons.ExecutePeriodicCallback()
+    Clock.schedule_once(PeriodicCallbackExecuter, 5)
 #====================================================================#
 # Classes
 #====================================================================#

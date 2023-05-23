@@ -179,8 +179,8 @@ class LeftBrSpand(AddonFoundations):
         connected = LeftBrSpand._IsCardConnected()
         usable = LeftBrSpand._IsCardUsable()
 
+        KontrolRGB.DisplayUserError()
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
-            KontrolRGB.DisplayUserError()
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 
             if(connected and usable):

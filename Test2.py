@@ -1,6 +1,7 @@
 import time
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
+from Local.Hardware.LeftBrSpand.driver import LeftBrSpand
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 Debug.enableConsole = True
 
@@ -12,15 +13,19 @@ result = GPIO.StartDriver()
 if(result != Execution.Passed):
     Debug.Error("FAILED TO START THE DRIVER")
 else:
-    while True:
-        listOfGPIOs = GPIO.GetList()
-        gpio12 = GPIO.GetGPIOLevel(12)
-        gpio13 = GPIO.GetGPIOLevel(13)
-        gpio26 = GPIO.GetGPIOLevel(26)
-        gpio27 = GPIO.GetGPIOLevel(27)
-        Debug.Log(f"Current GPIO levels are {[gpio12, gpio13, gpio26, gpio27]}")
-        time.sleep(1)
+    result = LeftBrSpand.Launch()
+    if(result != Execution.Passed):
+        Debug.Error("FAILED TO START THE DRIVER")
+    else:
+        for i in range(30):
+            try:
+                listOfGPIOs = GPIO.GetList()
+            except:
+                Debug.Error("Fuck up!")
+            Debug.Log(i)
+            LeftBrSpand.PeriodicCallback()
 
+LeftBrSpand.Stop()
 GPIO.StopDriver()
 Debug.End()
 

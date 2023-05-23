@@ -13,10 +13,10 @@ serial_ports = [
 # Define the characters to output
 characters = {
     "/dev/ttyAMA0" : "TX1_B",
-    "/dev/ttyAMA2" : "DEBUG",
+    "/dev/ttyAMA2" : "TX2_A",
     "/dev/ttyAMA3" : "TX1_A",
     "/dev/ttyAMA4" : "TX2_B",
-    "/dev/ttyAMA5" : "TX2_A", 
+    "/dev/ttyAMA5" : "DEBUG", 
 }
 
 print("========================================== - [BRS]")

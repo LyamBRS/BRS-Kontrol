@@ -3,16 +3,15 @@ import time
 
 # Define the serial port configurations
 serial_ports = [
-    "/dev/ttyAMA0",  # Serial 0
-    "/dev/ttyAMA1",  # Serial 1
-    "/dev/ttyAMA2",  # Serial 2
-    "/dev/ttyAMA3",  # Serial 3
-    "/dev/ttyAMA4",  # Serial 4
-    "/dev/ttyAMA5"   # Serial 5
+    "/dev/ttyAMA0",  # Serial 0 -> A -> TX1_B / RX1_B
+    "/dev/ttyAMA2",  # Serial 2 -> D -> DEBUG
+    "/dev/ttyAMA3",  # Serial 3 -> C -> TX1_A / RX1_A
+    "/dev/ttyAMA4",  # Serial 4 -> E -> TX2_B / RX2_B
+    "/dev/ttyAMA5"   # Serial 5 -> F -> TX2_A / RX2_A
 ]
 
 # Define the characters to output
-characters = ["A", "B", "C", "D", "E", "F"]
+characters = ["TX1_B", "B", "TX1_A", "DEBUG", "TX2_B", "TX2_A"]
 
 print("========================================== - [BRS]")
 print("Sending A,B,C,D,E at 9600 baud on serial ports...")

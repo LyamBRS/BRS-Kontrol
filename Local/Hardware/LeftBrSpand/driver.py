@@ -201,7 +201,7 @@ class LeftBrSpand(AddonFoundations):
                     title=_("BrSpand Lost"),
                     text=_("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),
                     buttons=[
-                        MDFillRoundFlatButton(text=_("Ok"), font_style="H4")
+                        MDFillRoundFlatButton(text=_("Ok"), font_style="H6")
                     ]
                 )
                 dialog.open()
@@ -213,7 +213,7 @@ class LeftBrSpand(AddonFoundations):
                     title=_("BrSpand Error"),
                     text=_("The BrSpand card connected to the left USB-C port cannot be used. This is either an error or because the card does not use their second connector. If your card only has one connector, there might be an issue with it."),
                     buttons=[
-                        MDFillRoundFlatButton(text=_("Ok"), font_style="H4")
+                        MDFillRoundFlatButton(text=_("Ok"), font_style="H6")
                     ]
                 )
                 dialog.open()

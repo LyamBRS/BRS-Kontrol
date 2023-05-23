@@ -14,6 +14,7 @@ LoadingLog.Import("Kivy")
 from kivy.core.window import Window
 from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager
+import threading
 # -------------------------------------------------------------------
 LoadingLog.Import("KivyMD")
 from kivymd.app import MDApp
@@ -80,8 +81,10 @@ class Application(MDApp):
         Debug.enableConsole = True
         Debug.Start("build")
 
-        Debug.Log("Turning off cursor")
-        Window.show_cursor = False
+
+        if(Information.platform == "Linux"):
+            Debug.Log("Turning off cursor")
+            Window.show_cursor = False
 
         Debug.Log("Turning off aliasing")
         Config.set("graphics", "multisamples", 0)

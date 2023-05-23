@@ -85,15 +85,15 @@ class LeftBrSpand(AddonFoundations):
         Debug.Log("Creating AddonInfoHandler")
         LeftBrSpand.addonInformation = AddonInfoHandler(
             "LeftBrSpand",
-            "ADXL343 on board LeftBrSpand hardware extension.",
+            "BrSpand handler and detector for left USB-C port",
             "0.0.1",
             "hardware",
             None,
             False,
-            True,
             False,
             False,
-            "integrated-circuit-chip",
+            False,
+            "expansion-card-variant",
             LeftBrSpand.Launch,
             LeftBrSpand.Stop,
             LeftBrSpand.Uninstall,
@@ -122,13 +122,6 @@ class LeftBrSpand(AddonFoundations):
             Debug.End()
             return result
 
-        result = ADXL343.StartDriver()
-        if(result != Execution.Passed):
-            Debug.Error("Failed to start backend driver ADXl343")
-            LeftBrSpand.addonInformation.DockAddonToApplication(False)
-            Debug.End()
-            return Execution.Failed
-
         Debug.Log("Addon started successfully.")
         Debug.Log("Adding addon to application...")
         LeftBrSpand.addonInformation.DockAddonToApplication(True)
@@ -150,18 +143,10 @@ class LeftBrSpand(AddonFoundations):
         Debug.Start("Stop")
 
         if(LeftBrSpand.state == True):
-            Debug.Log("Stopping ADXL343")
-            result = ADXL343.StopDriver()
-            if(result != Execution.Passed):
-                Debug.Error("Error when trying to stop ADXL343")
-                Debug.End()
-                return Execution.Failed
-            Debug.Log("ADXL343 is now OFF")
-            LeftBrSpand.profileData.SaveFile()
             Debug.End()
             return Execution.Passed
         else:
-            Debug.Log("Unecessary. ADXL343 is not running.")
+            Debug.Log("Unecessary. Addon is not running.")
             Debug.End()
             return Execution.Unecessary
     #endregion
@@ -253,4 +238,4 @@ class LeftBrSpand(AddonFoundations):
     #endregion
     pass
 #====================================================================#
-LoadingLog.End("ADXL343.py")
+LoadingLog.End("driver.py")

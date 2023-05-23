@@ -180,11 +180,6 @@ class LeftBrSpand(AddonFoundations):
         connected = LeftBrSpand._IsCardConnected()
         usable = LeftBrSpand._IsCardUsable()
 
-        if(connected):
-            KontrolRGB.DisplayUserError()
-        else:
-            KontrolRGB.DisplayPopUpAnimation(PopUpType=PopUpTypeEnum.Warning)
-
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 
@@ -245,13 +240,11 @@ class LeftBrSpand(AddonFoundations):
 
         if(LeftBrSpand.gpioLevels == connectedAndValid):
             LeftBrSpand.currentConnectionStatus = True
-            Debug.Log("Card is connected")
             Debug.End()
             return True
 
         if(LeftBrSpand.gpioLevels == connectedAndInvalid):
             LeftBrSpand.currentConnectionStatus = True
-            Debug.Log("Card is connected")
             Debug.End()
             return True
 

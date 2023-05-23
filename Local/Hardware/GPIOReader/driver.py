@@ -159,6 +159,20 @@ class GPIOReader(AddonFoundations):
             Debug.Log("Unecessary. GPIOReader is not running.")
             Debug.End()
             return Execution.Unecessary
+    # -----------------------------------
+    def PeriodicCallback(*args) -> Execution:
+        """
+            PeriodicCallback:
+            =================
+            Summary:
+            --------
+            Periodically executed function
+            that updates the list within
+            the :ref:`GPIO` backend class by calling
+            `GPIO.GetList()`
+        """
+        GPIO.GetList()
+        return Execution.Passed
     #endregion
     #region --------------------- PRIVATE
 

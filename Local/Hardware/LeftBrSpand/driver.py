@@ -293,8 +293,6 @@ class LeftBrSpand(AddonFoundations):
             by this BrSpand card port.
         """
         Debug.Start("_GetCurrentGPIOLevels")
-        list = GPIO.GetList()
-
         gpio12 = GPIO.GetGPIOLevel(12)
         gpio13 = GPIO.GetGPIOLevel(13)
         gpio26 = GPIO.GetGPIOLevel(26)

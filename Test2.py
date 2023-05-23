@@ -1,30 +1,69 @@
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, PrintPlane, NewArrival
+import time
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import VarTypes
+from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 Debug.enableConsole = True
 
-classes = [
-    VarTypes.Bool,
-    VarTypes.String,
-    VarTypes.Float,
-    VarTypes.Int
-]
 
-variables = [
-    True,
-    "Among us",
-    0.123456789,
-    4096
-]
+Debug.Start("Testing")
 
-plane = Plane(128, variables=variables, wantedClasses=classes)
+Debug.Log("Staring GPIO")
+result = GPIO.StartDriver()
+if(result != Execution.Passed):
+    Debug.Error("FAILED TO START THE DRIVER")
+else:
+    while True:
+        listOfGPIOs = GPIO.GetList()
+        gpio12 = GPIO.GetGPIOLevel(12)
+        gpio13 = GPIO.GetGPIOLevel(13)
+        gpio26 = GPIO.GetGPIOLevel(26)
+        gpio27 = GPIO.GetGPIOLevel(27)
+        Debug.Log(f"Current GPIO levels are {[gpio12, gpio13, gpio26, gpio27]}")
+        time.sleep(1)
 
-PrintPlane(plane)
+GPIO.StopDriver()
+Debug.End()
 
-print("\n\n\n")
 
-arrivedPlane = NewArrival(plane.passengers, classes)
-PrintPlane(arrivedPlane)
+
+
+
+
+
+
+
+
+
+
+
+
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, PrintPlane, NewArrival
+# from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import VarTypes
+# Debug.enableConsole = True
+# 
+# classes = [
+    # VarTypes.Bool,
+    # VarTypes.String,
+    # VarTypes.Float,
+    # VarTypes.Int
+# ]
+# 
+# variables = [
+    # True,
+    # "Among us",
+    # 0.123456789,
+    # 4096
+# ]
+# 
+# plane = Plane(128, variables=variables, wantedClasses=classes)
+# 
+# PrintPlane(plane)
+# 
+# print("\n\n\n")
+# 
+# arrivedPlane = NewArrival(plane.passengers, classes)
+# PrintPlane(arrivedPlane)
 
 # from kivy.uix.boxlayout import BoxLayout
 # from kivymd.app import MDApp

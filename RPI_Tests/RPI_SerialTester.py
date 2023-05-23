@@ -11,12 +11,18 @@ serial_ports = [
 ]
 
 # Define the characters to output
-characters = ["TX1_B", "B", "TX1_A", "DEBUG", "TX2_B", "TX2_A"]
+characters = {
+    "/dev/ttyAMA0" : "TX1_B",
+    "/dev/ttyAMA2" : "DEBUG",
+    "/dev/ttyAMA3" : "TX1_A",
+    "/dev/ttyAMA4" : "TX2_B",
+    "/dev/ttyAMA5" : "TX2_A", 
+}
 
 print("========================================== - [BRS]")
-print("Sending A,B,C,D,E at 9600 baud on serial ports...")
+print("Sending at 9600 baud on serial ports...")
 # Open each serial port and send the corresponding character
-for port, character in zip(serial_ports, characters):
+for port, character in characters.items():
     try:
         ser = serial.Serial(port, baudrate=9600, timeout=1)
         ser.write(character.encode())

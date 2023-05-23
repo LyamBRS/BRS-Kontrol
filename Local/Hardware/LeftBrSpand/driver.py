@@ -104,6 +104,7 @@ class LeftBrSpand(AddonFoundations):
             LeftBrSpand.ChangeProfile,
             LeftBrSpand.LoadProfile,
             LeftBrSpand.UnloadProfile,
+            LeftBrSpand.PeriodicCallback,
             LeftBrSpand.GetAllHardwareControls,
             LeftBrSpand.GetAllSoftwareActions,
             LeftBrSpand.ChangeButtonActionBinding,

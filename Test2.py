@@ -24,6 +24,7 @@ else:
                 Debug.Error("Fuck up!")
             Debug.Log(i)
             LeftBrSpand.PeriodicCallback()
+            time.sleep(1)
 
 LeftBrSpand.Stop()
 GPIO.StopDriver()

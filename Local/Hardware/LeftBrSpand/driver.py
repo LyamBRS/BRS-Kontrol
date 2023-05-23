@@ -24,16 +24,19 @@ import os
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
-from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import AddonFoundations, AddonInfoHandler, AddonEnum
 #endregion
 #region -------------------------------------------------------- Kivy
 # LoadingLog.Import("Kivy")
 #endregion
 #region ------------------------------------------------------ KivyMD
-# LoadingLog.Import('KivyMD')
+LoadingLog.Import('KivyMD')
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.button import MDFlatButton, MDFillRoundFlatButton
 #endregion
 #====================================================================#
 # Variables
@@ -57,6 +60,7 @@ class LeftBrSpand(AddonFoundations):
     #region   --------------------------- MEMBERS
     addonInformation:AddonInfoHandler = None
     oldConnectionStatus:bool = False
+    currentConnectionStatus:bool = False
     gpioLevels:list = []
     """
         Used to keep track of when a card
@@ -150,6 +154,72 @@ class LeftBrSpand(AddonFoundations):
             Debug.Log("Unecessary. Addon is not running.")
             Debug.End()
             return Execution.Unecessary
+    # -----------------------------------
+    def PeriodicCallback(*args) -> Execution:
+        """
+            PeriodicCallback:
+            =================
+            Summary:
+            --------
+            Checks if a BrSpand card
+            is currently connected to
+            Kontrol's Left USB-C port
+            periodically. Calls dialogs
+            if something happens.
+        """
+        Debug.Start("PeriodicCallback")
+
+        if(LeftBrSpand.state != True):
+            Debug.Error("LeftBrSpand addon is not started")
+            Debug.End()
+            return Execution.ByPassed
+
+        LeftBrSpand._GetCurrentGPIOLevels()
+        connected = LeftBrSpand._IsCardConnected()
+        usable = LeftBrSpand._IsCardUsable()
+
+        if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
+            LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
+
+            if(connected and usable):
+                dialog = MDDialog(
+                    title=_("BrSpand Detected"),
+                    text=_("A BrSpand card was detected. Do you want to start the connection process? This may cause crashes and unknown behaviors if the application is currently executing tasks and processes. Make sure you are in a main menu before connecting a BrSpand card."),
+                    buttons=[
+                        MDFlatButton(text=_("Cancel"), font_style="H4"),
+                        MDFillRoundFlatButton(text=_("Start"), font_style="H4")
+                    ]
+                )
+                dialog.open()
+                Debug.End()
+                return Execution.Passed
+
+            if(not connected):
+                dialog = MDDialog(
+                    title=_("BrSpand Lost"),
+                    text=_("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),
+                    buttons=[
+                        MDFillRoundFlatButton(text=_("Ok"), font_style="H4")
+                    ]
+                )
+                dialog.open()
+                Debug.End()
+                return Execution.Passed
+
+            if(connected and not usable):
+                dialog = MDDialog(
+                    title=_("BrSpand Error"),
+                    text=_("The BrSpand card connected to the left USB-C port cannot be used. This is either an error or because the card does not use their second connector. If your card only has one connector, there might be an issue with it."),
+                    buttons=[
+                        MDFillRoundFlatButton(text=_("Ok"), font_style="H4")
+                    ]
+                )
+                dialog.open()
+                Debug.End()
+                return Execution.Passed
+
+        Debug.End()
+        return Execution.Unecessary
     #endregion
     #region --------------------- PRIVATE
     def _IsCardConnected() -> bool:
@@ -163,7 +233,19 @@ class LeftBrSpand(AddonFoundations):
         """
         Debug.Start("_IsCardConnected")
 
+        connectedAndValid = [True, True, False, False]
+        connectedAndInvalid = [False, False, False, False]
+
+        if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+            Debug.End()
+            return True
+
+        if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+            Debug.End()
+            return True
+
         Debug.End()
+        return False
 
     def _IsCardUsable() -> bool:
         """
@@ -175,8 +257,19 @@ class LeftBrSpand(AddonFoundations):
             or not by Kontrol.
         """
         Debug.Start("_IsCardUsable")
+        connectedAndValid = [True, True, False, False]
+        connectedAndInvalid = [False, False, False, False]
+
+        if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+            Debug.End()
+            return True
+
+        if(LeftBrSpand.gpioLevels == connectedAndInvalid):
+            Debug.End()
+            return False
 
         Debug.End()
+        return False
 
     def _GetCurrentGPIOLevels() -> list:
         """

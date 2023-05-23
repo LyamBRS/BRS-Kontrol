@@ -15,6 +15,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
 from Programs.Local.Hardware.RGB import KontrolRGB
+from Programs.Pages.PopUps import PopUpTypeEnum
 LoadingLog.Start("driver.py")
 #====================================================================#
 # Imports
@@ -179,7 +180,11 @@ class LeftBrSpand(AddonFoundations):
         connected = LeftBrSpand._IsCardConnected()
         usable = LeftBrSpand._IsCardUsable()
 
-        KontrolRGB.DisplayUserError()
+        if(connected):
+            KontrolRGB.DisplayUserError()
+        else:
+            KontrolRGB.DisplayPopUpAnimation(PopUpType=PopUpTypeEnum.Warning)
+
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 

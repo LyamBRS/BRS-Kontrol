@@ -3,11 +3,11 @@ import time
 
 # Define the serial port configurations
 serial_ports = [
-    "/dev/serial0",  # Serial 1
-    "/dev/serial1",  # Serial 2
-    "/dev/serial2",  # Serial 3
-    "/dev/serial3",  # Serial 4
-    "/dev/serial4"   # Serial 5
+    "/dev/ttyAMA0",  # Serial 1
+    "/dev/ttyAMA1",  # Serial 2
+    "/dev/ttyAMA2",  # Serial 3
+    "/dev/ttyAMA3",  # Serial 4
+    "/dev/ttyAMA4"   # Serial 5
 ]
 
 # Define the characters to output

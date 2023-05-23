@@ -191,6 +191,7 @@ class Accelerometer(AddonFoundations):
             Accelerometer.ChangeProfile,
             Accelerometer.LoadProfile,
             Accelerometer.UnloadProfile,
+            Accelerometer.PeriodicCallback,
             Accelerometer.GetAllHardwareControls,
             Accelerometer.GetAllSoftwareActions,
             Accelerometer.ChangeButtonActionBinding,
@@ -822,4 +823,4 @@ class Accelerometer(AddonFoundations):
     #endregion
     pass
 #====================================================================#
-LoadingLog.End("ADXL343.py")
+LoadingLog.End("driver.py")

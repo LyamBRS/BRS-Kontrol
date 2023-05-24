@@ -956,12 +956,12 @@ def HardwareAddons() -> bool:
     #region ====== Step 1
     Debug.Log("Step 1 -> Initializing All Addons...")
 
-    try:
-        InitializeAllHardwareAddons(CreatePopUps=True)
-        Debug.Log("Function executed successfully.")
-    except:
-        Debug.Error("Epic fail occured when executing InitializeAllHardwareAddons")
-        error = "InitializeAllHardwareAddons crashed. Please submit a bug report to BRS, or uninstall recently installed addons."
+    # try:
+    InitializeAllHardwareAddons(CreatePopUps=True)
+    Debug.Log("Function executed successfully.")
+    # except:
+        # Debug.Error("Epic fail occured when executing InitializeAllHardwareAddons")
+        # error = "InitializeAllHardwareAddons crashed. Please submit a bug report to BRS, or uninstall recently installed addons."
 
     if(error != None):
         Debug.Error("Fatal error occured when initializing all hardware addons.")

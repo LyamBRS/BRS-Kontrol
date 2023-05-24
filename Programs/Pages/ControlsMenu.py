@@ -1556,7 +1556,9 @@ class BinderSelectorMenu(Screen):
 
         #region ---------------------------- Cards
         if(HeldData.whatIsBeingBinded == "axes"):
+            Debug.Log("Listing addon's hardware axes")
             for addonName, addonData in Addons._listedAddons.items():
+                Debug.Log(f"it is {addonData[AddonEnum.information][AddonEnum.Information.isCompatible]} that {addonData[AddonEnum.information][AddonEnum.Information.name]} is compatible and it is {addonData[AddonEnum.information][AddonEnum.Information.hasHardwareAxes]} that it has axes to bind.")
                 if(addonData[AddonEnum.information][AddonEnum.Information.hasHardwareAxes] and addonData[AddonEnum.information][AddonEnum.Information.isCompatible]):
                     swiperLayout = MDSwiperItem()
                     swiperLayout.padding = 40
@@ -1565,6 +1567,7 @@ class BinderSelectorMenu(Screen):
                     swiperLayout.add_widget(card)
                     self.SwiperLayout.add_widget(swiperLayout)
         else:
+            Debug.Log("Listing addon's hardware buttons")
             for addonName, addonData in Addons._listedAddons.items():
                 if(addonData[AddonEnum.information][AddonEnum.Information.hasHardwareButtons] and addonData[AddonEnum.information][AddonEnum.Information.isCompatible]):
                     swiperLayout = MDSwiperItem()
@@ -1805,6 +1808,7 @@ class BindSelectMenu(Screen):
         Debug.Log(f"Unbinding {HeldData.nameOfTheSoftwareBind} from {HeldData.whoHasItCurrentlyBinded}")
         if(HeldData.whatIsBeingBinded == "axes"):
             Addons.UnbindHardwareAxisFromEveryone(HeldData.nameOfTheSoftwareBind)
+            Debug.Log(f"Binding {HeldData.whoIsTryingToBindIt}'s {hardwareName} to {HeldData.nameOfTheSoftwareBind}")
             result = Addons.BindHardwareAxis(HeldData.whoIsTryingToBindIt, HeldData.nameOfTheSoftwareBind, hardwareName)
         else:
             Addons.UnbindHardwareButtonFromEveryone(HeldData.nameOfTheSoftwareBind)

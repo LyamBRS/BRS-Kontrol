@@ -12,6 +12,7 @@
 #====================================================================#
 # Loading Logs
 #====================================================================#
+from random import getstate
 from token import EXACT_TOKEN_TYPES
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 LoadingLog.Start("driver.py")
@@ -167,39 +168,39 @@ class Accelerometer(AddonFoundations):
             - `Execution.Failed` = Error occured
             - `Execution.Incompatibility` = Failed to verify for compatibility.
         """
-        Debug.Start("Launch")
+        Debug.Start("Accelerometer -> Launch")
 
         Debug.Log("Creating AddonInfoHandler")
         Accelerometer.addonInformation = AddonInfoHandler(
-            "Accelerometer",
-            "ADXL343 on board accelerometer hardware extension.",
-            "0.0.1",
-            "hardware",
-            None,
-            False,
-            True,
-            False,
-            False,
-            "integrated-circuit-chip",
-            Accelerometer.Launch,
-            Accelerometer.Stop,
-            Accelerometer.Uninstall,
-            Accelerometer.Update,
-            Accelerometer.GetState,
-            Accelerometer.ClearProfile,
-            Accelerometer.SaveProfile,
-            Accelerometer.ChangeProfile,
-            Accelerometer.LoadProfile,
-            Accelerometer.UnloadProfile,
-            Accelerometer.PeriodicCallback,
-            Accelerometer.GetAllHardwareControls,
-            Accelerometer.GetAllSoftwareActions,
-            Accelerometer.ChangeButtonActionBinding,
-            Accelerometer.ChangeAxisBinding,
-            Accelerometer.UnbindButtonBinding,
-            Accelerometer.UnbindAxisBinding,
-            Accelerometer.ChangeButtonActionBinding,
-            Accelerometer.ChangeAxisActionBinding
+            name="Accelerometer",
+            description="ADXL343 on board accelerometer hardware extension.",
+            version="0.0.1",
+            type="hardware",
+            repository=None,
+            hasHardwareButtons= False,
+            hasHardwareAxes= True,
+            readsSoftwareButtons= False,
+            readsSoftwareAxes= False,
+            MDIcon= "integrated-circuit-chip",
+            LaunchFunction = Accelerometer.Launch,
+            StopFunction = Accelerometer.Stop,
+            UninstallFunction = Accelerometer.Uninstall,
+            UpdateFunction = Accelerometer.Update,
+            GetStateFunction = Accelerometer.GetState,
+            ClearProfileFunction= Accelerometer.ClearProfile,
+            SaveProfile = Accelerometer.SaveProfile,
+            ChangeProfile= Accelerometer.ChangeProfile,
+            LoadProfile= Accelerometer.LoadProfile,
+            UnloadProfile= Accelerometer.UnloadProfile,
+            PeriodicCallback= Accelerometer.PeriodicCallback,
+            GetAllHardwareControls= Accelerometer.GetAllHardwareControls,
+            GetAllSoftwareActions= Accelerometer.GetAllSoftwareActions,
+            ChangeButtonActionBinding= Accelerometer.ChangeButtonActionBinding,
+            ChangeAxisActionBinding= Accelerometer.ChangeAxisActionBinding,
+            UnbindButtonBinding= Accelerometer.UnbindButtonBinding,
+            UnbindAxisBinding= Accelerometer.UnbindAxisBinding,
+            ChangeButtonBinding= Accelerometer.ChangeButtonBinding,
+            ChangeAxisBinding= Accelerometer.ChangeAxisBinding
         )
 
         result = Accelerometer.VerifyForExecution()
@@ -212,7 +213,7 @@ class Accelerometer(AddonFoundations):
 
         result = ADXL343.StartDriver()
         if(result != Execution.Passed):
-            Debug.Error("Failed to start backend driver ADXl343")
+            Debug.Error("Failed to start backend driver ADXL343")
             Accelerometer.addonInformation.DockAddonToApplication(False)
             Debug.End()
             return Execution.Failed
@@ -235,7 +236,7 @@ class Accelerometer(AddonFoundations):
             Gone, reduced to atoms.
             Oh, and it unbinds stuff too.
         """
-        Debug.Start("Stop")
+        Debug.Start("Accelerometer -> Stop")
 
         if(Accelerometer.state == True):
             Debug.Log("Stopping ADXL343")
@@ -268,8 +269,9 @@ class Accelerometer(AddonFoundations):
             - `Execution.Failed` = Something fucked up.
             - `dict` see :ref:`hardwareControls`
         """
+        Debug.Start("Accelerometer -> GetAllHardwareControls")
         if(Accelerometer.state == True):
-            Debug.Start("Accelerometer -> GetAllHardwareControls")
+            Debug.Log("Returning proper values")
             Debug.End()
             return Accelerometer.hardwareControls
         else:
@@ -367,7 +369,7 @@ class Accelerometer(AddonFoundations):
             a specific profile with the
             currently loaded informations.
         """
-        Debug.Start("SaveProfile")
+        Debug.Start("Accelerometer -> SaveProfile")
 
         if(Accelerometer.state == True):
             if(Accelerometer.loadedProfileName == None and profileToSave == None):
@@ -411,7 +413,7 @@ class Accelerometer(AddonFoundations):
             Attempts to clear a given profile
             from the cache of this addon.
         """
-        Debug.Start("ClearProfile")
+        Debug.Start("Accelerometer -> ClearProfile")
         if(Accelerometer.profileData.jsonData == None):
             Debug.Error("No json is loaded. Accelerometer cannot delete anything.")
             Debug.End()
@@ -447,7 +449,7 @@ class Accelerometer(AddonFoundations):
             - `nameOfSoftwareAxis` : Axis taken from SoftwareAxis in controls.py
             - `nameOfHardwareAxis` : Hardware axis to bind to :ref:`nameOfSoftwareAxis`
         """
-        Debug.Start(AddonEnum.ChangeAxisBinding)
+        Debug.Start("Accelerometer -> ChangeAxisBinding")
 
         if(Accelerometer.state == True):
             result = Accelerometer.UnbindAxisBinding(nameOfSoftwareAxis)
@@ -501,7 +503,7 @@ class Accelerometer(AddonFoundations):
             ----------
             - `nameOfSoftwareAxis` : Axis taken from SoftwareAxis in controls.py that needs to be unbinded.
         """
-        Debug.Start(AddonEnum.UnbindAxisBinding)
+        Debug.Start("Accelerometer -> UnbindAxisBinding")
 
         if(Accelerometer.state):
             whateverAxisHadItBinded = Accelerometer._WhoHasThatAxisBinded(nameOfSoftwareAxis)

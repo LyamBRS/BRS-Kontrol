@@ -1,37 +1,25 @@
-import timeit
-import struct
-import numpy as np
-
-my_bytes = b'\x02\x00\x01\x00\x00\xff\x03\xff'
-
-def convert_list_comprehension():
-    val = [int(byte) for byte in my_bytes]
-    print(val)
-    return val
-
-def convert_list_map():
-    val = list(map(int, my_bytes))
-    print(val)
-    return val
-
-def convert_list_struct():
-    val = struct.unpack('B' * len(my_bytes), my_bytes)
-    valList = list(val)
-    print(valList)
-    return valList
-
-def convert_list_numpy():
-    val = np.frombuffer(my_bytes, dtype=np.uint8)
-    print(val)
-    return val
-
-print("List comprehension:", timeit.timeit(convert_list_comprehension, number=1))
-print("List map:          ", timeit.timeit(convert_list_map, number=1))
-print("struct:            ", timeit.timeit(convert_list_struct, number=1))
-print("numpy:             ", timeit.timeit(convert_list_numpy, number=1))
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, VarTypes, Passenger
 
 
+data = [
+    4206969,                                     # unique device ID
+    1,                                              # BFIO version
+    0,                                              # Device type
+    1,                                              # Device status
+    "https://github.com/LyamBRS/BrSpand_GamePad.git",   # Git repository of the device.
+    "GamePad",
+    "Rev A"
+]
 
+vartypes = [VarTypes.Unsigned.LongLong, VarTypes.Unsigned.LongLong, VarTypes.Unsigned.Char, VarTypes.Unsigned.Char, VarTypes.String, VarTypes.String, VarTypes.String]
+
+universalInfo = Plane(7, data, vartypes)
+
+for passenger in universalInfo.passengers:
+    print(passenger.value_8bits[0])
+    print(",")
+    print(passenger.value_8bits[1])
+    print(",")
 
 
 

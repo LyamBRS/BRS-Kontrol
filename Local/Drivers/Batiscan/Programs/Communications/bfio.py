@@ -1,4 +1,4 @@
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, NewArrival, VarTypes, Execution, Passenger, PassengerTypes, Debug
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, NewArrival, VarTypes, Execution, Passenger, PassengerTypes, Debug, BFIO
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
 
@@ -276,8 +276,8 @@ def SendAPlaneOnUDP(functionID:int) -> Execution:
         --------
         Sends a plane on the UDP made of given parameters
     """
-    ipAddress = "10.0.0.135"
-    port = 4211
+    ipAddress = "192.168.4.2"
+    port = BFIO.UDP.portToSendToAccessPoint
 
     try:
         Debug.enableConsole = False

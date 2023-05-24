@@ -46,6 +46,15 @@ from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
 #====================================================================#
 from kivy.properties import StringProperty
 class CustomThreeLineIconListItem(ThreeLineRightIconListItem):
+    """
+        CustomThreeLineIconListItem:
+        ============================
+        Summary:
+        --------
+        This is used to display a widget
+        in the debugger menu that when clicked,
+        tried to send an UDP message to Batiscan.
+    """
     icon = StringProperty()
 
     def __init__(self, **kwargs):

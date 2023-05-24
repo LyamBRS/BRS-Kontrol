@@ -1852,8 +1852,9 @@ class BindSelectMenu(Screen):
         Debug.Start("UpdateShownValues")
 
         if(AppManager.manager.current == "BindSelectMenu"):
-            current = 0
+            Debug.Log(f"Getting hardware controls from {HeldData.whoIsTryingToBindIt}")
             hardwareData = Addons._listedAddons[HeldData.whoIsTryingToBindIt][AddonEnum.GetAllHardwareControls]()
+            self.recycleView.data = []
             for name,dictionary in hardwareData[HeldData.whatIsBeingBinded].items():
 
                 try:
@@ -1863,18 +1864,21 @@ class BindSelectMenu(Screen):
                 except:
                     currentValue = "GETTER ERROR"
 
-                if(dictionary["bindedTo"] != None):
+                if(dictionary["binded"] == True):
                     secondaryText:str = _("Binded to: ") + dictionary["bindedTo"]
                 else:
                     secondaryText:str = _("Available")
 
-                self.recycleView.data[current]["text"] = name
-                self.recycleView.data[current]["secondary_text"] = secondaryText
-                self.recycleView.data[current]["tertiary_text"] = currentValue
-                current = current + 1
-
+                self.recycleView.data.insert(0,
+                                            {
+                                                "text" : name,
+                                                "secondary_text" : secondaryText,
+                                                "tertiary_text" : currentValue,
+                                                "halign" : "left",
+                                                "on_release" : (lambda x: lambda: self.ButtonPressed(x))([name])
+                                            })
+            Clock.schedule_once(self.UpdateShownValues, 3)
             self.recycleView.refresh_from_data()
-            Clock.schedule_once(self.UpdateShownValues, 1)
         else:
             Debug.Warn("Stopping value updates.")
         Debug.End()

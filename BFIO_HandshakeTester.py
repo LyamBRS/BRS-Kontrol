@@ -21,6 +21,7 @@ def InitUartClass():
         Debug.End()
         return result
     Debug.Log("UART drivers started.")
+    return Execution.Passed
 
 def StopUART():
     return UART.StopDriver()

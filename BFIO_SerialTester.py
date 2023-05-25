@@ -111,7 +111,11 @@ def TestBFIOArrivals():
         for plane in receivedPlanes:
             if plane.passedTSA == True:
                 print("A plane passed TSA! O_O")
-                break
+                print(f"\n")
+                print(f"\n")
+                print(f"\n")
+                PrintPlane(plane)
+                return
             else:
                 print("A plane failed TSA checks")
 ################################################

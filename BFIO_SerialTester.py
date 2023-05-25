@@ -114,7 +114,9 @@ def TestBFIOArrivals():
                 print(f"\n")
                 print(f"\n")
                 print(f"\n")
+                Debug.enableConsole = True
                 PrintPlane(plane)
+                Debug.enableConsole = False
                 return
             else:
                 print("A plane failed TSA checks")

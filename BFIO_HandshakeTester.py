@@ -48,6 +48,7 @@ if(__name__ == "__main__"):
                 print("Reading received planes:")
 
                 newGroup = UART.GetOldestReceivedGroupOfPassengers()
+                print(f"Received passengers = {newGroup}")
                 if(newGroup == Execution.Failed):
                     print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
                 else:

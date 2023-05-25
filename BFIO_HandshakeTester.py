@@ -51,12 +51,15 @@ if(__name__ == "__main__"):
                 if(newGroup == Execution.Failed):
                     print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
                 else:
-                    planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
-                    if(planeIsMandatory):
-                        plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
-                        if(plane.passedTSA):
-                            print("WHAT ?!? IT WORKED?")
-                            break
+                    if(newGroup != None):
+                        planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
+                        if(planeIsMandatory):
+                            plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
+                            if(plane.passedTSA):
+                                print("WHAT ?!? IT WORKED?")
+                                break
+                    else:
+                        print("new passenger group is null.")
     print("Stopping threads")
     UART.StopDriver()
 

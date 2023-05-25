@@ -1,5 +1,5 @@
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader, Debug, Execution, time
-from Local.Drivers.Batiscan.Programs.Communications.bfio import PlaneIDs, SendAPlaneOnUDP
+from Local.Drivers.Batiscan.Programs.Communications.bfio import PlaneIDs, SendAPlaneOnUDP, MakeAPlaneOutOfArrivedBytes
 Debug.enableConsole = True
 
 # DONT FORGET TO SOMEHOW FIND WAY TO CHECK WTF IS BEING SENT
@@ -21,8 +21,11 @@ for reading in range(30):
         if(receivedMessage == None):
             break
         for sender,message in receivedMessage.items():
-            Debug.Log(f"New message from {sender}: {str(message)}")
+            Debug.Log(f"New plane from {sender}:")
+            arrival = MakeAPlaneOutOfArrivedBytes(message)
 
+            if (arrival.passedTSA):
+                Debug.Log(">>> Plane passed TSA")
 
 UDPReader.StopDriver()
 Debug.End()

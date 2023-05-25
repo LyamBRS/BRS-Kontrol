@@ -1,34 +1,64 @@
-import time
-from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
-from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
-from Local.Hardware.LeftBrSpand.driver import LeftBrSpand
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
-Debug.enableConsole = True
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, VarTypes, Passenger
 
 
-Debug.Start("Testing")
+data = [
+    4206969,                                     # unique device ID
+    1,                                              # BFIO version
+    0,                                              # Device type
+    1,                                              # Device status
+    "https://github.com/LyamBRS/BrSpand_GamePad.git",   # Git repository of the device.
+    "GamePad",
+    "Rev A"
+]
 
-Debug.Log("Staring GPIO")
-result = GPIO.StartDriver()
-if(result != Execution.Passed):
-    Debug.Error("FAILED TO START THE DRIVER")
-else:
-    result = LeftBrSpand.Launch()
-    if(result != Execution.Passed):
-        Debug.Error("FAILED TO START THE DRIVER")
-    else:
-        for i in range(30):
-            try:
-                listOfGPIOs = GPIO.GetList()
-            except:
-                Debug.Error("Fuck up!")
-            Debug.Log(i)
-            LeftBrSpand.PeriodicCallback()
-            time.sleep(1)
+vartypes = [VarTypes.Unsigned.LongLong, VarTypes.Unsigned.LongLong, VarTypes.Unsigned.Char, VarTypes.Unsigned.Char, VarTypes.String, VarTypes.String, VarTypes.String]
 
-LeftBrSpand.Stop()
-GPIO.StopDriver()
-Debug.End()
+universalInfo = Plane(7, data, vartypes)
+
+for passenger in universalInfo.passengers:
+    print(passenger.value_8bits[0])
+    print(",")
+    print(passenger.value_8bits[1])
+    print(",")
+
+
+
+
+
+
+
+
+# import time
+# from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+# from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
+# from Local.Hardware.LeftBrSpand.driver import LeftBrSpand
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+# Debug.enableConsole = True
+# 
+# 
+# Debug.Start("Testing")
+# 
+# Debug.Log("Staring GPIO")
+# result = GPIO.StartDriver()
+# if(result != Execution.Passed):
+    # Debug.Error("FAILED TO START THE DRIVER")
+# else:
+    # result = LeftBrSpand.Launch()
+    # if(result != Execution.Passed):
+        # Debug.Error("FAILED TO START THE DRIVER")
+    # else:
+        # for i in range(30):
+            # try:
+                # listOfGPIOs = GPIO.GetList()
+            # except:
+                # Debug.Error("Fuck up!")
+            # Debug.Log(i)
+            # LeftBrSpand.PeriodicCallback()
+            # time.sleep(1)
+# 
+# LeftBrSpand.Stop()
+# GPIO.StopDriver()
+# Debug.End()
 
 
 

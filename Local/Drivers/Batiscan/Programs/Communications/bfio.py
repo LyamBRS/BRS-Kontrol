@@ -1,4 +1,4 @@
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, NewArrival, VarTypes, Execution, Passenger, PassengerTypes, Debug
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, NewArrival, VarTypes, Execution, Passenger, PassengerTypes, Debug, BFIO
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
 
@@ -238,19 +238,27 @@ def SendUDPMessage(ip_address, port, message:str):
         Debug.Error("FAILED TO SEND SOCKET")
         return False
 
-def MakeAPlaneOutOfArrivedPassengers(passengers:list) -> NewArrival:
+def MakeAPlaneOutOfArrivedBytes(bytesToDecode:bytes) -> NewArrival:
     """
-        MakeAPlaneOutOfArrivedPassengers:
-        =================================
+        MakeAPlaneOutOfArrivedBytes:
+        ============================
         Summary:
         --------
-        Creates a plane out of a list of arrived
-        passengers depending on the pilot's ID.
+        Creates a plane out of a list of bytes.
+        Will return errors as Execution if the
+        plane couldn't be created.
+
+        The bytes needs to be in groupes of 2 bytes
+        being in the order of identifiant then luggage.
+        Batiscan works through UDP and that protocol
+        only uses bytes.
 
         Arguments:
         ----------
-        - `passengers:list` a list of passenger objects.
+        - `bytes:bytes` a list of bytes
     """
+
+    passengers = BFIO.GetPassengersFromDualBytes(bytesToDecode)
 
     pilot:Passenger = passengers[0]
     if(pilot.type != PassengerTypes.Pilot):
@@ -276,8 +284,8 @@ def SendAPlaneOnUDP(functionID:int) -> Execution:
         --------
         Sends a plane on the UDP made of given parameters
     """
-    ipAddress = "10.0.0.135"
-    port = 4211
+    ipAddress = "192.168.4.2"
+    port = BFIO.UDP.portToSendToAccessPoint
 
     try:
         Debug.enableConsole = False

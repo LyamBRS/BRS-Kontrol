@@ -1,6 +1,6 @@
 import serial
 import time
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPlane
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Debug, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPlane
 
 # Define the serial port configurations
 TIMEOUT = 0.1
@@ -61,7 +61,7 @@ def HandleNewArrivals() -> NewArrival:
                 stupidPython.receivedPassengers.clear()
                 stupidPython.receivedPassengers.append(arrival)
         else:
-            print("Adding passengers to a list of ")
+            print(f"Adding passengers to a list of {len(stupidPython.receivedPassengers)}")
             if(arrival.type == PassengerTypes.CoPilot):
                 # The rear of a plane was received
                 stupidPython.receivingPlane = False
@@ -82,11 +82,14 @@ def BuildPlanesFromPassengers():
     landedPlanes = []
 
     arrivedGroupsOfPassengers = HandleNewArrivals()
+    print(f"{len(arrivedGroupsOfPassengers)} groups of passengers can be parsed into planes.")
     if(len(arrivedGroupsOfPassengers) > 0):
         for group in arrivedGroupsOfPassengers:
             if(group[0].value_8bits[1] == MandatoryPlaneIDs.universalInfo):
                 print("UNIVERSAL PLANE LANDED")
+                Debug.enabledConsole = True
                 landedPlane = NewArrival(group, MandatoryFunctionRequestVarTypeLists[MandatoryPlaneIDs.universalInfo])
+                Debug.enableConsole = False
                 print(f"It is {landedPlane.passedTSA} that this plane passed TSA.")
                 landedPlanes.append(landedPlane)
             else:

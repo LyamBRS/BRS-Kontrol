@@ -204,6 +204,7 @@ class LeftBrSpand(AddonFoundations):
 
         if(LeftBrSpand.cardJustConnected and not LeftBrSpand.universalInfoSent):
             # Start the UART Universal Informations.
+            pass
 
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus

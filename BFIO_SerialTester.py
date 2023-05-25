@@ -26,11 +26,13 @@ def GetPassengerArrivals() -> list:
             print(data)
         except:
             print(f"Timed out when trying to read bytes.")
-        passenger = BFIO.GetPassengersFromDualBytes(data)
-        if(passenger.passedTSA):
-            newArrivals.append(passenger)
-        else:
-            print(f">>> {passenger.initErrorMessage} ")
+        passengerList = BFIO.GetPassengersFromDualBytes(data)
+        
+        for passenger in passengerList:
+            if(passenger.passedTSA):
+                newArrivals.append(passenger)
+            else:
+                print(f">>> {passenger.initErrorMessage} ")
     
     return newArrivals
 ################################################

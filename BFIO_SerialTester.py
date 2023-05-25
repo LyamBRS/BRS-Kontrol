@@ -27,7 +27,10 @@ def GetPassengerArrivals() -> list:
         except:
             print(f"Timed out when trying to read bytes.")
         passenger = BFIO.GetPassengersFromDualBytes(data)
-        newArrivals.append(passenger)
+        if(passenger.passedTSA):
+            newArrivals.append(passenger)
+        else:
+            print(f">>> {passenger.initErrorMessage} ")
     
     return newArrivals
 ################################################
@@ -90,7 +93,7 @@ def TestBFIOArrivals():
         print(f"Currently, we are {maybe} receiving a plane.")
         print(f"Currently, there is {len(receivedPassengers)} passengers received.")
         print(f"\n")
-        time.sleep(0.01)
+        time.sleep(0.1)
 
         receivedPlanes = BuildPlanesFromPassengers()
         if(len(receivedPlanes) > 0):

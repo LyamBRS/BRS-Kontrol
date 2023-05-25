@@ -38,7 +38,10 @@ def GetPassengerArrivals() -> list:
 ################################################
 ################################################
 receivedPassengers:list = []
-receivingPlane:bool = False
+
+class stupidPython:
+    receivingPlane:bool = False
+
 def HandleNewArrivals() -> NewArrival:
     """
         Appends passengers to a list.
@@ -52,18 +55,18 @@ def HandleNewArrivals() -> NewArrival:
 
     for arrival in newArrivals:
         
-        if(not receivingPlane):
+        if(not stupidPython.receivingPlane):
             if(arrival.type == PassengerTypes.Pilot):
-                receivingPlane = True
+                stupidPython.receivingPlane = True
                 receivedPassengers.clear()
                 receivedPassengers.append(arrival)
         else:
             if(arrival.type == PassengerTypes.CoPilot):
                 # The rear of a plane was received
-                receivingPlane = False
+                stupidPython.receivingPlane = False
 
             receivedPassengers.append(arrival)
-            if(receivingPlane == False):
+            if(stupidPython.receivingPlane == False):
                 arrivedPassengers.append(receivedPassengers.copy())
     return arrivedPassengers
 ################################################
@@ -91,7 +94,7 @@ def TestBFIOArrivals():
     for timeSlept in range(100):
         pourcentLeft = (timeSlept/100)*100
         print(f"======================================================== [{int(pourcentLeft)}%]")
-        maybe = "" if receivingPlane else "not"
+        maybe = "" if stupidPython.receivingPlane else "not"
         print(f"Currently, we are {maybe} receiving a plane.")
         print(f"Currently, there is {len(receivedPassengers)} passengers received.")
         print(f"\n")

@@ -23,16 +23,16 @@ def GetPassengerArrivals() -> list:
     while serialObject.in_waiting >= 2:
         try:
             data = serialObject.read(2)
-            print(data)
+            print(f"{data[0]}, {data[1]}")
         except:
             print(f"Timed out when trying to read bytes.")
         passengerList = BFIO.GetPassengersFromDualBytes(data)
         
-        for passenger in passengerList:
-            if(passenger.passedTSA):
-                newArrivals.append(passenger)
-            else:
-                print(f">>> {passenger.initErrorMessage} ")
+        # for passenger in passengerList:
+            # if(passenger.passedTSA):
+                # newArrivals.append(passenger)
+            # else:
+                # print(f">>> {passenger.initErrorMessage} ")
     
     return newArrivals
 ################################################

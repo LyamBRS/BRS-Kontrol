@@ -28,6 +28,7 @@ def StopUART():
 
 
 if(__name__ == "__main__"):
+    Debug.enableConsole = True
     result = InitUartClass()
     print(f"InitUartClass returned {result}")
     if(result != Execution.Passed):

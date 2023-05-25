@@ -24,6 +24,9 @@ def GetPassengerArrivals() -> list:
         try:
             data = serialObject.read(2)
             # print(f"{data[0]}, {data[1]}")
+            if(data[0] > 3):
+                print("Fuck up detected. Offsetting by 1 value.")
+                serialObject.read(1)
         except:
             print(f"Timed out when trying to read bytes.")
         passengerList = BFIO.GetPassengersFromDualBytes(data)

@@ -3,8 +3,8 @@ import time
 from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPlane
 
 # Define the serial port configurations
-serial_port = "/dev/ttyAMA0"  # Serial 0 -> A -> TX1_B / RX1_B
 TIMEOUT = 0.1
+serial_port = "/dev/ttyAMA0"  # Serial 0 -> A -> TX1_B / RX1_B
 # serial_port = "/dev/ttyAMA2"  # Serial 2 -> D -> TX2_A
 # serial_port = "/dev/ttyAMA3"  # Serial 3 -> C -> TX1_A / RX1_A
 # serial_port = "/dev/ttyAMA4"  # Serial 4 -> E -> TX2_B / RX2_B
@@ -83,7 +83,7 @@ def BuildPlanesFromPassengers():
 ################################################
 def TestBFIOArrivals():
     for timeSlept in range(100):
-        pourcentLeft = timeSlept/100
+        pourcentLeft = (timeSlept/100)*100
         print(f"======================================================== [{int(pourcentLeft)}%]")
         maybe = "" if receivingPlane else "not"
         print(f"Currently, we are {maybe} receiving a plane.")

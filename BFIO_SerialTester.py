@@ -104,11 +104,13 @@ def TestBFIOArrivals():
         time.sleep(0.1)
 
         receivedPlanes = BuildPlanesFromPassengers()
-        if(len(receivedPlanes) > 0):
-            print("PLANE WAS RECEIVED!")
-            print("\n\n\n\n")
-            PrintPlane(receivedPlanes[0])
-            break
+        print(f">>> {len(receivedPlanes)} planes were received.")
+        for plane in receivedPlanes:
+            if plane.passedTSA == True:
+                print("A plane passed TSA! O_O")
+                break
+            else:
+                print("A plane failed TSA checks")
 ################################################
 TestBFIOArrivals()
 serialObject.close()

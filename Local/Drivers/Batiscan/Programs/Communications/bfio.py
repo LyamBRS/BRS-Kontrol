@@ -266,11 +266,12 @@ def MakeAPlaneOutOfArrivedBytes(bytesToDecode:bytes) -> NewArrival:
         return Execution.Failed
 
     planeID = pilot.value_8bits[1]
-    try:
-        newArrival = NewArrival(passengers, receivedVarTypes[planeID])
-        return newArrival
-    except:
-        Debug.Error("PLANE DOES NOT EXIST / ISN'T SUPPORTED")
+    # try:
+    newArrival = NewArrival(passengers, receivedVarTypes[planeID])
+    return newArrival
+    # except:
+        # Debug.Error("PLANE DOES NOT EXIST / ISN'T SUPPORTED")
+        # return Execution.Failed
 
 import socket
 class StupidFuckingPythonIsRetardedAndGayAFWithMemoryManagement:

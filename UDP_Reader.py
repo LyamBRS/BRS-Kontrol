@@ -24,6 +24,12 @@ for reading in range(30):
             Debug.Log(f"New plane from {sender}:")
             arrival = MakeAPlaneOutOfArrivedBytes(message)
 
+            if(arrival == Execution.Failed):
+                print("Failed to generate a plane.")
+            
+            if(arrival == Execution.Crashed):
+                print("Crashed when making the plane?")
+
             if (arrival.passedTSA):
                 Debug.Log(">>> Plane passed TSA")
 

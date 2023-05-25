@@ -14,6 +14,7 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO
 from Programs.Local.Hardware.RGB import KontrolRGB
 from Programs.Pages.PopUps import PopUpTypeEnum
 LoadingLog.Start("driver.py")
@@ -63,6 +64,27 @@ class LeftBrSpand(AddonFoundations):
     addonInformation:AddonInfoHandler = None
     oldConnectionStatus:bool = False
     currentConnectionStatus:bool = False
+
+    cardJustConnected:bool = False
+    universalInfoSent:bool = False
+
+    class ConnectedCard:
+        """
+            ConnectedCard:
+            ==============
+            Summary:
+            --------
+            Keeps information about the
+            BrSpand card connected to this
+            BrSpand UART port.
+        """
+        gitRepository:str = None
+        name:str = None
+        revision:str = None
+        ID:int = None
+        BFIO:int = 0
+
+
     gpioLevels:list = []
     """
         Used to keep track of when a card
@@ -180,10 +202,13 @@ class LeftBrSpand(AddonFoundations):
         connected = LeftBrSpand._IsCardConnected()
         usable = LeftBrSpand._IsCardUsable()
 
+        if(LeftBrSpand.cardJustConnected and not LeftBrSpand.universalInfoSent):
+            # Start the UART Universal Informations.
+
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 
-            if(connected and usable):
+            if(connected):
                 dialog = MDDialog(
                     title=_("BrSpand Detected"),
                     text=_("A BrSpand card was detected. Do you want to start the connection process? This may cause crashes and unknown behaviors if the application is currently executing tasks and processes. Make sure you are in a main menu before connecting a BrSpand card."),
@@ -192,6 +217,8 @@ class LeftBrSpand(AddonFoundations):
                         MDFillRoundFlatButton(text=_("Start"), font_style="H6")
                     ]
                 )
+                LeftBrSpand.cardJustConnected = True
+                LeftBrSpand.universalInfoSent = False
                 dialog.open()
                 Debug.End()
                 return Execution.Passed
@@ -204,6 +231,8 @@ class LeftBrSpand(AddonFoundations):
                         MDFillRoundFlatButton(text=_("Ok"), font_style="H6")
                     ]
                 )
+                LeftBrSpand.cardJustConnected = False
+                LeftBrSpand.universalInfoSent = False
                 dialog.open()
                 Debug.End()
                 return Execution.Passed
@@ -276,6 +305,20 @@ class LeftBrSpand(AddonFoundations):
 
         Debug.End()
         return False
+
+    def _StartHandshake() -> Execution:
+        """
+            _StartHandshake:
+            ================
+            Summary:
+            --------
+            This function starts an UART class
+            and tries to send an universal plane.
+            on the Left master runway.
+        """
+        Debug.Start("LeftBrSpand -> _StartHandshake")
+
+        Debug.End()
 
     def _GetCurrentGPIOLevels() -> list:
         """

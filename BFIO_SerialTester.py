@@ -87,7 +87,7 @@ def BuildPlanesFromPassengers():
         for group in arrivedGroupsOfPassengers:
             if(group[0].value_8bits[1] == MandatoryPlaneIDs.universalInfo):
                 print("UNIVERSAL PLANE LANDED")
-                Debug.enabledConsole = True
+                Debug.enableConsole = True
                 landedPlane = NewArrival(group, MandatoryFunctionRequestVarTypeLists[MandatoryPlaneIDs.universalInfo])
                 Debug.enableConsole = False
                 print(f"It is {landedPlane.passedTSA} that this plane passed TSA.")

@@ -203,8 +203,7 @@ class LeftBrSpand(AddonFoundations):
         usable = LeftBrSpand._IsCardUsable()
 
         if(LeftBrSpand.cardJustConnected and not LeftBrSpand.universalInfoSent):
-            # Start the UART Universal Informations.
-            pass
+            LeftBrSpand._StartHandshake()
 
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus

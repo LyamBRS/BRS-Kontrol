@@ -37,10 +37,9 @@ def GetPassengerArrivals() -> list:
     return newArrivals
 ################################################
 ################################################
-receivedPassengers:list = []
-
 class stupidPython:
     receivingPlane:bool = False
+    receivedPassengers:list = []
 
 def HandleNewArrivals() -> NewArrival:
     """
@@ -52,15 +51,15 @@ def HandleNewArrivals() -> NewArrival:
     arrivedPassengers = []
     # Get passengers that arrived.
     newArrivals = GetPassengerArrivals()
-    print(f"Concatenating arrivals to a list of {len(receivedPassengers)}")
+    print(f"Concatenating arrivals to a list of {len(stupidPython.receivedPassengers)}")
     for arrival in newArrivals:
         
         if(not stupidPython.receivingPlane):
             if(arrival.type == PassengerTypes.Pilot):
                 print("Pilot received.")
                 stupidPython.receivingPlane = True
-                receivedPassengers.clear()
-                receivedPassengers.append(arrival)
+                stupidPython.receivedPassengers.clear()
+                stupidPython.receivedPassengers.append(arrival)
         else:
             print("Adding passengers to a list of ")
             if(arrival.type == PassengerTypes.CoPilot):
@@ -68,10 +67,10 @@ def HandleNewArrivals() -> NewArrival:
                 stupidPython.receivingPlane = False
                 print("Co-Pilot received")
 
-            receivedPassengers.append(arrival)
+            stupidPython.receivedPassengers.append(arrival)
             if(stupidPython.receivingPlane == False):
                 print("Passengers grouped into plane.")
-                arrivedPassengers.append(receivedPassengers.copy())
+                arrivedPassengers.append(stupidPython.receivedPassengers.copy())
     return arrivedPassengers
 ################################################
 def BuildPlanesFromPassengers():
@@ -100,7 +99,7 @@ def TestBFIOArrivals():
         print(f"======================================================== [{int(pourcentLeft)}%]")
         maybe = "" if stupidPython.receivingPlane else "not "
         print(f"Currently, we are {maybe}receiving a plane.")
-        print(f"Currently, there is {len(receivedPassengers)} passengers received.")
+        print(f"Currently, there is {len(stupidPython.receivedPassengers)} passengers received.")
         print(f"\n")
         time.sleep(0.1)
 

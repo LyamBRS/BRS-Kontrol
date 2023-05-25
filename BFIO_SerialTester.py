@@ -23,16 +23,16 @@ def GetPassengerArrivals() -> list:
     while serialObject.in_waiting >= 2:
         try:
             data = serialObject.read(2)
-            print(f"{data[0]}, {data[1]}")
+            # print(f"{data[0]}, {data[1]}")
         except:
             print(f"Timed out when trying to read bytes.")
         passengerList = BFIO.GetPassengersFromDualBytes(data)
         
-        # for passenger in passengerList:
-            # if(passenger.passedTSA):
-                # newArrivals.append(passenger)
-            # else:
-                # print(f">>> {passenger.initErrorMessage} ")
+        for passenger in passengerList:
+            if(passenger.passedTSA):
+                newArrivals.append(passenger)
+            else:
+                print(f">>> {passenger.initErrorMessage} ")
     
     return newArrivals
 ################################################
@@ -57,6 +57,7 @@ def HandleNewArrivals() -> NewArrival:
         
         if(not stupidPython.receivingPlane):
             if(arrival.type == PassengerTypes.Pilot):
+                print("Pilot received.")
                 stupidPython.receivingPlane = True
                 receivedPassengers.clear()
                 receivedPassengers.append(arrival)
@@ -64,9 +65,11 @@ def HandleNewArrivals() -> NewArrival:
             if(arrival.type == PassengerTypes.CoPilot):
                 # The rear of a plane was received
                 stupidPython.receivingPlane = False
+                print("Co-Pilot received")
 
             receivedPassengers.append(arrival)
             if(stupidPython.receivingPlane == False):
+                print("Passengers grouped into plane.")
                 arrivedPassengers.append(receivedPassengers.copy())
     return arrivedPassengers
 ################################################

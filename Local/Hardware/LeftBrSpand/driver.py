@@ -463,6 +463,27 @@ class LeftBrSpand(AddonFoundations):
         Debug.End()
         return Execution.Passed
     # -----------------------------------
+    def _GetCurrentGPIOLevels() -> list:
+        """
+            _GetCurrentGPIO:
+            ================
+            Summary:
+            --------
+            Returns a list of True and
+            False that corresponds to
+            the levels of the GPIOs used
+            by this BrSpand card port.
+        """
+        Debug.Start("_GetCurrentGPIOLevels")
+        gpio12 = GPIO.GetGPIOLevel(12)
+        gpio13 = GPIO.GetGPIOLevel(13)
+        gpio26 = GPIO.GetGPIOLevel(26)
+        gpio27 = GPIO.GetGPIOLevel(27)
+        Debug.Log(f"Current GPIO levels are {[gpio12, gpio13, gpio26, gpio27]}")
+        LeftBrSpand.gpioLevels = [gpio12, gpio13, gpio26, gpio27]
+        Debug.End()
+        return [gpio12, gpio13, gpio26, gpio27]
+    # -----------------------------------
     def _CheckUARTForUniversalInfo() -> Execution:
         """
             _CheckUARTForUniversalInfo:

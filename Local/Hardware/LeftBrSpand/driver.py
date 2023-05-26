@@ -412,7 +412,7 @@ class LeftBrSpand(AddonFoundations):
             ]
             )
         KontrolRGB.ApploadingAnimation()
-        LeftBrSpand.dialog.show()
+        LeftBrSpand.dialog.open()
         Debug.End()
         return Execution.Passed
     # -----------------------------------
@@ -507,7 +507,7 @@ class LeftBrSpand(AddonFoundations):
                 ]
             )
             KontrolRGB.DisplayUserError()
-            LeftBrSpand.dialog.show()
+            LeftBrSpand.dialog.open()
             Debug.End()
             return Execution.Failed
 
@@ -530,7 +530,7 @@ class LeftBrSpand(AddonFoundations):
                             ]
                         )
                         KontrolRGB.DisplayUserError()
-                        LeftBrSpand.dialog.show()
+                        LeftBrSpand.dialog.open()
                         Debug.End()
                         return Execution.Failed
                 else:
@@ -543,7 +543,7 @@ class LeftBrSpand(AddonFoundations):
                         ]
                     )
                     KontrolRGB.DisplayUserError()
-                    LeftBrSpand.dialog.show()
+                    LeftBrSpand.dialog.open()
                     Debug.End()
                     return Execution.Failed
             else:
@@ -556,7 +556,7 @@ class LeftBrSpand(AddonFoundations):
                     ]
                 )
                 KontrolRGB.DisplayUserError()
-                LeftBrSpand.dialog.show()
+                LeftBrSpand.dialog.open()
                 Debug.End()
                 return Execution.Failed
     #endregion

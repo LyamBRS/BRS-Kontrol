@@ -525,6 +525,7 @@ class LeftBrSpand(AddonFoundations):
                     plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                     if(plane.passedTSA):
                         Debug.Log("HOLY SHIT I THINK WE GOT IT ?!?")
+                        LeftBrSpand.ConnectedCard.universalInformationPlane = plane
                         Debug.End()
                         return Execution.Passed
                     else:

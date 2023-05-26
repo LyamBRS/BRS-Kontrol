@@ -56,7 +56,7 @@ def GetUniversalInfoPlane() -> Plane:
     ]
     
     Debug.End()
-    return 
+    return data
 
 #====================================================================#
 # Classes

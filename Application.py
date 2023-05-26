@@ -78,7 +78,8 @@ class Application(MDApp):
 
             Last, the current screen is set as one of them.
         """
-        Debug.enableConsole = True
+        if(Information.platform != "Linux"):
+            Debug.enableConsole = True
         Debug.Start("build")
 
 

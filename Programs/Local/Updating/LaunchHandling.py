@@ -12,6 +12,7 @@
 #====================================================================#
 import subprocess
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 # from Programs.Pages.DownloadProgress import DownloadProgress_Screens
 LoadingLog.Start("LaunchHandling.py")
 #====================================================================#
@@ -69,6 +70,29 @@ class Shutdown():
         Defaults to `None`.
     """
 
+    scheduleKontrolForShutdown:bool = False
+    """
+        scheduleKontrolForShutdown:
+        ===========================
+        Summary:
+        --------
+        member that defines if Kontrol should
+        shutdown itself when the quit button is pressed
+        in its toolbar. Defaults to `False`
+    """
+
+    def Kontrol():
+        """
+            Kontrol:
+            ========
+            Summary:
+            --------
+            Tries to shutdown Kontrol at the very very
+            end of the application's execution.
+        """
+        if(Shutdown.scheduleKontrolForShutdown and Information.platform == "Linux"):
+            command = "sudo shutdown -h now"
+            subprocess.run(command, shell=True)
 #====================================================================#
 # Functions
 #====================================================================#

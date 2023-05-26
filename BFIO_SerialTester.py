@@ -129,8 +129,8 @@ def TestBFIOArrivals():
     plane = GetUniversalInfoPlane()
     for passenger in plane.passengers:
         print(f"Sending {passenger.value_8bits[0]}, {passenger.value_8bits[1]}")
-        serialObject.write(int.to_bytes(passenger.value_8bits[0], byteorder="big"))
-        serialObject.write(int.to_bytes(passenger.value_8bits[1], byteorder="big"))
+        serialObject.write(int.to_bytes(passenger.value_8bits[0], length=1, byteorder="big", signed=False))
+        serialObject.write(int.to_bytes(passenger.value_8bits[1], length=1, byteorder="big", signed=False))
 ################################################
 TestBFIOArrivals()
 serialObject.close()

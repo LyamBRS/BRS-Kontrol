@@ -2,20 +2,17 @@
 # File Information
 #====================================================================#
 """
-    HardwareAddonsLauncher.py
+    BrSpand.py
     =========================
-    This file contains functions used to automatically
-    start all the hardware addons of your Kontrol device.
-
-    An hardware addon is NOT A DEVICE and is NOT A BRSPAND CARD.
-    An hardware addon is added directly on Kontrol's PCB such as the
-    ADXL343 accelerometer.
+    This file contains whats necessary to handle BFIO
+    drivers such as launching them, stopping them, checking if
+    they are downloaded, listing them and much more.
 """
 #====================================================================#
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-LoadingLog.Start("HardwareAddonsLauncher.py")
+LoadingLog.Start("BrSpand.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -90,25 +87,24 @@ def InitializeAllHardwareAddons(CreatePopUps:bool = False) -> Execution:
     Clock.schedule_once(PeriodicCallbackExecuter, 5)
     Debug.End()
 #====================================================================#
-def GetNamesOfInstalledAddons(pathToAddons:str) -> list:
+def InstalledBrSpandCards() -> list:
     """
-        GetNamesOfInstalledAddons:
-        ==========================
+        GetNamesOfInstalledBrSpandCards:
+        ================================
         Summary:
         --------
-        Returns a list of all the hardware addons
-        folder's names.
+        Returns a list of all the installed BrSpand cards.
     """
-    Debug.Start("GetNamesOfInstalledAddons")
-
+    Debug.Start("GetNamesOfInstalledBrSpandCards")
+    path = PathToBrSpandDrivers()
     Debug.Log("Finding folders at that path...")
-    subdirectories = [name for name in os.listdir(pathToAddons) if os.path.isdir(os.path.join(pathToAddons, name))]
+    subdirectories = [name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]
 
     Debug.Log(f"Found installed addons: {subdirectories}")
     Debug.End()
     return subdirectories
 #====================================================================#
-def LaunchAddonAtPath(nameOfAddon:str, pathOfAddonsFolder:str):
+def LaunchBrSpandAtPath(nameOfBrSpandCard:str, pathToTheBrSpandDrivers:str):
     """
         LaunchAddonAtPath:
         ==================
@@ -124,17 +120,17 @@ def LaunchAddonAtPath(nameOfAddon:str, pathOfAddonsFolder:str):
         - `Execution.Incompatibility` = Addon cannot launch on your device.
         - `Execution.Unecessary` = Addon is already running on your device.
     """
-    Debug.Start("LaunchAddonAtPath")
+    Debug.Start("LaunchBrSpandAtPath")
 
-    Debug.Log(f"Trying to launch {nameOfAddon}...")
+    Debug.Log(f"Trying to launch {nameOfBrSpandCard}...")
 
     # Append driver.py to specified path.
-    pathOfAddonsDriver = os.path.join(pathOfAddonsFolder, nameOfAddon, "driver.py")
+    pathOfAddonsDriver = os.path.join(pathToTheBrSpandDrivers, nameOfBrSpandCard, "driver.py")
 
-    Debug.Log(f"Start of {nameOfAddon}'s compiling...")
+    Debug.Log(f"Start of {nameOfBrSpandCard}'s compiling...")
     if(os.path.isfile(pathOfAddonsDriver)):
-        addonsModule = nameOfAddon
-        addonsClass = nameOfAddon
+        addonsModule = nameOfBrSpandCard
+        addonsClass = nameOfBrSpandCard
 
         # Dynamically load the module
         specifications = importlib.util.spec_from_file_location(addonsModule, pathOfAddonsDriver)
@@ -147,105 +143,68 @@ def LaunchAddonAtPath(nameOfAddon:str, pathOfAddonsFolder:str):
             if(hasattr(addonsClassObject, "Launch")):
                 result = addonsClassObject.Launch()
                 if(result != Execution.Passed):
-                    Debug.Error(f"{nameOfAddon} failed to launch with error code: {result}")
+                    Debug.Error(f"{nameOfBrSpandCard} failed to launch with error code: {result}")
                     Debug.End()
                 return result
             else:
-                Debug.Error(f"{nameOfAddon}'s class did not have a Launch method")
+                Debug.Error(f"{nameOfBrSpandCard}'s class did not have a Launch method")
                 Debug.End()
                 return Execution.Failed
         else:
-            Debug.Error(f"{nameOfAddon}'s driver.py did not have a class named {addonsClass}")
+            Debug.Error(f"{nameOfBrSpandCard}'s driver.py did not have a class named {addonsClass}")
             Debug.End()
             return Execution.Failed
     else:
-        Debug.Error(f"Failed to get {nameOfAddon}'s driver.py")
+        Debug.Error(f"Failed to get {nameOfBrSpandCard}'s driver.py")
         Debug.End()
         return Execution.Failed
 #====================================================================#
-def CreatePopUpMessage(nameOfTheAddon:str, executionReturnedByLaunch:Execution) -> Execution:
+def PathToBrSpandDrivers() -> str:
     """
-        CreatePopUpMessage:
+        PathToBrSpandDrivers:
+        =====================
+        Summary:
+        --------
+        Gets you the path to the BrSpand drivers.
+    """
+    Debug.Start("PathToBrSpandDrivers")
+    pathToDrivers = os.getcwd()
+    pathToDrivers = AppendPath(pathToDrivers, "/BrSpand/Drivers")
+    Debug.End()
+    return pathToDrivers
+#====================================================================#
+def IsCardDriversInstalled(nameOfTheCard:str):
+    """
+        IsCardDriversInstalled:
+        =======================
+        Summary:
+        --------
+        Checks if a BrSpand card's drivers
+        are installed on your machine.
+    """
+    Debug.Start("IsCardDriversInstalled")
+
+    installedCards = InstalledBrSpandCards()
+    if(nameOfTheCard in installedCards):
+        Debug.Log(f"{nameOfTheCard}'s drivers are installed on your device.")
+        Debug.End()
+        return Execution.Passed
+    else:
+        Debug.Error(f"{nameOfTheCard} is not installed on your device.")
+        Debug.End()
+        return Execution.Failed
+#====================================================================#
+def InstallCardDrivers(gitRepositoryToClone:str) -> Execution:
+    """
+        InstallCardDrivers:
         ===================
         Summary:
         --------
-        This function will create a normalized pop up containing
-        informations about why that addon couldn't execute.
+        Tries to install a BrSpand card's drivers on
+        your device.
     """
-    Debug.Start("CreatePopUpMessage")
+    Debug.Start("InstallCardDrivers")
 
-    if(executionReturnedByLaunch == Execution.Crashed):
-        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message=_("A critical error occured when Kontrol attempted to launch the following hardware extension addon: ") + nameOfTheAddon)
-        Debug.Log("Pop up created")
-        Debug.End()
-        return Execution.Passed
-    
-    if(executionReturnedByLaunch == Execution.Failed):
-        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon failed to launch for some reasons: ") + nameOfTheAddon)
-        Debug.Log("Pop up created")
-        Debug.End()
-        return Execution.Passed
-    
-    if(executionReturnedByLaunch == Execution.Incompatibility):
-        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon cannot operate on your hardware: ") + nameOfTheAddon)
-        Debug.Log("Pop up created")
-        Debug.End()
-        return Execution.Passed
-    
-    if(executionReturnedByLaunch == Execution.NoConnection):
-        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon failed to launch due to a connection error: ") + nameOfTheAddon)
-        Debug.Log("Pop up created")
-        Debug.End()
-        return Execution.Passed
-    
-    if(executionReturnedByLaunch == Execution.ByPassed):
-        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message=_("The following hardware extension addon bypassed its launch function: ") + nameOfTheAddon)
-        Debug.Log("Pop up created")
-        Debug.End()
-        return Execution.Passed
-    
-    if(executionReturnedByLaunch == Execution.Unecessary):
-        PopUpsHandler.Add(PopUpTypeEnum.Warning, Message=_("The following hardware extension addon said it was unecessary to launch it when Kontrol attempted to do so: ") + nameOfTheAddon)
-        Debug.Log("Pop up created")
-        Debug.End()
-        return Execution.Passed
-
-    Debug.Log("Seems like you called this function for nothing...")
-    Debug.Warn(f"This function does not support pop ups for executions of type: {executionReturnedByLaunch}")
     Debug.End()
-    return Execution.ByPassed
 #====================================================================#
-def PeriodicCallbackExecuter(*args):
-    """
-        PeriodicCallbackExecuter:
-        =========================
-        Summary:
-        --------
-        This is a callback function executed each 5 seconds
-        by Kivy.clock. Don't execute this manually
-        unless you really know what you're doing.
-    """
-    Addons.ExecutePeriodicCallback()
-    Clock.schedule_once(PeriodicCallbackExecuter, 5)
-#====================================================================#
-# Classes
-#====================================================================#
-# class Example:
-    # region   --------------------------- DOCSTRING
-    # ''' This class is a reference style class which represents the current state that a device can be in.
-        # A device can be GUI or hardware.
-        # You don't have to use this class when defining the state of a device, but it is more convenient than
-        # memorizing all the numbers associated by heart.
-    # '''
-    # endregion
-    # region   --------------------------- MEMBERS
-    # fakeVar : type = "sus"
-    # ''' It's ugly docstring which for some annoying reason is below whatever it needs to explain... Which is hideous and hard to follow. No humans read data from bottom to top bruh.'''
-    # endregion
-    # region   --------------------------- METHODS
-    # endregion
-    # region   --------------------------- CONSTRUCTOR
-    # endregion
-    # pass
-#====================================================================#
-LoadingLog.End("HardwareAddonsLauncher.py")
+LoadingLog.End("BrSpand.py")

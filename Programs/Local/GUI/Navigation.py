@@ -14,6 +14,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.networks import GetWifiIcon
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
+from Programs.Local.FileHandler.Cache import Cache
 from Programs.Local.Updating.LaunchHandling import Shutdown
 LoadingLog.Start("AppLoading.py")
 #====================================================================#
@@ -186,10 +187,18 @@ def GoTo_Quit(*args):
         pop up in case it fails for X reason.
     """
     Debug.Start("GoTo_Quit")
-    from kivy.base import EventLoop
+    from kivymd.app import MDApp
     Shutdown.scheduleKontrolForShutdown = True
-    EventLoop.window.dispatch('on_keyboard', None, 'escape', [27])
 
+    if(Cache.loaded):
+        Cache.GetAppInfo()
+        Cache.SetExit("User")
+        Cache.SetDate("Exit")
+        Cache.SaveFile()
+        Debug.Log("CACHE SAVED.")
+
+    runningApp = MDApp.get_running_app()
+    runningApp.stop()
     Debug.End()
 
 #====================================================================#

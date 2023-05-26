@@ -165,13 +165,16 @@ class Application(MDApp):
         print("Application built... starting")
 
     LoadingLog.Method("on_stop")
-    def on_stop(self):
+    def on_pre_stop(self):
         Debug.Start("Application -> on_stop")
         if(Cache.loaded):
-            Cache.GetAppInfo()
-            Cache.SetExit("User")
-            Cache.SetDate("Exit")
-            Cache.SaveFile()
+            try:
+                Cache.GetAppInfo()
+                Cache.SetExit("User")
+                Cache.SetDate("Exit")
+                Cache.SaveFile()
+            except:
+                Debug.Warn("Cache failed to save on_stop. This might be normal tho.")
         Debug.End()
 # ------------------------------------------------------------------------
 # try:

@@ -188,6 +188,7 @@ Addons.StopAll()
 WiFiStatusUpdater.StopUpdating()
 
 Debug.Log("KILLING PYTHON PROCESS")
-KillPython()
+# KillPython()
+Shutdown.Kontrol()
 
 LoadingLog.End("Application.py")

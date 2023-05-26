@@ -417,7 +417,7 @@ class LeftBrSpand(AddonFoundations):
             title= str(LeftBrSpand.ConnectedCard.name) + _(" is now connected!"),
             text=_("You plugged in a BrSpand compatible extension card into Kontrol.") + _("This card's version is") + " " + str(LeftBrSpand.ConnectedCard.revision) + " " + _("and their drivers can be downloaded from") + " " + str(LeftBrSpand.ConnectedCard.gitRepository),
             # text=f"This plane's callsign is {planeID}. It carries {passengerCount} passengers divided into {amountOfClasses} classes, it is {passedTSA} that it passed TSA.",
-            on_dismiss=LeftBrSpand.CloseDialog,
+            on_dismiss=LeftBrSpand._Dismissed,
             buttons=[
                 MDFlatButton(text=_("Ignore"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
                 MDFillRoundFlatButton(text=_("Launch drivers"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
@@ -442,6 +442,9 @@ class LeftBrSpand(AddonFoundations):
         LeftBrSpand.dialog.dismiss()
         KontrolRGB.DisplayDefaultColor()
         Debug.End()
+    # -----------------------------------
+    def _Dismissed(*args):
+        KontrolRGB.DisplayDefaultColor()     
     # -----------------------------------
     def VerifyForExecution() -> Execution:
         """
@@ -512,9 +515,9 @@ class LeftBrSpand(AddonFoundations):
         LeftBrSpand.dialog = MDDialog(
             title=title,
             text=text,
-            on_dismiss=LeftBrSpand.CloseDialog,
+            on_dismiss=LeftBrSpand._Dismissed,
             buttons=[
-                        MDFillRoundFlatButton(text=buttonText, font_style="H6", on_press = LeftBrSpand.CloseDialog, on_dismiss=LeftBrSpand.CloseDialog)
+                        MDFillRoundFlatButton(text=buttonText, font_style="H6", on_press = LeftBrSpand.CloseDialog)
                     ]
                 )
         LeftBrSpand.dialog.open()
@@ -648,9 +651,9 @@ class LeftBrSpand(AddonFoundations):
             LeftBrSpand.dialog = MDDialog(
                 title= LeftBrSpand.ConnectedCard.name + " " + _("installed"),
                 text=_("Kontrol successfully downloaded the required BrSpand drivers for the connected card locally. These drivers are launched when the BrSpand card connects and are closed when the card disconnects."),
-                on_dismiss=LeftBrSpand.CloseDialog,
+                on_dismiss=LeftBrSpand._Dismissed,
                 buttons=[
-                            MDFillRoundFlatButton(text=_("Nice"), font_style="H6", on_press = LeftBrSpand.CloseDialog, on_dismiss=LeftBrSpand.CloseDialog)
+                            MDFillRoundFlatButton(text=_("Nice"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
                         ]
                 )
             LeftBrSpand.dialog.open()

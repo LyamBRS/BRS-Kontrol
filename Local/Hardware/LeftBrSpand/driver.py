@@ -623,7 +623,7 @@ class LeftBrSpand(AddonFoundations):
                 LeftBrSpand.dialog = MDDialog(
                     title=_("Download Drivers?"),
                     text=_("No drivers for") + " " + str(LeftBrSpand.ConnectedCard.name) + " " + _("are installed on your Kontrol. Do you wish to download them? This can cause a temporary freeze."),
-                    on_dismiss=LeftBrSpand._IgnorePressed,
+                    on_dismiss=LeftBrSpand._Dismissed,
                     buttons=[
                                 MDFlatButton(text=_("Abort"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
                                 MDFillRoundFlatButton(text=_("Download drivers"), font_style="H6", on_press = LeftBrSpand._DownloadDriverPressed, on_dismiss=LeftBrSpand._IgnorePressed)

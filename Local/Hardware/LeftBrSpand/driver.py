@@ -67,6 +67,8 @@ class LeftBrSpand(AddonFoundations):
     oldConnectionStatus:bool = False
     currentConnectionStatus:bool = False
 
+    dialog:MDDialog = None
+
     cardJustConnected:bool = False
     universalInfoSent:bool = False
 

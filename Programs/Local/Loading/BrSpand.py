@@ -74,7 +74,7 @@ def LaunchBrSpandAtPath(nameOfBrSpandCard:str):
     Debug.Log(f"Trying to launch {nameOfBrSpandCard}...")
 
     # Append driver.py to specified path.
-    pathOfAddonsDriver = AppendPath(PathToBrSpandDrivers, str(f"/{nameOfBrSpandCard}/"))
+    pathOfAddonsDriver = AppendPath(PathToBrSpandDrivers, "/" + nameOfBrSpandCard + "/")
     pathOfAddonsDriver = AppendPath(pathOfAddonsDriver, "driver.py")
 
 

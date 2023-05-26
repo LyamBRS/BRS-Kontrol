@@ -209,12 +209,16 @@ class LeftBrSpand(AddonFoundations):
             result = LeftBrSpand._CheckUARTForUniversalInfo()
             if(result != Execution.Passed):
                 Debug.Error("Check UART failed.")
+                LeftBrSpand.cardJustConnected = False
+                LeftBrSpand.universalInfoSent = False
                 Debug.End()
                 return Execution.Failed
 
             result = LeftBrSpand._StoreUniversalInformations()
             if(result != Execution.Passed):
                 Debug.Error("Failed to store universal informations")
+                LeftBrSpand.cardJustConnected = False
+                LeftBrSpand.universalInfoSent = False
                 Debug.End()
                 return Execution.Failed
 
@@ -508,6 +512,8 @@ class LeftBrSpand(AddonFoundations):
             )
             KontrolRGB.DisplayUserError()
             LeftBrSpand.dialog.open()
+            LeftBrSpand.cardJustConnected = False
+            LeftBrSpand.universalInfoSent = False
             Debug.End()
             return Execution.Failed
 
@@ -531,6 +537,8 @@ class LeftBrSpand(AddonFoundations):
                         )
                         KontrolRGB.DisplayUserError()
                         LeftBrSpand.dialog.open()
+                        LeftBrSpand.cardJustConnected = False
+                        LeftBrSpand.universalInfoSent = False
                         Debug.End()
                         return Execution.Failed
                 else:
@@ -543,6 +551,8 @@ class LeftBrSpand(AddonFoundations):
                         ]
                     )
                     KontrolRGB.DisplayUserError()
+                    LeftBrSpand.cardJustConnected = False
+                    LeftBrSpand.universalInfoSent = False
                     LeftBrSpand.dialog.open()
                     Debug.End()
                     return Execution.Failed
@@ -556,6 +566,8 @@ class LeftBrSpand(AddonFoundations):
                     ]
                 )
                 KontrolRGB.DisplayUserError()
+                LeftBrSpand.cardJustConnected = False
+                LeftBrSpand.universalInfoSent = False
                 LeftBrSpand.dialog.open()
                 Debug.End()
                 return Execution.Failed

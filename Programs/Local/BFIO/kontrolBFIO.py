@@ -45,13 +45,26 @@ def GetUniversalInfoPlane() -> Plane:
     """
     Debug.Start("GetUniversalInfoPlane")
 
+
+    name = Information.name
+    if(name == None):
+        name = "Kontrol"
+    if(len(name) == 0):
+        name = "Kontrol"
+
+    software = Information.softwareVersion
+    if(software == None):
+        software = "0.0.5"
+    if(len(software) == 0):
+        software = "0.0.5"
+
     data = [
         696969,                                     # unique device ID
         1,                                              # BFIO version
         1,                                              # Device type
         1,                                              # Device status
         "https://github.com/LyamBRS/BrSpand_GamePad.git",   # Git repository of the device.
-        Information.name,
+        str(Information.name),
         str(Information.softwareVersion)
     ]
 

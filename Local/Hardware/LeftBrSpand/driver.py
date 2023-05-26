@@ -637,7 +637,7 @@ class LeftBrSpand(AddonFoundations):
         
         result = LaunchBrSpandAtPath(LeftBrSpand.ConnectedCard.name)
         if(result != Execution.Passed):
-            LeftBrSpand._ShowNewErrorDialog(_("Launch failure"), _("A fatal error occured when Kontrol tried to launch the drivers of the BrSpand card connected in the left port."), _("Oh"))
+            LeftBrSpand._ShowNewErrorDialog(_("Launch failure"), _("A fatal error occured when Kontrol tried to launch the drivers of the BrSpand card connected in the left port.") + " " + f"Reason: {result}", _("Oh"))
         else:
             LeftBrSpand.dialog.dismiss()
             LeftBrSpand.dialog = MDDialog(

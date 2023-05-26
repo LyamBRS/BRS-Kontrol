@@ -97,19 +97,22 @@ def LaunchBrSpandAtPath(nameOfBrSpandCard:str):
                 if(result != Execution.Passed):
                     Debug.Error(f"{nameOfBrSpandCard} failed to launch with error code: {result}")
                     Debug.End()
+                    return f"{nameOfBrSpandCard} failed to launch with error code: {result}"
+
+                Debug.End()
                 return result
             else:
                 Debug.Error(f"{nameOfBrSpandCard}'s class did not have a Launch method")
                 Debug.End()
-                return Execution.Failed
+                return f"{nameOfBrSpandCard}'s class did not have a Launch method"
         else:
             Debug.Error(f"{nameOfBrSpandCard}'s driver.py did not have a class named {addonsClass}")
             Debug.End()
-            return Execution.Failed
+            return f"{nameOfBrSpandCard}'s driver.py did not have a class named {addonsClass}"
     else:
         Debug.Error(f"Failed to get {nameOfBrSpandCard}'s driver.py")
         Debug.End()
-        return Execution.Failed
+        return f"Failed to get {nameOfBrSpandCard}'s driver.py"
 #====================================================================#
 def PathToBrSpandDrivers() -> str:
     """

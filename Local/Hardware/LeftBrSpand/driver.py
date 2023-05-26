@@ -659,7 +659,7 @@ class LeftBrSpand(AddonFoundations):
             LeftBrSpand.dialog.open()
             KontrolRGB.ApploadingAnimation()
         else:
-            LeftBrSpand._ShowNewErrorDialog(_("Download failure"), _("Kontrol failed to download the required drivers for the card currently plugged in the left BrSpand port."))
+            LeftBrSpand._ShowNewErrorDialog(_("Download failure"), _("Kontrol failed to download the required drivers for the card currently plugged in the left BrSpand port."), _("Damn"))
             KontrolRGB.DisplayUserError()
         Debug.End()
     #endregion

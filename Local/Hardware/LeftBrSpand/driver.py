@@ -176,6 +176,8 @@ class LeftBrSpand(AddonFoundations):
         Debug.Start("Stop")
 
         if(LeftBrSpand.state == True):
+            LeftBrSpand.state = False
+            UART.StopDriver()
             Debug.End()
             return Execution.Passed
         else:
@@ -334,7 +336,7 @@ class LeftBrSpand(AddonFoundations):
         UART.serialPort = "/dev/ttyAMA2"
         result = UART.StartDriver()
 
-        if(result != Execution.Passed):
+        if(result == Execution.Incompatibility):
             LeftBrSpand.dialog = MDDialog(
                 title=_("BrSpand Failure"),
                 text=_("The left BrSpand port failed to start the UART driver and thus cannot communicate with the card you plugged in. Make sure you're running on a compatible Kontrol version."),
@@ -384,12 +386,22 @@ class LeftBrSpand(AddonFoundations):
         """
         Debug.Start("__StoreUniversalInformations")
 
+        data = [
+            4206969,                                     # unique device ID 0
+            1,                                              # BFIO version 1
+            0,                                              # Device type 2
+            1,                                              # Device status 3
+            "https://github.com/LyamBRS/BrSpand_GamePad.git",   # Git repository of the device. 4
+            "GamePad", # 5
+            "Rev A" # 6
+        ]
+
         LeftBrSpand.ConnectedCard.ID = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(0)
         LeftBrSpand.ConnectedCard.BFIO = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(1)
         LeftBrSpand.ConnectedCard.type = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(2)
-        LeftBrSpand.ConnectedCard.gitRepository = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(3)
-        LeftBrSpand.ConnectedCard.name = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(4)
-        LeftBrSpand.ConnectedCard.revision = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(5)
+        LeftBrSpand.ConnectedCard.gitRepository = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(4)
+        LeftBrSpand.ConnectedCard.name = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(5)
+        LeftBrSpand.ConnectedCard.revision = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(6)
 
         Debug.End()
         return Execution.Passed
@@ -562,7 +574,7 @@ class LeftBrSpand(AddonFoundations):
                 Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
                 LeftBrSpand.dialog = MDDialog(
                     title=_("Handshake Failure"),
-                    text=_("463: BrSpand drivers did not receive anything back from the BrSpand card. Handshake could not be resolved."),
+                    text=_("463: BrSpand drivers did not receive anything back from the BrSpand card. Handshake could not be resolved. Try to unplug, then replug your BrSpand card only once the Connection Lost message appears."),
                     buttons=[
                         MDFillRoundFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
                     ]

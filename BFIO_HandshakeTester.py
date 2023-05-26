@@ -46,6 +46,10 @@ if(__name__ == "__main__"):
                 time.sleep(1)
                 pourcent = int((timeSpent/5)*100)
                 print(f"================================[{pourcent}%]")
+                result = UART.QueuePlaneOnTaxiway(GetUniversalInfoPlane())
+                if(result != Execution.Passed):
+                    print("Failed to queue univrsal info on taxiway.")       
+
                 print("Reading received planes:")
 
                 newGroup = UART.GetOldestReceivedGroupOfPassengers()

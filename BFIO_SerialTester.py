@@ -128,6 +128,7 @@ def TestBFIOArrivals():
     print("Sending a plane on taxiway?")
     plane = GetUniversalInfoPlane()
     for passenger in plane.passengers:
+        print(f"Sending {passenger.value_8bits[0]}, {passenger.value_8bits[1]}")
         serialObject.write(passenger.value_8bits[0])
         serialObject.write(passenger.value_8bits[1])
 ################################################

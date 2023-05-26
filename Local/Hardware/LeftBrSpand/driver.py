@@ -427,8 +427,8 @@ class LeftBrSpand(AddonFoundations):
 
         LeftBrSpand.dialog = MDDialog(
             title= str(LeftBrSpand.ConnectedCard.name) + _(" is now connected!"),
-            #text=_("You plugged in a BrSpand compatible extension card into Kontrol.") + _("This card's revision is") + ": " + str(LeftBrSpand.ConnectedCard.revision) + ". " + _("The drivers can be downloaded from") + ": " + str(LeftBrSpand.ConnectedCard.gitRepository),
-            text=f"This plane's callsign is {planeID}. It carries {passengerCount} passengers divided into {amountOfClasses} classes, it is {passedTSA} that it passed TSA.",
+            text=_("You plugged in a BrSpand compatible extension card into Kontrol.") + _("This card's revision is") + ": " + str(LeftBrSpand.ConnectedCard.revision) + ". " + _("The drivers can be downloaded from") + ": " + str(LeftBrSpand.ConnectedCard.gitRepository),
+            # text=f"This plane's callsign is {planeID}. It carries {passengerCount} passengers divided into {amountOfClasses} classes, it is {passedTSA} that it passed TSA.",
 
             buttons=[
                 MDFlatButton(text=_("Cancel"), font_style="H6", on_press = LeftBrSpand.CloseDialog),

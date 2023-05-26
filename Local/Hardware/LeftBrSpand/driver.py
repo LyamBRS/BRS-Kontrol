@@ -415,12 +415,12 @@ class LeftBrSpand(AddonFoundations):
 
         LeftBrSpand.dialog = MDDialog(
             title= str(LeftBrSpand.ConnectedCard.name) + _(" is now connected!"),
-            text=_("You plugged in a BrSpand compatible extension card into Kontrol.") + _("This card's revision is") + ": " + str(LeftBrSpand.ConnectedCard.revision) + ". " + _("The drivers can be downloaded from") + ": " + str(LeftBrSpand.ConnectedCard.gitRepository),
+            text=_("You plugged in a BrSpand compatible extension card into Kontrol.") + _("This card's version is") + " " + str(LeftBrSpand.ConnectedCard.revision) + " " + _("and their drivers can be downloaded from") + " " + str(LeftBrSpand.ConnectedCard.gitRepository),
             # text=f"This plane's callsign is {planeID}. It carries {passengerCount} passengers divided into {amountOfClasses} classes, it is {passedTSA} that it passed TSA.",
-
+            on_dismiss=LeftBrSpand.CloseDialog,
             buttons=[
-                MDFlatButton(text=_("Cancel"), font_style="H6", on_press = LeftBrSpand.CloseDialog),
-                MDFillRoundFlatButton(text=_("Launch"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                MDFlatButton(text=_("Ignore"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
+                MDFillRoundFlatButton(text=_("Launch drivers"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
             ]
             )
         KontrolRGB.ApploadingAnimation()
@@ -512,8 +512,9 @@ class LeftBrSpand(AddonFoundations):
         LeftBrSpand.dialog = MDDialog(
             title=title,
             text=text,
+            on_dismiss=LeftBrSpand.CloseDialog,
             buttons=[
-                MDFillRoundFlatButton(text=buttonText, font_style="H6", on_press = LeftBrSpand.CloseDialog, on_dismiss=LeftBrSpand.CloseDialog)
+                        MDFillRoundFlatButton(text=buttonText, font_style="H6", on_press = LeftBrSpand.CloseDialog, on_dismiss=LeftBrSpand.CloseDialog)
                     ]
                 )
         LeftBrSpand.dialog.open()
@@ -535,15 +536,8 @@ class LeftBrSpand(AddonFoundations):
         newGroup = UART.GetOldestReceivedGroupOfPassengers()
         if(newGroup == Execution.Failed):
             Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
-            LeftBrSpand.dialog = MDDialog(
-                title=_("Handshake Failure"),
-                text=_("416: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved."),
-                buttons=[
-                    MDFillRoundFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
-                ]
-            )
+            LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"), _("416: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved. Please try to unplug and replug your card."), _("Damn"))
             KontrolRGB.DisplayUserError()
-            LeftBrSpand.dialog.open()
             LeftBrSpand.cardJustConnected = False
             LeftBrSpand.universalInfoSent = False
             Debug.End()
@@ -561,59 +555,110 @@ class LeftBrSpand(AddonFoundations):
                         return Execution.Passed
                     else:
                         Debug.Error(f"BFIO failure. Universal Information plane seems to be corrupted.")
-                        LeftBrSpand.dialog = MDDialog(
-                            title=_("Handshake Failure"),
-                            text=_("437: The received BFIO data from the BrSpand card appears to be corrupted. Please unplug the card, wait for the connection lost pop up messgage and try to connect it again."),
-                            buttons=[
-                                MDFillRoundFlatButton(text=_("Sure"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
-                            ]
-                        )
+                        LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"), _("437: The received BFIO data from the BrSpand card appears to be corrupted. Please unplug the card, wait for the connection lost pop up messgage and try to connect it again."), _("Sure"))
                         KontrolRGB.DisplayUserError()
-                        LeftBrSpand.dialog.open()
                         LeftBrSpand.cardJustConnected = False
                         LeftBrSpand.universalInfoSent = False
                         Debug.End()
                         return Execution.Failed
                 else:
                     Debug.Error(f"BFIO failure. BrSpand card keeps sending useless informations")
-                    LeftBrSpand.dialog = MDDialog(
-                        title=_("Handshake Failure"),
-                        text=_("450: The connected card is sending unsupported BFIO answers/requests before their handshakes were successful. Unplug the card, wait for the connection lost pop up then try to connect it again."),
-                        buttons=[
-                            MDFillRoundFlatButton(text=_("Huh"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
-                        ]
-                    )
+                    LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"), _("450: The connected card is sending unsupported BFIO answers/requests before their handshakes were successful. Unplug the card, wait for the connection lost pop up then try to connect it again."), _("Huh"))
                     KontrolRGB.DisplayUserError()
                     LeftBrSpand.cardJustConnected = False
                     LeftBrSpand.universalInfoSent = False
-                    LeftBrSpand.dialog.open()
                     Debug.End()
                     return Execution.Failed
             else:
                 Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
-                LeftBrSpand.dialog = MDDialog(
-                    title=_("Handshake Failure"),
-                    text=_("463: BrSpand drivers did not receive anything back from the BrSpand card. Handshake could not be resolved. Try to unplug, then replug your BrSpand card only once the Connection Lost message appears."),
-                    buttons=[
-                        MDFillRoundFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
-                    ]
-                )
+                LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"),_("463: BrSpand drivers did not receive anything back from the BrSpand card. Handshake could not be resolved. Try to unplug, then replug your BrSpand card only once the Connection Lost message appears."), _("Damn"))
                 KontrolRGB.DisplayUserError()
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False
-                LeftBrSpand.dialog.open()
                 Debug.End()
                 return Execution.Failed
     # -----------------------------------
-    def _LaunchBrSpandDriver() -> Execution:
+    def _IgnorePressed(*args) -> None:
         """
-            _LaunchBrSpandDriver:
-            =====================
+            _IgnorePressed:
+            ===============
+            Summary:
+            --------
+            This is a callback executed
+            when the ignore button is
+            pressed and thus ignores the card.
+        """
+        Debug.Start("_IgnorePressed")
+        LeftBrSpand._ShowNewErrorDialog(_("Process canceled"), _("You will need to unplug and replug your BrSpand card in order for the connection process to restart. Make sure that you wait for the Connection Lost pop up to be displayed before you replug it."))
+        Debug.End()
+    # -----------------------------------
+    def _LaunchDriversPressed(*args) -> Execution:
+        """
+            _LaunchDriversPressed:
+            ======================
             Summary:
             --------
             Executed when the launch button is pressed
             in the shown dialog.
         """
+        Debug.Start("_LaunchDriversPressed")
+
+        from Programs.Local.Loading.BrSpand import IsCardDriversInstalled
+
+        result = IsCardDriversInstalled()
+
+        if(result == Execution.Passed):
+            Debug.Log("Drivers are already installed, launching them.")
+        else:
+            Debug.Log("Drivers are not installed.")
+            if(Information.CanUse.Internet == False):
+                LeftBrSpand._ShowNewErrorDialog(_("Driver downloading"), _("Your device does not currently have access to the internet. GitHub cannot be accessed therefore the drivers could not be downloaded. Please connect to a valid internet before plugging your card again."), _("Ok"))
+                Debug.End()
+                return
+            else:
+                LeftBrSpand.dialog.dismiss()
+                LeftBrSpand.dialog = MDDialog(
+                    title=_("Download Drivers?"),
+                    text=_("No drivers for") + " " + str(LeftBrSpand.ConnectedCard.name) + " " + _("are installed on your Kontrol. Do you wish to download them? This can cause a temporary freeze."),
+                    on_dismiss=LeftBrSpand._IgnorePressed,
+                    buttons=[
+                                MDFlatButton(text=_("Abort"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
+                                MDFillRoundFlatButton(text=_("Download drivers"), font_style="H6", on_press = LeftBrSpand._DownloadDriverPressed, on_dismiss=LeftBrSpand._IgnorePressed)
+                            ]
+                )
+                LeftBrSpand.dialog.open()    
+        Debug.End()
+    # -----------------------------------
+    def _DownloadDriverPressed(*args):
+        """
+            _DownloadDriverPressed:
+            =======================
+            Summary:
+            --------
+            This callback function is
+            called when the user wants
+            to download the drivers on
+            their devices
+        """
+        Debug.Start("_DownloadDriverPressed")
+        from Programs.Local.Loading.BrSpand import InstallCardsDrivers
+        result = InstallCardsDrivers(LeftBrSpand.ConnectedCard.name, LeftBrSpand.ConnectedCard.gitRepository)
+        if(result == Execution.Passed):
+            LeftBrSpand.dialog.dismiss()
+            LeftBrSpand.dialog = MDDialog(
+                title= LeftBrSpand.ConnectedCard.name + " " + _("installed"),
+                text=_("Kontrol successfully downloaded the required BrSpand drivers for the connected card locally. These drivers are launched when the BrSpand card connects and are closed when the card disconnects."),
+                on_dismiss=LeftBrSpand.CloseDialog,
+                buttons=[
+                            MDFillRoundFlatButton(text=_("Nice"), font_style="H6", on_press = LeftBrSpand.CloseDialog, on_dismiss=LeftBrSpand.CloseDialog)
+                        ]
+                )
+            LeftBrSpand.dialog.open()
+            KontrolRGB.ApploadingAnimation()
+        else:
+            LeftBrSpand._ShowNewErrorDialog(_("Download failure"), _("Kontrol failed to download the required drivers for the card currently plugged in the left BrSpand port."))
+            KontrolRGB.DisplayUserError()
+        Debug.End()
     #endregion
     #endregion
     #region   --------------------------- CONSTRUCTOR

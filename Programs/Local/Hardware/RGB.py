@@ -461,6 +461,33 @@ class KontrolRGB:
             Debug.End()
             return Execution.ByPassed
     # -----------------------------------
+    def StartOfHandshake():
+        """
+            Handshaking:
+            ============
+            Summary:
+            --------
+            Shows a very fast cycling
+            animations RGB colors and shit
+            so the user knows something's
+            happenning with their cards.
+        """
+        Debug.Start("KontrolRGB -> Handshaking")
+
+        if(KontrolRGB.canBeUsed):
+            RGB.SetAttributes(colors=[255,255,255],
+                            rgbMode=RGBModes.cycling,
+                            lerpDelta=1,
+                            animationDuration=3
+                            )
+
+            Debug.End()
+            return Execution.Passed
+        else:
+            Debug.Error("CLASS CANNOT BE USED")
+            Debug.End()
+            return Execution.ByPassed
+    # -----------------------------------
     def Handshaking():
         """
             Handshaking:

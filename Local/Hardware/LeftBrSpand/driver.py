@@ -243,7 +243,7 @@ class LeftBrSpand(AddonFoundations):
                         # MDFillRoundFlatButton(text=_("Start"), font_style="H6")
                     # ]
                 # )
-                KontrolRGB.Handshaking()
+                KontrolRGB.StartOfHandshake()
                 LeftBrSpand.cardJustConnected = True
                 LeftBrSpand.universalInfoSent = False
                 Debug.End()
@@ -365,6 +365,7 @@ class LeftBrSpand(AddonFoundations):
             Debug.End()
             return Execution.Failed
 
+        KontrolRGB.Handshaking()
         Debug.End()
         return Execution.Passed
 
@@ -560,7 +561,7 @@ class LeftBrSpand(AddonFoundations):
                 Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
                 LeftBrSpand.dialog = MDDialog(
                     title=_("Handshake Failure"),
-                    text=_("463: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved."),
+                    text=_("463: BrSpand drivers did not receive anything back from the BrSpand card. Handshake could not be resolved."),
                     buttons=[
                         MDFillRoundFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
                     ]

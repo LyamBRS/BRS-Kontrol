@@ -33,7 +33,7 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import AddonFoundations, AddonInfoHandler, AddonEnum
+from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import AddonFoundations, AddonInfoHandler, AddonEnum, Addons
 #endregion
 #region -------------------------------------------------------- Kivy
 # LoadingLog.Import("Kivy")
@@ -66,6 +66,9 @@ class LeftBrSpand(AddonFoundations):
     addonInformation:AddonInfoHandler = None
     oldConnectionStatus:bool = False
     currentConnectionStatus:bool = False
+
+    brSpandCardDockedAndRunning:bool = False
+    """ Tells the addon if they have a running driver for the card installed. """
 
     dialog:MDDialog = MDDialog()
 
@@ -247,6 +250,9 @@ class LeftBrSpand(AddonFoundations):
 
             if(not connected):
                 LeftBrSpand._ShowNewErrorDialog(_("BrSpand Lost"), _("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),_("Ok"))
+                LeftBrSpand._StopBrSpandDrivers()
+                
+
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False
                 UART.StopDriver()
@@ -257,6 +263,30 @@ class LeftBrSpand(AddonFoundations):
         return Execution.Unecessary
     #endregion
     #region --------------------- PRIVATE
+    def _StopBrSpandDrivers() -> Execution:
+        """
+            _StopBrSpandDrivers:
+            ====================
+            Summary:
+            --------
+            Function executed that attempts
+            to murder the ongoing BrSpand
+            driver.
+        """
+        Debug.Start("_StopBrSpandDrivers")
+
+        try:
+            result = Addons.StopOne(addonToStop=LeftBrSpand.ConnectedCard.name)
+            if(result != Execution.Failed):
+                Debug.Log(f"Successfully stopped {LeftBrSpand.ConnectedCard.name}")
+                Debug.End()
+                return Execution.Passed
+        except:
+            Debug.Error(f"No addons with the name {str(LeftBrSpand.ConnectedCard.name)} are currently running.")
+
+        Debug.End()
+        return Execution.Failed
+
     def _IsCardConnected() -> bool:
         """
             _IsCardConnected:

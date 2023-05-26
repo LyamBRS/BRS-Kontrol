@@ -608,7 +608,7 @@ class LeftBrSpand(AddonFoundations):
 
         from Programs.Local.Loading.BrSpand import IsCardDriversInstalled
 
-        result = IsCardDriversInstalled()
+        result = IsCardDriversInstalled(LeftBrSpand.ConnectedCard.name)
 
         if(result == Execution.Passed):
             Debug.Log("Drivers are already installed, launching them.")

@@ -251,7 +251,7 @@ class LeftBrSpand(AddonFoundations):
             if(not connected):
                 LeftBrSpand._ShowNewErrorDialog(_("BrSpand Lost"), _("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),_("Ok"))
                 LeftBrSpand._StopBrSpandDrivers()
-                
+
 
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False
@@ -635,7 +635,7 @@ class LeftBrSpand(AddonFoundations):
         """
         Debug.Start("_LaunchCard")
         
-        result = LaunchBrSpandAtPath(str(LeftBrSpand.ConnectedCard.name))
+        result = LaunchBrSpandAtPath(LeftBrSpand.ConnectedCard.name)
         if(result != Execution.Passed):
             LeftBrSpand._ShowNewErrorDialog(_("Launch failure"), _("A fatal error occured when Kontrol tried to launch the drivers of the BrSpand card connected in the left port."), _("Oh"))
         else:

@@ -14,6 +14,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.networks import GetWifiIcon
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
+from Programs.Local.Updating.LaunchHandling import Shutdown
 LoadingLog.Start("AppLoading.py")
 #====================================================================#
 # Imports
@@ -185,6 +186,10 @@ def GoTo_Quit(*args):
         pop up in case it fails for X reason.
     """
     Debug.Start("GoTo_Quit")
+    from kivymd.app import MDApp
+    Shutdown.scheduleKontrolForShutdown = True
+    runningApp = MDApp.get_running_app()
+    runningApp.stop()
     Debug.End()
 
 #====================================================================#

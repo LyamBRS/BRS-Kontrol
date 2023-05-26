@@ -54,9 +54,11 @@ def GetUniversalInfoPlane() -> Plane:
         Information.name,
         str(Information.softwareVersion)
     ]
+
+    plane = Plane(MandatoryPlaneIDs.universalInfo, data, MandatoryFunctionRequestVarTypeLists[MandatoryPlaneIDs.universalInfo])
     
     Debug.End()
-    return data
+    return plane
 
 #====================================================================#
 # Classes

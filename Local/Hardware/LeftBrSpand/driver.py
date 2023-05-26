@@ -592,7 +592,7 @@ class LeftBrSpand(AddonFoundations):
             pressed and thus ignores the card.
         """
         Debug.Start("_IgnorePressed")
-        LeftBrSpand._ShowNewErrorDialog(_("Process canceled"), _("You will need to unplug and replug your BrSpand card in order for the connection process to restart. Make sure that you wait for the Connection Lost pop up to be displayed before you replug it."))
+        LeftBrSpand._ShowNewErrorDialog(_("Process canceled"), _("You will need to unplug and replug your BrSpand card in order for the connection process to restart. Make sure that you wait for the Connection Lost pop up to be displayed before you replug it."), _("Ok"))
         Debug.End()
     # -----------------------------------
     def _LaunchDriversPressed(*args) -> Execution:

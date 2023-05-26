@@ -1805,6 +1805,8 @@ class BindSelectMenu(Screen):
         PopUps_Screens.SetExiter(ControlMenu_Screens, "ControlMenu")
         PopUpsHandler.Clear()
 
+        Debug.enableConsole = True
+
         Debug.Log(f"Unbinding {HeldData.nameOfTheSoftwareBind} from {HeldData.whoHasItCurrentlyBinded}")
         if(HeldData.whatIsBeingBinded == "axes"):
             Addons.UnbindHardwareAxisFromEveryone(HeldData.nameOfTheSoftwareBind)
@@ -1824,6 +1826,8 @@ class BindSelectMenu(Screen):
             PopUpsHandler.Add(PopUpTypeEnum.Remark,
                               Message=_("Successfully binded the specified addon's hardware with a new software representation. Kontrol automatically removed other hardware's binds associated with this software representation.")
                               )
+
+        Debug.enableConsole = False
         PopUps_Screens.Call()
         Debug.End()
 # ------------------------------------------------------------------------

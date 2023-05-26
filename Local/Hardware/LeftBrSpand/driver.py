@@ -420,7 +420,7 @@ class LeftBrSpand(AddonFoundations):
             on_dismiss=LeftBrSpand._Dismissed,
             buttons=[
                 MDFlatButton(text=_("Ignore"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
-                MDFillRoundFlatButton(text=_("Launch drivers"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                MDFillRoundFlatButton(text=_("Launch drivers"), font_style="H6", on_press = LeftBrSpand._LaunchDriversPressed)
             ]
             )
         KontrolRGB.ApploadingAnimation()

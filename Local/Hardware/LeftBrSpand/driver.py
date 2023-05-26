@@ -297,7 +297,7 @@ class LeftBrSpand(AddonFoundations):
         Debug.Log("Card is NOT connected")
         Debug.End()
         return False
-
+    # -----------------------------------
     def _IsCardUsable() -> bool:
         """
             _IsCardUsable:
@@ -321,7 +321,7 @@ class LeftBrSpand(AddonFoundations):
 
         Debug.End()
         return False
-
+    # -----------------------------------
     def _StartHandshake() -> Execution:
         """
             _StartHandshake:
@@ -370,7 +370,7 @@ class LeftBrSpand(AddonFoundations):
         KontrolRGB.Handshaking()
         Debug.End()
         return Execution.Passed
-
+    # -----------------------------------
     def _StoreUniversalInformations() -> Execution:
         """
             __StoreUniversalInformations:
@@ -405,7 +405,7 @@ class LeftBrSpand(AddonFoundations):
 
         Debug.End()
         return Execution.Passed
-
+    # -----------------------------------
     def _DisplayConnectionSuccessful() -> Execution:
         """
             _DisplayConnectionSuccessful:
@@ -592,6 +592,16 @@ class LeftBrSpand(AddonFoundations):
                 LeftBrSpand.dialog.open()
                 Debug.End()
                 return Execution.Failed
+    # -----------------------------------
+    def _LaunchBrSpandDriver() -> Execution:
+        """
+            _LaunchBrSpandDriver:
+            =====================
+            Summary:
+            --------
+            Executed when the launch button is pressed
+            in the shown dialog.
+        """
     #endregion
     #endregion
     #region   --------------------------- CONSTRUCTOR

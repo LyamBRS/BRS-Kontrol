@@ -30,6 +30,7 @@ from kivy.uix.recyclegridlayout import RecycleGridLayout
 LoadingLog.Import("KivyMD")
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.card import MDCard
+from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import ThreeLineRightIconListItem, IconRightWidget
 from kivymd.uix.recycleview import RecycleView
@@ -409,13 +410,17 @@ class DebuggerMenu(Screen):
         """
         Debug.Start("ButtonPressed")
         Debug.Log(args)
-        HeldData.whatIsBeingBinded = "buttons"
-        HeldData.nameOfTheSoftwareBind = args[0][0]
-        HeldData.whoHasItCurrentlyBinded = args[0][1]
-        HeldData.whoHasItCurrentlyBinded = args[0][2]
-        BinderSelector_Screens.SetCaller(DebuggerMenu_Screens, "DebuggerMenu")
-        BinderSelector_Screens.SetExiter(DebuggerMenu_Screens, "DebuggerMenu")
-        BinderSelector_Screens.Call()
+
+        from kivymd.uix.button import MDFillRoundFlatButton
+
+        dialog = MDDialog(
+            title=_("Arguments:"),
+            text=str(args),
+            buttons=[
+                MDFillRoundFlatButton(text=_("I guess yeah"), font_style="H6")
+            ]
+        )
+
         Debug.End()
 # ------------------------------------------------------------------------
 LoadingLog.End("DebuggerMenu.py")

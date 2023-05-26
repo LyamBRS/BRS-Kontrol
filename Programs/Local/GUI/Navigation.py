@@ -186,10 +186,10 @@ def GoTo_Quit(*args):
         pop up in case it fails for X reason.
     """
     Debug.Start("GoTo_Quit")
-    from kivymd.app import MDApp
+    from kivy.base import EventLoop
     Shutdown.scheduleKontrolForShutdown = True
-    runningApp = MDApp.get_running_app()
-    runningApp.stop()
+    EventLoop.window.dispatch('on_keyboard', None, 'escape', [27])
+
     Debug.End()
 
 #====================================================================#

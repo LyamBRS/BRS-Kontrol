@@ -1,6 +1,7 @@
 import serial
 import time
 from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Debug, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPlane
+from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
 # Define the serial port configurations
 TIMEOUT = 0.1
@@ -123,6 +124,9 @@ def TestBFIOArrivals():
                 return
             else:
                 print("A plane failed TSA checks")
+        
+        print("Sending a plane on taxiway?")
+        serialObject.write(GetUniversalInfoPlane())
 ################################################
 TestBFIOArrivals()
 serialObject.close()

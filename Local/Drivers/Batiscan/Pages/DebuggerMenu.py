@@ -420,6 +420,7 @@ class DebuggerMenu(Screen):
                 MDFillRoundFlatButton(text=_("I guess yeah"), font_style="H6")
             ]
         )
+        dialog.open()
 
         Debug.End()
 # ------------------------------------------------------------------------

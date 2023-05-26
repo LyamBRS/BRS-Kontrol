@@ -16,9 +16,9 @@ from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
 from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART
 from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, NewArrival, Plane
+from Programs.Local.Loading.BrSpand import LaunchBrSpandAtPath
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 from Programs.Local.Hardware.RGB import KontrolRGB
-from Programs.Pages.PopUps import PopUpTypeEnum
 LoadingLog.Start("driver.py")
 #====================================================================#
 # Imports
@@ -595,6 +595,34 @@ class LeftBrSpand(AddonFoundations):
         LeftBrSpand._ShowNewErrorDialog(_("Process canceled"), _("You will need to unplug and replug your BrSpand card in order for the connection process to restart. Make sure that you wait for the Connection Lost pop up to be displayed before you replug it."), _("Ok"))
         Debug.End()
     # -----------------------------------
+    def _LaunchCard() -> Execution:
+        """
+            _LaunchCard:
+            ============
+            Summary:
+            --------
+            Tries to launch the connected card's drivers.
+        """
+        Debug.Start("_LaunchCard")
+        
+        result = LaunchBrSpandAtPath(str(LeftBrSpand.ConnectedCard.name))
+        if(result != Execution.Passed):
+            LeftBrSpand._ShowNewErrorDialog(_("Launch failure"), _("A fatal error occured when Kontrol tried to launch the drivers of the BrSpand card connected in the left port."), _("Oh"))
+        else:
+            LeftBrSpand.dialog.dismiss()
+            LeftBrSpand.dialog = MDDialog(
+                title= str(LeftBrSpand.ConnectedCard.BFIO) + " " + _("is now running!"),
+                text=_("Kontrol successfully launched the drivers of the connected BrSpand card! The drivers will stop when the card is unplugged."),
+                on_dismiss=LeftBrSpand._Dismissed,
+                buttons=[
+                            MDFillRoundFlatButton(text=_("Alright"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                        ]
+            )
+            LeftBrSpand.dialog.open()
+            KontrolRGB.ApploadingAnimation()   
+
+        Debug.End()
+    # -----------------------------------
     def _LaunchDriversPressed(*args) -> Execution:
         """
             _LaunchDriversPressed:
@@ -612,6 +640,7 @@ class LeftBrSpand(AddonFoundations):
 
         if(result == Execution.Passed):
             Debug.Log("Drivers are already installed, launching them.")
+            LeftBrSpand._LaunchCard()
         else:
             Debug.Log("Drivers are not installed.")
             if(Information.CanUse.Internet == False):
@@ -653,7 +682,8 @@ class LeftBrSpand(AddonFoundations):
                 text=_("Kontrol successfully downloaded the required BrSpand drivers for the connected card locally. These drivers are launched when the BrSpand card connects and are closed when the card disconnects."),
                 on_dismiss=LeftBrSpand._Dismissed,
                 buttons=[
-                            MDFillRoundFlatButton(text=_("Nice"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                            MDFlatButton(text=_("Abort"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
+                            MDFillRoundFlatButton(text=_("Launch drivers"), font_style="H6", on_press = LeftBrSpand._LaunchDriversPressed)
                         ]
                 )
             LeftBrSpand.dialog.open()

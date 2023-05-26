@@ -31,62 +31,10 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 #endregion
 #region -------------------------------------------------------- Kivy
-LoadingLog.Import("Kivy")
-from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 # LoadingLog.Import('KivyMD')
 #endregion
-from Programs.Pages.PopUps import PopUpTypeEnum, PopUpsHandler
-#====================================================================#
-# Functions
-#====================================================================#
-def InitializeAllHardwareAddons(CreatePopUps:bool = False) -> Execution:
-    """
-        InitializeAllHardwareAddons:
-        ============================
-        Summary:
-        --------
-        This function will attempt to gather all the
-        hardware addons you have installed in your Kontrol
-        and launch them. See the official documentation to
-        understand what an hardware addon is.
-
-        Arguments:
-        ----------
-        - `CreatePopUps:bool` If false, no pop ups will be created from executing this.
-
-        Returns:
-        --------
-        - `Execution.Passed` : All addons were launched and added to the application.
-        - `Execution.Unecessary` : No addons are installed on your Kontrol.
-        - `failedAddons` : List of addons that failed to launch.
-    """
-    Debug.Start("InitializeAllHardwareAddons")
-
-    Debug.Log("Getting path of addons folder")
-    pathToAddons = os.getcwd()
-    pathToAddons = AppendPath(pathToAddons, "/Local/Hardware")
-
-    Debug.Log("Fetching installed hardware addons")
-    installedAddons = GetNamesOfInstalledAddons(pathToAddons)
-    if(len(installedAddons) == 0):
-        Debug.Warn("Your Kontrol does not have any hardware addons installed. Please install some if you think its an error.")
-        Debug.End()
-        return Execution.Unecessary
-
-    Debug.Log("Launching found addons...")
-    for addon in installedAddons:
-        result = LaunchAddonAtPath(addon, pathToAddons)
-        if(result != Execution.Passed):
-            Debug.Warn(f"Seems like {addon} failed to launch.")
-
-            if(CreatePopUps == True):
-                CreatePopUpMessage(addon, result)
-
-    Debug.Log("Starting periodic updater callback.")
-    Clock.schedule_once(PeriodicCallbackExecuter, 5)
-    Debug.End()
 #====================================================================#
 def InstalledBrSpandCards() -> list:
     """
@@ -105,28 +53,28 @@ def InstalledBrSpandCards() -> list:
     Debug.End()
     return subdirectories
 #====================================================================#
-def LaunchBrSpandAtPath(nameOfBrSpandCard:str, pathToTheBrSpandDrivers:str):
+def LaunchBrSpandAtPath(nameOfBrSpandCard:str):
     """
-        LaunchAddonAtPath:
-        ==================
+        LaunchBrSpandAtPath:
+        ====================
         Summary:
         --------
-        Launches a specified addon at a 
+        Launches a specified BrSpand Card at a 
         specified path.
 
         Returns:
         --------
-        - `Execution.Passed` = Addon launched successfully and is now accessible through the Addons class.
-        - `Execution.Failed` = Addon failed to launch.
-        - `Execution.Incompatibility` = Addon cannot launch on your device.
-        - `Execution.Unecessary` = Addon is already running on your device.
+        - `Execution.Passed` = Card launched successfully and is now accessible through the Cards class.
+        - `Execution.Failed` = Card failed to launch.
+        - `Execution.Incompatibility` = Card cannot launch on your device.
+        - `Execution.Unecessary` = Card is already running on your device.
     """
     Debug.Start("LaunchBrSpandAtPath")
 
     Debug.Log(f"Trying to launch {nameOfBrSpandCard}...")
 
     # Append driver.py to specified path.
-    pathOfAddonsDriver = os.path.join(pathToTheBrSpandDrivers, nameOfBrSpandCard, "driver.py")
+    pathOfAddonsDriver = os.path.join(PathToBrSpandDrivers, f"/nameOfBrSpandCard", "driver.py")
 
     Debug.Log(f"Start of {nameOfBrSpandCard}'s compiling...")
     if(os.path.isfile(pathOfAddonsDriver)):

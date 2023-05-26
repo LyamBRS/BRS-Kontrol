@@ -14,7 +14,9 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Hardware.GPIO.driver import GPIO
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO
+from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, NewArrival, Plane
+from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 from Programs.Local.Hardware.RGB import KontrolRGB
 from Programs.Pages.PopUps import PopUpTypeEnum
 LoadingLog.Start("driver.py")
@@ -78,9 +80,11 @@ class LeftBrSpand(AddonFoundations):
             BrSpand card connected to this
             BrSpand UART port.
         """
+        universalInformationPlane:NewArrival = None
         gitRepository:str = None
         name:str = None
         revision:str = None
+        type:int = None
         ID:int = None
         BFIO:int = 0
 
@@ -200,52 +204,58 @@ class LeftBrSpand(AddonFoundations):
 
         LeftBrSpand._GetCurrentGPIOLevels()
         connected = LeftBrSpand._IsCardConnected()
-        usable = LeftBrSpand._IsCardUsable()
+
+        if(LeftBrSpand.cardJustConnected and LeftBrSpand.universalInfoSent):
+            result = LeftBrSpand._CheckUARTForUniversalInfo()
+            if(result != Execution.Passed):
+                Debug.Error("Check UART failed.")
+                Debug.End()
+                return Execution.Failed
+
+            result = LeftBrSpand._StoreUniversalInformations()
+            if(result != Execution.Passed):
+                Debug.Error("Failed to store universal informations")
+                Debug.End()
+                return Execution.Failed
+
+            LeftBrSpand._DisplayConnectionSuccessful()
+            LeftBrSpand.cardJustConnected = False
+            LeftBrSpand.universalInfoSent = False
 
         if(LeftBrSpand.cardJustConnected and not LeftBrSpand.universalInfoSent):
+            Debug.Log("Starting handshake proceedure")
             LeftBrSpand._StartHandshake()
+            LeftBrSpand.universalInfoSent = True
 
         if(LeftBrSpand.currentConnectionStatus != LeftBrSpand.oldConnectionStatus):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 
             if(connected):
-                dialog = MDDialog(
-                    title=_("BrSpand Detected"),
-                    text=_("A BrSpand card was detected. Do you want to start the connection process? This may cause crashes and unknown behaviors if the application is currently executing tasks and processes. Make sure you are in a main menu before connecting a BrSpand card."),
-                    buttons=[
-                        MDFlatButton(text=_("Cancel"), font_style="H6"),
-                        MDFillRoundFlatButton(text=_("Start"), font_style="H6")
-                    ]
-                )
+                # dialog = MDDialog(
+                    # title=_("BrSpand Detected"),
+                    # text=_("A BrSpand card was detected. Do you want to start the connection process? This may cause crashes and unknown behaviors if the application is currently executing tasks and processes. Make sure you are in a main menu before connecting a BrSpand card."),
+                    # buttons=[
+                        # MDFlatButton(text=_("Cancel"), font_style="H6"),
+                        # MDFillRoundFlatButton(text=_("Start"), font_style="H6")
+                    # ]
+                # )
+                KontrolRGB.Handshaking()
                 LeftBrSpand.cardJustConnected = True
                 LeftBrSpand.universalInfoSent = False
-                dialog.open()
                 Debug.End()
                 return Execution.Passed
 
             if(not connected):
-                dialog = MDDialog(
+                LeftBrSpand.dialog = MDDialog(
                     title=_("BrSpand Lost"),
                     text=_("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),
                     buttons=[
-                        MDFillRoundFlatButton(text=_("Ok"), font_style="H6")
+                        MDFillRoundFlatButton(text=_("Ok"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
                     ]
                 )
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False
-                dialog.open()
-                Debug.End()
-                return Execution.Passed
-
-            if(connected and not usable):
-                dialog = MDDialog(
-                    title=_("BrSpand Error"),
-                    text=_("The BrSpand card connected to the left USB-C port cannot be used. This is either an error or because the card does not use their second connector. If your card only has one connector, there might be an issue with it."),
-                    buttons=[
-                        MDFillRoundFlatButton(text=_("Ok"), font_style="H6")
-                    ]
-                )
-                dialog.open()
+                LeftBrSpand.dialog.open()
                 Debug.End()
                 return Execution.Passed
 
@@ -317,30 +327,109 @@ class LeftBrSpand(AddonFoundations):
             on the Left master runway.
         """
         Debug.Start("LeftBrSpand -> _StartHandshake")
+        UART.serialPort = "/dev/ttyAMA2"
+        result = UART.StartDriver()
+
+        if(result != Execution.Passed):
+            LeftBrSpand.dialog = MDDialog(
+                title=_("BrSpand Failure"),
+                text=_("The left BrSpand port failed to start the UART driver and thus cannot communicate with the card you plugged in. Make sure you're running on a compatible Kontrol version."),
+                buttons=[
+                    MDFlatButton(text=_("Ok"), font_style="H6", on_press = LeftBrSpand.CloseDialog),
+                ]
+            )
+            LeftBrSpand.dialog.open()
+            KontrolRGB.DisplayUserError()
+            Debug.Error("LeftBrSpand failed to start UART BFIO threads.")
+            Debug.End()
+            return Execution.Failed
+
+        Debug.Log("Building and sending Universal Info")
+        kontrolUniversalInfo = GetUniversalInfoPlane()
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
+        if(result != Execution.Passed):
+            LeftBrSpand.dialog = MDDialog(
+                title=_("BrSpand Failure"),
+                text=_("The left BrSpand port failed to output its Universal Informations to the BrSpand card you just plugged in. Unplug it, wait for the pop up message then try to reconnect it."),
+                buttons=[
+                    MDFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog),
+                ]
+            )
+            LeftBrSpand.dialog.open()
+            KontrolRGB.DisplayUserError()
+            Debug.Error("LeftBrSpand failed to queue plane on taxiway of BFIO threads.")
+            Debug.End()
+            return Execution.Failed
 
         Debug.End()
+        return Execution.Passed
 
-    def _GetCurrentGPIOLevels() -> list:
+    def _StoreUniversalInformations() -> Execution:
         """
-            _GetCurrentGPIO:
-            ================
+            __StoreUniversalInformations:
+            =============================
             Summary:
             --------
-            Returns a list of True and
-            False that corresponds to
-            the levels of the GPIOs used
-            by this BrSpand card port.
+            Handles the storing of the
+            universal information stored
+            within the landed plane obtained
+            from the handshake with the
+            currently plugged in BrSpand
+            card.
         """
-        Debug.Start("_GetCurrentGPIOLevels")
-        gpio12 = GPIO.GetGPIOLevel(12)
-        gpio13 = GPIO.GetGPIOLevel(13)
-        gpio26 = GPIO.GetGPIOLevel(26)
-        gpio27 = GPIO.GetGPIOLevel(27)
-        Debug.Log(f"Current GPIO levels are {[gpio12, gpio13, gpio26, gpio27]}")
-        LeftBrSpand.gpioLevels = [gpio12, gpio13, gpio26, gpio27]
+        Debug.Start("__StoreUniversalInformations")
+
+        LeftBrSpand.ConnectedCard.ID = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(0)
+        LeftBrSpand.ConnectedCard.BFIO = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(1)
+        LeftBrSpand.ConnectedCard.type = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(2)
+        LeftBrSpand.ConnectedCard.gitRepository = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(3)
+        LeftBrSpand.ConnectedCard.name = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(4)
+        LeftBrSpand.ConnectedCard.revision = LeftBrSpand.ConnectedCard.universalInformationPlane.GetParameter(5)
+
         Debug.End()
-        return [gpio12, gpio13, gpio26, gpio27]
+        return Execution.Passed
+
+    def _DisplayConnectionSuccessful() -> Execution:
+        """
+            _DisplayConnectionSuccessful:
+            =============================
+            Summary:
+            --------
+            This function's purpose is to
+            display a dialog to the user
+            informing him about the card
+            he just plugged into their
+            Kontrol device.
+        """
+        Debug.Start("LeftBrSpand -> _DisplayConnectionSuccessful")
+
+        LeftBrSpand.dialog = MDDialog(
+            title= str(LeftBrSpand.ConnectedCard.name) + _(" is now connected!"),
+            text=_("You plugged in a BrSpand compatible extension card into Kontrol.") + _("This card's revision is") + ": " + str(LeftBrSpand.ConnectedCard.revision) + ". " + _("The drivers can be downloaded from") + ": " + str(LeftBrSpand.ConnectedCard.gitRepository),
+            buttons=[
+                MDFlatButton(text=_("Cancel"), font_style="H6", on_press = LeftBrSpand.CloseDialog),
+                MDFillRoundFlatButton(text=_("Launch"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+            ]
+            )
+        KontrolRGB.ApploadingAnimation()
+        LeftBrSpand.dialog.show()
+        Debug.End()
+        return Execution.Passed
     # -----------------------------------
+    def CloseDialog(*args):
+        """
+            CloseDialog:
+            ============
+            Summary:
+            --------
+            Closes the currently opened
+            BrSpand dialog and returns
+            the RGB lights to normal.
+        """
+        Debug.Start("CloseDialog")
+        LeftBrSpand.dialog.dismiss()
+        KontrolRGB.DisplayDefaultColor()
+        Debug.End()
     # -----------------------------------
     def VerifyForExecution() -> Execution:
         """
@@ -373,6 +462,82 @@ class LeftBrSpand(AddonFoundations):
         Debug.Log("Seems alright.")
         Debug.End()
         return Execution.Passed
+    # -----------------------------------
+    def _CheckUARTForUniversalInfo() -> Execution:
+        """
+            _CheckUARTForUniversalInfo:
+            ===========================
+            Summary:
+            --------
+            Checks the UART to see if the card
+            answered with its universal informations
+            properly.
+        """
+        Debug.Start("LeftBrSpand -> _CheckUARTForUniversalInfo")
+
+        newGroup = UART.GetOldestReceivedGroupOfPassengers()
+        if(newGroup == Execution.Failed):
+            Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
+            LeftBrSpand.dialog = MDDialog(
+                title=_("Handshake Failure"),
+                text=_("416: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved."),
+                buttons=[
+                    MDFillRoundFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                ]
+            )
+            KontrolRGB.DisplayUserError()
+            LeftBrSpand.dialog.show()
+            Debug.End()
+            return Execution.Failed
+
+        else:
+            if(newGroup != None):
+                planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
+                if(planeIsMandatory):
+                    plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
+                    if(plane.passedTSA):
+                        Debug.Log("HOLY SHIT I THINK WE GOT IT ?!?")
+                        Debug.End()
+                        return Execution.Passed
+                    else:
+                        Debug.Error(f"BFIO failure. Universal Information plane seems to be corrupted.")
+                        LeftBrSpand.dialog = MDDialog(
+                            title=_("Handshake Failure"),
+                            text=_("437: The received BFIO data from the BrSpand card appears to be corrupted. Please unplug the card, wait for the connection lost pop up messgage and try to connect it again."),
+                            buttons=[
+                                MDFillRoundFlatButton(text=_("Sure"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                            ]
+                        )
+                        KontrolRGB.DisplayUserError()
+                        LeftBrSpand.dialog.show()
+                        Debug.End()
+                        return Execution.Failed
+                else:
+                    Debug.Error(f"BFIO failure. BrSpand card keeps sending useless informations")
+                    LeftBrSpand.dialog = MDDialog(
+                        title=_("Handshake Failure"),
+                        text=_("450: The connected card is sending unsupported BFIO answers/requests before their handshakes were successful. Unplug the card, wait for the connection lost pop up then try to connect it again."),
+                        buttons=[
+                            MDFillRoundFlatButton(text=_("Huh"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                        ]
+                    )
+                    KontrolRGB.DisplayUserError()
+                    LeftBrSpand.dialog.show()
+                    Debug.End()
+                    return Execution.Failed
+            else:
+                Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
+                LeftBrSpand.dialog = MDDialog(
+                    title=_("Handshake Failure"),
+                    text=_("463: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved."),
+                    buttons=[
+                        MDFillRoundFlatButton(text=_("Damn"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
+                    ]
+                )
+                KontrolRGB.DisplayUserError()
+                LeftBrSpand.dialog.show()
+                Debug.End()
+                return Execution.Failed
     #endregion
     #endregion
     #region   --------------------------- CONSTRUCTOR

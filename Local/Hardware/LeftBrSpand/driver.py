@@ -237,14 +237,6 @@ class LeftBrSpand(AddonFoundations):
             LeftBrSpand.oldConnectionStatus = LeftBrSpand.currentConnectionStatus
 
             if(connected):
-                # dialog = MDDialog(
-                    # title=_("BrSpand Detected"),
-                    # text=_("A BrSpand card was detected. Do you want to start the connection process? This may cause crashes and unknown behaviors if the application is currently executing tasks and processes. Make sure you are in a main menu before connecting a BrSpand card."),
-                    # buttons=[
-                        # MDFlatButton(text=_("Cancel"), font_style="H6"),
-                        # MDFillRoundFlatButton(text=_("Start"), font_style="H6")
-                    # ]
-                # )
                 KontrolRGB.StartOfHandshake()
                 LeftBrSpand.cardJustConnected = True
                 LeftBrSpand.universalInfoSent = False
@@ -252,16 +244,10 @@ class LeftBrSpand(AddonFoundations):
                 return Execution.Passed
 
             if(not connected):
-                LeftBrSpand.dialog = MDDialog(
-                    title=_("BrSpand Lost"),
-                    text=_("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),
-                    buttons=[
-                        MDFillRoundFlatButton(text=_("Ok"), font_style="H6", on_press = LeftBrSpand.CloseDialog)
-                    ]
-                )
+                LeftBrSpand._ShowNewErrorDialog(_("BrSpand Lost"), _("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),_("Ok"))
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False
-                LeftBrSpand.dialog.open()
+                UART.StopDriver()
                 Debug.End()
                 return Execution.Passed
 
@@ -507,6 +493,30 @@ class LeftBrSpand(AddonFoundations):
         LeftBrSpand.gpioLevels = [gpio12, gpio13, gpio26, gpio27]
         Debug.End()
         return [gpio12, gpio13, gpio26, gpio27]
+    # -----------------------------------
+    def _ShowNewErrorDialog(title:str, text:str, buttonText:str) -> Execution:
+        """
+            _ShowNewAcknowledgeDialog:
+            ==========================
+            Summary:
+            --------
+            Shows a simple dialog.
+            Makes the RGB a certain color,
+            sets the buttons
+        """
+        Debug.Start("_ShowNewErrorDialog")
+
+        LeftBrSpand.dialog.dismiss()
+        LeftBrSpand.dialog = MDDialog(
+            title=title,
+            text=text,
+            buttons=[
+                MDFillRoundFlatButton(text=buttonText, font_style="H6", on_press = LeftBrSpand.CloseDialog, on_dismiss=LeftBrSpand.CloseDialog)
+                    ]
+                )
+        LeftBrSpand.dialog.open()
+        Debug.End()
+        return Execution.Passed
     # -----------------------------------
     def _CheckUARTForUniversalInfo() -> Execution:
         """

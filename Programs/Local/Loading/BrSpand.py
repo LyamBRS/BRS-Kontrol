@@ -20,6 +20,7 @@ LoadingLog.Start("BrSpand.py")
 LoadingLog.Import("Python")
 import os
 import importlib.util
+import subprocess
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
@@ -194,17 +195,53 @@ def IsCardDriversInstalled(nameOfTheCard:str):
         Debug.End()
         return Execution.Failed
 #====================================================================#
-def InstallCardDrivers(gitRepositoryToClone:str) -> Execution:
+def InstallCardsDrivers(nameOfTheCard:str, gitRepoURL:str) -> Execution:
     """
-        InstallCardDrivers:
-        ===================
+        InstallCardsDrivers:
+        ====================
         Summary:
         --------
-        Tries to install a BrSpand card's drivers on
-        your device.
+        Clones a Git repository from the specified URL to the desired folder path with a specific name.
+        
+        Arguments:
+        ----------
+        - gitRepoURL (str): The URL of the Git repository.
+        - nameOfTheCard (str): The desired name for the cloned repository folder.
+        
+        Returns:
+        --------
+        - `Execution.Passed`: The cloning process succeeded.
+        - `Execution.Failed`: The cloning process failed.
     """
-    Debug.Start("InstallCardDrivers")
+    try:
 
-    Debug.End()
+        pathToDrivers = PathToBrSpandDrivers()
+        pathToRepository = AppendPath(pathToDrivers, f"/{nameOfTheCard}")
+
+        if(os.path.exists(pathToRepository)):
+            try:
+                from git import rmtree
+                rmtree(pathToRepository)
+            except:
+                Debug.Error("Failed to delete old repository.")
+                Debug.End()
+                return Execution.Crashed
+
+        # Clone the repository using the git command-line tool
+        result = subprocess.run(['git', 'clone', gitRepoURL, pathToRepository])
+        if(result.returncode == 0):
+            Debug.Log(">>> SUCCESS")
+        else:
+            Debug.Error("Failed to download BrSpand drivers.")
+            Debug.End()
+            return Execution.Failed
+
+        Debug.End()
+        return Execution.Passed
+    except subprocess.CalledProcessError:
+        # An error occurred during the cloning process
+        Debug.Error("Subprocesses failed")
+        Debug.End()
+        return Execution.Failed
 #====================================================================#
 LoadingLog.End("BrSpand.py")

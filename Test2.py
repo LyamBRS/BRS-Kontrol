@@ -1,40 +1,14 @@
-import subprocess
-import os
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
-def clone_git_repository(url, folder_path, desired_folder_name):
-    """
-    Clones a Git repository from the specified URL to the desired folder path with a specific name.
-    
-    Arguments:
-    - url (str): The URL of the Git repository.
-    - folder_path (str): The path where the repository will be cloned.
-    - desired_folder_name (str): The desired name for the cloned repository folder.
-    
-    Returns:
-    - bool: True if the cloning process succeeded, False otherwise.
-    """
-    try:
-        # Clone the repository using the git command-line tool
-        subprocess.run(['git', 'clone', url, folder_path])
-        
-        # Rename the cloned folder to the desired name
-        subprocess.run(['mv', f'{folder_path}/{url.split("/")[-1].split(".")[0]}', f'{folder_path}/{desired_folder_name}'])
-        
-        return True
-    except subprocess.CalledProcessError:
-        # An error occurred during the cloning process
-        return False
+from Programs.Local.Loading.BrSpand import InstallCardsDrivers, Debug
+
 
 url = "https://github.com/LyamBRS/BrSpand_GamePad.git"
 name = "Gamepad"
-path = os.getcwd()
-path = AppendPath(path, "/BrSpand/Drivers/")
 
 print(f"Trying to clone {url}.")
-print(f"Trying to clone it to {path}")
-printf(f"Trying to rename it to {name}")
+print(f"Trying to rename it to {name}")
 
-clone_git_repository(url, path, name)
+Debug.enableConsole = True
+InstallCardsDrivers("Gamepad", url)
 
 
 

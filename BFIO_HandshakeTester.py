@@ -28,7 +28,7 @@ def StopUART():
 
 
 if(__name__ == "__main__"):
-    Debug.enableConsole = True
+    Debug.enableConsole = False
     result = InitUartClass()
     print(f"InitUartClass returned {result}")
     if(result != Execution.Passed):
@@ -62,6 +62,7 @@ if(__name__ == "__main__"):
                             plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                             if(plane.passedTSA):
                                 print("Universal information gathered.")
+                                Debug.enableConsole = True
                                 PrintPlane(plane)
                                 break
                     else:

@@ -252,6 +252,7 @@ class LeftBrSpand(AddonFoundations):
                 LeftBrSpand._ShowNewErrorDialog(_("BrSpand Lost"), _("The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."),_("Ok"))
                 LeftBrSpand._StopBrSpandDrivers()
 
+                UART.Reset()
 
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False

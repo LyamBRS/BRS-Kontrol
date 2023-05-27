@@ -78,6 +78,8 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import VarTypes
 def TestValues():
     success = False
 
+    UART.Reset()
+
     hardwareVarTypes = [VarTypes.Int, VarTypes.Int, VarTypes.Bool, VarTypes.Int, VarTypes.Int, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool]
 
     hardwareRequest = Plane(20, [], [])
@@ -102,7 +104,7 @@ def TestValues():
             print(f"================================[{pourcent}%]")
             result = UART.QueuePlaneOnTaxiway(hardwareRequest)
             if(result != Execution.Passed):
-                print("Failed to queue univrsal info on taxiway.")
+                print("Failed to queue hardware request on taxiway")
 
             print("Reading received planes:")
 
@@ -117,7 +119,7 @@ def TestValues():
                     if(planeIsMandatory):
                         plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                         if(plane.passedTSA):
-                            print("Universal information gathered.")
+                            print("Hardware information gathered.")
                             Debug.enableConsole = True
                             PrintPlane(plane)
                             Debug.enableConsole = False

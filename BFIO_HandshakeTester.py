@@ -133,6 +133,11 @@ def TestValues():
                             return True
                     else:
                         receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+
+
+                        leftJoystickX = 
+
+
                         Debug.enableConsole = True
                         PrintPlane(receivedPlane)
                         Debug.enableConsole = False

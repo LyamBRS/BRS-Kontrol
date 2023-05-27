@@ -135,7 +135,18 @@ def TestValues():
                         receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
 
 
-                        leftJoystickX = 
+                        print(f"Left Joystick X = {receivedPlane.GetParameter(0)}")
+                        print(f"Left Joystick Y = {receivedPlane.GetParameter(1)}")
+                        print(f"Left Joystick button = {receivedPlane.GetParameter(2)}")
+                        print(f"Right Joystick X = {receivedPlane.GetParameter(3)}")
+                        print(f"Right Joystick X = {receivedPlane.GetParameter(4)}")
+                        print(f"Right Joystick button = {receivedPlane.GetParameter(5)}")
+
+                        print(f"Switch 1{receivedPlane.GetParameter(6)}")
+                        print(f"Switch 2{receivedPlane.GetParameter(7)}")
+                        print(f"Switch 3{receivedPlane.GetParameter(8)}")
+                        print(f"Switch 4{receivedPlane.GetParameter(9)}")
+                        print(f"Switch 5{receivedPlane.GetParameter(10)}")
 
 
                         Debug.enableConsole = True

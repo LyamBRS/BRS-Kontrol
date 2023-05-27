@@ -94,7 +94,7 @@ def TestValues():
     result = UART.QueuePlaneOnTaxiway(hardwareRequest)
     print(f"{result}")
     if(result != Execution.Passed):
-        print("Failed to queue universal info on taxiway.")
+        print("Failed to queue info on taxiway.")
     else:
         print(f"Plane was sent on UART... maybe...")
 
@@ -126,6 +126,7 @@ def TestValues():
                             return True
                     else:
                         receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                        PrintPlane(receivedPlane)
                 else:
                     print("new passenger group is null.")
     print("Stopping threads")

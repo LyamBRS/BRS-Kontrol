@@ -2,13 +2,13 @@ from Programs.Local.Loading.BrSpand import InstallCardsDrivers, Debug
 
 
 url = "https://github.com/LyamBRS/BrSpand_GamePad.git"
-name = "Gamepad"
+name = "GamePad"
 
 print(f"Trying to clone {url}.")
 print(f"Trying to rename it to {name}")
 
 Debug.enableConsole = True
-InstallCardsDrivers("Gamepad", url)
+InstallCardsDrivers("GamePad", url)
 
 
 

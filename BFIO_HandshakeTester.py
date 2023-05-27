@@ -119,7 +119,9 @@ def TestValues():
                     print(f"It is {planeIsMandatory} that this plane is mandatory.")
 
                     for passenger in newGroup:
+                        Debug.enableConsole = True
                         PrintPassenger(passenger)
+                        Debug.enableConsole = False
 
                     if(planeIsMandatory):
                         plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)

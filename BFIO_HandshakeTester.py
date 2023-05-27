@@ -1,6 +1,6 @@
 import serial
 import time
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Debug, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPlane
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Debug, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPassenger, PrintPlane
 from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART, Execution
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
@@ -117,6 +117,10 @@ def TestValues():
                 if(newGroup != None):
                     planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
                     print(f"It is {planeIsMandatory} that this plane is mandatory.")
+
+                    for passenger in newGroup:
+                        PrintPassenger(passenger)
+
                     if(planeIsMandatory):
                         plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                         if(plane.passedTSA):

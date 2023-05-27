@@ -90,7 +90,7 @@ def TestValues():
     # if(result != Execution.Passed):
         # pass
     # else:
-    print(f"Sending UniversalInfo to BrSpand card...")
+    print(f"Sending hardware request to BrSpand card...")
     result = UART.QueuePlaneOnTaxiway(hardwareRequest)
     print(f"{result}")
     if(result != Execution.Passed):
@@ -116,6 +116,7 @@ def TestValues():
             else:
                 if(newGroup != None):
                     planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
+                    print(f"It is {planeIsMandatory} that this plane is mandatory.")
                     if(planeIsMandatory):
                         plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                         if(plane.passedTSA):

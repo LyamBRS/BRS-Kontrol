@@ -83,47 +83,47 @@ def TestValues():
     hardwareRequest = Plane(20, [], [])
 
     Debug.enableConsole = False
-    result = InitUartClass()
-    print(f"InitUartClass returned {result}")
+    # result = InitUartClass()
+    # print(f"InitUartClass returned {result}")
+    # if(result != Execution.Passed):
+        # pass
+    # else:
+    print(f"Sending UniversalInfo to BrSpand card...")
+    result = UART.QueuePlaneOnTaxiway(hardwareRequest)
+    print(f"{result}")
     if(result != Execution.Passed):
-        pass
+        print("Failed to queue universal info on taxiway.")
     else:
-        print(f"Sending UniversalInfo to BrSpand card...")
-        result = UART.QueuePlaneOnTaxiway(hardwareRequest)
-        print(f"{result}")
-        if(result != Execution.Passed):
-            print("Failed to queue universal info on taxiway.")
-        else:
-            print(f"Plane was sent on UART... maybe...")
+        print(f"Plane was sent on UART... maybe...")
 
-            for timeSpent in range(5):
-                time.sleep(1)
-                pourcent = int((timeSpent/5)*100)
-                print(f"================================[{pourcent}%]")
-                result = UART.QueuePlaneOnTaxiway(hardwareRequest)
-                if(result != Execution.Passed):
-                    print("Failed to queue univrsal info on taxiway.")
+        for timeSpent in range(5):
+            time.sleep(1)
+            pourcent = int((timeSpent/5)*100)
+            print(f"================================[{pourcent}%]")
+            result = UART.QueuePlaneOnTaxiway(hardwareRequest)
+            if(result != Execution.Passed):
+                print("Failed to queue univrsal info on taxiway.")
 
-                print("Reading received planes:")
+            print("Reading received planes:")
 
-                newGroup = UART.GetOldestReceivedGroupOfPassengers()
-                if(newGroup == Execution.Failed):
-                    print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
-                else:
-                    if(newGroup != None):
-                        planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
-                        if(planeIsMandatory):
-                            plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
-                            if(plane.passedTSA):
-                                print("Universal information gathered.")
-                                Debug.enableConsole = True
-                                PrintPlane(plane)
-                                Debug.enableConsole = False
-                                return True
-                        else:
-                            receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+            newGroup = UART.GetOldestReceivedGroupOfPassengers()
+            if(newGroup == Execution.Failed):
+                print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
+            else:
+                if(newGroup != None):
+                    planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
+                    if(planeIsMandatory):
+                        plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
+                        if(plane.passedTSA):
+                            print("Universal information gathered.")
+                            Debug.enableConsole = True
+                            PrintPlane(plane)
+                            Debug.enableConsole = False
+                            return True
                     else:
-                        print("new passenger group is null.")
+                        receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                else:
+                    print("new passenger group is null.")
     print("Stopping threads")
     UART.StopDriver()
     return False

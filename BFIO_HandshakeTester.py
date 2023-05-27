@@ -126,7 +126,10 @@ def TestValues():
                             return True
                     else:
                         receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                        Debug.enableConsole = True
                         PrintPlane(receivedPlane)
+                        Debug.enableConsole = False
+                        return True
                 else:
                     print("new passenger group is null.")
     print("Stopping threads")

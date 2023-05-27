@@ -132,7 +132,7 @@ def TestValues():
                             Debug.enableConsole = False
                             return True
                     else:
-                        receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                        receivedPlane = NewArrival(newGroup, hardwareVarTypes)
 
 
                         print(f"Left Joystick X = {receivedPlane.GetParameter(0)}")

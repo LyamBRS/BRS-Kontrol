@@ -106,7 +106,9 @@ def TestValues():
 
             print("Reading received planes:")
 
+            # Debug.enableConsole = True
             newGroup = UART.GetOldestReceivedGroupOfPassengers()
+            # Debug.enableConsole = False
             if(newGroup == Execution.Failed):
                 print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
             else:

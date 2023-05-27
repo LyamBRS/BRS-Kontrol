@@ -132,3 +132,8 @@ if(__name__ == "__main__"):
     result = TestHandshake()
     if(result == False):
         print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")
+
+    print("(((((((((((((((( NEXT ))))))))))))))))")
+    result = TestValues()
+    if(result == False):
+        print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")

@@ -38,7 +38,7 @@ if(__name__ == "__main__"):
         result = UART.QueuePlaneOnTaxiway(GetUniversalInfoPlane())
         print(f"{result}")
         if(result != Execution.Passed):
-            print("Failed to queue univrsal info on taxiway.")
+            print("Failed to queue universal info on taxiway.")
         else:
             print(f"Plane was sent on UART... maybe...")
 
@@ -48,12 +48,11 @@ if(__name__ == "__main__"):
                 print(f"================================[{pourcent}%]")
                 result = UART.QueuePlaneOnTaxiway(GetUniversalInfoPlane())
                 if(result != Execution.Passed):
-                    print("Failed to queue univrsal info on taxiway.")       
+                    print("Failed to queue univrsal info on taxiway.")
 
                 print("Reading received planes:")
 
                 newGroup = UART.GetOldestReceivedGroupOfPassengers()
-                print(f"Received passengers = {newGroup}")
                 if(newGroup == Execution.Failed):
                     print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
                 else:
@@ -62,14 +61,12 @@ if(__name__ == "__main__"):
                         if(planeIsMandatory):
                             plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                             if(plane.passedTSA):
-                                print("WHAT ?!? IT WORKED?")
+                                print("Universal information gathered.")
+                                PrintPlane(plane)
                                 break
                     else:
                         print("new passenger group is null.")
     print("Stopping threads")
     UART.StopDriver()
-
-    
-
 
 print("[[[[[[[[[[[[[[[[ - END- ]]]]]]]]]]]]]]]]")

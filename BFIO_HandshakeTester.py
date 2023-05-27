@@ -26,8 +26,9 @@ def InitUartClass():
 def StopUART():
     return UART.StopDriver()
 
+def TestHandshake():
+    success = False
 
-if(__name__ == "__main__"):
     Debug.enableConsole = False
     result = InitUartClass()
     print(f"InitUartClass returned {result}")
@@ -64,10 +65,70 @@ if(__name__ == "__main__"):
                                 print("Universal information gathered.")
                                 Debug.enableConsole = True
                                 PrintPlane(plane)
-                                break
+                                Debug.enableConsole = False
+                                return True
                     else:
                         print("new passenger group is null.")
     print("Stopping threads")
     UART.StopDriver()
+    return False
 
-print("[[[[[[[[[[[[[[[[ - END- ]]]]]]]]]]]]]]]]")
+
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import VarTypes
+def TestValues():
+    success = False
+
+    hardwareVarTypes = [VarTypes.Int, VarTypes.Int, VarTypes.Bool, VarTypes.Int, VarTypes.Int, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool]
+
+    hardwareRequest = Plane(20, [], [])
+
+    Debug.enableConsole = False
+    result = InitUartClass()
+    print(f"InitUartClass returned {result}")
+    if(result != Execution.Passed):
+        pass
+    else:
+        print(f"Sending UniversalInfo to BrSpand card...")
+        result = UART.QueuePlaneOnTaxiway(hardwareRequest)
+        print(f"{result}")
+        if(result != Execution.Passed):
+            print("Failed to queue universal info on taxiway.")
+        else:
+            print(f"Plane was sent on UART... maybe...")
+
+            for timeSpent in range(5):
+                time.sleep(1)
+                pourcent = int((timeSpent/5)*100)
+                print(f"================================[{pourcent}%]")
+                result = UART.QueuePlaneOnTaxiway(hardwareRequest)
+                if(result != Execution.Passed):
+                    print("Failed to queue univrsal info on taxiway.")
+
+                print("Reading received planes:")
+
+                newGroup = UART.GetOldestReceivedGroupOfPassengers()
+                if(newGroup == Execution.Failed):
+                    print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
+                else:
+                    if(newGroup != None):
+                        planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
+                        if(planeIsMandatory):
+                            plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
+                            if(plane.passedTSA):
+                                print("Universal information gathered.")
+                                Debug.enableConsole = True
+                                PrintPlane(plane)
+                                Debug.enableConsole = False
+                                return True
+                        else:
+                            receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                    else:
+                        print("new passenger group is null.")
+    print("Stopping threads")
+    UART.StopDriver()
+    return False
+
+if(__name__ == "__main__"):
+    result = TestHandshake()
+    if(result == False):
+        print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")

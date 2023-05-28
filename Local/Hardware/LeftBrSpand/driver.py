@@ -650,7 +650,7 @@ class LeftBrSpand(AddonFoundations):
                         ]
             )
             LeftBrSpand.dialog.open()
-            KontrolRGB.ApploadingAnimation()   
+            KontrolRGB.ApploadingAnimation()
 
         Debug.End()
     # -----------------------------------

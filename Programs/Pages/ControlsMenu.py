@@ -1845,6 +1845,24 @@ class BindSelectMenu(Screen):
         BinderSelector_Screens.Call()
         Debug.End
 # ------------------------------------------------------------------------
+    def _GoToErrorPopUp(self, *args):
+        """
+            _GoToErrorPopUp:
+            ============
+            Summary:
+            --------
+            Goes to the error pop up displayed
+            when something fucks up. Like an addon
+            stopping randomly in the middle of bindings.
+        """
+        Debug.Start("_GoToErrorPopUp")
+
+        PopUpsHandler.Add(PopUpTypeEnum.FatalError, Message=_("A critical error occured while attempting to bind or update binder values. Maybe the driver stopped?"))
+        PopUps_Screens.SetCaller(ControlMenu_Screens, "ControlMenu")
+        PopUps_Screens.SetExiter(ControlMenu_Screens, "ControlMenu")
+        PopUps_Screens.Call()
+        Debug.End()
+# ------------------------------------------------------------------------
     def UpdateShownValues(self, *args):
         """
             UpdateShownValues:
@@ -1860,6 +1878,25 @@ class BindSelectMenu(Screen):
         if(AppManager.manager.current == "BindSelectMenu"):
             Debug.Log(f"Getting hardware controls from {HeldData.whoIsTryingToBindIt}")
             hardwareData = Addons._listedAddons[HeldData.whoIsTryingToBindIt][AddonEnum.GetAllHardwareControls]()
+
+            if(hardwareData == Execution.Failed):
+                Debug.Error("Failed to get hardware data")
+                self._GoToErrorPopUp()
+                Debug.End()
+                return
+
+            if(hardwareData == Execution.Incompatibility):
+                Debug.Error("Failed to get hardware data")
+                self._GoToErrorPopUp()
+                Debug.End()
+                return
+
+            if(hardwareData == Execution.Crashed):
+                Debug.Error("Failed to get hardware data")
+                self._GoToErrorPopUp()
+                Debug.End()
+                return
+
             self.recycleView.data = []
 
             for name,dictionary in hardwareData[HeldData.whatIsBeingBinded].items():

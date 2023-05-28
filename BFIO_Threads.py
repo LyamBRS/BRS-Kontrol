@@ -19,7 +19,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Passenger, Plane
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Passenger, Plane
 LoadingLog.Start("BFIODriver.py")
 #====================================================================#
 # Imports
@@ -65,6 +65,7 @@ class BFIODriver:
     thread = None
     stopEvent = threading.Event()
     isStarted: bool = False
+    errorMessage:str = ""
 
     _realLeftJoystickX = 0
     _realLeftJoystickY = 0
@@ -121,6 +122,7 @@ class BFIODriver:
         from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, NewArrival, PassengerTypes, MandatoryPlaneIDs
         ################################################
         receivedAPlane:bool = False
+        uartError:bool = False
 
         while True:
 
@@ -134,13 +136,21 @@ class BFIODriver:
             ###########################################
             receivedPlane:Passenger = UART.GetOldestReceivedGroupOfPassengers()
             if(receivedPlane != None):
-                if(receivedPlane[0].value_8bits[1] == 20):
-                    # This is an hardware readout! Youpii
-                    receivedAPlane = True
-                    receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                if(receivedPlane != Execution.Failed):
+                    if(receivedPlane[0].value_8bits[1] == 20):
+                        # This is an hardware readout! Youpii
+                        receivedAPlane = True
+                        receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)
+                else:
+                    uartError = True
             ###########################################
 
             with uartClass._lock:
+
+                if(uartError == True):
+                    uartClass.isStarted = False
+                    uartClass.errorMessage = "UART class is not started."
+
                 if(receivedAPlane):
                     receivedAPlane = False
 
@@ -183,6 +193,7 @@ class BFIODriver:
             return Execution.Incompatibility
 
         if BFIODriver.isStarted == False:
+            BFIODriver.errorMessage = ""
             if not BFIODriver.thread or not BFIODriver.thread.is_alive():
                 BFIODriver.stopEvent.clear()
                 BFIODriver.thread = threading.Thread(target=BFIODriver._handlingThread, args=(BFIODriver,UART,))

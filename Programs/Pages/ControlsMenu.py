@@ -1861,12 +1861,6 @@ class BindSelectMenu(Screen):
             hardwareData = Addons._listedAddons[HeldData.whoIsTryingToBindIt][AddonEnum.GetAllHardwareControls]()
             self.recycleView.data = []
 
-            dialog = MDDialog(
-                title=_("Debug"),
-                text=str(hardwareData)
-                    )
-            dialog.open()
-
             for name,dictionary in hardwareData[HeldData.whatIsBeingBinded].items():
 
                 try:

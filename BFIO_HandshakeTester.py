@@ -3,6 +3,8 @@ import time
 from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Debug, NewArrival, Plane, PassengerTypes, Passenger, MandatoryPlaneIDs, MandatoryFunctionRequestVarTypeLists, PrintPassenger, PrintPlane
 from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART, Execution
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
+from BFIO_Threads import BFIODriver
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import VarTypes
 
 # Define the serial port configurations
 TIMEOUT = 0.1
@@ -73,28 +75,78 @@ def TestHandshake():
     UART.StopDriver()
     return False
 
+def PrintBFIODriver():
+    print("-------------------------------------")
+    print(f"Left joystick X positive:  {BFIODriver.Get_LeftJoystickXPositive()}")
+    print(f"Left joystick X negative:  {BFIODriver.Get_LeftJoystickXNegative()}")
+    print(f"Left joystick Y positive:  {BFIODriver.Get_LeftJoystickYPositive()}")
+    print(f"Left joystick Y negative:  {BFIODriver.Get_LeftJoystickYNegative()}")
+    print(f"Left joystick button:      {BFIODriver.Get_LeftJoystickButton()}")
+    print("-------------------------------------")
+    print(f"Right joystick X positive: {BFIODriver.Get_RightJoystickXPositive()}")
+    print(f"Right joystick X negative: {BFIODriver.Get_RightJoystickXNegative()}")
+    print(f"Right joystick Y positive: {BFIODriver.Get_RightJoystickYPositive()}")
+    print(f"Right joystick Y negative: {BFIODriver.Get_RightJoystickYNegative()}")
+    print(f"Right joystick button:     {BFIODriver.Get_RightJoystickButton()}")
+    print("-------------------------------------")
+    print(f"Switch 1: {BFIODriver.Get_Switch1()}")
+    print(f"Switch 2: {BFIODriver.Get_Switch2()}")
+    print(f"Switch 3: {BFIODriver.Get_Switch3()}")
+    print(f"Switch 4: {BFIODriver.Get_Switch4()}")
+    print(f"Switch 5: {BFIODriver.Get_Switch5()}")
 
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import VarTypes
+def SleepAndPrintHeader(timeSlept, maxTime):
+    time.sleep(1)
+    pourcent = int((1-(timeSlept/5))*100)
+    print(f"=========================================== [{pourcent}%]")
+
+def StartBFIODriver():
+    print("Starting BFIODriver...")
+    result = BFIODriver.StartDriver()
+    if(result != Execution.Passed):
+        print(f"Failed to start BFIO drivers: {result}")
+        return True
+    print(">>> SUCCESS")
+    return False
+
+def StopBFIODriver():
+    print("Stopping BFIODriver...")
+    result = BFIODriver.StopDriver()
+    if(result != Execution.Passed):
+        print(f"Failed to stop BFIO drivers: {result}")
+        return True
+    print(">>> SUCCESS")
+    return False
+
+def TestBFIODriver():
+
+    if(StartBFIODriver()):
+        print("Failed to start BFIO Drivers")
+        return False
+
+    for timeSlept in range(5):
+        SleepAndPrintHeader(timeSlept, 5)
+        PrintBFIODriver()
+
+    if(StopBFIODriver()):
+        print("Failed to stop BFIO Drivers. Maybe they already stopped?")
+        return False
+    return True
+
 def TestValues():
     success = False
 
     UART.Reset()
-
     hardwareVarTypes = [VarTypes.Int, VarTypes.Int, VarTypes.Bool, VarTypes.Int, VarTypes.Int, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool]
-
     hardwareRequest = Plane(20, [], [])
-
     Debug.enableConsole = False
-    # result = InitUartClass()
-    # print(f"InitUartClass returned {result}")
-    # if(result != Execution.Passed):
-        # pass
-    # else:
+
     print(f"Sending hardware request to BrSpand card...")
     result = UART.QueuePlaneOnTaxiway(hardwareRequest)
-    print(f"{result}")
+
     if(result != Execution.Passed):
-        print("Failed to queue info on taxiway.")
+        print(f"Failed to queue info on taxiway. {result}")
+        return
     else:
         print(f"Plane was sent on UART... maybe...")
 
@@ -104,15 +156,15 @@ def TestValues():
             print(f"================================[{pourcent}%]")
             result = UART.QueuePlaneOnTaxiway(hardwareRequest)
             if(result != Execution.Passed):
-                print("Failed to queue hardware request on taxiway")
+                print(f"Failed to queue hardware request on taxiway: {result}")
+                return
 
             print("Reading received planes:")
-
-            # Debug.enableConsole = True
             newGroup = UART.GetOldestReceivedGroupOfPassengers()
-            # Debug.enableConsole = False
+
             if(newGroup == Execution.Failed):
                 print(f"Something failed in GetOldestReceivedGroupOfPassengers: {newGroup}")
+                return
             else:
                 if(newGroup != None):
                     planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
@@ -126,10 +178,7 @@ def TestValues():
                     if(planeIsMandatory):
                         plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                         if(plane.passedTSA):
-                            print("Hardware information gathered.")
-                            # Debug.enableConsole = True
-                            # PrintPlane(plane)
-                            # Debug.enableConsole = False
+                            print("Universal information gathered")
                             return False
                     else:
                         receivedPlane = NewArrival(newGroup, hardwareVarTypes)
@@ -165,6 +214,9 @@ if(__name__ == "__main__"):
         print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")
 
     print("(((((((((((((((( NEXT ))))))))))))))))")
-    result = TestValues()
+    result = TestBFIODriver()
     if(result == False):
         print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")
+    print("[[[[[[[[[[[[[[[[ - PASS- ]]]]]]]]]]]]]]]]")
+
+    UART.StopDriver()

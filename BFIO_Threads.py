@@ -60,7 +60,10 @@ class BFIODriver:
         Backend driver that reads at fasts intervals the
         UART threads handled by BrSpand ports drivers.
         Its goal is to send planes to Gamepad as fast
-        as possible.
+        as possible to get as many hardware readout in
+        the least amount of time in order to update
+        getter functions that are called by hardware
+        binders in Kontrol's Control menu.
     """
     thread = None
     stopEvent = threading.Event()

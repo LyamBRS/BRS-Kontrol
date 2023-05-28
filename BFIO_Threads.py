@@ -19,7 +19,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, Passenger, Plane
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import BFIO, NewArrival, Passenger, Plane
 LoadingLog.Start("BFIODriver.py")
 #====================================================================#
 # Imports
@@ -80,6 +80,7 @@ class BFIODriver:
     _realSwitch4 = False
     _realSwitch5 = False
 
+    extractedPlane:NewArrival = None
 
     leftJoystickPositiveX:float = 0
     """ The saved left joystick value for its X axis in the positive. (0-1) """
@@ -153,6 +154,8 @@ class BFIODriver:
 
                 if(receivedAPlane):
                     receivedAPlane = False
+
+                    uartClass.extractedPlane = receivedPlane
 
                     uartClass._realLeftJoystickX        = receivedPlane.GetParameter(0)
                     uartClass._realLeftJoystickY        = receivedPlane.GetParameter(1)

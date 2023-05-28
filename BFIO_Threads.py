@@ -19,7 +19,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Hardware.UART.receiver import UART
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Passenger, Plane
 LoadingLog.Start("BFIODriver.py")
 #====================================================================#
 # Imports
@@ -132,9 +132,9 @@ class BFIODriver:
             ###########################################
             time.sleep(0.040) # Gamepad sends 37 bytes at 9600 bauds meaning 31ms of TX time
             ###########################################
-            receivedPlane:NewArrival = UART.GetOldestReceivedGroupOfPassengers()
+            receivedPlane:Passenger = UART.GetOldestReceivedGroupOfPassengers()
             if(receivedPlane != None):
-                if(receivedPlane.planeID == 20):
+                if(receivedPlane[0].value_8bits[1] == 20):
                     # This is an hardware readout! Youpii
                     receivedAPlane = True
                     receivedPlane = NewArrival(receivedPlane, hardwareVarTypes)

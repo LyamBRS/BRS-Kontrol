@@ -85,7 +85,7 @@ class GPIOReader(AddonFoundations):
             "hardware",
             None,
             False,
-            True,
+            False,
             False,
             False,
             "raspberry-pi",

@@ -415,6 +415,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.leftJoystickButton = BFIODriver._realLeftJoystickButton
+            return BFIODriver.leftJoystickButton
         else:
             return False
 
@@ -431,6 +432,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.rightJoystickButton = BFIODriver._realRightJoystickButton
+            return BFIODriver.rightJoystickButton
         else:
             return False
 
@@ -447,6 +449,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.switch1 = BFIODriver._realSwitch1
+            return BFIODriver.switch1
         else:
             return False
 
@@ -463,6 +466,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.switch2 = BFIODriver._realSwitch2
+            return BFIODriver.switch2
         else:
             return False
 
@@ -479,6 +483,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.switch3 = BFIODriver._realSwitch3
+            return BFIODriver.switch3
         else:
             return False
 
@@ -495,6 +500,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.switch4 = BFIODriver._realSwitch4
+            return BFIODriver.switch4
         else:
             return False
 
@@ -511,6 +517,7 @@ class BFIODriver:
         """
         if(BFIODriver.isStarted):
             BFIODriver.switch5 = BFIODriver._realSwitch5
+            return BFIODriver.switch5
         else:
             return False
     #endregion

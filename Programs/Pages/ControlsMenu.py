@@ -1752,7 +1752,7 @@ class BindSelectMenu(Screen):
                                                 default_size_hint=(1, None),
                                                 size_hint=(1, None),
                                                 orientation='lr-tb')
-        self.RecyleBoxLayout.padding = [0,25,0,50]
+        self.RecyleBoxLayout.padding = 25
         self.RecyleBoxLayout.spacing = 5
         self.RecyleBoxLayout.cols = 1
         # self.RecyleBoxLayout.orientation
@@ -1760,6 +1760,7 @@ class BindSelectMenu(Screen):
 
         self.recycleView = RecycleView()
         self.recycleView.pos_hint = {"center_x" : 0.5, "center_y" : 0.25}
+        self.recycleView.size_hint = (1,0.75)
         self.recycleView.add_widget(self.RecyleBoxLayout)
         self.recycleView.viewclass = ThreeLineListItem
         self.Layout.add_widget(self.recycleView)

@@ -80,24 +80,24 @@ def TestHandshake():
     return False
 
 def PrintBFIODriver():
-    # print("-------------------------------------")
-    # print(f"Left joystick X positive:  {BFIODriver.Get_LeftJoystickXPositive()}")
-    # print(f"Left joystick X negative:  {BFIODriver.Get_LeftJoystickXNegative()}")
-    # print(f"Left joystick Y positive:  {BFIODriver.Get_LeftJoystickYPositive()}")
-    # print(f"Left joystick Y negative:  {BFIODriver.Get_LeftJoystickYNegative()}")
-    # print(f"Left joystick button:      {BFIODriver.Get_LeftJoystickButton()}")
-    # print("-------------------------------------")
-    # print(f"Right joystick X positive: {BFIODriver.Get_RightJoystickXPositive()}")
-    # print(f"Right joystick X negative: {BFIODriver.Get_RightJoystickXNegative()}")
-    # print(f"Right joystick Y positive: {BFIODriver.Get_RightJoystickYPositive()}")
-    # print(f"Right joystick Y negative: {BFIODriver.Get_RightJoystickYNegative()}")
-    # print(f"Right joystick button:     {BFIODriver.Get_RightJoystickButton()}")
-    # print("-------------------------------------")
-    # print(f"Switch 1: {BFIODriver.Get_Switch1()}")
-    # print(f"Switch 2: {BFIODriver.Get_Switch2()}")
-    # print(f"Switch 3: {BFIODriver.Get_Switch3()}")
-    # print(f"Switch 4: {BFIODriver.Get_Switch4()}")
-    # print(f"Switch 5: {BFIODriver.Get_Switch5()}")
+    print("-------------------------------------")
+    print(f"Left joystick X positive:  {BFIODriver.Get_LeftJoystickXPositive()}")
+    print(f"Left joystick X negative:  {BFIODriver.Get_LeftJoystickXNegative()}")
+    print(f"Left joystick Y positive:  {BFIODriver.Get_LeftJoystickYPositive()}")
+    print(f"Left joystick Y negative:  {BFIODriver.Get_LeftJoystickYNegative()}")
+    print(f"Left joystick button:      {BFIODriver.Get_LeftJoystickButton()}")
+    print("-------------------------------------")
+    print(f"Right joystick X positive: {BFIODriver.Get_RightJoystickXPositive()}")
+    print(f"Right joystick X negative: {BFIODriver.Get_RightJoystickXNegative()}")
+    print(f"Right joystick Y positive: {BFIODriver.Get_RightJoystickYPositive()}")
+    print(f"Right joystick Y negative: {BFIODriver.Get_RightJoystickYNegative()}")
+    print(f"Right joystick button:     {BFIODriver.Get_RightJoystickButton()}")
+    print("-------------------------------------")
+    print(f"Switch 1: {BFIODriver.Get_Switch1()}")
+    print(f"Switch 2: {BFIODriver.Get_Switch2()}")
+    print(f"Switch 3: {BFIODriver.Get_Switch3()}")
+    print(f"Switch 4: {BFIODriver.Get_Switch4()}")
+    print(f"Switch 5: {BFIODriver.Get_Switch5()}")
 
     print("-------------------------------------")
     print(f"Left joystick X:         {BFIODriver._realLeftJoystickX}")
@@ -147,9 +147,9 @@ def TestBFIODriver():
         SleepAndPrintHeader(timeSlept, 5)
         PrintBFIODriver()
 
-        Debug.enableConsole = True
-        PrintPlane(BFIODriver.extractedPlane)
-        Debug.enableConsole = False
+        # Debug.enableConsole = True
+        # PrintPlane(BFIODriver.extractedPlane)
+        # Debug.enableConsole = False
 
     if(StopBFIODriver()):
         print("Failed to stop BFIO Drivers. Maybe they already stopped?")

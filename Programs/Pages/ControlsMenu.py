@@ -42,6 +42,7 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.swiper import MDSwiper, MDSwiperItem
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.list import ThreeLineListItem, ThreeLineRightIconListItem, IconRightWidget
+from kivymd.uix.dialog import MDDialog
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -1859,6 +1860,13 @@ class BindSelectMenu(Screen):
             Debug.Log(f"Getting hardware controls from {HeldData.whoIsTryingToBindIt}")
             hardwareData = Addons._listedAddons[HeldData.whoIsTryingToBindIt][AddonEnum.GetAllHardwareControls]()
             self.recycleView.data = []
+
+            dialog = MDDialog(
+                title=_("Debug"),
+                text=hardwareData
+                    )
+            dialog.open()
+
             for name,dictionary in hardwareData[HeldData.whatIsBeingBinded].items():
 
                 try:

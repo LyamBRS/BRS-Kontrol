@@ -63,12 +63,16 @@ def TestHandshake():
                         planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
                         if(planeIsMandatory):
                             plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
-                            if(plane.passedTSA):
-                                print("Universal information gathered.")
-                                Debug.enableConsole = True
-                                PrintPlane(plane)
-                                Debug.enableConsole = False
-                                return True
+                            if(plane != None):
+                                if(plane.passedTSA):
+                                    print("Universal information gathered.")
+                                    Debug.enableConsole = True
+                                    PrintPlane(plane)
+                                    Debug.enableConsole = False
+                                    return True
+                            else:
+                                print("74: Plane is equal to None")
+                                return False
                     else:
                         print("new passenger group is null.")
     print("Stopping threads")
@@ -214,11 +218,13 @@ if(__name__ == "__main__"):
     result = TestHandshake()
     if(result == False):
         print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")
+    else:
 
-    print("(((((((((((((((( NEXT ))))))))))))))))")
-    result = TestBFIODriver()
-    if(result == False):
-        print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")
-    print("[[[[[[[[[[[[[[[[ - PASS- ]]]]]]]]]]]]]]]]")
+        print("(((((((((((((((( NEXT ))))))))))))))))")
+        result = TestBFIODriver()
+        if(result == False):
+            print("[[[[[[[[[[[[[[[[ - FAIL- ]]]]]]]]]]]]]]]]")
+        else:
+            print("[[[[[[[[[[[[[[[[ - PASS- ]]]]]]]]]]]]]]]]")
 
     UART.StopDriver()

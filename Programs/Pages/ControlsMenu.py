@@ -1863,7 +1863,7 @@ class BindSelectMenu(Screen):
 
             dialog = MDDialog(
                 title=_("Debug"),
-                text=hardwareData
+                text=str(hardwareData)
                     )
             dialog.open()
 

@@ -26,7 +26,7 @@ for reading in range(30):
 
             if(arrival == Execution.Failed):
                 print("Failed to generate a plane.")
-            
+
             if(arrival == Execution.Crashed):
                 print("Crashed when making the plane?")
 

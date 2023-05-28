@@ -414,8 +414,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realLeftJoystickButton
-            BFIODriver.leftJoystickButton = button
+            BFIODriver.leftJoystickButton = BFIODriver._realLeftJoystickButton
         else:
             return False
 
@@ -431,8 +430,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realRightJoystickButton
-            BFIODriver.rightJoystickButton = button
+            BFIODriver.rightJoystickButton = BFIODriver._realRightJoystickButton
         else:
             return False
 
@@ -448,8 +446,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realSwitch1
-            BFIODriver.switch1 = button
+            BFIODriver.switch1 = BFIODriver._realSwitch1
         else:
             return False
 
@@ -465,8 +462,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realSwitch2
-            BFIODriver.switch2 = button
+            BFIODriver.switch2 = BFIODriver._realSwitch2
         else:
             return False
 
@@ -482,8 +478,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realSwitch3
-            BFIODriver.switch3 = button
+            BFIODriver.switch3 = BFIODriver._realSwitch3
         else:
             return False
 
@@ -499,8 +494,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realSwitch4
-            BFIODriver.switch4 = button
+            BFIODriver.switch4 = BFIODriver._realSwitch4
         else:
             return False
 
@@ -516,8 +510,7 @@ class BFIODriver:
             class is not started.
         """
         if(BFIODriver.isStarted):
-            button = BFIODriver._realSwitch5
-            BFIODriver.switch5 = button
+            BFIODriver.switch5 = BFIODriver._realSwitch5
         else:
             return False
     #endregion

@@ -642,7 +642,7 @@ class LeftBrSpand(AddonFoundations):
         else:
             LeftBrSpand.dialog.dismiss()
             LeftBrSpand.dialog = MDDialog(
-                title= str(LeftBrSpand.ConnectedCard.BFIO) + " " + _("is now running!"),
+                title= str(LeftBrSpand.ConnectedCard.name) + " " + _("is now running!"),
                 text=_("Kontrol successfully launched the drivers of the connected BrSpand card! The drivers will stop when the card is unplugged."),
                 on_dismiss=LeftBrSpand._Dismissed,
                 buttons=[

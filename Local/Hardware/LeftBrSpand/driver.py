@@ -635,7 +635,7 @@ class LeftBrSpand(AddonFoundations):
             Tries to launch the connected card's drivers.
         """
         Debug.Start("_LaunchCard")
-        
+
         result = LaunchBrSpandAtPath(LeftBrSpand.ConnectedCard.name)
         if(result != Execution.Passed):
             LeftBrSpand._ShowNewErrorDialog(_("Launch failure"), _("A fatal error occured when Kontrol tried to launch the drivers of the BrSpand card connected in the left port.") + " " + f"Reason: {result}", _("Oh"))

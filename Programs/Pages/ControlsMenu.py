@@ -1445,6 +1445,8 @@ class AxisMenu(Screen):
         Debug.Log(f"There is {amountOfCard} cards to display")
 
         self.recycleView = RecycleView()
+        self.recycleView.pos_hint = {"center_x" : 0.5, "center_y" : 0.40}
+        self.recycleView.size_hint = (1,0.80)
         self.recycleView.add_widget(self.RecyleBoxLayout)
         self.recycleView.viewclass = CustomThreeLineIconListItem
         self.Layout.add_widget(self.recycleView)
@@ -1892,6 +1894,24 @@ class BindSelectMenu(Screen):
                 return
 
             if(hardwareData == Execution.Crashed):
+                Debug.Error("Failed to get hardware data")
+                self._GoToErrorPopUp()
+                Debug.End()
+                return
+
+            if(hardwareData == Execution.Unecessary):
+                Debug.Error("Failed to get hardware data")
+                self._GoToErrorPopUp()
+                Debug.End()
+                return
+
+            if(hardwareData == Execution.Passed):
+                Debug.Error("Failed to get hardware data")
+                self._GoToErrorPopUp()
+                Debug.End()
+                return
+
+            if(hardwareData == Execution.ByPassed):
                 Debug.Error("Failed to get hardware data")
                 self._GoToErrorPopUp()
                 Debug.End()

@@ -132,7 +132,9 @@ def TestBFIODriver():
         SleepAndPrintHeader(timeSlept, 5)
         PrintBFIODriver()
 
+        Debug.enableConsole = True
         PrintPlane(BFIODriver.extractedPlane)
+        Debug.enableConsole = False
 
     if(StopBFIODriver()):
         print("Failed to stop BFIO Drivers. Maybe they already stopped?")

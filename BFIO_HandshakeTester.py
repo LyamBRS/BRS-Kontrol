@@ -116,21 +116,21 @@ def TestValues():
             else:
                 if(newGroup != None):
                     planeIsMandatory = BFIO.IsPassengerGroupAMandatoryPlane(newGroup)
-                    print(f"It is {planeIsMandatory} that this plane is mandatory.")
+                    # print(f"It is {planeIsMandatory} that this plane is mandatory.")
 
-                    for passenger in newGroup:
-                        Debug.enableConsole = True
-                        PrintPassenger(passenger)
-                        Debug.enableConsole = False
+                    # for passenger in newGroup:
+                        # Debug.enableConsole = True
+                        # PrintPassenger(passenger)
+                        # Debug.enableConsole = False
 
                     if(planeIsMandatory):
                         plane = BFIO.ParsePassengersIntoMandatoryPlane(newGroup)
                         if(plane.passedTSA):
                             print("Hardware information gathered.")
-                            Debug.enableConsole = True
-                            PrintPlane(plane)
-                            Debug.enableConsole = False
-                            return True
+                            # Debug.enableConsole = True
+                            # PrintPlane(plane)
+                            # Debug.enableConsole = False
+                            return False
                     else:
                         receivedPlane = NewArrival(newGroup, hardwareVarTypes)
 
@@ -149,9 +149,9 @@ def TestValues():
                         print(f"Switch 5{receivedPlane.GetParameter(10)}")
 
 
-                        Debug.enableConsole = True
-                        PrintPlane(receivedPlane)
-                        Debug.enableConsole = False
+                        # Debug.enableConsole = True
+                        # PrintPlane(receivedPlane)
+                        # Debug.enableConsole = False
                         return True
                 else:
                     print("new passenger group is null.")

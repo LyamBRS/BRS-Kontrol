@@ -1,14 +1,62 @@
 from Programs.Local.Loading.BrSpand import InstallCardsDrivers, Debug
 
+import time
+import socket
 
-url = "https://github.com/LyamBRS/BrSpand_GamePad.git"
-name = "GamePad"
+from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
+from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger
+from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
-print(f"Trying to clone {url}.")
-print(f"Trying to rename it to {name}")
+UDPReader.port = 4211
+UDPSender.port = 4210
+UDPSender.ipAddress = "192.168.4.2"
 
-Debug.enableConsole = True
-InstallCardsDrivers("GamePad", url)
+result = UDPSender.StartDriver()
+result = UDPReader.StartDriver()
+
+time.sleep(2.5)
+plane:Plane = GetUniversalInfoPlane()
+listToSend = []
+for passenger in plane.passengers:
+    listToSend.append(passenger.value_8bits[0])
+    listToSend.append(passenger.value_8bits[1])
+
+UDPSender.SendThing(listToSend)
+print("Sent an universal info plane?")
+time.sleep(2.5)
+
+readThingy = UDPReader.GetOldestMessage()
+print(f"Received message: {readThingy}")
+time.sleep(2.5)
+print("Close UDP")
+
+result = UDPReader.StopDriver()
+result = UDPSender.StopDriver()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# url = "https://github.com/LyamBRS/BrSpand_GamePad.git"
+# name = "GamePad"
+# 
+# print(f"Trying to clone {url}.")
+# print(f"Trying to rename it to {name}")
+# 
+# Debug.enableConsole = True
+# InstallCardsDrivers("GamePad", url)
 
 
 

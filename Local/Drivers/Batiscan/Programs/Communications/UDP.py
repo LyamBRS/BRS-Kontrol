@@ -188,7 +188,10 @@ class BatiscanUDP:
                 with udpClass.lock:
                     planeToSend = BatiscanUDP._thingToSend
                     BatiscanUDP._thingToSend = None
-                    ExecutePlane(arrival)
+
+                    if(arrival != None):
+                        ExecutePlane(arrival)
+                        arrival = None
                     pass
             except:
                 pass

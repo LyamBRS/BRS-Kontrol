@@ -60,6 +60,12 @@ def MakeAPlaneOutOfArrivedBytes(bytesToDecode:bytes) -> NewArrival:
 
     passengers = BFIO.GetPassengersFromDualBytes(bytesToDecode)
 
+    if(passengers == None):
+        return None
+    
+    if(len(passengers) < 2):
+        return None
+
     # Checking if the first passenger is a pilot. Otherwise, the plane is discarded.
     pilot:Passenger = passengers[0]
     if(pilot.type != PassengerTypes.Pilot):

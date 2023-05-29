@@ -501,13 +501,8 @@ def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
         --------
         Sends a plane on the UDP made of given parameters
     """
-    ipAddress = "192.168.4.2"
-    port = BFIO.UDP.portToSendToAccessPoint
-
     try:
-        Debug.enableConsole = False
         planeToSend = Plane(functionID, Getters[functionID](), sentVarTypes[functionID])
-        Debug.enableConsole = True
     except:
         Debug.Error("FAILED TO CREATE PLANE BRUH")
 
@@ -521,6 +516,6 @@ def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
 
     bytesToSend = bytes(listOfIntegers)
     Debug.Log(f"Sending {listOfIntegers}")
-    UDPSender.SendThing(planeToSend)
+    UDPSender.SendThing(bytesToSend)
 
     return True

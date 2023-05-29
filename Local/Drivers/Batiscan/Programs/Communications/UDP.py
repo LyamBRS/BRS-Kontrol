@@ -65,17 +65,15 @@ def StartUDP() -> Execution:
     Debug.Start("StartUDP")
 
     UDPReader.timeoutInSeconds = 0.5
-    UDPReader.port = BFIO.UDP.portToReceiveFromAccessPoint
+    UDPReader.port = 4211
+    UDPSender.port = 4210
+    UDPSender.ipAddress = "192.168.4.2"
 
     result = UDPReader.StartDriver()
     if(result != Execution.Passed):
         Debug.Error("Failed to start UDPReader. We won't be able to receive data from Batiscan.")
         Debug.End()
         return Execution.NoConnection
-
-    BatiscanUDP.port = BFIO.UDP.portToSendToAccessPoint
-    BatiscanUDP.ipAddress = "198.168.4.2"
-    BatiscanUDP.timeoutInSeconds = 0.5
 
     result = UDPSender.StartDriver()
     if(result != Execution.Passed):
@@ -171,21 +169,22 @@ class BatiscanUDP:
 
             if(count == 2):
                 SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
-                time.sleep(0.005)
+                time.sleep(0.030)
                 count = 0
 
             if(count == 1):
                 SendAPlaneOnUDP(PlaneIDs.allSensors, Getters)
-                time.sleep(0.005)
+                time.sleep(0.030)
                 count = 2
 
             if(count == 0):
                 SendAPlaneOnUDP(PlaneIDs.allStates, Getters)
+                time.sleep(0.030)
                 count = 1
 
             if(planeToSend != None):
                 SendAPlaneOnUDP(planeToSend, Getters)
-                time.sleep(0.005)
+                time.sleep(0.030)
                 planeToSend = None
             try:
                 with udpClass.lock:

@@ -29,7 +29,7 @@ time.sleep(2.5)
 readThingy = UDPReader.GetOldestMessage()
 for sender,message in readThingy.items():
     Debug.Log(f"New plane from {sender}:")
-    arrival = BFIO.GetPassengersFromDualBytes(readThingy[1])
+    arrival = BFIO.GetPassengersFromDualBytes(message)
 plane = BFIO.ParsePassengersIntoMandatoryPlane(arrival)
 
 Debug.enableConsole = True

@@ -93,6 +93,23 @@ def GoTo_CommunicationDebugger(*args):
     DebuggerMenu_Screens.SetCaller(None, "BatiscanMenu")
     DebuggerMenu_Screens.SetExiter(None, "BatiscanMenu")
     DebuggerMenu_Screens.Call()
+# ----------------------------------------------------------------
+def GoTo_About(*args):
+    """
+        GoTo_About:
+        ===========
+        Summary:
+        --------
+        This function's purpose is to
+        launch the about menu of batiscan's
+        GUI. The about menu contains informations about
+        various :ref:`Controls` actions bindings, config
+        information and live feed of batiscan's data.
+    """
+    from Local.Drivers.Batiscan.Pages.AboutMenu import AboutMenu_Screens
+    AboutMenu_Screens.SetCaller(AboutMenu_Screens, "AboutMenu")
+    AboutMenu_Screens.SetExiter(AboutMenu_Screens, "AboutMenu")
+    AboutMenu_Screens.Call()
 #====================================================================#
 # Classes
 #====================================================================#
@@ -190,6 +207,11 @@ SettingMenuButtons = [
         "name" : _("Debug"),
         "icon" : "bug",
         "function" : GoTo_CommunicationDebugger
+    },
+    {
+        "name" : _("About"),
+        "icon" : "help-circle",
+        "function" : GoTo_About
     },
     {
         "name" : _("Quit"),

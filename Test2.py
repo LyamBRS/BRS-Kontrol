@@ -5,7 +5,7 @@ import socket
 
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, BFIO, PrintPlane
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
 UDPReader.port = 4211
@@ -28,6 +28,13 @@ time.sleep(2.5)
 
 readThingy = UDPReader.GetOldestMessage()
 print(f"Received message: {readThingy}")
+passenengers = BFIO.GetPassengersFromDualBytes(readThingy)
+plane = BFIO.ParsePassengersIntoMandatoryPlane(passenengers)
+
+Debug.enableConsole = True
+PrintPlane(plane)
+Debug.enableConsole = False
+
 time.sleep(2.5)
 print("Close UDP")
 

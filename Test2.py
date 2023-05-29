@@ -5,7 +5,7 @@ import socket
 
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
-    from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, BFIO, PrintPlane, MandatoryPlaneIDs
+from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, BFIO, PrintPlane, MandatoryPlaneIDs
 from Local.Drivers.Batiscan.Programs.Communications.UDP import BatiscanUDP
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 

@@ -505,6 +505,8 @@ def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
         planeToSend = Plane(functionID, Getters[functionID](), sentVarTypes[functionID])
     except:
         Debug.Error("FAILED TO CREATE PLANE BRUH")
+        print("BATISCAN FAILED SendAPlaneOnUDP")
+        return Execution.Failed
 
     listOfIntegers = []
     for passenger in planeToSend.passengers:
@@ -518,4 +520,4 @@ def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
     Debug.Log(f"Sending {listOfIntegers}")
     UDPSender.SendThing(bytesToSend)
 
-    return True
+    return Execution.Passed

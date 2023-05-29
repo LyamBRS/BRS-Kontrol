@@ -74,7 +74,7 @@ def StartUDP() -> Execution:
         return Execution.NoConnection
 
     BatiscanUDP.port = BFIO.UDP.portToSendToAccessPoint
-    BatiscanUDP.ipAddress = "198.162.4.2"
+    BatiscanUDP.ipAddress = "198.168.4.2"
     BatiscanUDP.timeoutInSeconds = 0.5
 
     result = UDPSender.StartDriver()

@@ -5,7 +5,8 @@ import socket
 
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
-from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, BFIO, PrintPlane
+    from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, BFIO, PrintPlane, MandatoryPlaneIDs
+from Local.Drivers.Batiscan.Programs.Communications.UDP import BatiscanUDP
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
 UDPReader.port = 4211
@@ -14,31 +15,21 @@ UDPSender.ipAddress = "192.168.4.2"
 
 result = UDPSender.StartDriver()
 result = UDPReader.StartDriver()
+result = BatiscanUDP.StartDriver()
 
 time.sleep(2.5)
-plane:Plane = GetUniversalInfoPlane()
-listToSend = []
-for passenger in plane.passengers:
-    listToSend.append(passenger.value_8bits[0])
-    listToSend.append(passenger.value_8bits[1])
-
-UDPSender.SendThing(listToSend)
+BatiscanUDP.SendThing(MandatoryPlaneIDs.universalInfo)
 print("Sent an universal info plane?")
 time.sleep(2.5)
 
-readThingy = UDPReader.GetOldestMessage()
-for sender,message in readThingy.items():
-    Debug.Log(f"New plane from {sender}:")
-    arrival = BFIO.GetPassengersFromDualBytes(message)
-plane = BFIO.ParsePassengersIntoMandatoryPlane(arrival)
-
-Debug.enableConsole = True
-PrintPlane(plane)
-Debug.enableConsole = False
+# Debug.enableConsole = True
+# PrintPlane(plane)
+# Debug.enableConsole = False
 
 time.sleep(2.5)
 print("Close UDP")
 
+result = BatiscanUDP.StopDriver()
 result = UDPReader.StopDriver()
 result = UDPSender.StopDriver()
 

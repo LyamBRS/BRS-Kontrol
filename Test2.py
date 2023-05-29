@@ -27,9 +27,10 @@ print("Sent an universal info plane?")
 time.sleep(2.5)
 
 readThingy = UDPReader.GetOldestMessage()
-print(f"Received message: {readThingy[1]}")
-passenengers = BFIO.GetPassengersFromDualBytes(readThingy[1])
-plane = BFIO.ParsePassengersIntoMandatoryPlane(passenengers)
+for sender,message in readThingy.items():
+    Debug.Log(f"New plane from {sender}:")
+    arrival = BFIO.GetPassengersFromDualBytes(readThingy[1])
+plane = BFIO.ParsePassengersIntoMandatoryPlane(arrival)
 
 Debug.enableConsole = True
 PrintPlane(plane)

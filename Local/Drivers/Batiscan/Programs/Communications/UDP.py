@@ -79,9 +79,18 @@ def StartUDP() -> Execution:
 
     result = UDPSender.StartDriver()
     if(result != Execution.Passed):
+        Debug.Error("Failed to start UDPSender. We won't be able to send data to Batiscan.")
+        Debug.End()
+        return Execution.NoConnection
+    
+    result = BatiscanUDP.StartDriver()
+    if(result != Execution.Passed):
         Debug.Error("Failed to start BatiscanUDP. We won't be able to send data to Batiscan.")
         Debug.End()
         return Execution.NoConnection
+    
+
+    UDPSender.SendThing()
 
     Debug.End()
     return Execution.Passed
@@ -98,18 +107,24 @@ def StopUDP() -> Execution:
     """
     Debug.Start("StopUDP")
 
-    result = UDPReader.StopDriver()
-    if(result != Execution.Passed):
-        Debug.Error("Failed to stop UDPReader. Its possible that its already stopped.")
-        Debug.End()
-        return Execution.Failed
-
     result = BatiscanUDP.StopDriver()
     if(result != Execution.Passed):
-        Debug.Error("Failed to stop BatiscanUDP. Its possible that its already stopped.")
+        Debug.Error("Failed to stop BatiscanUDP.")
         Debug.End()
-        return Execution.Failed
+        return Execution.NoConnection
 
+    result = UDPReader.StopDriver()
+    if(result != Execution.Passed):
+        Debug.Error("Failed to stop UDPReader.")
+        Debug.End()
+        return Execution.NoConnection
+
+    result = UDPSender.StopDriver()
+    if(result != Execution.Passed):
+        Debug.Error("Failed to stop UDPSender.")
+        Debug.End()
+        return Execution.NoConnection
+    
     Debug.End()
     return Execution.Passed
 #====================================================================#

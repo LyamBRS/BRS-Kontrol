@@ -4,6 +4,9 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Local.Drivers.Batiscan.Programs.Communications.UDP import BatiscanUDP
+from Local.Drivers.Batiscan.Programs.Communications.bfio import PlaneIDs, getters
+from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
 LoadingLog.Start("BatiscanMenu.py")
 #====================================================================#
 # Imports
@@ -336,11 +339,11 @@ class BatiscanMenu(Screen):
         #endregion
 
         #region ---------------------------- Buttons
-        self.FillBallastButton  = NavigationButton(icon="basket-fill")
-        self.LightButton        = NavigationButton(icon="car-light-high")
-        self.SurfaceButton      = NavigationButton(icon="waves-arrow-up")
-        self.CameraButton       = NavigationButton(icon="video-off")
-        self.EmptyBallastButton = NavigationButton(icon="basket-unfill")
+        self.FillBallastButton  = NavigationButton(icon = "basket-fill",       on_release = self._FillPressed)
+        self.LightButton        = NavigationButton(icon = "car-light-high",    on_release = self._LightPressed)
+        self.SurfaceButton      = NavigationButton(icon = "waves-arrow-up",    on_release = self._SurfacePressed)
+        self.CameraButton       = NavigationButton(icon = "video-off",         on_release = self._CameraPressed)
+        self.EmptyBallastButton = NavigationButton(icon = "basket-unfill",     on_release = self._EmptyPressed)
         #endregion
 
         #region ---------------------------- Bottom Action Buttons
@@ -413,5 +416,55 @@ class BatiscanMenu(Screen):
         """
         pass
 # ------------------------------------------------------------------------
-
+    def _CameraPressed(self, *args):
+        Debug.Start("_CameraPressed")
+        BatiscanControls.wantedCameraStatus = not BatiscanControls.wantedCameraStatus
+        BatiscanUDP.SendThing(PlaneIDs.cameraUpdate, getters)
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _SurfacePressed(self, *args):
+        Debug.Start("_SurfacePressed")
+        BatiscanControls.wantedSurface = not BatiscanControls.wantedSurface
+        BatiscanUDP.SendThing(PlaneIDs.surface, getters)
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _LightPressed(self, *args):
+        Debug.Start("_LightPressed")
+        BatiscanControls.wantedLeftLight = not BatiscanControls.wantedLeftLight
+        BatiscanControls.wantedRightLight = not BatiscanControls.wantedRightLight
+        BatiscanUDP.SendThing(PlaneIDs.lightsUpdate, getters)
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _EmptyPressed(self, *args):
+        Debug.Start("_EmptyPressed")
+        BatiscanControls.wantedBallast = False
+        BatiscanUDP.SendThing(PlaneIDs.ballastUpdate, getters)
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _FillPressed(self, *args):
+        Debug.Start("_FillPressed")
+        BatiscanControls.wantedBallast = True
+        BatiscanUDP.SendThing(PlaneIDs.ballastUpdate, getters)
+        Debug.End()
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+    def _UpdateCamera(self, *args):
+        Debug.Start("_UpdateCamera")
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdateSurface(self, *args):
+        Debug.Start("_UpdateSurface")
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdateLights(self, *args):
+        Debug.Start("_UpdateLights")
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdateEmpty(self, *args):
+        Debug.Start("_UpdateEmpty")
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdateFill(self, *args):
+        Debug.Start("_UpdateFill")
+        Debug.End()
 LoadingLog.End("BatiscanMenu.py")

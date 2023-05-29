@@ -493,7 +493,7 @@ import socket
 class StupidFuckingPythonIsRetardedAndGayAFWithMemoryManagement:
     listOfIntegers = []
 
-def SendAPlaneOnUDP(functionID:int, UDPObject, Getters) -> Execution:
+def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
     """
         SendAPlaneOnUDP:
         ================

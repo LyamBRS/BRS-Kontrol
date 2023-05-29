@@ -51,6 +51,9 @@ class BatiscanControls:
     wantedLeftLight:bool = False
     wantedRightLight:bool = False
 
+    wantedSurface:bool = False
+    currentSurface:bool = False
+
     wantedBallast:bool = False
     currentBallast:bool = False
 

@@ -162,31 +162,31 @@ class BatiscanUDP:
                 break
             ##################################################
             oldestMessage = UDPReader.GetOldestMessage()
-            if(oldestMessage == None):
-                break
-            for sender,message in oldestMessage.items():
-                Debug.Log(f"New plane from {sender}:")
-                arrival = MakeAPlaneOutOfArrivedBytes(message)
-            ##################################################
+            if(oldestMessage != None):
+                for sender,message in oldestMessage.items():
+                    Debug.Log(f"New plane from {sender}:")
+                    arrival = MakeAPlaneOutOfArrivedBytes(message)
+                ##################################################
 
             if(count == 2):
-                SendAPlaneOnUDP(PlaneIDs.navigationUpdate)
+                SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
                 count = 0
 
             if(count == 1):
-                SendAPlaneOnUDP(PlaneIDs.allSensors)
+                SendAPlaneOnUDP(PlaneIDs.allSensors, Getters)
                 count = 2
 
             if(count == 0):
-                SendAPlaneOnUDP(PlaneIDs.allStates)
+                SendAPlaneOnUDP(PlaneIDs.allStates, Getters)
                 count = 1
 
             if(planeToSend != None):
-                SendAPlaneOnUDP(planeToSend, )
+                SendAPlaneOnUDP(planeToSend, Getters)
                 planeToSend = None
             try:
                 with udpClass.lock:
                     planeToSend = BatiscanUDP._thingToSend
+                    BatiscanUDP._thingToSend = None
                     ExecutePlane(arrival)
                     pass
             except:

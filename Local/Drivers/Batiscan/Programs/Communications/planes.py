@@ -67,7 +67,13 @@ def MakeAPlaneOutOfArrivedBytes(bytesToDecode:bytes) -> NewArrival:
         return None
 
     # Checking if the first passenger is a pilot. Otherwise, the plane is discarded.
-    pilot:Passenger = passengers[0]
+    try:
+        pilot:Passenger = passengers[0]
+    except:
+        Debug.Error("FAILED TO GET PILOT. EPIC FAIL")
+        print(passengers)
+        return None
+
     if(pilot.type != PassengerTypes.Pilot):
         Debug.Error("Err first passenger isn't a pilot mate...")
         return Execution.Failed

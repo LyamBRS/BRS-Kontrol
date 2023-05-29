@@ -171,10 +171,12 @@ class BatiscanUDP:
 
             if(count == 2):
                 SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
+                time.sleep(0.005)
                 count = 0
 
             if(count == 1):
                 SendAPlaneOnUDP(PlaneIDs.allSensors, Getters)
+                time.sleep(0.005)
                 count = 2
 
             if(count == 0):
@@ -183,6 +185,7 @@ class BatiscanUDP:
 
             if(planeToSend != None):
                 SendAPlaneOnUDP(planeToSend, Getters)
+                time.sleep(0.005)
                 planeToSend = None
             try:
                 with udpClass.lock:

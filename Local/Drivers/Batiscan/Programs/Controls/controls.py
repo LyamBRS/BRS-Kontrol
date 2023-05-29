@@ -2,12 +2,11 @@
 # File Information
 #====================================================================#
 """
-    AppLoading.py
+    controls.py
     =============
-    This file is used to control and coordinate the loading of the
-    application's various things. It uses a list of things to do where
-    each element is paired with a function that returns `True` if an
-    error occured and `False` if that loading step was successful.
+    This file's purpose is to handle the various controls and bindings
+    of Batiscan's GUI. It has callbacks and various other functions
+    called and checked.
 """
 #====================================================================#
 # Loading Logs
@@ -74,7 +73,7 @@ class BatiscanControls:
 
     pressure:int = 0
     temperature:int = 0
-    
+
     currentTemperatureUnit:str = "C"
     wantedTemperatureUnit:str = "C"
 

@@ -10,6 +10,7 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Local.Drivers.Batiscan.Programs.Communications.UDP import StartUDP
 from Programs.Pages.DriverMenu import DriverMenu_Screens
 LoadingLog.Start("Driver.py")
 #====================================================================#
@@ -47,7 +48,7 @@ def CheckIntegrity() -> FileIntegrity:
         or missing file(s). As the name says, it checks for the
         integrity of itself and returns the resulted integrity.
     """
-    Debug.Start("CheckIntegrity")
+    Debug.Start("Batiscan -> CheckIntegrity")
 
     #region ------------------------------------------- [0]
     Debug.Log("[0]: Importing dependencies")
@@ -72,7 +73,7 @@ def Launch() -> Execution:
 
         It will return a value within the Execution enum.
     """
-    Debug.Start("Launch")
+    Debug.Start("Batiscan -> Launch")
     #region [0]---------------------------------------- [IMPORT]
     Debug.Log("[0]: Importing dependencies")
     from Local.Drivers.Batiscan.Pages.BatiscanMenu import BatiscanMenu_Screens
@@ -82,7 +83,16 @@ def Launch() -> Execution:
     BatiscanMenu_Screens.SetCaller(BatiscanMenu_Screens, "BatiscanMenu")
     BatiscanMenu_Screens.SetExiter(BatiscanMenu_Screens, "BatiscanMenu")
     #endregion
-    #region [2]---------------------------------------- [LAUNCH]
+
+    #region [2]---------------------------------------- [UDP setup]
+    result = StartUDP()
+    if(result != Execution.Passed):
+        Debug.Error("UDP DRIVERS COULD NOT BE STARTED")
+        Debug.End()
+        return Execution.NoConnection
+    #endregion
+
+    #region [3]---------------------------------------- [LAUNCH]
     Debug.Log("[2]: Launching DriverMenu")
     BatiscanMenu_Screens.Call()
     #endregion
@@ -99,7 +109,7 @@ def Update() -> Execution:
         latest version. It will return an Execution value depending
         on what happens.
     """
-    Debug.Start("Update")
+    Debug.Start("Batiscan -> Update")
     Debug.End()
     return Execution.ByPassed
 # -------------------------------------------------------------------
@@ -112,7 +122,7 @@ def Uninstall() -> Execution:
         Completely uninstall this device driver without leaving any
         traces of it's existence in Kontrol's Software.
     """
-    Debug.Start("Uninstall")
+    Debug.Start("Batiscan -> Uninstall")
     Debug.End()
     return Execution.ByPassed
 # -------------------------------------------------------------------
@@ -129,7 +139,7 @@ def ClearProfileCache(profileName:str) -> Execution:
         The name of the profile is given as a parameter. The function
         will return an Execution enum value.
     """
-    Debug.Start("ClearProfileCache")
+    Debug.Start("Batiscan -> ClearProfileCache")
     Debug.End()
     return Execution.ByPassed
 # -------------------------------------------------------------------
@@ -146,7 +156,7 @@ def GetErrorMessage() -> str:
 
         if there is no error to return, `None` is returned.
     """
-    Debug.Start("GetErrorMessage")
+    Debug.Start("Batiscan -> GetErrorMessage")
     Debug.End()
     return variables.errorMessage
 # -------------------------------------------------------------------
@@ -159,7 +169,7 @@ def Quit() -> Execution:
         Function used to quit and close the device driver and return
         to Kontrol's GUI.
     """
-    Debug.Start("Quit")
+    Debug.Start("Batiscan -> Quit")
     from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
     from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
     from Programs.Pages.DriverMenu import DriverMenu_Screens

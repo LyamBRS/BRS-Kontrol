@@ -182,8 +182,8 @@ class DebugNavigationBar():
 LoadingLog.GlobalVariable("SettingMenuButtons")
 SettingMenuButtons = [
     {
-        "name" : _("Network"),
-        "icon" : "wifi-cog",
+        "name" : _("Main menu"),
+        "icon" : "submarine",
         "function" : GoTo_Network
     },
     {

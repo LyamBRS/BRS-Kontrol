@@ -1,31 +1,43 @@
 from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, NewArrival, VarTypes, Execution, Passenger, PassengerTypes, Debug, BFIO
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
-
+from Local.Drivers.Batiscan.Programs.Controls.updaters import BatiscanUpdaters
+from Local.Drivers.Batiscan.Programs.Controls.values import BatiscanValues
+from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
 ################################################
 def GetPing() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [True]
 ################################################
 def GetStatus() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [1]
 ################################################
 def GetHandshake() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return []
 ################################################
 def GetErrorMessage() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return ["no errors"]
 ################################################
 ################################################
 def GetType() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [1]
 ################################################
@@ -44,18 +56,15 @@ def GetID() -> list:
 ################################################
 def GetRestartProtocol() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return []
 ################################################
 def GetUniversalInfoUpdate() -> list:
     """
-        GetUniversalInfoUpdate:
-        ======================
-        Summary:
-        --------
-        Gets a plane that requests the other
-        device to send their ID all the while
-        you're sending an ID.
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [
                     1234567890,                                     # unique device ID
@@ -71,13 +80,8 @@ def GetUniversalInfoUpdate() -> list:
 ################################################
 def GetHandlingError() -> list:
     """
-        GetHandlingError:
-        ================
-        Summary:
-        --------
-        Gets a plane that is made to
-        specify that there has been
-        an handling error with the methods.
+        returns variable necessary to make the plane
+        with the same name.
     """
     return []
 ################################################
@@ -88,53 +92,66 @@ def GetHandlingError() -> list:
 ################################################
 def GetUpdateLights() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [BatiscanControls.wantedLeftLight, BatiscanControls.wantedRightLight]
 ################################################
 def GetUpdateServos() -> list:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [BatiscanControls.wantedServoA, BatiscanControls.wantedServoB, BatiscanControls.wantedServoC, BatiscanControls.wantedServoD, BatiscanControls.wantedServoE]
 ################################################
 def GetUpdateModes() -> Plane:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [BatiscanControls.wantedMode, BatiscanControls.wantedTemperatureUnit]
 ################################################
 def GetUpdateCamera() -> Plane:
     """
-        GetUpdateCamera:
-        =====================
-        Summary:
-        --------
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [BatiscanControls.wantedCameraStatus, BatiscanControls.wantedCameraAngle]
 ################################################
 def GetAllState() -> Plane:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return []
 ################################################
 def GetAllSensor() -> Plane:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return []
 ################################################
 def GetUpdateNavigation() -> Plane:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [BatiscanControls.wantedSpeed, BatiscanControls.wantedPitch, BatiscanControls.wantedRoll, BatiscanControls.wantedYaw]
 ################################################
 def GetSetBallast() -> Plane:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return [BatiscanControls.wantedBallast]
 ################################################
 def GetSurfaceNow() -> Plane:
     """
+        returns variable necessary to make the plane
+        with the same name.
     """
     return []
-
 
 
 class PlaneIDs:
@@ -222,6 +239,205 @@ getters = {
 }
 
 
+def _PlaneIsNotOk(newArrival:NewArrival, wantedPlaneID:int):
+    """
+        _PlaneIsNotOk:
+        ==============
+        Summary:
+        --------
+        Private local function that checks
+        if a received plane from UDP isn't right
+        to use in Batiscan's specific functions.
+    """
+    Debug.Start("_PlaneIsNotOk")
+
+    if(not newArrival.passedTSA):
+        Debug.Error("Specified plane didn't pass TSA")
+        Debug.End()
+        return True
+
+    if(newArrival.planeID != wantedPlaneID):
+        Debug.Error("Specified plane isn't of the right ID")
+        Debug.End()
+        return True
+
+    Debug.End()
+    return False
+
+################################################
+def SetUpdateLights(newArrival:NewArrival) -> Execution:
+    """
+    """
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.lightsUpdate)):
+        return Execution.Failed
+
+    BatiscanValues.leftLight = newArrival.GetParameter(0)
+    BatiscanValues.rightLight = newArrival.GetParameter(1)
+
+    BatiscanUpdaters.UpdateLeftLightState()
+    BatiscanUpdaters.UpdateRightLightState()
+
+    return Execution.Passed
+################################################
+def SetUpdateServos(newArrival:NewArrival) -> Execution:
+    """
+        Updates saved values of Batiscan<s driver with new
+        servo values received from the real Batiscan.
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.servoUpdate)):
+        return Execution.Failed
+
+    BatiscanValues.servoA = newArrival.GetParameter(0)
+    BatiscanValues.servoB = newArrival.GetParameter(1)
+    BatiscanValues.servoC = newArrival.GetParameter(2)
+    BatiscanValues.servoD = newArrival.GetParameter(3)
+    BatiscanValues.servoE = newArrival.GetParameter(4)
+
+    BatiscanUpdaters.UpdateServoA()
+    BatiscanUpdaters.UpdateServoB()
+    BatiscanUpdaters.UpdateServoC()
+    BatiscanUpdaters.UpdateServoD()
+    BatiscanUpdaters.UpdateServoE()
+
+    return Execution.Passed
+################################################
+def SetUpdateModes(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.modeUpdate)):
+        return Execution.Failed
+
+    BatiscanValues.navigationMode = newArrival.GetParameter(0)
+    BatiscanValues.temperatureUnit = newArrival.GetParameter(1)
+
+    BatiscanUpdaters.UpdateNavigationMode()
+    BatiscanUpdaters.UpdateTemperature()
+
+    return Execution.Passed
+################################################
+def SetUpdateCamera(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.cameraUpdate)):
+        return Execution.Failed
+
+    BatiscanValues.cameraStatus = newArrival.GetParameter(0)
+    BatiscanValues.cameraAngle = newArrival.GetParameter(1)
+
+    BatiscanUpdaters.UpdateCameraState()
+    BatiscanUpdaters.UpdateCameraAngle()
+
+    return Execution.Passed
+################################################
+def SetAllState(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.allStates)):
+        return Execution.Failed
+
+    BatiscanValues.waterDetected = newArrival.GetParameter(0)
+    BatiscanValues.cameraStatus = newArrival.GetParameter(1)
+    BatiscanValues.lowBattery = newArrival.GetParameter(2)
+    BatiscanValues.leftLight = newArrival.GetParameter(3)
+    BatiscanValues.rightLight = newArrival.GetParameter(4)
+    BatiscanValues.inEmergency = newArrival.GetParameter(5)
+    BatiscanValues.ballast = newArrival.GetParameter(6)
+    BatiscanValues.isCommunicating = newArrival.GetParameter(7)
+
+    BatiscanUpdaters.UpdateWaterDetected()
+    BatiscanUpdaters.UpdateCameraState()
+    BatiscanUpdaters.UpdateLowBattery()
+    BatiscanUpdaters.UpdateLeftLightState()
+    BatiscanUpdaters.UpdateRightLightState()
+    BatiscanUpdaters.UpdateInEmergency()
+    BatiscanUpdaters.UpdateBallast()
+    BatiscanUpdaters.UpdateIsCommunicating()
+
+    return Execution.Passed
+################################################
+def SetAllSensor(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.allSensors)):
+        return Execution.Failed
+
+    BatiscanValues.pressure         = newArrival.GetParameter(0)
+    BatiscanValues.pitch            = newArrival.GetParameter(1)
+    BatiscanValues.roll             = newArrival.GetParameter(2)
+    BatiscanValues.yaw              = newArrival.GetParameter(3)
+    BatiscanValues.speed            = newArrival.GetParameter(4)
+    BatiscanValues.battery          = newArrival.GetParameter(5)
+
+    BatiscanUpdaters.UpdatePressure()
+    BatiscanUpdaters.UpdatePitch()
+    BatiscanUpdaters.UpdateRoll()
+    BatiscanUpdaters.UpdateYaw()
+    BatiscanUpdaters.UpdateSpeed()
+    BatiscanUpdaters.UpdateBattery()
+
+    return Execution.Passed
+################################################
+def SetUpdateNavigation(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.navigationUpdate)):
+        return Execution.Failed
+
+    BatiscanValues.speed    = newArrival.GetParameter(0)
+    BatiscanValues.pitch    = newArrival.GetParameter(1)
+    BatiscanValues.roll     = newArrival.GetParameter(2)
+    BatiscanValues.yaw      = newArrival.GetParameter(3)
+
+
+    BatiscanUpdaters.UpdateSpeed()
+    BatiscanUpdaters.UpdatePitch()
+    BatiscanUpdaters.UpdateRoll()
+    BatiscanUpdaters.UpdateYaw()
+
+    return Execution.Passed
+################################################
+def SetSetBallast(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.ballastUpdate)):
+        return Execution.Failed
+
+    BatiscanValues.ballast = newArrival.GetParameter(0)
+    BatiscanUpdaters.UpdateBallast()
+
+    return Execution.Passed
+################################################
+def SetSurfaceNow(newArrival:NewArrival) -> Execution:
+    """
+    """
+
+    if(_PlaneIsNotOk(newArrival, PlaneIDs.surface)):
+        return Execution.Failed
+
+    return Execution.Passed
+
+
+updaters = {
+    PlaneIDs.lightsUpdate       : SetUpdateLights,
+    PlaneIDs.servoUpdate        : SetUpdateServos,
+    PlaneIDs.modeUpdate         : SetUpdateModes,
+    PlaneIDs.cameraUpdate       : SetUpdateCamera,
+    PlaneIDs.allStates          : SetAllState,
+    PlaneIDs.allSensors         : SetAllSensor,
+    PlaneIDs.navigationUpdate   : SetUpdateNavigation,
+    PlaneIDs.ballastUpdate      : SetSetBallast,
+    PlaneIDs.surface            : SetSurfaceNow,
+}
+
+
+
 def SendUDPMessage(ip_address, port, message:str):
     try:
         import socket
@@ -277,7 +493,7 @@ import socket
 class StupidFuckingPythonIsRetardedAndGayAFWithMemoryManagement:
     listOfIntegers = []
 
-def SendAPlaneOnUDP(functionID:int) -> Execution:
+def SendAPlaneOnUDP(functionID:int, UDPObject, Getters) -> Execution:
     """
         SendAPlaneOnUDP:
         ================
@@ -290,23 +506,13 @@ def SendAPlaneOnUDP(functionID:int) -> Execution:
 
     try:
         Debug.enableConsole = False
-        planeToSend = Plane(functionID, getters[functionID](), sentVarTypes[functionID])
+        planeToSend = Plane(functionID, Getters[functionID](), sentVarTypes[functionID])
         Debug.enableConsole = True
     except:
         Debug.Error("FAILED TO CREATE PLANE BRUH")
 
-    # try:
-        # Create a UDP socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
     listOfIntegers = []
-    listOfIntegers.clear()
-    sincePythonIsRetardedThisFixesMemoryAllocationErrorWhereForLoopThinksListIsntTheWantedList : bool = False
     for passenger in planeToSend.passengers:
-        if(sincePythonIsRetardedThisFixesMemoryAllocationErrorWhereForLoopThinksListIsntTheWantedList == False):
-            print("FUCKING CLEARING IT")
-            listOfIntegers.clear()
-            sincePythonIsRetardedThisFixesMemoryAllocationErrorWhereForLoopThinksListIsntTheWantedList = True
         # Send the message
         valA = passenger.value_8bits[0]#.encode('utf-8')
         valB = passenger.value_8bits[1]#.encode('utf-8')
@@ -315,10 +521,6 @@ def SendAPlaneOnUDP(functionID:int) -> Execution:
 
     bytesToSend = bytes(listOfIntegers)
     Debug.Log(f"Sending {listOfIntegers}")
-    sock.sendto(bytesToSend, (ipAddress, port))
-    # Close the socket
-    sock.close()
+    UDPSender.SendThing(planeToSend)
+
     return True
-    # except Exception as e:
-        # Debug.Error("FAILED TO SEND SOCKET")
-        # return False

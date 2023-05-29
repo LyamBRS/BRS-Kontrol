@@ -234,7 +234,7 @@ class LeftBrSpand(AddonFoundations):
             LeftBrSpand.universalInfoSent = False
 
         if(LeftBrSpand.cardJustConnected and not LeftBrSpand.universalInfoSent):
-            Debug.Log("Starting handshake proceedure")
+            Debug.Log("Starting handshake procedure")
             LeftBrSpand._StartHandshake()
             LeftBrSpand.universalInfoSent = True
 
@@ -243,6 +243,9 @@ class LeftBrSpand(AddonFoundations):
 
             if(connected):
                 KontrolRGB.StartOfHandshake()
+
+                
+
                 LeftBrSpand.cardJustConnected = True
                 LeftBrSpand.universalInfoSent = False
                 Debug.End()

@@ -170,12 +170,12 @@ def CheckIntegrity(NameOfDeviceDriver:str) -> FileIntegrity:
     #region -------------------------------------------------- STEP 6
     Debug.Log("[6]: Getting driver module")
     import importlib
-    try:
-        module = importlib.import_module(f"Local.Drivers.{NameOfDeviceDriver}.Driver")
-    except:
-        Debug.Error(">>> Driver file crashes when loading.")
-        Debug.End()
-        return FileIntegrity.Corrupted
+    # try:
+    module = importlib.import_module(f"Local.Drivers.{NameOfDeviceDriver}.Driver")
+    # except:
+        # Debug.Error(">>> Driver file crashes when loading.")
+        # Debug.End()
+        # return FileIntegrity.Corrupted
     #endregion
     #region -------------------------------------------------- STEP 7
     Debug.Log("[7]: Verifying Driver.py")

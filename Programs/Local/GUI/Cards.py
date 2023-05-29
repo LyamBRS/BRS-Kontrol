@@ -378,7 +378,7 @@ class DeviceDriverCard(BaseButton, Widget):
         #endregion
 
         #region --------------------------- Integrity Check
-        Debug.Log("Checking integrity of -> {driverName}")
+        Debug.Log(f"Checking integrity of -> {driverName}")
         integrity = CheckIntegrity(driverName)
 
         if(integrity == FileIntegrity.Good):

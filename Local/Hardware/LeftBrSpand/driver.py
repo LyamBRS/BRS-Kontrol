@@ -244,7 +244,7 @@ class LeftBrSpand(AddonFoundations):
             if(connected):
                 KontrolRGB.StartOfHandshake()
 
-                
+
 
                 LeftBrSpand.cardJustConnected = True
                 LeftBrSpand.universalInfoSent = False
@@ -374,6 +374,9 @@ class LeftBrSpand(AddonFoundations):
 
         Debug.Log("Building and sending Universal Info")
         kontrolUniversalInfo = GetUniversalInfoPlane()
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
         result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
         if(result != Execution.Passed):
             LeftBrSpand.dialog = MDDialog(

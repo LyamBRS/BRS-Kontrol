@@ -89,8 +89,8 @@ def StartUDP() -> Execution:
         Debug.End()
         return Execution.NoConnection
     
-
-    UDPSender.SendThing()
+    # from Programs.Communications.bfio import GetUniversalInfoUpdate
+    # BatiscanUDP
 
     Debug.End()
     return Execution.Passed

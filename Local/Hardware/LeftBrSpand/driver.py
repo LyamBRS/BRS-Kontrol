@@ -373,11 +373,14 @@ class LeftBrSpand(AddonFoundations):
             return Execution.Failed
 
         Debug.Log("Building and sending Universal Info")
-        kontrolUniversalInfo = GetUniversalInfoPlane()
-        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
-        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
-        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
-        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfo)
+        kontrolUniversalInfoA = GetUniversalInfoPlane()
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfoA)
+        kontrolUniversalInfoB = GetUniversalInfoPlane()
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfoB)
+        kontrolUniversalInfoC = GetUniversalInfoPlane()
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfoC)
+        kontrolUniversalInfoD = GetUniversalInfoPlane()
+        result = UART.QueuePlaneOnTaxiway(kontrolUniversalInfoD)
         if(result != Execution.Passed):
             LeftBrSpand.dialog = MDDialog(
                 title=_("BrSpand Failure"),

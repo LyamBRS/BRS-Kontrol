@@ -243,9 +243,6 @@ class LeftBrSpand(AddonFoundations):
 
             if(connected):
                 KontrolRGB.StartOfHandshake()
-
-
-
                 LeftBrSpand.cardJustConnected = True
                 LeftBrSpand.universalInfoSent = False
                 Debug.End()
@@ -290,7 +287,26 @@ class LeftBrSpand(AddonFoundations):
 
         Debug.End()
         return Execution.Failed
+    # -----------------------------------
+    def _RetryHandshake(*args) -> Execution:
+        """
+            _RetryHandshake:
+            ================
+            Summary:
+            --------
+            Callback executed when your
+            dumb ass still think it can make
+            an extension card connect when it
+            has bad connectors.
+        """
+        Debug.Start("_RetryHandshake")
+        KontrolRGB.StartOfHandshake()
+        LeftBrSpand.universalInfoSent = False
+        LeftBrSpand.cardJustConnected = True
+        LeftBrSpand.dialog.dismiss()
 
+        Debug.End()
+    # -----------------------------------
     def _IsCardConnected() -> bool:
         """
             _IsCardConnected:
@@ -579,7 +595,7 @@ class LeftBrSpand(AddonFoundations):
         newGroup = UART.GetOldestReceivedGroupOfPassengers()
         if(newGroup == Execution.Failed):
             Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
-            LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"), _("416: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved. Please try to unplug and replug your card."), _("Damn"))
+            LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"), _("416: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved. Please try to unplug and replug your card. Do you want to retry an handshake?"), _("Damn"))
             KontrolRGB.DisplayUserError()
             LeftBrSpand.cardJustConnected = False
             LeftBrSpand.universalInfoSent = False
@@ -614,12 +630,21 @@ class LeftBrSpand(AddonFoundations):
                     return Execution.Failed
             else:
                 Debug.Error(f"BFIO failure. Failed to obtain oldest plane received.")
-                LeftBrSpand._ShowNewErrorDialog(_("Handshake Failure"),_("463: BrSpand drivers did not receive anything back from the BrSpand card. Handshake could not be resolved. Try to unplug, then replug your BrSpand card only once the Connection Lost message appears."), _("Damn"))
-                KontrolRGB.DisplayUserError()
+                LeftBrSpand.dialog.dismiss()
+                LeftBrSpand.dialog = MDDialog(
+                    title=_("Handshake failure"),
+                    text=_("Kontrol failed to establish an handshake with the currently connected card. Do you wish to retry to gather its informations? This is probably due to a poor connection between Kontrol and your BrSpand card due to warped USB-C connectors."),
+                    on_dismiss=LeftBrSpand._Dismissed,
+                    buttons=[
+                                MDFlatButton(text=_("Fuck this"), font_style="H6", on_press = LeftBrSpand._IgnorePressed),
+                                MDFillRoundFlatButton(text=_("Retry"), font_style="H6", on_press = LeftBrSpand._RetryHandshake, on_dismiss=LeftBrSpand._IgnorePressed)
+                            ]
+                )
+                LeftBrSpand.dialog.open()
                 LeftBrSpand.cardJustConnected = False
                 LeftBrSpand.universalInfoSent = False
                 Debug.End()
-                return Execution.Failed
+                return Execution.Passed
     # -----------------------------------
     def _IgnorePressed(*args) -> None:
         """
@@ -698,7 +723,7 @@ class LeftBrSpand(AddonFoundations):
                                 MDFillRoundFlatButton(text=_("Download drivers"), font_style="H6", on_press = LeftBrSpand._DownloadDriverPressed, on_dismiss=LeftBrSpand._IgnorePressed)
                             ]
                 )
-                LeftBrSpand.dialog.open()    
+                LeftBrSpand.dialog.open()
         Debug.End()
     # -----------------------------------
     def _DownloadDriverPressed(*args):

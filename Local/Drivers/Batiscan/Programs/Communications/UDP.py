@@ -148,6 +148,7 @@ class BatiscanUDP:
     """ private thread object from :ref:`Threading`."""
     stop_event = threading.Event()
     isStarted: bool = False
+    lock = threading.Lock()
 
 
     @staticmethod

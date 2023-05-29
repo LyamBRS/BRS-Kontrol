@@ -4,7 +4,7 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-LoadingLog.Start("AboutMenu.py")
+LoadingLog.Start("BatiscanValueMenu.py")
 #====================================================================#
 # Imports
 #====================================================================#
@@ -39,6 +39,7 @@ from kivymd.uix.recycleview import RecycleView
 LoadingLog.Import("Local")
 from Programs.Local.Hardware.RGB import KontrolRGB
 from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
+from Local.Drivers.Batiscan.Programs.Controls.values import BatiscanValues
 # from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
 # from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
@@ -81,15 +82,15 @@ class CustomThreeLineIconListItem(ThreeLineRightIconListItem):
 #====================================================================#
 # Screen class
 #====================================================================#
-LoadingLog.Class("AboutMenu_Screens")
-class AboutMenu_Screens:
+LoadingLog.Class("BatiscanValueMenu_Screens")
+class BatiscanValueMenu_Screens:
     """
-        AboutMenu_Screens:
+        BatiscanValueMenu_Screens:
         ================
         Summary:
         --------
         This class allows the handling of the transitional screen
-        :class:`AboutMenu`.
+        :class:`BatiscanValueMenu`.
 
         Description:
         ------------
@@ -134,12 +135,12 @@ class AboutMenu_Screens:
                 bool: `True`: Something went wrong. `False`: Success
         """
         # Attempt to add the screen class as a widget of the AppManager
-        AboutMenu_Screens._exitClass = screenClass
-        AboutMenu_Screens._exitName  = screenName
+        BatiscanValueMenu_Screens._exitClass = screenClass
+        BatiscanValueMenu_Screens._exitName  = screenName
 
-        AboutMenu_Screens._exitTransition = transition
-        AboutMenu_Screens._exitDuration = duration
-        AboutMenu_Screens._exitDirection = direction
+        BatiscanValueMenu_Screens._exitTransition = transition
+        BatiscanValueMenu_Screens._exitDuration = duration
+        BatiscanValueMenu_Screens._exitDirection = direction
         return False
 
     def SetCaller(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
@@ -158,12 +159,12 @@ class AboutMenu_Screens:
                 bool: `True`: Something went wrong. `False`: Success
         """
         # Attempt to add the screen class as a widget of the AppManager
-        AboutMenu_Screens._callerClass = screenClass
-        AboutMenu_Screens._callerName  = screenName
+        BatiscanValueMenu_Screens._callerClass = screenClass
+        BatiscanValueMenu_Screens._callerName  = screenName
 
-        AboutMenu_Screens._callerTransition = transition
-        AboutMenu_Screens._callerDuration = duration
-        AboutMenu_Screens._callerDirection = direction
+        BatiscanValueMenu_Screens._callerTransition = transition
+        BatiscanValueMenu_Screens._callerDuration = duration
+        BatiscanValueMenu_Screens._callerDirection = direction
         return False
 
     def _Exit(*args) -> Execution:
@@ -173,18 +174,18 @@ class AboutMenu_Screens:
             Returns:
                 bool: `True`:  Something went wrong and the wanted exiter screen can't be loaded. `False`: Success
         """
-        Debug.Start("AboutMenu_Screens -> _Exit()")
+        Debug.Start("BatiscanValueMenu_Screens -> _Exit()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if exit class was specified
             Debug.Log("Checking exit class")
-            if(AboutMenu_Screens._exitClass == None):
+            if(BatiscanValueMenu_Screens._exitClass == None):
                 Debug.Error("Attempted to call exit while no exit class were specified")
                 Debug.End()
                 return True
 
             Debug.Log("Checking exit name")
-            if(AboutMenu_Screens._exitName == None):
+            if(BatiscanValueMenu_Screens._exitName == None):
                 Debug.Error("Attempted to call exit while no exit name were specified")
                 Debug.End()
                 return True
@@ -192,25 +193,25 @@ class AboutMenu_Screens:
             Debug.Log("Checking exit class Call()")
             try:
                 Debug.Log("Trying to call exit class caller.")
-                AboutMenu_Screens._exitClass.Call()
+                BatiscanValueMenu_Screens._exitClass.Call()
                 Debug.Log("Success")
                 Debug.End()
                 return False
             except:
                 Debug.Log("Class specified wasn't an _Screen class.")
-                AppManager.manager.add_widget(AboutMenu_Screens._exitClass(name=AboutMenu_Screens._exitName))
+                AppManager.manager.add_widget(BatiscanValueMenu_Screens._exitClass(name=BatiscanValueMenu_Screens._exitName))
         except:
             Debug.Error("AppLoading -> Exception occured.")
             Debug.End()
             return True
 
         # Attempt to call the added screen
-        AppManager.manager.transition = AboutMenu_Screens._exitTransition()
-        AppManager.manager.transition.duration = AboutMenu_Screens._exitDuration
-        AppManager.manager.transition.direction = AboutMenu_Screens._exitDirection
+        AppManager.manager.transition = BatiscanValueMenu_Screens._exitTransition()
+        AppManager.manager.transition.duration = BatiscanValueMenu_Screens._exitDuration
+        AppManager.manager.transition.direction = BatiscanValueMenu_Screens._exitDirection
 
         # try:
-        AppManager.manager.current = AboutMenu_Screens._exitName
+        AppManager.manager.current = BatiscanValueMenu_Screens._exitName
         # except:
             # return True
         Debug.End()
@@ -223,36 +224,36 @@ class AboutMenu_Screens:
             Returns:
                 Execution
         """
-        Debug.Start("AboutMenu_Screens -> Call()")
+        Debug.Start("BatiscanValueMenu_Screens -> Call()")
         # Attempt to add the screen class as a widget of the AppManager
         try:
             # Check if caller class was specified
             # Debug.Log("Checking caller class")
-            # if(AboutMenu_Screens._callerClass == None):
+            # if(BatiscanValueMenu_Screens._callerClass == None):
                 # Debug.Error("No caller class specified.")
                 # Debug.End()
                 # return True
 # 
             # Debug.Log("Checking caller name")
-            # if(AboutMenu_Screens._callerName == None):
+            # if(BatiscanValueMenu_Screens._callerName == None):
                 # Debug.Error("No caller name specified.")
                 # Debug.End()
                 # return True
 
             Debug.Log("Attempting to add widget")
-            AppManager.manager.add_widget(AboutMenu(name="AboutMenu"))
+            AppManager.manager.add_widget(BatiscanValueMenu(name="BatiscanValueMenu"))
         except:
             Debug.Error("Exception occured while handling Call()")
             Debug.End()
             return True
 
         # Attempt to call the added screen
-        AppManager.manager.transition = AboutMenu_Screens._callerTransition()
-        AppManager.manager.transition.duration = AboutMenu_Screens._callerDuration
-        AppManager.manager.transition.direction = AboutMenu_Screens._callerDirection
+        AppManager.manager.transition = BatiscanValueMenu_Screens._callerTransition()
+        AppManager.manager.transition.duration = BatiscanValueMenu_Screens._callerDuration
+        AppManager.manager.transition.direction = BatiscanValueMenu_Screens._callerDirection
 
         # try:
-        AppManager.manager.current = "AboutMenu"
+        AppManager.manager.current = "BatiscanValueMenu"
         Debug.Log("Screen successfully changed")
         # except:
             # Debug.Error("Failed to add AppLoading as current screen.")
@@ -283,10 +284,10 @@ BFIO_Functions = {
 }
 
 
-LoadingLog.Class("AboutMenu")
-class AboutMenu(Screen):
+LoadingLog.Class("BatiscanValueMenu")
+class BatiscanValueMenu(Screen):
     """
-        AboutMenu:
+        BatiscanValueMenu:
         -----------
         This class handles the screen of the account menu which shows
         to the user some actions that they can do with their user profiles
@@ -304,7 +305,7 @@ class AboutMenu(Screen):
     def on_pre_enter(self, *args):
         """
         """
-        Debug.Start("AboutMenu -> on_pre_enter")
+        Debug.Start("BatiscanValueMenu -> on_pre_enter")
         KontrolRGB.FastLoadingAnimation()
         self.padding = 0
         self.spacing = 0
@@ -341,7 +342,7 @@ class AboutMenu(Screen):
             In this case, once the view is fully loaded, the cards
             will slowly elevate to the wanted value.
         """
-        Debug.Start("AboutMenu -> on_enter")
+        Debug.Start("BatiscanValueMenu -> on_enter")
         KontrolRGB.DisplayDefaultColor()
         Debug.End()
 # ------------------------------------------------------------------------
@@ -351,14 +352,14 @@ class AboutMenu(Screen):
             us time to animate the screen leaving before destroying the
             objects and instances it created.
         """
-        Debug.Start("AboutMenu -> on_pre_leave")
+        Debug.Start("BatiscanValueMenu -> on_pre_leave")
         Debug.End()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
         """
             Function called when the screen is fully out of view.
         """
-        Debug.Start("AboutMenu -> on_leave")
+        Debug.Start("BatiscanValueMenu -> on_leave")
         Debug.Log("Attempting to remove self from AppManager's widgets")
         self.clear_widgets()
         AppManager.manager.remove_widget(self)
@@ -384,18 +385,44 @@ class AboutMenu(Screen):
 
         self.recycleView = RecycleView()
         self.recycleView.add_widget(self.RecyleBoxLayout)
-        self.recycleView.viewclass = CustomThreeLineIconListItem
+        self.recycleView.viewclass = ThreeLineRightIconListItem
         self.Layout.add_widget(self.recycleView)
 
-        for name,dictionary in BFIO_Functions.items():
+
+        valuesDictionary = {
+           "ballast" :          BatiscanValues.ballast,
+           "battery" :          BatiscanValues.battery,
+           "cameraAngle" :      BatiscanValues.cameraAngle,
+           "cameraStatus" :     BatiscanValues.cameraStatus,
+           "inEmergency" :      BatiscanValues.inEmergency,
+           "isCommunicating" :  BatiscanValues.isCommunicating,
+           "lowBattery" :       BatiscanValues.lowBattery,
+           "leftLight" :        BatiscanValues.leftLight,
+           "rightLight" :       BatiscanValues.rightLight,
+           "navigationMode" :   BatiscanValues.navigationMode,
+           "pitch" :            BatiscanValues.pitch,
+           "roll" :             BatiscanValues.roll,
+           "yaw" :              BatiscanValues.yaw,
+           "speed" :            BatiscanValues.speed,
+           "pressure" :         BatiscanValues.pressure,
+           "servoA" :           BatiscanValues.servoA,
+           "servoB" :           BatiscanValues.servoB,
+           "servoC" :           BatiscanValues.servoC,
+           "servoD" :           BatiscanValues.servoD,
+           "servoE" :           BatiscanValues.servoE,
+           "temperature" :      BatiscanValues.temperature,
+           "temperatureUnit" :  BatiscanValues.temperatureUnit,
+           "waterDetected" :    BatiscanValues.waterDetected  
+        }
+
+
+        for name,value in valuesDictionary.items():
 
             self.recycleView.data.insert(0,
                                          {
                                              "text" : name,
-                                             "secondary_text" : str(dictionary["Callsign"]),
+                                             "secondary_text" : str(value),
                                              "halign" : "left",
-                                             "on_release" : (lambda x: lambda: self.ButtonPressed(x))([name, dictionary]),
-                                             "icon" : "trash-can"
                                          })
         Debug.End()
 # ------------------------------------------------------------------------
@@ -424,4 +451,4 @@ class AboutMenu(Screen):
 
         Debug.End()
 # ------------------------------------------------------------------------
-LoadingLog.End("AboutMenu.py")
+LoadingLog.End("BatiscanValueMenu.py")

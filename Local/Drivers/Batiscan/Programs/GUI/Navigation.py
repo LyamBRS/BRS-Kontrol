@@ -110,6 +110,19 @@ def GoTo_About(*args):
     AboutMenu_Screens.SetCaller(AboutMenu_Screens, "AboutMenu")
     AboutMenu_Screens.SetExiter(AboutMenu_Screens, "AboutMenu")
     AboutMenu_Screens.Call()
+# ----------------------------------------------------------------
+def GoTo_BatiscanValues(*args):
+    """
+        GoTo_BatiscanValues:
+        ===========
+        Summary:
+        --------
+
+    """
+    from Local.Drivers.Batiscan.Pages.BatiscanValuesMenu import BatiscanValueMenu_Screens
+    BatiscanValueMenu_Screens.SetCaller(BatiscanValueMenu_Screens, "BatiscanValueMenu")
+    BatiscanValueMenu_Screens.SetExiter(BatiscanValueMenu_Screens, "BatiscanValueMenu")
+    BatiscanValueMenu_Screens.Call()
 #====================================================================#
 # Classes
 #====================================================================#
@@ -212,6 +225,11 @@ SettingMenuButtons = [
         "name" : _("About"),
         "icon" : "help-circle",
         "function" : GoTo_About
+    },
+    {
+        "name" : _("Returned values"),
+        "icon" : "bug",
+        "function" : GoTo_BatiscanValues
     },
     {
         "name" : _("Quit"),

@@ -115,6 +115,7 @@ class ListCard(BaseButton, Widget):
         self.RecycleView.add_widget(self.RecycleBoxLayout)
         self.RecycleView.viewclass = ThreeLineListItem
         self.RecycleViewLayout.add_widget(self.RecycleView)
+        self.RecycleViewLayout.add_widget(MDLabel(text="AAAH"))
 
         for data in self.savedData:
             Debug.Log(data)

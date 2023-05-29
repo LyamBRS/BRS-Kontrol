@@ -175,19 +175,13 @@ def Quit() -> Execution:
     from Programs.Pages.DriverMenu import DriverMenu_Screens
     from Local.Drivers.Batiscan.Pages.BatiscanMenu import BatiscanMenu_Screens
 
-    result = StopUDP()
-    if(result != Execution.Passed):
-        Debug.Error("UDP DRIVERS COULD NOT BE STOPPED")
-        Debug.End()
-        return Execution.NoConnection
-
     Debug.Log("Creating pop up message.")
     PopUpsHandler.Clear()
     PopUpsHandler.Add(PopUpTypeEnum.Question,
                       Message = _("Do you really want to quit this device driver?"),
                       ButtonAText = _("Yes"),
                       ButtonBText = _("No"),
-                      ButtonAHandler = DriverMenu_Screens.Call,
+                      ButtonAHandler = _Stop,
                       ButtonBHandler = BatiscanMenu_Screens.Call
                       )
     PopUps_Screens.SetCaller(BatiscanMenu_Screens, "BatiscanMenu")
@@ -199,6 +193,21 @@ def Quit() -> Execution:
 #====================================================================#
 # Classes
 #====================================================================#
+def _Stop(*args):
+    """
+        _Stop():
+        ========
+        Summary:
+        --------
+        Called when the user 
+    """
 
+    result = StopUDP()
+    if(result != Execution.Passed):
+        Debug.Error("UDP DRIVERS COULD NOT BE STOPPED")
+        Debug.End()
+        return Execution.NoConnection
+    
+    DriverMenu_Screens.Call()
 #====================================================================#
 LoadingLog.End("Driver.py")

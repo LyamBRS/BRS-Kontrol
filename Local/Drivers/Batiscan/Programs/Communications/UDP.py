@@ -172,20 +172,33 @@ class BatiscanUDP:
                 time.sleep(0.030)
                 count = 0
 
+            if udpClass.stop_event.is_set():
+                break
+
             if(count == 1):
                 SendAPlaneOnUDP(PlaneIDs.allSensors, Getters)
                 time.sleep(0.030)
                 count = 2
+
+            if udpClass.stop_event.is_set():
+                break
 
             if(count == 0):
                 SendAPlaneOnUDP(PlaneIDs.allStates, Getters)
                 time.sleep(0.030)
                 count = 1
 
+            if udpClass.stop_event.is_set():
+                break
+
             if(planeToSend != None):
                 SendAPlaneOnUDP(planeToSend, Getters)
                 time.sleep(0.030)
                 planeToSend = None
+
+            if udpClass.stop_event.is_set():
+                break
+
             try:
                 with udpClass.lock:
                     planeToSend = BatiscanUDP._thingToSend

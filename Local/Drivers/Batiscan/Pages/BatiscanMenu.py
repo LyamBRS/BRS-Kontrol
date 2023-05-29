@@ -419,32 +419,32 @@ class BatiscanMenu(Screen):
     def _CameraPressed(self, *args):
         Debug.Start("_CameraPressed")
         BatiscanControls.wantedCameraStatus = not BatiscanControls.wantedCameraStatus
-        BatiscanUDP.SendThing(PlaneIDs.cameraUpdate, getters)
+        BatiscanUDP.SendThing(PlaneIDs.cameraUpdate)
         Debug.End()
 # ------------------------------------------------------------------------
     def _SurfacePressed(self, *args):
         Debug.Start("_SurfacePressed")
         BatiscanControls.wantedSurface = not BatiscanControls.wantedSurface
-        BatiscanUDP.SendThing(PlaneIDs.surface, getters)
+        BatiscanUDP.SendThing(PlaneIDs.surface)
         Debug.End()
 # ------------------------------------------------------------------------
     def _LightPressed(self, *args):
         Debug.Start("_LightPressed")
         BatiscanControls.wantedLeftLight = not BatiscanControls.wantedLeftLight
         BatiscanControls.wantedRightLight = not BatiscanControls.wantedRightLight
-        BatiscanUDP.SendThing(PlaneIDs.lightsUpdate, getters)
+        BatiscanUDP.SendThing(PlaneIDs.lightsUpdate)
         Debug.End()
 # ------------------------------------------------------------------------
     def _EmptyPressed(self, *args):
         Debug.Start("_EmptyPressed")
         BatiscanControls.wantedBallast = False
-        BatiscanUDP.SendThing(PlaneIDs.ballastUpdate, getters)
+        BatiscanUDP.SendThing(PlaneIDs.ballastUpdate)
         Debug.End()
 # ------------------------------------------------------------------------
     def _FillPressed(self, *args):
         Debug.Start("_FillPressed")
         BatiscanControls.wantedBallast = True
-        BatiscanUDP.SendThing(PlaneIDs.ballastUpdate, getters)
+        BatiscanUDP.SendThing(PlaneIDs.ballastUpdate)
         Debug.End()
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------

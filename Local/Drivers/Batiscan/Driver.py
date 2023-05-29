@@ -10,7 +10,7 @@
 # Loading Logs
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Local.Drivers.Batiscan.Programs.Communications.UDP import StartUDP
+from Local.Drivers.Batiscan.Programs.Communications.UDP import StartUDP, StopUDP
 from Programs.Pages.DriverMenu import DriverMenu_Screens
 LoadingLog.Start("Driver.py")
 #====================================================================#
@@ -174,6 +174,12 @@ def Quit() -> Execution:
     from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
     from Programs.Pages.DriverMenu import DriverMenu_Screens
     from Local.Drivers.Batiscan.Pages.BatiscanMenu import BatiscanMenu_Screens
+
+    result = StopUDP()
+    if(result != Execution.Passed):
+        Debug.Error("UDP DRIVERS COULD NOT BE STOPPED")
+        Debug.End()
+        return Execution.NoConnection
 
     Debug.Log("Creating pop up message.")
     PopUpsHandler.Clear()

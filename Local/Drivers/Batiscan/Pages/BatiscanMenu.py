@@ -404,6 +404,7 @@ class BatiscanMenu(Screen):
         #region ---------------------------- Updaters
         BatiscanUpdaters.UpdateLeftLightState = self._UpdateLights
         BatiscanUpdaters.UpdateRightLightState = self._UpdateLights
+        BatiscanUpdaters.UpdateCameraState = self._UpdateCamera
         #endregion
 
         Debug.End()
@@ -418,6 +419,7 @@ class BatiscanMenu(Screen):
 
         BatiscanUpdaters.UpdateRightLightState = EmptyFunction
         BatiscanUpdaters.UpdateLeftLightState = EmptyFunction
+        BatiscanUpdaters.UpdateCameraState = EmptyFunction
 
         Debug.End()
 # ------------------------------------------------------------------------
@@ -475,14 +477,13 @@ class BatiscanMenu(Screen):
     def _UpdateCamera(self, *args):
         Debug.Start("_UpdateCamera")
 
-        if(BatiscanControls.currentLeftLight != BatiscanValues.leftLight or BatiscanControls.currentRightLight != BatiscanValues.rightLight):
-            BatiscanControls.currentLeftLight = BatiscanValues.leftLight
-            BatiscanControls.currentRightLight = BatiscanValues.rightLight
+        if(BatiscanControls.currentCameraStatus != BatiscanValues.cameraStatus):
+            BatiscanControls.currentCameraStatus = BatiscanValues.cameraStatus
 
-            if(BatiscanValues.leftLight or BatiscanValues.rightLight):
-                self.LightButton.icon = "lightbulb"
+            if(BatiscanValues.cameraStatus):
+                self.LightButton.icon = "video"
             else:
-                self.LightButton.icon = "lightbulb-outline"        
+                self.LightButton.icon = "video-off"        
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateSurface(self, *args):

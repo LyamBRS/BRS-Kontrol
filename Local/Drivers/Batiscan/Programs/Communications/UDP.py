@@ -249,14 +249,16 @@ class BatiscanUDP:
             if(count == 2):
     
                 ###############################################################
-                # forward = None
-                # if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
+                forward = None
+                if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
+                    pass
                     # forward = Controls._axes[SoftwareAxes.backward]["getter"]()
                 # else:
                     # forward = None
 # 
-                # backward = None
-                # if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
+                backward = None
+                if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
+                    pass
                     # backward = Controls._axes[SoftwareAxes.forward]["getter"]()
                 # else:
                     # backward = None

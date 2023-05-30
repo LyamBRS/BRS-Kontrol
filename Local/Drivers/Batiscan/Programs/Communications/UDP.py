@@ -224,13 +224,15 @@ class BatiscanUDP:
                 if(newOnValue == True):
                     StateFlippers.LightsWantedOn()
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
+                    time.sleep(0.030)
 
-            newOnValue = CurrentButtonValue(SoftwareButtons.off)
-            if(batiscanButtonsActions[SoftwareButtons.off] != newOnValue):
-                batiscanButtonsActions[SoftwareButtons.off] = newOnValue
-                if(newOnValue == True):
+            newOffValue = CurrentButtonValue(SoftwareButtons.off)
+            if(batiscanButtonsActions[SoftwareButtons.off] != newOffValue):
+                batiscanButtonsActions[SoftwareButtons.off] = newOffValue
+                if(newOffValue == True):
                     StateFlippers.LightsWantedOff()
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
+                    time.sleep(0.030)
 
         while True:
             if udpClass.stop_event.is_set():
@@ -243,15 +245,11 @@ class BatiscanUDP:
                     arrival = MakeAPlaneOutOfArrivedBytes(message)
                 ##################################################
 
-            if(count == 3):
-                HandleAddons()
-                time.sleep(0.030)
-                count = 0
-
+            HandleAddons()
             if(count == 2):
                 SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
                 time.sleep(0.030)
-                count = 3
+                count = 0
 
             if udpClass.stop_event.is_set():
                 break

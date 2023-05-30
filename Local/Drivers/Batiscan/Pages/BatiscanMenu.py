@@ -481,9 +481,9 @@ class BatiscanMenu(Screen):
             BatiscanControls.currentCameraStatus = BatiscanValues.cameraStatus
 
             if(BatiscanValues.cameraStatus):
-                self.LightButton.icon = "video"
+                self.CameraButton.icon = "video"
             else:
-                self.LightButton.icon = "video-off"        
+                self.CameraButton.icon = "video-off"        
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateSurface(self, *args):

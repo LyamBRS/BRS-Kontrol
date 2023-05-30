@@ -454,8 +454,8 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _LightPressed(self, *args):
         Debug.Start("_LightPressed")
-        BatiscanControls.wantedLeftLight = not BatiscanControls.wantedLeftLight
-        BatiscanControls.wantedRightLight = not BatiscanControls.wantedRightLight
+        BatiscanControls.wantedLeftLight = not BatiscanValues.leftLight
+        BatiscanControls.wantedRightLight = not BatiscanValues.rightLight
         BatiscanUDP.SendThing(PlaneIDs.lightsUpdate)
         Debug.End()
 # ------------------------------------------------------------------------
@@ -474,6 +474,15 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _UpdateCamera(self, *args):
         Debug.Start("_UpdateCamera")
+
+        if(BatiscanControls.currentLeftLight != BatiscanValues.leftLight or BatiscanControls.currentRightLight != BatiscanValues.rightLight):
+            BatiscanControls.currentLeftLight = BatiscanValues.leftLight
+            BatiscanControls.currentRightLight = BatiscanValues.rightLight
+
+            if(BatiscanValues.leftLight or BatiscanValues.rightLight):
+                self.LightButton.icon = "lightbulb"
+            else:
+                self.LightButton.icon = "lightbulb-outline"        
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateSurface(self, *args):

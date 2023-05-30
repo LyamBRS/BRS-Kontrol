@@ -14,6 +14,7 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
+from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls
 from Local.Drivers.Batiscan.Programs.Communications.planes import ExecuteArrivedPlane
 LoadingLog.Start("UDP.py")
 #====================================================================#
@@ -37,9 +38,10 @@ from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
 #region -------------------------------------------------------- Kivy
 # LoadingLog.Import("Kivy")
 #endregion
-#region ------------------------------------------------------ KivyMD
+#region ------------------------------------------------------ Batiscan
 LoadingLog.Import('Batiscan')
 from Local.Drivers.Batiscan.Programs.Communications.bfio import PlaneIDs, SendAPlaneOnUDP, getters
+from Local.Drivers.Batiscan.Programs.Controls.actions import BatiscanActions
 #endregion
 #====================================================================#
 # Functions
@@ -150,11 +152,85 @@ class BatiscanUDP:
 
 
     @staticmethod
-    def _Thread(udpClass, ExecutePlane, Getters):
+    def _Thread(udpClass, ExecutePlane, Getters, Controls:Controls, StateFlippers:BatiscanActions):
 
         count = 0
         planeToSend = None
         from Local.Drivers.Batiscan.Programs.Communications.planes import MakeAPlaneOutOfArrivedBytes
+        from Libraries.BRS_Python_Libraries.BRS.PnP.controls import SoftwareAxes, SoftwareButtons
+
+        batiscanAxesActions = {
+            SoftwareAxes.pitch_up    : 0,
+            SoftwareAxes.pitch_down  : 0,
+            SoftwareAxes.roll_left   : 0,
+            SoftwareAxes.roll_right  : 0,
+            SoftwareAxes.yaw_left    : 0,
+            SoftwareAxes.yaw_right   : 0,
+            SoftwareAxes.up          : 0,
+            SoftwareAxes.down        : 0
+        }
+        """
+            A list of all the software axes being used by Batiscan when its
+            GUI is loaded and going and their associated descriptions. 
+            The names within this list are extracted from :ref:`Controls`. 
+            :ref:`SoftwareAxis` and this dictionary is used to keep old
+            values to avoid useless updates and planes sent to Batiscan.
+        """
+        
+        batiscanButtonsActions = {
+        SoftwareButtons.fill         : False,
+        SoftwareButtons.empty        : False,
+        SoftwareButtons.reset        : False,
+        SoftwareButtons.forward      : False,
+        SoftwareButtons.backward     : False,
+        SoftwareButtons.up           : False,
+        SoftwareButtons.down         : False,
+        SoftwareButtons.left         : False,
+        SoftwareButtons.right        : False,
+        SoftwareButtons.on           : False,
+        SoftwareButtons.off          : False,
+        SoftwareButtons.custom_1     : False,
+        SoftwareButtons.custom_2     : False
+        }
+        """
+            A list of all the software buttons being used by Batiscan when its
+            GUI is loaded and going and their associated descriptions. 
+            The names within this list are extracted from :ref:`Controls`. 
+            :ref:`SoftwareButtons`
+        """
+
+        def CurrentButtonValue(name:str) -> bool:
+            if(Controls._buttons[name]["binded"]):
+                if(Controls._buttons[name]["getter"] != None):
+                    newValue = Controls._buttons[name]["getter"]()
+                    return newValue
+            return False
+
+        def HandleAddons():
+            """
+                HandleAddons:
+                =============
+                Summary:
+                --------
+                Handles the sending of planes
+                related to addons getters.
+                See Batiscan's controls for
+                more informations about this
+                one.
+            """
+            newOnValue = CurrentButtonValue(SoftwareButtons.on)
+            if(batiscanButtonsActions[SoftwareButtons.on] != newOnValue):
+                batiscanButtonsActions[SoftwareButtons.on] = newOnValue
+                if(newOnValue == True):
+                    StateFlippers.LightsWantedOn()
+                    SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
+
+            newOnValue = CurrentButtonValue(SoftwareButtons.off)
+            if(batiscanButtonsActions[SoftwareButtons.off] != newOnValue):
+                batiscanButtonsActions[SoftwareButtons.off] = newOnValue
+                if(newOnValue == True):
+                    StateFlippers.LightsWantedOff()
+                    SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
 
         while True:
             if udpClass.stop_event.is_set():
@@ -167,10 +243,15 @@ class BatiscanUDP:
                     arrival = MakeAPlaneOutOfArrivedBytes(message)
                 ##################################################
 
+            if(count == 3):
+                HandleAddons()
+                time.sleep(0.030)
+                count = 0
+
             if(count == 2):
                 SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
                 time.sleep(0.030)
-                count = 0
+                count = 3
 
             if udpClass.stop_event.is_set():
                 break
@@ -230,7 +311,7 @@ class BatiscanUDP:
         if (BatiscanUDP.isStarted == False):
             if (not BatiscanUDP.thread or not BatiscanUDP.thread.is_alive()):
                 BatiscanUDP.stop_event.clear()
-                BatiscanUDP.thread = threading.Thread(target=BatiscanUDP._Thread, args=(BatiscanUDP, ExecuteArrivedPlane, getters, ))
+                BatiscanUDP.thread = threading.Thread(target=BatiscanUDP._Thread, args=(BatiscanUDP, ExecuteArrivedPlane, getters, Controls, BatiscanActions, ))
                 BatiscanUDP.thread.daemon = True
                 BatiscanUDP.thread.start()
                 BatiscanUDP.isStarted = True

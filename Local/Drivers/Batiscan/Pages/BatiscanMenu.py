@@ -42,6 +42,7 @@ from kivymd.uix.card import MDCard
 LoadingLog.Import("Local")
 from Programs.Local.Hardware.RGB import KontrolRGB
 from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
+from Local.Drivers.Batiscan.Programs.Communications.bfio import BatiscanValues, BatiscanUpdaters
 # from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
 # from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
@@ -235,6 +236,19 @@ class BatiscanMenu_Screens:
 #====================================================================#
 # Classes
 #====================================================================#
+
+def EmptyFunction():
+    """
+        EmptyFunction:
+        ==============
+        Summary:
+        --------
+        Used to reset BatiscanUpdaters
+        so they don't crash nothing by trying
+        to update inexisting values and shit.
+    """
+    pass
+
 LoadingLog.Class("NavigationButton")
 class NavigationButton(MDIconButton):
     """
@@ -340,7 +354,7 @@ class BatiscanMenu(Screen):
 
         #region ---------------------------- Buttons
         self.FillBallastButton  = NavigationButton(icon = "basket-fill",       on_release = self._FillPressed)
-        self.LightButton        = NavigationButton(icon = "car-light-high",    on_release = self._LightPressed)
+        self.LightButton        = NavigationButton(icon = "lightbulb-outline",    on_release = self._LightPressed)
         self.SurfaceButton      = NavigationButton(icon = "waves-arrow-up",    on_release = self._SurfacePressed)
         self.CameraButton       = NavigationButton(icon = "video-off",         on_release = self._CameraPressed)
         self.EmptyBallastButton = NavigationButton(icon = "basket-unfill",     on_release = self._EmptyPressed)
@@ -386,6 +400,12 @@ class BatiscanMenu(Screen):
         """
         Debug.Start("BatiscanMenu -> on_enter")
         KontrolRGB.DisplayDefaultColor()
+
+        #region ---------------------------- Updaters
+        BatiscanUpdaters.UpdateLeftLightState = self._UpdateLights
+        BatiscanUpdaters.UpdateRightLightState = self._UpdateLights
+        #endregion
+
         Debug.End()
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
@@ -395,6 +415,10 @@ class BatiscanMenu(Screen):
             objects and instances it created.
         """
         Debug.Start("BatiscanMenu -> on_pre_leave")
+
+        BatiscanUpdaters.UpdateRightLightState = EmptyFunction
+        BatiscanUpdaters.UpdateLeftLightState = EmptyFunction
+
         Debug.End()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
@@ -458,6 +482,17 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _UpdateLights(self, *args):
         Debug.Start("_UpdateLights")
+
+        if(BatiscanControls.currentLeftLight != BatiscanValues.leftLight or BatiscanControls.currentRightLight != BatiscanValues.rightLight):
+            BatiscanControls.currentLeftLight = BatiscanValues.leftLight
+            BatiscanControls.currentRightLight = BatiscanValues.rightLight
+
+            if(BatiscanValues.leftLight or BatiscanValues.rightLight):
+                self.LightButton.icon = "lightbulb"
+            else:
+                self.LightButton.icon = "lightbulb-outline"        
+        
+
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateEmpty(self, *args):

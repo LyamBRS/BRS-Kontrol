@@ -102,6 +102,18 @@ class BatiscanActions:
     def LightsWantedOff():
         BatiscanControls.wantedLeftLight = False
         BatiscanControls.wantedRightLight = False
+
+    def SetNewYaw(floatValue:float):
+        BatiscanControls.wantedYaw = floatValue * 127
+
+    def SetNewRoll(floatValue:float):
+        BatiscanControls.wantedRoll = floatValue * 127
+
+    def SetNewPitch(floatValue:float):
+        BatiscanControls.wantedPitch = floatValue * 127
+
+    def SetNewSpeed(floatValue:float):
+        BatiscanControls.wantedSpeed = floatValue * 127
     # endregion
     # region   --------------------------- CONSTRUCTOR
     # endregion

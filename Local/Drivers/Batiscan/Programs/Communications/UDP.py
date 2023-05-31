@@ -155,7 +155,7 @@ class BatiscanUDP:
     @staticmethod
     def _Thread(udpClass, ExecutePlane, Getters, Controls:Controls, StateFlippers:BatiscanActions, kontrolRGB:RGB):
 
-        count = 0
+        count:int = 0
         planeToSend = None
         from Local.Drivers.Batiscan.Programs.Communications.planes import MakeAPlaneOutOfArrivedBytes
         from Libraries.BRS_Python_Libraries.BRS.PnP.controls import SoftwareAxes, SoftwareButtons
@@ -267,7 +267,6 @@ class BatiscanUDP:
 
                 backward = None
                 if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
-                    pass
                     backward = Controls._axes[SoftwareAxes.forward]["getter"]()
                 else:
                     backward = None

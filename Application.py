@@ -14,7 +14,6 @@ LoadingLog.Import("Kivy")
 from kivy.core.window import Window
 from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager
-import threading
 # -------------------------------------------------------------------
 LoadingLog.Import("KivyMD")
 from kivymd.app import MDApp

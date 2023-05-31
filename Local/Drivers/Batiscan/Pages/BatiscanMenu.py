@@ -35,7 +35,7 @@ LoadingLog.Import("KivyMD")
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.uix.label import MDLabel
 from kivymd.uix.card import MDCard
     
 #endregion
@@ -330,6 +330,25 @@ class NavigationButton(MDIconButton):
         self.size_hint = (1,1)
         self.icon_size = self.size[1]
 
+LoadingLog.Class("InfoDisplayText")
+class InfoDisplayText(MDLabel):
+    """
+        InfoDisplayText:
+        =================
+        Summary:
+        --------
+        This is a custom widget class which was
+        made to be put in a TopInformationHolder card 
+        acting as a label.
+    """
+    def __init__(self, **kwargs):
+        super(InfoDisplayText, self).__init__(**kwargs)
+        self.valign = "center"
+        self.halign = "center"
+        self.pos_hint = {"center_x":0.5, "center_y":0.5}
+        self.size_hint = (1,1)
+        self.font_style = "H4"
+
 LoadingLog.Class("BottomButtons")
 class BottomButtons(MDCard):
    """
@@ -347,17 +366,35 @@ class BottomButtons(MDCard):
         self.shadow_radius = Shadow.Radius.default
         self.radius = Rounding.default
 
+LoadingLog.Class("TopInformation")
+class TopInformationHolder(MDCard):
+   """
+        TopInformationHolder:
+        =====================
+        Summary:
+        --------
+        This class is an MDCard spinoff
+        that is made to hold :ref:`NavigationButton`
+   """
+   def __init__(self, **kwargs):
+        super(TopInformationHolder, self).__init__(**kwargs)
+        self.shadow_softness = Shadow.Smoothness.default
+        self.elevation = Shadow.Elevation.default
+        self.shadow_radius = Shadow.Radius.default
+        self.radius = Rounding.default
+
+
 LoadingLog.Class("JoystickCard")
 class JoystickCard(MDCard):
    joystick:Joystick = None
    def __init__(self, **kwargs):
         super(JoystickCard, self).__init__(**kwargs)
         Debug.Start("JoystickCard")
-        self.joystick = Joystick(size_hint = (0.75, 0.75), pos_hint = {"center_x":0.5, "center_y":0.5})
-        self.joystick.outer_size                = 0.9
-        self.joystick.inner_size                = 0.55
-        self.joystick.pad_size                  = 0.68
-        self.joystick.outer_line_width          = 0.01
+        self.joystick = Joystick(size_hint = (1.25, 1.25), pos_hint = {"center_x":0.5, "center_y":0.5})
+        self.joystick.outer_size                = 0.9/1.25
+        self.joystick.inner_size                = 0.55/1.25
+        self.joystick.pad_size                  = 0.68/1.25
+        self.joystick.outer_line_width          = 0.00
         self.joystick.inner_line_width          = 0.01
         self.joystick.pad_line_width            = 0.01
         self.joystick.outer_background_color    = GetAccentColor("200")#(0.75, 0.75, 0.75, 1)
@@ -410,9 +447,10 @@ class BatiscanMenu(Screen):
 
         #region ---------------------------- Layouts
         self.Layout = MDFloatLayout()
-        self.RightJoystickLayout = MDBoxLayout(size_hint = (0.25,0.25), pos_hint = {'center_x': 0.125,'center_y': 0.5})
-        self.LeftJoystickLayout = MDBoxLayout(size_hint = (0.25, 0.25), pos_hint = {'center_x': 0.875,'center_y': 0.5})
+        self.RightJoystickLayout = MDBoxLayout(size_hint = (0.25, 0.25), pos_hint = {'center_x': 0.125,'center_y': 0.25})
+        self.LeftJoystickLayout = MDBoxLayout(size_hint = (0.25, 0.25), pos_hint = {'center_x': 0.875,'center_y': 0.25})
         self.ActionButtonCardLayout = MDBoxLayout(size_hint = (1,0.125))
+        self.TopInformationLayout = MDBoxLayout(size_hint = (1,0.125), pos_hint = {'center_x': 0.5,'center_y': 0.85})
         #endregion
 
         #region ---------------------------- Buttons
@@ -433,6 +471,18 @@ class BatiscanMenu(Screen):
         self.ActionButtonCardLayout.add_widget(self.ActionButtonsCard)
         #endregion
 
+        #region ---------------------------- Top Action Information
+        self.TemperatureLabel = InfoDisplayText(text = str(BatiscanValues.temperature) + BatiscanValues.temperatureUnit)
+        self.PressureLabel = InfoDisplayText(text = str(BatiscanValues.pressure) + " Pa")
+        self.BatteryLabel = InfoDisplayText(text = str(BatiscanValues.battery) + "%")
+
+        self.TopInformationCard = TopInformationHolder()
+        self.TopInformationCard.add_widget(self.TemperatureLabel)
+        self.TopInformationCard.add_widget(self.PressureLabel)
+        self.TopInformationCard.add_widget(self.BatteryLabel)
+        self.TopInformationLayout.add_widget(self.TopInformationCard)
+        #endregion
+
         #region ---------------------------- ToolBar
         from Local.Drivers.Batiscan.Programs.GUI.Navigation import DebugNavigationBar
         self.ToolBar = DebugNavigationBar(pageTitle=_("Batiscan"))
@@ -450,6 +500,7 @@ class BatiscanMenu(Screen):
             self.RightJoystickLayout.add_widget(self.RightJoystickCard)
         #endregion
 
+        self.Layout.add_widget(self.TopInformationLayout)
         self.Layout.add_widget(self.ActionButtonCardLayout)
         self.Layout.add_widget(self.LeftJoystickLayout)
         self.Layout.add_widget(self.RightJoystickLayout)
@@ -472,6 +523,9 @@ class BatiscanMenu(Screen):
         BatiscanUpdaters.UpdateLeftLightState = self._UpdateLights
         BatiscanUpdaters.UpdateRightLightState = self._UpdateLights
         BatiscanUpdaters.UpdateCameraState = self._UpdateCamera
+        BatiscanUpdaters.UpdateBattery = self._UpdateBattery
+        BatiscanUpdaters.UpdatePressure = self._UpdatePressure
+        BatiscanUpdaters.UpdateTemperature = self._UpdateTemperature
         #endregion
 
         Debug.End()
@@ -484,9 +538,12 @@ class BatiscanMenu(Screen):
         """
         Debug.Start("BatiscanMenu -> on_pre_leave")
 
-        BatiscanUpdaters.UpdateRightLightState = EmptyFunction
         BatiscanUpdaters.UpdateLeftLightState = EmptyFunction
+        BatiscanUpdaters.UpdateRightLightState = EmptyFunction
         BatiscanUpdaters.UpdateCameraState = EmptyFunction
+        BatiscanUpdaters.UpdateBattery = EmptyFunction
+        BatiscanUpdaters.UpdatePressure = EmptyFunction
+        BatiscanUpdaters.UpdateTemperature = EmptyFunction
 
         Debug.End()
 # ------------------------------------------------------------------------
@@ -598,7 +655,21 @@ class BatiscanMenu(Screen):
             else:
                 self.LightButton.icon = "lightbulb-outline"        
         
-
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdateTemperature(self, *args):
+        Debug.Start("_UpdateTemperature")
+        self.TemperatureLabel.text = str(BatiscanValues.temperature) + BatiscanValues.temperatureUnit
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdatePressure(self, *args):
+        Debug.Start("_UpdatePressure")
+        self.PressureLabel.text = str(BatiscanValues.pressure) + " Pa"
+        Debug.End()
+# ------------------------------------------------------------------------
+    def _UpdateBattery(self, *args):
+        Debug.Start("_UpdateBattery")
+        self.BatteryLabel.text = str(BatiscanValues.battery) + "%"
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateEmpty(self, *args):

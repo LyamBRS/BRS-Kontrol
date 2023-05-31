@@ -222,7 +222,8 @@ class BatiscanUDP:
             if(batiscanButtonsActions[SoftwareButtons.on] != newOnValue):
                 batiscanButtonsActions[SoftwareButtons.on] = newOnValue
                 if(newOnValue == True):
-                    StateFlippers.LightsWantedOn()
+                    with udpClass.lock:
+                        StateFlippers.LightsWantedOn()
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 
@@ -230,7 +231,8 @@ class BatiscanUDP:
             if(batiscanButtonsActions[SoftwareButtons.off] != newOffValue):
                 batiscanButtonsActions[SoftwareButtons.off] = newOffValue
                 if(newOffValue == True):
-                    StateFlippers.LightsWantedOff()
+                    with udpClass.lock:
+                        StateFlippers.LightsWantedOff()
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 
@@ -246,20 +248,19 @@ class BatiscanUDP:
                 ##################################################
 
             HandleAddons()
+
             if(count == 2):
     
                 ###############################################################
                 forward = None
                 if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
-                    pass
                     forward = Controls._axes[SoftwareAxes.backward]["getter"]()
                 # else:
                     # forward = None
 # 
                 backward = None
                 if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
-                    pass
-                    # backward = Controls._axes[SoftwareAxes.forward]["getter"]()
+                    backward = Controls._axes[SoftwareAxes.forward]["getter"]()
                 # else:
                     # backward = None
 # 

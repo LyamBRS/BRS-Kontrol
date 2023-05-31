@@ -404,6 +404,7 @@ def SetAllSensor(newArrival:NewArrival) -> Execution:
     BatiscanUpdaters.UpdateYaw()
     BatiscanUpdaters.UpdateSpeed()
     BatiscanUpdaters.UpdateBattery()
+    BatiscanUpdaters.UpdateTemperature()
 
     return Execution.Passed
 ################################################

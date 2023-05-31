@@ -240,12 +240,16 @@ class BatiscanUDP:
             if udpClass.stop_event.is_set():
                 break
             ##################################################
-            oldestMessage = UDPReader.GetOldestMessage()
-            if(oldestMessage != None):
-                for sender,message in oldestMessage.items():
-                    Debug.Log(f"New plane from {sender}:")
-                    arrival = MakeAPlaneOutOfArrivedBytes(message)
-                ##################################################
+            arrivals = []
+            while True:
+                oldestMessage = UDPReader.GetOldestMessage()
+                if(oldestMessage != None):
+                    for sender,message in oldestMessage.items():
+                        Debug.Log(f"New plane from {sender}:")
+                        arrivals.append = MakeAPlaneOutOfArrivedBytes(message)
+                else:
+                    break
+            ##################################################
 
             HandleAddons()
 
@@ -356,9 +360,12 @@ class BatiscanUDP:
                     planeToSend = BatiscanUDP._thingToSend
                     BatiscanUDP._thingToSend = None
 
-                    if(arrival != None):
-                        ExecutePlane(arrival)
-                        arrival = None
+                    if(arrivals != None):
+                        if(len(arrivals) > 0):
+                            for arrival in arrivals:
+                                if(arrival != None):
+                                    ExecutePlane(arrival)
+                    arrivals.clear()
                     pass
             except:
                 pass

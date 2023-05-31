@@ -262,21 +262,23 @@ class BatiscanUDP:
                 forward = None
                 if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
                     forward = Controls._axes[SoftwareAxes.backward]["getter"]()
-                # else:
-                    # forward = None
-# 
+                else:
+                    forward = None
+
                 backward = None
                 if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
                     pass
-                    # backward = Controls._axes[SoftwareAxes.forward]["getter"]()
-                # else:
-                    # backward = None
-# 
-                # if(forward != None and backward != None):
-                    # if(forward > backward):
-                        # StateFlippers.SetNewSpeed(forward)
-                    # else:
-                        # StateFlippers.SetNewSpeed(backward-1)
+                    backward = Controls._axes[SoftwareAxes.forward]["getter"]()
+                else:
+                    backward = None
+
+                if(forward != None and backward != None):
+                    if(forward > backward):
+                        with udpClass.lock:
+                            StateFlippers.SetNewSpeed(forward)
+                    else:
+                        with udpClass.lock:
+                            StateFlippers.SetNewSpeed(backward-1)
                 ##############################################################
                 # if(Controls._axes[SoftwareAxes.yaw_right]["binded"] == True):
                     # yaw_right = Controls._axes[SoftwareAxes.yaw_right]["getter"]()

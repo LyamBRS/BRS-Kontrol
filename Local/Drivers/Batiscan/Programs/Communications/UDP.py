@@ -225,7 +225,7 @@ class BatiscanUDP:
                 if(newOnValue == True):
                     with udpClass.lock:
                         StateFlippers.LightsWantedOn()
-                        RGB.SetAttributes([0,255,0], RGBModes.static, 1)
+                        kontrolRGB.SetAttributes([0,255,0], RGBModes.static, 1)
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 
@@ -235,7 +235,7 @@ class BatiscanUDP:
                 if(newOffValue == True):
                     with udpClass.lock:
                         StateFlippers.LightsWantedOff()
-                        RGB.SetAttributes([0,0,255], RGBModes.static, 1)
+                        kontrolRGB.SetAttributes([0,0,255], RGBModes.static, 1)
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 

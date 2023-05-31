@@ -156,24 +156,42 @@ def GetSurfaceNow() -> Plane:
 
 class PlaneIDs:
     ping:int = 0
+    """Callsign 0"""
     status:int = 1
+    """Callsign 1"""
     handshake:int = 2
+    """Callsign 2"""
     errorMessage:int = 3
+    """Callsign 3"""
     deviceType:int = 4
+    """Callsign 4"""
     uniqueID:int = 5
+    """Callsign 5"""
     restartProtocol:int = 6
+    """Callsign 6"""
     universalInfo:int = 7
+    """Callsign 7"""
     communicationError:int = 8
+    """Callsign 8"""
 
     lightsUpdate:int = 20
+    """Callsign 20"""
     servoUpdate:int = 21
+    """Callsign 21"""
     modeUpdate:int = 22
+    """Callsign 22"""
     cameraUpdate:int = 23
+    """Callsign 23"""
     allStates:int = 24
+    """Callsign 24"""
     allSensors:int = 25
+    """Callsign 25"""
     navigationUpdate:int = 26
+    """Callsign 26"""
     ballastUpdate:int = 27
+    """Callsign 27"""
     surface:int = 28
+    """Callsign 28"""
 
 sentVarTypes = {
     PlaneIDs.ping               : [VarTypes.Bool],

@@ -239,6 +239,85 @@ class BatiscanUDP:
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 
+        def HandleAndSendNavigation():
+            ###############################################################
+            forward = None
+            if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
+                forward = Controls._axes[SoftwareAxes.backward]["getter"]()
+            else:
+                forward = None
+
+            backward = None
+            if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
+                backward = Controls._axes[SoftwareAxes.forward]["getter"]()
+            else:
+                backward = None
+
+            if(forward != None and backward != None):
+                if(forward > backward):
+                    with udpClass.lock:
+                        StateFlippers.SetNewSpeed(forward)
+                else:
+                    with udpClass.lock:
+                        StateFlippers.SetNewSpeed(-backward)
+            ##############################################################
+            if(Controls._axes[SoftwareAxes.yaw_right]["binded"] == True):
+                yaw_right = Controls._axes[SoftwareAxes.yaw_right]["getter"]()
+            else:
+                yaw_right = None
+# 
+            if(Controls._axes[SoftwareAxes.yaw_left]["binded"] == True):
+                yaw_left = Controls._axes[SoftwareAxes.yaw_left]["getter"]()
+            else:
+                yaw_left = None
+# 
+            if(yaw_right != None and yaw_left != None):
+                if(yaw_right > yaw_left):
+                    with udpClass.lock:
+                        StateFlippers.SetNewYaw(yaw_right)
+                else:
+                    with udpClass.lock:
+                        StateFlippers.SetNewYaw(-yaw_left)
+            ##############################################################
+            if(Controls._axes[SoftwareAxes.roll_right]["binded"] == True):
+                roll_right = Controls._axes[SoftwareAxes.roll_right]["getter"]()
+            else:
+                roll_right = None
+
+            if(Controls._axes[SoftwareAxes.roll_left]["binded"] == True):
+                roll_left = Controls._axes[SoftwareAxes.roll_left]["getter"]()
+            else:
+                roll_left = None
+
+            if(roll_right != None and roll_left != None):
+                if(roll_right > roll_left):
+                    with udpClass.lock:
+                        StateFlippers.SetNewRoll(roll_right)
+                else:
+                    with udpClass.lock:
+                        StateFlippers.SetNewRoll(-roll_left)
+            ##############################################################
+            if(Controls._axes[SoftwareAxes.pitch_up]["binded"] == True):
+                pitch_up = Controls._axes[SoftwareAxes.pitch_up]["getter"]()
+            else:
+                pitch_up = None
+
+            if(Controls._axes[SoftwareAxes.pitch_down]["binded"] == True):
+                pitch_down = Controls._axes[SoftwareAxes.pitch_down]["getter"]()
+            else:
+                pitch_down = None
+
+            if(pitch_up != None and pitch_down != None):
+                if(pitch_up > pitch_down):
+                    with udpClass.lock:
+                        StateFlippers.SetNewPitch(pitch_up)
+                else:
+                    with udpClass.lock:
+                        StateFlippers.SetNewPitch(-pitch_down)
+
+            SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
+            time.sleep(0.030) 
+
         while True:
             if udpClass.stop_event.is_set():
                 break
@@ -253,88 +332,10 @@ class BatiscanUDP:
                 else:
                     break
             ##################################################
-
-            HandleAddons()
+            HandleAndSendNavigation()
 
             if(count == 2):
-    
-                ###############################################################
-                forward = None
-                if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
-                    forward = Controls._axes[SoftwareAxes.backward]["getter"]()
-                else:
-                    forward = None
-
-                backward = None
-                if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
-                    backward = Controls._axes[SoftwareAxes.forward]["getter"]()
-                else:
-                    backward = None
-
-                if(forward != None and backward != None):
-                    if(forward > backward):
-                        with udpClass.lock:
-                            StateFlippers.SetNewSpeed(forward)
-                    else:
-                        with udpClass.lock:
-                            StateFlippers.SetNewSpeed(-backward)
-                ##############################################################
-                if(Controls._axes[SoftwareAxes.yaw_right]["binded"] == True):
-                    yaw_right = Controls._axes[SoftwareAxes.yaw_right]["getter"]()
-                else:
-                    yaw_right = None
-# 
-                if(Controls._axes[SoftwareAxes.yaw_left]["binded"] == True):
-                    yaw_left = Controls._axes[SoftwareAxes.yaw_left]["getter"]()
-                else:
-                    yaw_left = None
-# 
-                if(yaw_right != None and yaw_left != None):
-                    if(yaw_right > yaw_left):
-                        with udpClass.lock:
-                            StateFlippers.SetNewYaw(yaw_right)
-                    else:
-                        with udpClass.lock:
-                            StateFlippers.SetNewYaw(-yaw_left)
-                ##############################################################
-                if(Controls._axes[SoftwareAxes.roll_right]["binded"] == True):
-                    roll_right = Controls._axes[SoftwareAxes.roll_right]["getter"]()
-                else:
-                    roll_right = None
-
-                if(Controls._axes[SoftwareAxes.roll_left]["binded"] == True):
-                    roll_left = Controls._axes[SoftwareAxes.roll_left]["getter"]()
-                else:
-                    roll_left = None
-
-                if(roll_right != None and roll_left != None):
-                    if(roll_right > roll_left):
-                        with udpClass.lock:
-                            StateFlippers.SetNewRoll(roll_right)
-                    else:
-                        with udpClass.lock:
-                            StateFlippers.SetNewRoll(-roll_left)
-                ##############################################################
-                if(Controls._axes[SoftwareAxes.pitch_up]["binded"] == True):
-                    pitch_up = Controls._axes[SoftwareAxes.pitch_up]["getter"]()
-                else:
-                    pitch_up = None
-
-                if(Controls._axes[SoftwareAxes.pitch_down]["binded"] == True):
-                    pitch_down = Controls._axes[SoftwareAxes.pitch_down]["getter"]()
-                else:
-                    pitch_down = None
-
-                if(pitch_up != None and pitch_down != None):
-                    if(pitch_up > pitch_down):
-                        with udpClass.lock:
-                            StateFlippers.SetNewPitch(pitch_up)
-                    else:
-                        with udpClass.lock:
-                            StateFlippers.SetNewPitch(-pitch_down)
-
-                SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
-                time.sleep(0.030) 
+                HandleAddons()
                 count = 0
 
             if udpClass.stop_event.is_set():

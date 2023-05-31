@@ -383,6 +383,8 @@ class DebuggerMenu(Screen):
         self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
 
         self.recycleView = RecycleView()
+        self.recycleView.pos_hint = {"center_x" : 0.5, "center_y" : 0.45}
+        self.recycleView.size_hint = (1,0.90)
         self.recycleView.add_widget(self.RecyleBoxLayout)
         self.recycleView.viewclass = CustomThreeLineIconListItem
         self.Layout.add_widget(self.recycleView)

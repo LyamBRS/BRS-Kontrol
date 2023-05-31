@@ -16,9 +16,9 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
+# from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
-from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
+from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls
 from Local.Drivers.Batiscan.Programs.GUI.Navigation import DebugNavigationBar
 #endregion
 #region -------------------------------------------------------- Kivy
@@ -28,8 +28,8 @@ from kivy.uix.recyclegridlayout import RecycleGridLayout
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-from kivymd.uix.button import MDIconButton
-from kivymd.uix.card import MDCard
+# from kivymd.uix.button import MDIconButton
+# from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import ThreeLineRightIconListItem, IconRightWidget
@@ -38,7 +38,8 @@ from kivymd.uix.recycleview import RecycleView
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
 from Programs.Local.Hardware.RGB import KontrolRGB
-from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
+from Local.Drivers.Batiscan.Programs.Controls.actions import batiscanAxesActions, batiscanButtonsActions
+# from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
 # from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
 # from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
@@ -325,7 +326,7 @@ class AboutMenu(Screen):
         self.add_widget(background)
         #endregion
         #region ---------------------------- ToolBar
-        self.ToolBar = DebugNavigationBar(pageTitle=_("UDP Debugging"))
+        self.ToolBar = DebugNavigationBar(pageTitle=_("About Batiscan"))
         #endregion
 
         self.create_layouts()
@@ -383,19 +384,42 @@ class AboutMenu(Screen):
         self.RecyleBoxLayout.bind(minimum_height=self.RecyleBoxLayout.setter("height"))
 
         self.recycleView = RecycleView()
+        self.recycleView.pos_hint = {"center_x" : 0.5, "center_y" : 0.45}
+        self.recycleView.size_hint = (1,0.90)
         self.recycleView.add_widget(self.RecyleBoxLayout)
         self.recycleView.viewclass = CustomThreeLineIconListItem
         self.Layout.add_widget(self.recycleView)
 
-        for name,dictionary in BFIO_Functions.items():
+        buttonIntroducer = _("Button") + ": "
+        axisIntroducer = _("Axis") + ": "
+
+        for name,dictionary in batiscanAxesActions.items():
+            description = _(dictionary["description"])
+            if(Controls._axes[name]["binded"]):
+                bindInformation = Controls._axes[name]["bindedTo"] + ": " + Controls._axes[name]["bindedAs"]
+            else:
+                bindInformation = _("Not binded")
 
             self.recycleView.data.insert(0,
                                          {
-                                             "text" : name,
-                                             "secondary_text" : str(dictionary["Callsign"]),
-                                             "halign" : "left",
-                                             "on_release" : (lambda x: lambda: self.ButtonPressed(x))([name, dictionary]),
-                                             "icon" : "trash-can"
+                                             "text" : axisIntroducer + name,
+                                             "secondary_text" : description,
+                                             "tertiary_text" : bindInformation,
+                                             "halign" : "left"
+                                         })
+            
+        for name,dictionary in batiscanButtonsActions.items():
+            description = _(dictionary["description"])
+            if(Controls._buttons[name]["binded"]):
+                bindInformation = Controls._buttons[name]["bindedTo"] + ": " + Controls._buttons[name]["bindedAs"]
+            else:
+                bindInformation = _("Not binded")
+
+            self.recycleView.data.append({
+                                             "text" : buttonIntroducer + name,
+                                             "secondary_text" : description,
+                                             "tertiary_text" : bindInformation,
+                                             "halign" : "left"
                                          })
         Debug.End()
 # ------------------------------------------------------------------------

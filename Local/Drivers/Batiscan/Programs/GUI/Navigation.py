@@ -452,7 +452,7 @@ class DebugNavigationBar():
         try:
             wifiList = self._GetNewWiFiList()
             batteryList = self._GetBatteryIconList()
-            
+
             emergencyList = self._GetInEmergency()
             waterDetectedList = self._GetWaterDetected()
 

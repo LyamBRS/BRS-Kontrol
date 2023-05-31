@@ -95,6 +95,17 @@ class BatiscanActions:
 
     # endregion
     # region   --------------------------- METHODS
+    def _ClampValueToSignedChar(valueToClamp) -> int:
+        """
+            Makes it so the value cannot go
+            below -127 and above 127
+        """
+        if(valueToClamp > 127):
+            return 127
+        if(valueToClamp < -127):
+            return -127
+        return valueToClamp
+
     def LightsWantedOn():
         BatiscanControls.wantedLeftLight = True
         BatiscanControls.wantedRightLight = True
@@ -104,16 +115,25 @@ class BatiscanActions:
         BatiscanControls.wantedRightLight = False
 
     def SetNewYaw(floatValue:float):
-        BatiscanControls.wantedYaw = floatValue * 127
+        value = (floatValue*127)
+        value = BatiscanActions._ClampValueToSignedChar(value)
+        BatiscanControls.wantedYaw = int(value)
 
     def SetNewRoll(floatValue:float):
-        BatiscanControls.wantedRoll = floatValue * 127
+        value = (floatValue*127)
+        value = BatiscanActions._ClampValueToSignedChar(value)
+        BatiscanControls.wantedRoll = int(value)
 
     def SetNewPitch(floatValue:float):
-        BatiscanControls.wantedPitch = floatValue * 127
+        value = (floatValue*127)
+        value = BatiscanActions._ClampValueToSignedChar(value)
+        BatiscanControls.wantedPitch = int(value)
 
     def SetNewSpeed(floatValue:float):
-        BatiscanControls.wantedSpeed = floatValue * 127
+        value = (floatValue*127)
+        value = BatiscanActions._ClampValueToSignedChar(value)
+        BatiscanControls.wantedSpeed = int(value)
+        print(BatiscanControls.wantedSpeed)
     # endregion
     # region   --------------------------- CONSTRUCTOR
     # endregion

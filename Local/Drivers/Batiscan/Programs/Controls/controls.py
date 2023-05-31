@@ -87,11 +87,11 @@ class BatiscanControls:
     currentRoll:int = 0
     currentYaw:int = 0
 
-    wantedPitch:int = 0
-    wantedRoll:int = 0
-    wantedYaw:int = 0
-    wantedSpeed:int = 0
-    currentSpeed:int = 0
+    wantedPitch:float = 0
+    wantedRoll:float = 0
+    wantedYaw:float = 0
+    wantedSpeed:float = 0
+    currentSpeed:float = 0
 
     currentServoA:int = 0
     currentServoB:int = 0

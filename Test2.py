@@ -9,53 +9,39 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, 
 from Local.Drivers.Batiscan.Programs.Communications.UDP import BatiscanUDP
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
-# UDPReader.port = 4211
-# UDPSender.port = 4210
-# UDPSender.ipAddress = "192.168.4.2"
+from Local.Drivers.Batiscan.Programs.Communications.UDP import SendAPlaneOnUDP, getters, PlaneIDs, Debug, BatiscanActions
+from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
+Debug.enableConsole = True
+sus:float = 0.99
+# BatiscanActions.SetNewSpeed(sus)
+# BatiscanActions.SetNewRoll(0.1)
+# BatiscanActions.SetNewPitch(-0.1)
+# BatiscanActions.SetNewYaw(0.997563)
+SendAPlaneOnUDP(PlaneIDs.navigationUpdate, getters)
 
-# result = UDPSender.StartDriver()
-# result = UDPReader.StartDriver()
-# result = BatiscanUDP.StartDriver()
 
-# time.sleep(2.5)
-# BatiscanUDP.SendThing(MandatoryPlaneIDs.universalInfo)
-# print("Sent an universal info plane?")
-# time.sleep(2.5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# url = "https://github.com/LyamBRS/BrSpand_GamePad.git"
+# name = "GamePad"
+
+# print(f"Trying to clone {url}.")
+# print(f"Trying to rename it to {name}")
 
 # Debug.enableConsole = True
-# PrintPlane(plane)
-# Debug.enableConsole = False
-
-# time.sleep(2.5)
-# print("Close UDP")
-
-# result = BatiscanUDP.StopDriver()
-# result = UDPReader.StopDriver()
-# result = UDPSender.StopDriver()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-url = "https://github.com/LyamBRS/BrSpand_GamePad.git"
-name = "GamePad"
-# 
-print(f"Trying to clone {url}.")
-print(f"Trying to rename it to {name}")
-# 
-Debug.enableConsole = True
-InstallCardsDrivers("GamePad", url)
+# InstallCardsDrivers("GamePad", url)
 
 
 

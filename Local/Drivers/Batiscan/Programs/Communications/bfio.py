@@ -521,6 +521,9 @@ def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
     """
     # try:
     planeToSend = Plane(functionID, Getters[functionID](), sentVarTypes[functionID], DontDebug=True)
+    if(not planeToSend.passedTSA):
+        whateverItUsed = Getters[functionID]()
+        raise Exception(f"A plane failed its TSA check. The plane was built using callsign {functionID} and its getter returned {whateverItUsed}")
     # except:
         # Debug.Error("FAILED TO CREATE PLANE BRUH")
         # print("BATISCAN FAILED SendAPlaneOnUDP")

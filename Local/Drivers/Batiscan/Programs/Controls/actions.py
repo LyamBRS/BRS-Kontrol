@@ -41,10 +41,12 @@ batiscanAxesActions = {
     SoftwareAxes.pitch_down  : {"description" : "Pitch downwards"},
     SoftwareAxes.roll_left   : {"description" : "Roll left"},
     SoftwareAxes.roll_right  : {"description" : "Roll right"},
-    SoftwareAxes.yaw_left    : {"description" : "turn left"},
-    SoftwareAxes.yaw_right   : {"description" : "turn right"},
-    SoftwareAxes.up          : {"description" : "pitch camera up"},
-    SoftwareAxes.down        : {"description" : "pitch camera down"}
+    SoftwareAxes.yaw_left    : {"description" : "Turn left"},
+    SoftwareAxes.yaw_right   : {"description" : "Turn right"},
+    SoftwareAxes.up          : {"description" : "Pitch camera up"},
+    SoftwareAxes.down        : {"description" : "Pitch camera down"},
+    SoftwareAxes.forward     : {"description" : "Throttle forwards"},
+    SoftwareAxes.backward    : {"description" : "Throttle backwards"}
 }
 """
     A list of all the software axes being used by Batiscan when its

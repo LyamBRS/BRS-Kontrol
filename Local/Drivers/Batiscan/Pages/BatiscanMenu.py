@@ -24,6 +24,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
+from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAxes, SoftwareButtons
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -43,13 +44,86 @@ LoadingLog.Import("Local")
 from Programs.Local.Hardware.RGB import KontrolRGB
 from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
 from Local.Drivers.Batiscan.Programs.Communications.bfio import BatiscanValues, BatiscanUpdaters
+from Local.Drivers.Batiscan.Programs.Controls.actions import BatiscanActions
 # from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
 # from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 #endregion
 #====================================================================#
 # Functions
 #====================================================================#
+def EmptyFunction():
+    """
+        EmptyFunction:
+        ==============
+        Summary:
+        --------
+        Used to reset BatiscanUpdaters
+        so they don't crash nothing by trying
+        to update inexisting values and shit.
+    """
+    pass
 
+def WeNeedLeftJoystick() -> bool:
+    """
+        WeNeedLeftJoystick:
+        =====================
+        Summary:
+        --------
+        This function's goal is to
+        tell the screen if we need to
+        build a left joystick card
+        so that the application can drive
+        the submarine.
+
+        It returns `True` if both axis
+        are not binded to anything in the
+        :ref:`Controls` class. If any axis
+        is binded, `False` is returned and
+        a Joystick card needs to be built.
+    """
+    Debug.Start("WeNeedLeftJoystick")
+
+    Debug.Log("Checking Y axis bindings")
+    if(Controls._axes[SoftwareAxes.forward]["binded"] and Controls._axes[SoftwareAxes.backward]["binded"]):
+        if(Controls._axes[SoftwareAxes.yaw_left]["binded"] and Controls._axes[SoftwareAxes.yaw_right]["binded"]):
+            Debug.Log("Screen joystick is not needed")
+            Debug.End()
+            return False
+    
+    Debug.Log("Screen joystick is needed")
+    Debug.End()
+    return True
+
+def WeNeedRightJoystick() -> bool:
+    """
+        WeNeedRightJoystick:
+        =====================
+        Summary:
+        --------
+        This function's goal is to
+        tell the screen if we need to
+        build a right joystick card
+        so that the application can drive
+        the submarine.
+
+        It returns `True` if both axis
+        are not binded to anything in the
+        :ref:`Controls` class. If any axis
+        is binded, `False` is returned and
+        a Joystick card needs to be built.
+    """
+    Debug.Start("WeNeedRightJoystick")
+
+    Debug.Log("Checking Y axis bindings")
+    if(Controls._axes[SoftwareAxes.roll_left]["binded"] and Controls._axes[SoftwareAxes.roll_right]["binded"]):
+        if(Controls._axes[SoftwareAxes.pitch_up]["binded"] and Controls._axes[SoftwareAxes.pitch_down]["binded"]):
+            Debug.Log("Screen joystick is not needed")
+            Debug.End()
+            return False
+    
+    Debug.Log("Screen joystick is needed")
+    Debug.End()
+    return True
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -237,18 +311,6 @@ class BatiscanMenu_Screens:
 # Classes
 #====================================================================#
 
-def EmptyFunction():
-    """
-        EmptyFunction:
-        ==============
-        Summary:
-        --------
-        Used to reset BatiscanUpdaters
-        so they don't crash nothing by trying
-        to update inexisting values and shit.
-    """
-    pass
-
 LoadingLog.Class("NavigationButton")
 class NavigationButton(MDIconButton):
     """
@@ -285,31 +347,32 @@ class BottomButtons(MDCard):
         self.shadow_radius = Shadow.Radius.default
         self.radius = Rounding.default
 
+LoadingLog.Class("JoystickCard")
 class JoystickCard(MDCard):
-   Joystick:Joystick = None
+   joystick:Joystick = None
    def __init__(self, **kwargs):
         super(JoystickCard, self).__init__(**kwargs)
         Debug.Start("JoystickCard")
-        self.Joystick = Joystick(size_hint = (0.75, 0.75), pos_hint = {"center_x":0.5, "center_y":0.5})
-        self.Joystick.outer_size                = 0.9
-        self.Joystick.inner_size                = 0.55
-        self.Joystick.pad_size                  = 0.68
-        self.Joystick.outer_line_width          = 0.01
-        self.Joystick.inner_line_width          = 0.01
-        self.Joystick.pad_line_width            = 0.01
-        self.Joystick.outer_background_color    = GetAccentColor("200")#(0.75, 0.75, 0.75, 1)
-        self.Joystick.outer_line_color          = GetAccentColor("700")#(0.25, 0.25, 0.25, 1)
-        self.Joystick.inner_background_color    = GetAccentColor("400")#(0.5,  0.5,  0.5,  1)
-        self.Joystick.inner_line_color          = GetAccentColor("300")#(0.7,  0.7,  0.7,  1)
-        self.Joystick.pad_background_color      = GetAccentColor("600")#(0.3,  0.3,  0.3,  1)
-        self.Joystick.pad_line_color            = GetAccentColor("500")#(0.4,  0.4,  0.4,  1)
+        self.joystick = Joystick(size_hint = (0.75, 0.75), pos_hint = {"center_x":0.5, "center_y":0.5})
+        self.joystick.outer_size                = 0.9
+        self.joystick.inner_size                = 0.55
+        self.joystick.pad_size                  = 0.68
+        self.joystick.outer_line_width          = 0.01
+        self.joystick.inner_line_width          = 0.01
+        self.joystick.pad_line_width            = 0.01
+        self.joystick.outer_background_color    = GetAccentColor("200")#(0.75, 0.75, 0.75, 1)
+        self.joystick.outer_line_color          = GetAccentColor("700")#(0.25, 0.25, 0.25, 1)
+        self.joystick.inner_background_color    = GetAccentColor("400")#(0.5,  0.5,  0.5,  1)
+        self.joystick.inner_line_color          = GetAccentColor("300")#(0.7,  0.7,  0.7,  1)
+        self.joystick.pad_background_color      = GetAccentColor("600")#(0.3,  0.3,  0.3,  1)
+        self.joystick.pad_line_color            = GetAccentColor("500")#(0.4,  0.4,  0.4,  1)
 
         self.shadow_softness = Shadow.Smoothness.default
         self.elevation = Shadow.Elevation.default
         self.shadow_radius = Shadow.Radius.default
         self.radius = Rounding.default
 
-        self.add_widget(self.Joystick)
+        self.add_widget(self.joystick)
         Debug.End()
 
 LoadingLog.Class("BatiscanMenu")
@@ -376,11 +439,15 @@ class BatiscanMenu(Screen):
         #endregion
 
         #region ---------------------------- Joystick
-        self.LeftJoystickCard = JoystickCard()
-        self.RightJoystickCard = JoystickCard()
+        if(WeNeedLeftJoystick()):
+            self.LeftJoystickCard = JoystickCard()
+            self.LeftJoystickCard.joystick.bind(pad = self._LeftJoystickMoved)
+            self.LeftJoystickLayout.add_widget(self.LeftJoystickCard)
 
-        self.LeftJoystickLayout.add_widget(self.LeftJoystickCard)
-        self.RightJoystickLayout.add_widget(self.RightJoystickCard)
+        if(WeNeedRightJoystick()):
+            self.RightJoystickCard = JoystickCard()
+            self.RightJoystickCard.joystick.bind(pad = self._RightJoystickMoved)
+            self.RightJoystickLayout.add_widget(self.RightJoystickCard)
         #endregion
 
         self.Layout.add_widget(self.ActionButtonCardLayout)
@@ -473,6 +540,35 @@ class BatiscanMenu(Screen):
         BatiscanUDP.SendThing(PlaneIDs.ballastUpdate)
         Debug.End()
 # ------------------------------------------------------------------------
+    def _LeftJoystickMoved(self, *args):
+        """
+            _LeftJoystickMoved:
+            ==================
+            Summary:
+            --------
+            Callback function for when the
+            left joystick moves.
+        """
+        yaw   = self.LeftJoystickCard.joystick.pad[0]
+        speed = self.LeftJoystickCard.joystick.pad[1]
+
+        BatiscanActions.SetNewSpeed(speed)
+        BatiscanActions.SetNewYaw(yaw)
+# ------------------------------------------------------------------------
+    def _RightJoystickMoved(self, *args):
+        """
+            _RightJoystickMoved:
+            ====================
+            Summary:
+            --------
+            Callback function for when the
+            right joystick moves.
+        """
+        roll   = self.RightJoystickCard.joystick.pad[1]
+        pitch = self.RightJoystickCard.joystick.pad[0]
+
+        BatiscanActions.SetNewPitch(pitch)
+        BatiscanActions.SetNewRoll(roll)
 # ------------------------------------------------------------------------
     def _UpdateCamera(self, *args):
         Debug.Start("_UpdateCamera")

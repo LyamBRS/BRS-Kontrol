@@ -4,7 +4,7 @@
 import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
-from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
 from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("Application.py")
 #===================================================================#
@@ -36,7 +36,7 @@ from Programs.Pages.AppLoading import AppLoading_Screens
 from Programs.Pages.PopUps import PopUps_Screens
 from Programs.Local.Updating.LaunchHandling import Shutdown
 
-from Programs.Pages.WiFiLogin import WiFiConnecting_Screens, WiFiLogin_Screens
+# from Programs.Pages.WiFiLogin import WiFiConnecting_Screens, WiFiLogin_Screens
 #====================================================================#
 # Configuration
 #====================================================================#

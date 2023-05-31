@@ -26,11 +26,14 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.networks import GetWifiIcon
+from Libraries.BRS_Python_Libraries.BRS.GUI.Status.battery import GetBatteryIconFromPourcentage
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition, SwapTransition, ShaderTransition
+from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -41,6 +44,7 @@ from kivymd.uix.recycleview import MDRecycleView
 from kivymd.uix.button import MDFillRoundFlatIconButton, MDIconButton
 #endregion
 LoadingLog.Import("Local")
+from Local.Drivers.Batiscan.Programs.Controls.values import BatiscanValues
 #====================================================================#
 # Functions
 #====================================================================#
@@ -186,9 +190,18 @@ class DebugNavigationBar():
         self.ToolBar.headline_text = "Headline"
         self.ToolBar.anchor_title = "left"
         self.ToolBar.left_action_items = [["menu", lambda x: self.NavDrawer.set_state("open"), "Menu", "Overflow"]]
+        self.ToolBar.right_action_items = [
+                                            ["reload", self.Callback, _("Loading")]
+                                            ]
+
+        self.UpdateIcons()
+
         self.ToolBar.elevation = Shadow.Elevation.default
         self.ToolBar.shadow_softness = Shadow.Smoothness.default
         self.ToolBar.shadow_radius = Shadow.Radius.default
+
+        Clock.schedule_once(self.UpdateIcons, 0)
+
         #endregion
         self.NavDrawer.set_state("close")
         Debug.End()
@@ -196,6 +209,9 @@ class DebugNavigationBar():
     #region -------------------------------------------------- Members
     LoadingLog.Member("ToolBar")
     ToolBar:MDTopAppBar = None
+
+    _currentlyConnected:bool = False
+    """Private variable used to keep track of the connection to Batiscan."""
 
     LoadingLog.Member("NavDrawer")
     NavDrawer:MDNavigationDrawer = None
@@ -205,6 +221,250 @@ class DebugNavigationBar():
     def Callback(self, *args):
         pass
     # ----------------------------------------------------------------
+    def _GetNewWiFiList(self) -> list:
+        """
+            _GetNewWiFiList:
+            ================
+            Summary:
+            --------
+            Private function that returns the current values to
+            put in the top navigation bar for the WiFi Icon.
+            This function also handles the text hint of the icon.
+        """
+        networkInfo = WiFiStatusUpdater.GetConnectionStatus()
+
+        networkName:str = networkInfo[0]
+        signalStrength:int = networkInfo[2]
+
+        wifiIcon:str = "wifi-strength-outline"
+        wifiToolTip:str = _("No wifi")
+
+        if(networkName != "ERROR"):
+
+            if(networkName == None or networkName == ""):
+                wifiIcon = "wifi-strength-off-outline"
+                wifiToolTip = _("WiFi disconnected")
+                self._currentlyConnected = False
+            else:
+                wifiToolTip = networkName
+                wifiIcon = GetWifiIcon(signalStrength, None)
+                self._currentlyConnected = True
+        else:
+            wifiIcon = "wifi-cancel"
+            wifiToolTip = _("error")
+            self._currentlyConnected = False
+
+        return [wifiIcon, self.Callback, wifiToolTip]
+    # ----------------------------------------------------------------
+    def _GetBatteryIconList(self) -> list:
+        """
+            _GetBatteryIcon:
+            ================
+            Summary:
+            --------
+            private function that handles the battery icon
+            generation and returns a list to append to the
+            data of the TopToolbar.
+        """
+        batteryLevel:int = BatiscanValues.battery
+        toolTip:str = _("No battery")
+
+        if(self._currentlyConnected == False):
+            icon = GetBatteryIconFromPourcentage(0, "unknown")
+            toolTip = _("No connection")
+            return [icon, self.Callback, toolTip]
+        else:
+            if(batteryLevel < 0):
+                icon = "battery-alert"
+                toolTip = str(batteryLevel) + "%"
+                return [icon, self.Callback, toolTip]
+
+            if(batteryLevel > 100):
+                icon = "battery-alert"
+                toolTip = str(batteryLevel) + "%"
+                return [icon, self.Callback, toolTip]
+
+            icon = GetBatteryIconFromPourcentage(batteryLevel, None)
+            toolTip = str(batteryLevel) + "%"
+            return [icon, self.Callback, toolTip]
+    # ----------------------------------------------------------------
+    def _GetInEmergency(self) -> list:
+        """
+            _GetInEmergency:
+            ================
+            Summary:
+            --------
+            Private function that returns a list if the
+            submarine is in an emergency. Otherwise, None
+            is returned and no icons needs to be added.
+        """
+        inEmergency:bool = BatiscanValues.inEmergency
+        toolTip:str = _("EMERGENCY DETECTED")
+
+        if(self._currentlyConnected == False):
+            icon = "alert-remove"
+            toolTip = _("No connection")
+            return [icon, self.Callback, toolTip]
+        else:
+            if(inEmergency):
+                icon = "alert"
+                toolTip:str = _("EMERGENCY DETECTED")
+                return [icon, self.Callback, toolTip]
+            else:
+                icon = "triangle-outline"
+                toolTip:str = _("No ermegency")
+                return [icon, self.Callback, toolTip]
+    # ----------------------------------------------------------------
+    def _GetWaterDetected(self) -> list:
+        """
+            _GetWaterDetected:
+            ==================
+            Summary:
+            --------
+            Private function that returns a list if the
+            submarine has detected water. Otherwise, None
+            is returned and no icons needs to be added to
+            the top tool bar.
+        """
+        waterDetected:bool = BatiscanValues.waterDetected
+
+        if(self._currentlyConnected == False):
+            icon = "water-off"
+            toolTip = _("No connection")
+            return [icon, self.Callback, toolTip]
+        else:
+            if(waterDetected):
+                icon = "water-alert"
+                toolTip:str = _("SINKING")
+                return [icon, self.Callback, toolTip]
+            else:
+                icon = "water-outline"
+                toolTip:str = _("Dry")
+                return [icon, self.Callback, toolTip]
+    # ----------------------------------------------------------------
+    def _GetBallast(self) -> list:
+        """
+            _GetBallast:
+            ==================
+            Summary:
+            --------
+            Private function that returns a list
+            Depending on the current status of the
+            submarine's ballast. None is returned
+            if there is no connection.
+        """
+        ballast:bool = BatiscanValues.ballast
+        toolTip:str = _("Empty")
+
+        if(self._currentlyConnected == False):
+            icon = "block-helper"
+            toolTip:str = _("No connection")
+            return [icon, self.Callback, toolTip]
+        else:
+            if(ballast):
+                icon = "weight-kilogram"
+                toolTip:str = _("Ballast filled")
+                return [icon, self.Callback, toolTip]
+            else:
+                icon = "feather"
+                toolTip:str = _("Ballast emptied")
+                return [icon, self.Callback, toolTip]
+    # ----------------------------------------------------------------
+    def _GetCameraList(self) -> list:
+        """
+            _GetCameraList:
+            ==================
+            Summary:
+            --------
+            Private function that returns a list
+            Depending on the current status of the
+            submarine's camera. None is returned
+            if there is no connection or the
+            camera is not ON.
+        """
+        on:bool = BatiscanValues.cameraStatus
+
+        if(self._currentlyConnected == False):
+            icon = "block-helper"
+            toolTip:str = _("No connection")
+            return [icon, self.Callback, toolTip]
+        else:
+            if(on):
+                icon = "video"
+                toolTip:str = _("Camera On")
+                return [icon, self.Callback, toolTip]
+            else:
+                icon = "video-off"
+                toolTip:str = _("Camera Off")
+                return [icon, self.Callback, toolTip]
+    # ----------------------------------------------------------------
+    def _GetLightList(self) -> list:
+        """
+            _GetCameraList:
+            ==================
+            Summary:
+            --------
+            Private function that returns a list
+            Depending on the current status of the
+            submarine's camera. None is returned
+            if there is no connection or the
+            camera is not ON.
+        """
+        leftOn:bool = BatiscanValues.leftLight
+        rightOn:bool = BatiscanValues.rightLight
+        toolTip:str = _("Lights OFF")
+
+        if(self._currentlyConnected == False):
+            icon = "block-helper"
+            toolTip:str = _("No connection")
+            return [icon, self.Callback, toolTip]
+        else:
+            if(leftOn and rightOn):
+                icon = "car-light-high"
+                toolTip = _("Both lights ON")
+                return [icon, self.Callback, toolTip]
+
+            if(leftOn and not rightOn):
+                icon = "car-light-dimmed"
+                toolTip = _("Left light ON")
+                return [icon, self.Callback, toolTip]
+            
+            if(not leftOn and rightOn):
+                icon = "car-light-dimmed"
+                toolTip = _("Right light ON")
+                return [icon, self.Callback, toolTip]
+
+            icon = "lightbulb-outline"
+            toolTip:str = _("Lights Off")
+            return [icon, self.Callback, toolTip]
+    # ----------------------------------------------------------------
+    def UpdateIcons(self, *args):
+        """
+            UpdateIcons:
+            ===================
+            Summary:
+            --------
+            Callback function executed each 5 seconds
+            that attempts to update the icons displayed
+            in the toolbar that says if we have internet
+            access.
+        """
+        try:
+            wifiList = self._GetNewWiFiList()
+            batteryList = self._GetBatteryIconList()
+            
+            emergencyList = self._GetInEmergency()
+            waterDetectedList = self._GetWaterDetected()
+
+            lightList = self._GetLightList()
+            cameraList = self._GetCameraList()
+            ballastList = self._GetBallast()
+
+            self.ToolBar.right_action_items = [lightList, cameraList, ballastList, emergencyList, waterDetectedList, batteryList, wifiList]
+
+            Clock.schedule_once(self.UpdateIcons, 5)
+        except:
+            Debug.Error("TOOLBAR ERROR FAILED TO ADD RIGHT ICON WIDGETS")
     #endregion
 #====================================================================#
 # Structure

@@ -40,7 +40,6 @@ from kivy.clock import Clock
 LoadingLog.Import("KivyMD")
 from kivymd.uix.navigationdrawer import MDNavigationDrawer,MDNavigationDrawerDivider,MDNavigationDrawerHeader,MDNavigationDrawerItem,MDNavigationDrawerLabel,MDNavigationDrawerMenu,MDNavigationLayout
 from kivymd.uix.toolbar import MDTopAppBar
-from kivymd.uix.list import MDList, OneLineListItem, OneLineIconListItem
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.recycleview import MDRecycleView
 from kivymd.uix.button import MDFillRoundFlatIconButton
@@ -255,7 +254,7 @@ class AppNavigationBar():
         self.ToolBar.headline_text = "Headline"
         self.ToolBar.anchor_title = "left"
         self.ToolBar.left_action_items = [["menu", lambda x: self.NavDrawer.set_state("open"), "Menu", "Overflow"]]
-        self.ToolBar.right_action_items = [["earth-off", self.Callback, _("No internet")], ["wifi-strength-outline", self.Callback, _("No WiFi")]]
+        self.ToolBar.right_action_items = [["reload", self.Callback, _("Loading")], ["reload", self.Callback, _("Loading")]]
 
         self.UpdateNetworkIcons()
 
@@ -368,7 +367,7 @@ SettingMenuButtons = [
         "function" : GoTo_About
     },
     {
-        "name" : _("Quit"),
+        "name" : _("Shutdown"),
         "icon" : "power",
         "function" : GoTo_Quit
     }

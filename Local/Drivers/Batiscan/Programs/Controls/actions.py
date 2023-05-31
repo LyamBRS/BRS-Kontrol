@@ -51,6 +51,8 @@ batiscanAxesActions = {
     GUI is loaded and going and their associated descriptions. 
     The names within this list are extracted from :ref:`Controls`. 
     :ref:`SoftwareAxis`
+
+    "name" : {"description" : "description text"}
 """
 
 batiscanButtonsActions = {
@@ -73,6 +75,8 @@ batiscanButtonsActions = {
     GUI is loaded and going and their associated descriptions. 
     The names within this list are extracted from :ref:`Controls`. 
     :ref:`SoftwareButtons`
+
+    "name" : {"description" : "description text"}
 """
 #====================================================================#
 # Classes

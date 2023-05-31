@@ -252,7 +252,7 @@ class BatiscanUDP:
                 forward = None
                 if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
                     pass
-                    # forward = Controls._axes[SoftwareAxes.backward]["getter"]()
+                    forward = Controls._axes[SoftwareAxes.backward]["getter"]()
                 # else:
                     # forward = None
 # 

@@ -229,7 +229,13 @@ receivedVarTypes = {
     PlaneIDs.modeUpdate         : [VarTypes.Char, VarTypes.Char],
     PlaneIDs.cameraUpdate       : [VarTypes.Bool, VarTypes.Signed.Char],
     PlaneIDs.allStates          : [VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool, VarTypes.Bool,VarTypes.Bool, VarTypes.Bool, VarTypes.Bool],
-    PlaneIDs.allSensors         : [VarTypes.Int, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Unsigned.Char],
+    PlaneIDs.allSensors         : [VarTypes.Int,        # Pressure
+                                   VarTypes.Signed.Char, # temperature
+                                   VarTypes.Signed.Char, # pitch
+                                   VarTypes.Signed.Char, # roll
+                                   VarTypes.Signed.Char, # yaw
+                                   VarTypes.Signed.Char, # speed
+                                   VarTypes.Unsigned.Char], # battery
     PlaneIDs.navigationUpdate   : [VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char],
     PlaneIDs.ballastUpdate      : [VarTypes.Bool],
     PlaneIDs.surface            : [VarTypes.Bool],
@@ -385,11 +391,12 @@ def SetAllSensor(newArrival:NewArrival) -> Execution:
         return Execution.Failed
 
     BatiscanValues.pressure         = newArrival.GetParameter(0)
-    BatiscanValues.pitch            = newArrival.GetParameter(1)
-    BatiscanValues.roll             = newArrival.GetParameter(2)
-    BatiscanValues.yaw              = newArrival.GetParameter(3)
-    BatiscanValues.speed            = newArrival.GetParameter(4)
-    BatiscanValues.battery          = newArrival.GetParameter(5)
+    BatiscanValues.temperature      = newArrival.GetParameter(1)
+    BatiscanValues.pitch            = newArrival.GetParameter(2)
+    BatiscanValues.roll             = newArrival.GetParameter(3)
+    BatiscanValues.yaw              = newArrival.GetParameter(4)
+    BatiscanValues.speed            = newArrival.GetParameter(5)
+    BatiscanValues.battery          = newArrival.GetParameter(6)
 
     BatiscanUpdaters.UpdatePressure()
     BatiscanUpdaters.UpdatePitch()

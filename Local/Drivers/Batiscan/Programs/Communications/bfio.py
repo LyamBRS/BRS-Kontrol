@@ -519,12 +519,12 @@ def SendAPlaneOnUDP(functionID:int, Getters) -> Execution:
         --------
         Sends a plane on the UDP made of given parameters
     """
-    try:
-        planeToSend = Plane(functionID, Getters[functionID](), sentVarTypes[functionID], DontDebug=True)
-    except:
-        Debug.Error("FAILED TO CREATE PLANE BRUH")
-        print("BATISCAN FAILED SendAPlaneOnUDP")
-        return Execution.Failed
+    # try:
+    planeToSend = Plane(functionID, Getters[functionID](), sentVarTypes[functionID], DontDebug=True)
+    # except:
+        # Debug.Error("FAILED TO CREATE PLANE BRUH")
+        # print("BATISCAN FAILED SendAPlaneOnUDP")
+        # return Execution.Failed
 
     listOfIntegers = []
     for passenger in planeToSend.passengers:

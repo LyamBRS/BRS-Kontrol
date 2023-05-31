@@ -368,7 +368,7 @@ class NetworkMenu(Screen):
             WiFiLogin_Screens.SetBadExiter(NetworkMenu_Screens, "NetworkMenu")
             WiFiLogin_Screens.SetGoodExiter(NetworkMenu_Screens, "NetworkMenu")
 
-            if(network == Execution.Failed):
+            if(networks == Execution.Failed):
                 Debug.Error("Fatal error when getting available networks.")
                 Debug.Log("WiFi networks cannot be accessed.")
                 anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
@@ -377,7 +377,7 @@ class NetworkMenu(Screen):
                 Debug.End()
                 return
             
-            if(network == Execution.Crashed):
+            if(networks == Execution.Crashed):
                 Debug.Error("Fatal error when getting available networks.")
                 Debug.Log("WiFi networks cannot be accessed.")
                 anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
@@ -386,7 +386,7 @@ class NetworkMenu(Screen):
                 Debug.End()
                 return
             
-            if(network == Execution.Incompatibility):
+            if(networks == Execution.Incompatibility):
                 Debug.Error("Fatal error when getting available networks.")
                 Debug.Log("WiFi networks cannot be accessed.")
                 anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")

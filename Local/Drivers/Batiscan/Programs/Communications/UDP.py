@@ -295,7 +295,7 @@ class BatiscanUDP:
                             StateFlippers.SetNewYaw(yaw_right)
                     else:
                         with udpClass.lock:
-                            StateFlippers.SetNewSpeed(-yaw_left)
+                            StateFlippers.SetNewYaw(-yaw_left)
                 ##############################################################
                 if(Controls._axes[SoftwareAxes.roll_right]["binded"] == True):
                     roll_right = Controls._axes[SoftwareAxes.roll_right]["getter"]()
@@ -310,10 +310,10 @@ class BatiscanUDP:
                 if(roll_right != None and roll_left != None):
                     if(roll_right > roll_left):
                         with udpClass.lock:
-                            StateFlippers.SetNewYaw(roll_right)
+                            StateFlippers.SetNewRoll(roll_right)
                     else:
                         with udpClass.lock:
-                            StateFlippers.SetNewSpeed(-roll_left)
+                            StateFlippers.SetNewRoll(-roll_left)
                 ##############################################################
                 if(Controls._axes[SoftwareAxes.pitch_up]["binded"] == True):
                     pitch_up = Controls._axes[SoftwareAxes.pitch_up]["getter"]()
@@ -328,10 +328,10 @@ class BatiscanUDP:
                 if(pitch_up != None and pitch_down != None):
                     if(pitch_up > pitch_down):
                         with udpClass.lock:
-                            StateFlippers.SetNewYaw(pitch_up)
+                            StateFlippers.SetNewPitch(pitch_up)
                     else:
                         with udpClass.lock:
-                            StateFlippers.SetNewSpeed(-pitch_down)
+                            StateFlippers.SetNewPitch(-pitch_down)
 
                 SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
                 time.sleep(0.030) 

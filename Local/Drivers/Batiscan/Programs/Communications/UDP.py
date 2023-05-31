@@ -243,13 +243,13 @@ class BatiscanUDP:
             if udpClass.stop_event.is_set():
                 break
             ##################################################
-            arrivals = []
+            arrivals:list = []
             while True:
                 oldestMessage = UDPReader.GetOldestMessage()
                 if(oldestMessage != None):
                     for sender,message in oldestMessage.items():
                         Debug.Log(f"New plane from {sender}:")
-                        arrivals.append = MakeAPlaneOutOfArrivedBytes(message)
+                        arrivals.append(MakeAPlaneOutOfArrivedBytes(message))
                 else:
                     break
             ##################################################

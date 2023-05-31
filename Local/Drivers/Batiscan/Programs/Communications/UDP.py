@@ -42,6 +42,7 @@ from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
 LoadingLog.Import('Batiscan')
 from Local.Drivers.Batiscan.Programs.Communications.bfio import PlaneIDs, SendAPlaneOnUDP, getters
 from Local.Drivers.Batiscan.Programs.Controls.actions import BatiscanActions
+from ......Programs.Local.Hardware.RGB import KontrolRGB
 #endregion
 #====================================================================#
 # Functions
@@ -152,7 +153,7 @@ class BatiscanUDP:
 
 
     @staticmethod
-    def _Thread(udpClass, ExecutePlane, Getters, Controls:Controls, StateFlippers:BatiscanActions):
+    def _Thread(udpClass, ExecutePlane, Getters, Controls:Controls, StateFlippers:BatiscanActions, kontrolRGB:KontrolRGB):
 
         count = 0
         planeToSend = None
@@ -224,6 +225,7 @@ class BatiscanUDP:
                 if(newOnValue == True):
                     with udpClass.lock:
                         StateFlippers.LightsWantedOn()
+                        kontrolRGB.StartUpAnimation(1)
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 
@@ -233,6 +235,7 @@ class BatiscanUDP:
                 if(newOffValue == True):
                     with udpClass.lock:
                         StateFlippers.LightsWantedOff()
+                        kontrolRGB.StartUpAnimation(0)
                     SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
                     time.sleep(0.030)
 
@@ -389,7 +392,7 @@ class BatiscanUDP:
         if (BatiscanUDP.isStarted == False):
             if (not BatiscanUDP.thread or not BatiscanUDP.thread.is_alive()):
                 BatiscanUDP.stop_event.clear()
-                BatiscanUDP.thread = threading.Thread(target=BatiscanUDP._Thread, args=(BatiscanUDP, ExecuteArrivedPlane, getters, Controls, BatiscanActions, ))
+                BatiscanUDP.thread = threading.Thread(target=BatiscanUDP._Thread, args=(BatiscanUDP, ExecuteArrivedPlane, getters, Controls, BatiscanActions, KontrolRGB))
                 BatiscanUDP.thread.daemon = True
                 BatiscanUDP.thread.start()
                 BatiscanUDP.isStarted = True

@@ -6,18 +6,23 @@ import socket
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.sender import UDPSender
 from Libraries.BRS_Python_Libraries.BRS.Network.UDP.receiver import UDPReader
 from Libraries.BRS_Python_Libraries.BRS.Utilities.bfio import Plane, Passenger, BFIO, PrintPlane, MandatoryPlaneIDs
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetMDCardColor
 from Local.Drivers.Batiscan.Programs.Communications.UDP import BatiscanUDP
 from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 
 from Local.Drivers.Batiscan.Programs.Communications.UDP import SendAPlaneOnUDP, getters, PlaneIDs, Debug, BatiscanActions
 from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
 Debug.enableConsole = True
-sus:float = 0.99
+# sus:float = 0.99
 # BatiscanActions.SetNewSpeed(sus)
 # BatiscanActions.SetNewRoll(0.1)
 # BatiscanActions.SetNewPitch(-0.1)
 # BatiscanActions.SetNewYaw(0.997563)
-SendAPlaneOnUDP(PlaneIDs.navigationUpdate, getters)
+# SendAPlaneOnUDP(PlaneIDs.navigationUpdate, getters)
+
+print(GetMDCardColor("Dark"))
+
+
 
 
 

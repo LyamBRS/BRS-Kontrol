@@ -23,7 +23,7 @@ from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
-from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor, GetPrimaryColor, GetMDCardColor
 from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAxes, SoftwareButtons
 #endregion
 #region -------------------------------------------------------- Kivy
@@ -37,6 +37,7 @@ from kivymd.uix.button import MDIconButton
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.card import MDCard
+from kivymd.uix.spinner import MDSpinner
     
 #endregion
 #region ------------------------------------------------------ Kontrol
@@ -383,6 +384,75 @@ class TopInformationHolder(MDCard):
         self.shadow_radius = Shadow.Radius.default
         self.radius = Rounding.default
 
+LoadingLog.Class("TopInformation")
+class CameraCardWidget(MDCard):
+    """
+        CameraCardWidget:
+        ================
+        Summary:
+        --------
+        This class is an MDCard spinoff
+        that is made to hold a camera gotten
+        from batiscan's data feed.
+    """
+    streaming:bool = False
+
+    def TurnOff(self, *args):
+        """
+            TurnOff:
+            =======
+            Summary:
+            --------
+            Turns off the camera widget.
+            A video off icon is displayed
+            until you want to turn it on
+            again.
+        """
+        if self.streaming:
+            self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
+            self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
+            self.MiddleWidget.theme_icon_color = "Custom"
+            self.MiddleWidget.icon_color = GetMDCardColor("Light")
+            self.Layout.add_widget(self.MiddleWidget)
+            self.streaming = False
+
+    def TurnOn(self, *args):
+        """
+            TurnOn:
+            =======
+            Summary:
+            --------
+            Turns on the camera widget.
+            A spinner is displayed until video
+            feed can be received.
+        """
+        if not self.streaming:
+            self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
+
+            self.MiddleWidget = MDSpinner(active = True, pos_hint={"center_x" : 0.5, "center_y":0.5})
+            self.MiddleWidget.size_hint = (0.25, 0.25)
+            self.MiddleWidget.palette = [GetAccentColor(), GetPrimaryColor()]
+            self.Layout.add_widget(self.MiddleWidget)
+            self.streaming = True
+
+    def __init__(self, **kwargs):
+        super(CameraCardWidget, self).__init__(**kwargs)
+        self.shadow_softness = 0
+        self.elevation = 0
+        self.shadow_radius = 0
+        self.radius = Rounding.default
+
+        self.Layout = MDFloatLayout()
+
+        self.md_bg_color = GetMDCardColor("Dark")
+        self.bg_color = GetMDCardColor("Dark")
+
+        self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
+        self.MiddleWidget.theme_icon_color = "Custom"
+        self.MiddleWidget.icon_color = GetMDCardColor("Light")
+        self.Layout.add_widget(self.MiddleWidget)
+        self.add_widget(self.Layout)
+        self.streaming = False
 
 LoadingLog.Class("JoystickCard")
 class JoystickCard(MDCard):
@@ -451,6 +521,7 @@ class BatiscanMenu(Screen):
         self.LeftJoystickLayout = MDBoxLayout(size_hint = (0.25, 0.25), pos_hint = {'center_x': 0.875,'center_y': 0.25})
         self.ActionButtonCardLayout = MDBoxLayout(size_hint = (1,0.125))
         self.TopInformationLayout = MDBoxLayout(size_hint = (1,0.125), pos_hint = {'center_x': 0.5,'center_y': 0.85})
+        self.CameraLayout = MDBoxLayout(size_hint = (0.5,1), pos_hint = {'center_x': 0.5,'center_y': 0.5})
         #endregion
 
         #region ---------------------------- Buttons
@@ -472,9 +543,9 @@ class BatiscanMenu(Screen):
         #endregion
 
         #region ---------------------------- Top Action Information
-        self.TemperatureLabel = InfoDisplayText(text = str(BatiscanValues.temperature) + BatiscanValues.temperatureUnit)
-        self.PressureLabel = InfoDisplayText(text = str(BatiscanValues.pressure) + " Pa")
-        self.BatteryLabel = InfoDisplayText(text = str(BatiscanValues.battery) + "%")
+        self.TemperatureLabel = InfoDisplayText(text = _("Loading"))
+        self.PressureLabel = InfoDisplayText(text = _("Loading"))
+        self.BatteryLabel = InfoDisplayText(text =_("Loading"))
 
         self.TopInformationCard = TopInformationHolder()
         self.TopInformationCard.add_widget(self.TemperatureLabel)
@@ -500,9 +571,15 @@ class BatiscanMenu(Screen):
             self.RightJoystickLayout.add_widget(self.RightJoystickCard)
         #endregion
 
+        #region ---------------------------- Camera Display
+        self.CameraWidget = CameraCardWidget(size_hint = (0.5,0.5), pos_hint={"center_x":0.5, "center_y":0.5})
+        self.CameraLayout.add_widget(self.CameraWidget)
+        #endregion
+
         self.Layout.add_widget(self.TopInformationLayout)
         self.Layout.add_widget(self.ActionButtonCardLayout)
         self.Layout.add_widget(self.LeftJoystickLayout)
+        self.Layout.add_widget(self.CameraLayout)
         self.Layout.add_widget(self.RightJoystickLayout)
         self.Layout.add_widget(self.ToolBar.ToolBar)
         self.Layout.add_widget(self.ToolBar.NavDrawer)
@@ -635,8 +712,10 @@ class BatiscanMenu(Screen):
 
             if(BatiscanValues.cameraStatus):
                 self.CameraButton.icon = "video"
+                self.CameraWidget.TurnOn()
             else:
-                self.CameraButton.icon = "video-off"        
+                self.CameraButton.icon = "video-off"
+                self.CameraWidget.TurnOff()  
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateSurface(self, *args):

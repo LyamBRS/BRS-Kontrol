@@ -26,6 +26,7 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.networks import GetWifiIcon
 from Libraries.BRS_Python_Libraries.BRS.GUI.Status.battery import GetBatteryIconFromPourcentage
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
@@ -269,7 +270,7 @@ class DebugNavigationBar():
         batteryLevel:int = BatiscanValues.battery
         toolTip:str = _("No battery")
 
-        if(self._currentlyConnected == False):
+        if(self._currentlyConnected == False and Information.platform == "Linux"):
             icon = GetBatteryIconFromPourcentage(0, "unknown")
             toolTip = _("No connection")
             return [icon, self.Callback, toolTip]
@@ -301,7 +302,7 @@ class DebugNavigationBar():
         inEmergency:bool = BatiscanValues.inEmergency
         toolTip:str = _("EMERGENCY DETECTED")
 
-        if(self._currentlyConnected == False):
+        if(self._currentlyConnected == False and Information.platform == "Linux"):
             icon = "alert-remove"
             toolTip = _("No connection")
             return [icon, self.Callback, toolTip]
@@ -328,7 +329,7 @@ class DebugNavigationBar():
         """
         waterDetected:bool = BatiscanValues.waterDetected
 
-        if(self._currentlyConnected == False):
+        if(self._currentlyConnected == False and Information.platform == "Linux"):
             icon = "water-off"
             toolTip = _("No connection")
             return [icon, self.Callback, toolTip]
@@ -356,7 +357,7 @@ class DebugNavigationBar():
         ballast:bool = BatiscanValues.ballast
         toolTip:str = _("Empty")
 
-        if(self._currentlyConnected == False):
+        if(self._currentlyConnected == False and Information.platform == "Linux"):
             icon = "block-helper"
             toolTip:str = _("No connection")
             return [icon, self.Callback, toolTip]
@@ -384,7 +385,7 @@ class DebugNavigationBar():
         """
         on:bool = BatiscanValues.cameraStatus
 
-        if(self._currentlyConnected == False):
+        if(self._currentlyConnected == False and Information.platform == "Linux"):
             icon = "block-helper"
             toolTip:str = _("No connection")
             return [icon, self.Callback, toolTip]
@@ -414,7 +415,7 @@ class DebugNavigationBar():
         rightOn:bool = BatiscanValues.rightLight
         toolTip:str = _("Lights OFF")
 
-        if(self._currentlyConnected == False):
+        if(self._currentlyConnected == False and Information.platform == "Linux"):
             icon = "block-helper"
             toolTip:str = _("No connection")
             return [icon, self.Callback, toolTip]

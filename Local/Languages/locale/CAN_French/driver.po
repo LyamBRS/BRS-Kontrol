@@ -1,0 +1,143 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Launch drivers"
+msgstr "Lancer les pilotes"
+
+msgid " is now connected!"
+msgstr " est maintenant connecté !"
+
+msgid "Download Drivers?"
+msgstr "Télécharger les pilotes ?"
+
+msgid "Abort"
+msgstr "Annuler"
+
+msgid "Oh"
+msgstr "Oh"
+
+msgid "416: BrSpand drivers failed to obtain Universal Information from their own drivers. Handshake could not be resolved. Please try to unplug and replug your card. Do you want to retry an handshake?"
+msgstr "416 : Les pilotes BrSpand n'ont pas réussi à obtenir les informations universelles de leurs propres pilotes. La poignée de main n'a pas pu être résolue. Veuillez essayer de débrancher et de rebrancher votre carte. Voulez-vous réessayer une poignée de main ?"
+
+msgid "Self Verification"
+msgstr "Auto-vérification"
+
+msgid "Launch failure"
+msgstr "Échec du lancement"
+
+msgid "Driver downloading"
+msgstr "Téléchargement du pilote"
+
+msgid "A fatal error occured when Kontrol tried to launch the drivers of the BrSpand card connected in the left port."
+msgstr "Une erreur fatale s'est produite lorsque Kontrol a tenté de lancer les pilotes de la carte BrSpand connectée dans le port gauche."
+
+msgid "Process canceled"
+msgstr "Processus annulé"
+
+msgid "450: The connected card is sending unsupported BFIO answers/requests before their handshakes were successful. Unplug the card, wait for the connection lost pop up then try to connect it again."
+msgstr "450 : La carte connectée envoie des réponses/demandes BFIO non prises en charge avant que leur poignée de main ne réussisse. Débranchez la carte, attendez la fenêtre de perte de connexion, puis essayez de la reconnecter."
+
+msgid "You plugged in a BrSpand compatible extension card into Kontrol."
+msgstr "Vous avez branché une carte d'extension compatible BrSpand sur Kontrol."
+
+msgid "are installed on your Kontrol. Do you wish to download them? This can cause a temporary freeze."
+msgstr "sont installés sur votre Kontrol. Souhaitez-vous les télécharger ? Cela peut entraîner un blocage temporaire."
+
+msgid "installed"
+msgstr "installé"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "This card's version is"
+msgstr "La version de cette carte est"
+
+msgid "is now running!"
+msgstr "est maintenant en cours d'exécution !"
+
+msgid "Damn"
+msgstr "Merde"
+
+msgid "BrSpand Failure"
+msgstr "Échec de BrSpand"
+
+msgid "and their drivers can be downloaded from"
+msgstr "et leurs pilotes peuvent être téléchargés depuis"
+
+msgid "Ignore"
+msgstr "Ignorer"
+
+msgid "Huh"
+msgstr "Huh"
+
+msgid "437: The received BFIO data from the BrSpand card appears to be corrupted. Please unplug the card, wait for the connection lost pop up messgage and try to connect it again."
+msgstr "437 : Les données BFIO reçues de la carte BrSpand semblent être corrompues. Veuillez débrancher la carte, attendre le message de perte de connexion, puis essayer de la reconnecter."
+
+msgid "You will need to unplug and replug your BrSpand card in order for the connection process to restart. Make sure that you wait for the Connection Lost pop up to be displayed before you replug it."
+msgstr "Vous devrez débrancher puis rebrancher votre carte BrSpand afin que le processus de connexion redémarre. Assurez-vous d'attendre que le message de perte de connexion soit affiché avant de la rebrancher."
+
+msgid "Kontrol failed to download the required drivers for the card currently plugged in the left BrSpand port."
+msgstr "Kontrol n'a pas réussi à télécharger les pilotes requis pour la carte actuellement branchée dans le port BrSpand de gauche."
+
+msgid "Kontrol successfully launched the drivers of the connected BrSpand card! The drivers will stop when the card is unplugged."
+msgstr "Kontrol a réussi à lancer les pilotes de la carte BrSpand connectée ! Les pilotes s'arrêteront lorsque la carte sera débranchée."
+
+msgid "No drivers for"
+msgstr "Aucun pilote pour"
+
+msgid "Retry"
+msgstr "Réessayer"
+
+msgid "Handshake Failure"
+msgstr "Échec de la connection"
+
+msgid "The LeftBrSpand failed to verify itself for launch."
+msgstr "Le LeftBrSpand a échoué à se vérifier pour le lancement."
+
+msgid "Kontrol successfully downloaded the required BrSpand drivers for the connected card locally. These drivers are launched when the BrSpand card connects and are closed when the card disconnects."
+msgstr "Kontrol a téléchargé avec succès les pilotes BrSpand requis pour la carte connectée localement. Ces pilotes sont lancés lorsque la carte BrSpand se connecte et sont fermés lorsque la carte se déconnecte."
+
+msgid "The left BrSpand port failed to start the UART driver and thus cannot communicate with the card you plugged in. Make sure you're running on a compatible Kontrol version."
+msgstr "Le port BrSpand de gauche n'a pas réussi à démarrer le pilote UART et ne peut donc pas communiquer avec la carte que vous avez branchée. Assurez-vous d'utiliser une version compatible de Kontrol."
+
+msgid "The left BrSpand port failed to output its Universal Informations to the BrSpand card you just plugged in. Unplug it, wait for the pop up message then try to reconnect it."
+msgstr "Le port BrSpand de gauche n'a pas réussi à transmettre ses Informations Universelles à la carte BrSpand que vous venez de brancher. Débranchez-la, attendez le message contextuel, puis essayez de la reconnecter."
+
+msgid "Fuck this"
+msgstr "Mange de la marde"
+
+msgid "Download failure"
+msgstr "Échec du téléchargement"
+
+msgid "Kontrol failed to establish an handshake with the currently connected card. Do you wish to retry to gather its informations? This is probably due to a poor connection between Kontrol and your BrSpand card due to warped USB-C connectors."
+msgstr "Kontrol n'a pas réussi à établir une poignée de main avec la carte actuellement connectée. Souhaitez-vous réessayer pour collecter ses informations ? Cela est probablement dû à une mauvaise connexion entre Kontrol et votre carte BrSpand en raison de connecteurs USB-C déformés."
+
+msgid "BrSpand Lost"
+msgstr "BrSpand perdu"
+
+msgid "Handshake failure"
+msgstr "Échec de la poignée de main"
+
+msgid "Your device does not currently have access to the internet. GitHub cannot be accessed therefore the drivers could not be downloaded. Please connect to a valid internet before plugging your card again."
+msgstr "Votre appareil n'a actuellement pas accès à Internet. GitHub ne peut pas être accédé, donc les pilotes n'ont pas pu être téléchargés. Veuillez vous connecter à un internet valide avant de rebrancher votre carte."
+
+msgid "The BrSpand card connected to the left USB-C port has been disconnected. Ensure you have a solid connection if this is not normal. Avoid bending Kontrol too."
+msgstr "La carte BrSpand connectée au port USB-C de gauche a été déconnectée. Assurez-vous d'avoir une connexion solide si ce n'est pas normal. Évitez de trop plier Kontrol."
+
+msgid "Sure"
+msgstr "Bien sûr"
+
+msgid "Alright"
+msgstr "D'accord"
+
+msgid "Download drivers"
+msgstr "Télécharger les pilotes"
+

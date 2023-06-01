@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "WiFi disconnected"
+msgstr "WiFi déconnecté"
+
+msgid "BrSpand"
+msgstr "BrSpand"
+
+msgid "Loading"
+msgstr "Chargement"
+
+msgid "Internet connected"
+msgstr "Internet connecté"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+msgid "Devices"
+msgstr "Périphériques"
+
+msgid "error"
+msgstr "erreur"
+
+msgid "No internet"
+msgstr "Pas d'internet"
+
+msgid "Network"
+msgstr "Réseau"
+
+msgid "Account"
+msgstr "Compte"
+
+msgid "About"
+msgstr "À propos"
+
+msgid "Shutdown"
+msgstr "Arrêter"
+
+msgid "No wifi"
+msgstr "Pas de WiFi"
+
+msgid "Controls & Keybinds"
+msgstr "Contrôles & Assignations"
+

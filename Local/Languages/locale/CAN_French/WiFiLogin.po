@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Retry"
+msgstr "Réessayer"
+
+msgid "You successfully connected to: "
+msgstr "Vous vous êtes connecté avec succès à : "
+
+msgid " with password: "
+msgstr " avec le mot de passe : "
+
+msgid "SSID"
+msgstr "SSID"
+
+msgid "An error occurred while attempting to connect to: "
+msgstr "Une erreur s'est produite lors de la tentative de connexion à : "
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Cancel"
+msgstr "Annuler"
+

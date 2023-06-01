@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-05-31 12:00+0000\n"
+"PO-Revision-Date: 2023-05-31 12:00+0000\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS \n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: DriverMenu.py
+
+
+msgid "Kontrol failed to get the following function from this device driver"
+msgstr "Kontrol failed to get the following function from this device driver"
+
+msgid "A fatal error occured while executing this device driver's function"
+msgstr "A fatal error occured while executing this device driver's function"
+
+msgid "A fatal error occured while executing this device driver's function"
+msgstr "A fatal error occured while executing this device driver's function"

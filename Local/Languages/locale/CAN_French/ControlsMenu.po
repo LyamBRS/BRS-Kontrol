@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "value: "
+msgstr "valeur: "
+
+msgid "Axes"
+msgstr "Axes"
+
+msgid "binded as: "
+msgstr "lié en tant que: "
+
+msgid "Do you really want to unbind"
+msgstr "Voulez-vous vraiment supprimer la liaison"
+
+msgid "Select a new binder for: "
+msgstr "Sélectionnez un nouveau lien pour: "
+
+msgid "Hardware"
+msgstr "Matériel"
+
+msgid "binded to: "
+msgstr "lié à: "
+
+msgid "There is nothing to un-bind."
+msgstr "Il n'y a rien à supprimer."
+
+msgid "Binded to: "
+msgstr "Lié à: "
+
+msgid "Addon"
+msgstr "Extension"
+
+msgid "A critical error occured while attempting to bind or update binder values. Maybe the driver stopped?"
+msgstr "Une erreur critique s'est produite lors de la tentative de liaison ou de mise à jour des valeurs de liaison. Peut-être que le pilote s'est arrêté ?"
+
+msgid "Software"
+msgstr "Logiciel"
+
+msgid "Select a binder"
+msgstr "Sélectionnez un lien"
+
+msgid "Kontrol failed to bind the specified addon's hardware with the specified software representation. "
+msgstr "Kontrol n'a pas réussi à lier le matériel de l'extension spécifiée à la représentation logicielle spécifiée."
+
+msgid "Controls & Keybinds"
+msgstr "Contrôles & Assignations"
+
+msgid "Available"
+msgstr "Disponible"
+
+msgid "Buttons"
+msgstr "Boutons"
+
+msgid "Successfully binded the specified addon's hardware with a new software representation. Kontrol automatically removed other hardware's binds associated with this software representation."
+msgstr "Liaison réussie entre le matériel de l'extension spécifiée et une nouvelle représentation logicielle. Kontrol a automatiquement supprimé les autres liaisons matérielles associées à cette représentation logicielle."
+

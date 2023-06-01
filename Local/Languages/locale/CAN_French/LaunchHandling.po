@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "The newly installed version of Kontrol is missing key files and cannot be launched. It may be corrupted or too different from this one. Please attempt to launch it manually."
+msgstr "La nouvelle version installée de Kontrol manque certains fichiers clés et ne peut pas être lancée. Elle peut être corrompue ou trop différente de celle-ci. Veuillez essayer de la lancer manuellement."
+
+msgid "Do you wish to transfer profiles, device drivers, and BrSpand drivers to the new version?"
+msgstr "Souhaitez-vous transférer les profils, les pilotes de périphériques et les pilotes BrSpand vers la nouvelle version ?"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "A fatal error occurred while attempting to get installed instances of Kontrol. You will need to manually launch the new installed version."
+msgstr "Une erreur fatale s'est produite lors de la tentative d'obtention des versions installées de Kontrol. Vous devrez lancer manuellement la nouvelle version installée."
+
+msgid "No other versions appear to be installed. Kontrol failed to launch a newly downloaded version."
+msgstr "Aucune autre version n'apparaît installée. Kontrol n'a pas réussi à lancer une nouvelle version téléchargée."
+
+msgid "Kontrol failed to get the path of the newly installed Kontrol version. Please launch it manually or uninstall it."
+msgstr "Kontrol n'a pas réussi à obtenir le chemin d'accès de la nouvelle version installée de Kontrol. Veuillez la lancer manuellement ou la désinstaller."
+
+msgid "Do you want to quit this version and launch the newly installed version?"
+msgstr "Voulez-vous quitter cette version et lancer la nouvelle version installée ?"
+
+msgid "Too many versions of Kontrol were found to automatically find the newly installed version. Please launch it manually or reboot and accept automatic deletion of other versions."
+msgstr "Trop de versions de Kontrol ont été trouvées pour lancer automatiquement la nouvelle version installée. Veuillez la lancer manuellement ou redémarrer et accepter la suppression automatique des autres versions."
+

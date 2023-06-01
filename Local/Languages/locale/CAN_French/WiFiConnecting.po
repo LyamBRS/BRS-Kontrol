@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Failed to connect to the internet after"
+msgstr "Échec de la connexion à Internet après"
+
+msgid "seconds but that network does not provide internet access."
+msgstr "secondes, mais ce réseau n'a pas accès à Internet."
+
+msgid "Time taken to connect to the internet"
+msgstr "Temps nécessaire pour se connecter à Internet"
+
+msgid "Time taken to connect to"
+msgstr "Temps nécessaire pour se connecter à"
+
+msgid "The wifi connection was successful after"
+msgstr "La connexion WiFi a réussi après"
+
+msgid "seconds"
+msgstr "secondes"
+
+msgid "Current WiFi network is now"
+msgstr "Le réseau WiFi actuel est maintenant"
+
+msgid "but the connection to this network or the internet could not be verified due to early aborting by the user."
+msgstr "mais la connexion à ce réseau ou à Internet n'a pas pu être vérifiée en raison d'une annulation précoce par l'utilisateur."
+
+msgid "Successfully connected to, and verified internet access of"
+msgstr "Connexion réussie et accès Internet vérifié à"
+
+msgid "Cancel"
+msgstr "Annuler"
+

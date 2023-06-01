@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Account Parameters"
+msgstr "Paramètres du compte"
+
+msgid "Are you really sure you want to permanently delete this account?"
+msgstr "Êtes-vous vraiment sûr(e) de vouloir supprimer définitivement ce compte ?"
+
+msgid "Delete account"
+msgstr "Supprimer le compte"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Log out"
+msgstr "Déconnexion"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Are you sure you want to log out of your account? You need to be logged in to close Kontrol."
+msgstr "Êtes-vous sûr(e) de vouloir vous déconnecter de votre compte ? Vous devez être connecté(e) pour fermer Kontrol."
+
+msgid "Are you sure you want to delete this account? You will not be able to recover this account. Cache associated with this account inside of drivers and cards will also be deleted permanently."
+msgstr "Êtes-vous sûr(e) de vouloir supprimer ce compte ? Vous ne pourrez pas récupérer ce compte. Le cache associé à ce compte à l'intérieur des pilotes et des cartes sera également supprimé définitivement."
+

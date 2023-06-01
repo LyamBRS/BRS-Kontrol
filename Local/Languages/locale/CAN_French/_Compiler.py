@@ -21,6 +21,7 @@ print(f"Compiling: {folder}")
 print("START\n----------")
 # Loop through all .po files in the script directory
 for filename in os.listdir(script_dir):
+    print(filename)
     if filename.endswith('.po'):
         po_filepath = os.path.join(script_dir, filename)
 
@@ -30,7 +31,7 @@ for filename in os.listdir(script_dir):
         mo_filepath = os.path.splitext(po_filepath)[0] + '.mo'
         mo_filepath = mo_filepath.replace(folder, folder+"\\LC_MESSAGES")
         po.save_as_mofile(mo_filepath)
-        print(f"Compiled: {filename}")
+        print(f"--- DONE")
         # except:
             # print(f"[-FAILED-]: {filename}")
 

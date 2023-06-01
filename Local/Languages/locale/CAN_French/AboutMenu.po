@@ -1,0 +1,67 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "width"
+msgstr "largeur"
+
+msgid "Framework"
+msgstr "Framework"
+
+msgid "Versions"
+msgstr "Versions"
+
+msgid "OS"
+msgstr "OS"
+
+msgid "Hardware"
+msgstr "Matériel"
+
+msgid "height"
+msgstr "hauteur"
+
+msgid "Display"
+msgstr "Affichage"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Kontrol"
+msgstr "Kontrol"
+
+msgid "Python"
+msgstr "Python"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Processor"
+msgstr "Processeur"
+
+msgid "Software"
+msgstr "Logiciel"
+
+msgid "Platform"
+msgstr "Plateforme"
+
+msgid "Discord"
+msgstr "Discord"
+
+msgid "About"
+msgstr "À propos"
+
+msgid "Technicalities"
+msgstr "Technicalitiées"
+
+msgid "GitHub"
+msgstr "GitHub"
+
+msgid "Host"
+msgstr "Hôte"

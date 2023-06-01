@@ -1,0 +1,26 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "An error occurred when attempting to get elements when the widget was pressed."
+msgstr "Une erreur s'est produite lors de la tentative d'obtention des éléments lorsque le widget a été appuyé."
+
+msgid "Failed to get wireless WiFi networks. Your device may not support WiFi. Please use Ethernet if available."
+msgstr "Une erreur est survenue lors de l'obtantion des réseaux WiFi. Votre appareil ne prend pas en charge le WiFi. Veuillez utiliser Ethernet si disponible."
+
+msgid "Network Parameters"
+msgstr "Paramètres du réseaux"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Ok"
+msgstr "Ok"
+

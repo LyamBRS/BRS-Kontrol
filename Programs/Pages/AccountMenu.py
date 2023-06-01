@@ -89,7 +89,7 @@ def DeletePressed(*args):
     #region ------------------- PopUps Creation
     PopUpsHandler.Clear()
     PopUpsHandler.Add(Icon              = "delete",
-                      Message           = _("Are you sure you want to delete this account? You will not be able to recover this account. Cache  associated with this account inside of drivers and cards will also be deleted permanently."),
+                      Message           = _("Are you sure you want to delete this account? You will not be able to recover this account. Cache associated with this account inside of drivers and cards will also be deleted permanently."),
                       Type              = PopUpTypeEnum.Custom,
                       ButtonAText       = _("Delete account"),
                       ButtonBText       = _("Cancel"),

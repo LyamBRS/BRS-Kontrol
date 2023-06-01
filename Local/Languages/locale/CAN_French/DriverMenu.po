@@ -1,0 +1,86 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "The device driver cannot work without a connection."
+msgstr "Le pilote ne peut pas fonctionner sans connexion."
+
+msgid "The device driver is bypassing its Integrity check."
+msgstr "Le pilote contourne sa vérification d'intégrité."
+
+msgid "The device driver sees itself as empty."
+msgstr "Le pilote se voit comme étant vide."
+
+msgid "The device driver returned Ahead when performing its self check."
+msgstr "Le pilote a renvoyé 'Ahead' lors de sa vérification interne."
+
+msgid "The self check executed by the device driver returned an unknown result that Kontrol cannot comprehend."
+msgstr "La vérification interne exécutée par le pilote a renvoyé un résultat inconnu que Kontrol ne peut pas comprendre."
+
+msgid "The device driver is bypassing its launch."
+msgstr "Le pilote contourne son lancement."
+
+msgid "The device driver encountered an incompatibility issue while launching."
+msgstr "Le pilote a rencontré un problème d'incompatibilité lors de son lancement."
+
+msgid "The device driver failed to launch."
+msgstr "Le pilote n'a pas pu être lancé."
+
+msgid "The device driver thinks it's unnecessary to perform a launch. The driver cannot launch until a proper execution result is given."
+msgstr "Le pilote estime qu'il n'est pas nécessaire d'effectuer un lancement. Le pilote ne peut pas être lancé tant qu'un résultat d'exécution approprié n'est pas donné."
+
+msgid "Kontrol failed to execute this function."
+msgstr "Kontrol n'a pas pu exécuter cette fonction."
+
+msgid "The device driver crashed while attempting to self-check."
+msgstr "Le pilote a planté lors de sa vérification interne."
+
+msgid "The device driver identified a corruption within itself."
+msgstr "Le pilote a identifié une corruption interne."
+
+msgid "Kontrol failed to get the following function from this device driver: "
+msgstr "Kontrol n'a pas pu obtenir la fonction suivante de ce pilote: "
+
+msgid "Devices Driver"
+msgstr "Pilote de device"
+
+msgid "The device driver thinks it's unnecessary to perform a self-check. The driver cannot launch until a proper integrity result is given."
+msgstr "Le pilote estime qu'il n'est pas nécessaire d'effectuer une vérification interne. Le pilote ne peut pas être lancé tant qu'un résultat d'intégrité approprié n'est pas donné."
+
+msgid "Kontrol cannot launch this device driver safely."
+msgstr "Kontrol ne peut pas lancer ce pilote en toute sécurité."
+
+msgid "A fatal error occurred while executing this device driver's function: "
+msgstr "Une erreur fatale s'est produite lors de l'exécution de la fonction de ce pilote: "
+
+msgid "The device driver says it's Outdated."
+msgstr "Le pilote indique qu'il est obsolète."
+
+msgid "The device driver encountered an incompatibility issue while performing a self-check."
+msgstr "Le pilote a rencontré un problème d'incompatibilité lors de sa vérification interne."
+
+msgid "The device driver failed its self-check."
+msgstr "Le pilote a échoué à sa vérification interne."
+
+msgid "The device driver returned Error when performing its self-check."
+msgstr "Le pilote a renvoyé une erreur lors de sa vérification interne."
+
+msgid "The launch executed by the device driver returned an unknown result that Kontrol cannot comprehend."
+msgstr "Le lancement effectué par le pilote a renvoyé un résultat inconnu que Kontrol ne peut pas comprendre."
+
+msgid "The device driver crashed while attempting to launch."
+msgstr "Le pilote a planté lors de son lancement."
+
+msgid "Driver error message: "
+msgstr "Message d'erreur du pilote: "
+
+msgid "Kontrol failed to get the following function from this device driver"
+msgstr "Kontrol n'a pas pu obtenir la fonction suivante de ce pilote"
+

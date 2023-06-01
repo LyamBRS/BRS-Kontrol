@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Retry"
+msgstr "Réessayer"
+
+msgid "Search GitHub"
+msgstr "Chercher GitHub"
+
+msgid "You ran out of GitHub API requests. Wait up to an hour."
+msgstr "Vous n'avez plus de requètes GitHub. Veuillez attendre jusqu'à une heure."
+
+msgid "Error"
+msgstr "Erreur"
+
+msgid "No internet connection. Device drivers cannot be installed."
+msgstr "Aucune connexion Internet. Les pilotes de Devices ne peuvent pas être installés."
+
+msgid "No repository could be found with that link."
+msgstr "Aucun repository n'a pu être trouvé avec ce lien."
+
+msgid "Search for a device driver repository to download."
+msgstr "Recherchez un référentiel de pilotes de périphériques à télécharger."
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Not Initialized"
+msgstr "Non initialisé"
+
+msgid "Search GitHub for device drivers to install"
+msgstr "Recherchez des pilotes de périphériques à installer sur GitHub"
+

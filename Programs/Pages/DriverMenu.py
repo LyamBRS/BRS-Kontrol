@@ -83,7 +83,7 @@ def HandleDriverIntegrity(driverName, GetErrorMessageFunction) -> Execution:
         Debug.Log(">>> SUCCESS")
     except:
         Debug.Error("Failed to get function")
-        CallPopUps(_("Kontrol failed to get the following function from this device driver: ") + "CheckIntegrity")
+        CallPopUps(_("Kontrol failed to get the following function from this device driver") + ": CheckIntegrity")
         Debug.End()
         return Execution.Crashed
 

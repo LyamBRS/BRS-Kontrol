@@ -217,6 +217,50 @@ class AppNavigationBar():
         super(AppNavigationBar, self).__init__(**kwargs)
         Debug.Start("AppNavigationBar -> __init__")
         # Widgets
+
+        SettingMenuButtons = [
+            {
+                "name" : _("Network"),
+                "icon" : "wifi-cog",
+                "function" : GoTo_Network
+            },
+            {
+                "name" : _("Bluetooth"),
+                "icon" : "bluetooth-settings",
+                "function" : GoTo_Bluetooth
+            },
+            {
+                "name" : _("Devices"),
+                "icon" : "devices",
+                "function" : GoTo_Devices
+            },
+            {
+                "name" : _("BrSpand"),
+                "icon" : "expansion-card-variant",
+                "function" : GoTo_BrSpand
+            },
+            {
+                "name" : _("Controls & Keybinds"),
+                "icon" : "controller",
+                "function" : GoTo_Controls
+            },
+            {
+                "name" : _("Account"),
+                "icon" : "account-edit",
+                "function" : GoTo_Account
+            },
+            {
+                "name" : _("About"),
+                "icon" : "help",
+                "function" : GoTo_About
+            },
+            {
+                "name" : _("Shutdown"),
+                "icon" : "power",
+                "function" : GoTo_Quit
+            }
+        ]
+
         self.NavDrawer = MDNavigationDrawer(pos_hint = {'top': 1, 'left': 0})
         self.DrawerLayout = MDBoxLayout(pos_hint = {'top': 1, 'left': 0})
         self.RecyleBoxLayout = RecycleBoxLayout(default_size=(None,56),

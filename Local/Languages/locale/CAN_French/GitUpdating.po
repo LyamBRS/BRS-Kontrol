@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BRS Kontrol - Languages\n"
+"POT-Creation-Date: 2023-06-01 00:22\n"
+"PO-Revision-Date: 2023-06-01 00:22\n"
+"Last-Translator: Lyam BRS <lyam.brs@gmail.com>\n"
+"Language-Team: BRS\n"
+"MIME-Version: 1.2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "No"
+msgstr "Non"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "Kontrol failed to delete the following version: "
+msgstr "Kontrol n'a pas été en mesure de désinstaller les anciennes versions suivante: "
+
+msgid "Do you want to update Kontrol to its latest version?"
+msgstr "Voulez vous mettre à jour votre version de Kontrol?"
+
+msgid "Kontrol failed to check for older installed versions. Please ensure that your installation is correct."
+msgstr "Kontrol n'a pas été en mesure de vérifier si d'autres versions son installer. Veuillez vous assurez que votre installation est correcte."
+
+msgid "Multiple versions of Kontrol are installed. Do you wish to delete them?"
+msgstr "Plusieurs versions de Kontrol son installés. Voulez vous désinstaller les autres?"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "\nNew version: "
+msgstr "\nNouvelle version: "
+
+msgid "Update"
+msgstr "Mise à jour"
+

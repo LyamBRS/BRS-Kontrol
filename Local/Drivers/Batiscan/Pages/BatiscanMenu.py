@@ -681,7 +681,7 @@ class BatiscanMenu(Screen):
         self.CameraButton.disabled = True
         Clock.unschedule(self._CheckOnCamera)
 
-        BatiscanControls.wantedCameraStatus = not BatiscanControls.wantedCameraStatus
+        BatiscanControls.wantedCameraStatus = not BatiscanValues.cameraStatus
         if(BatiscanControls.wantedCameraStatus):
             self.CameraWidget.TurnOn()
         else:

@@ -665,6 +665,10 @@ class BatiscanMenu(Screen):
         Clock.unschedule(self._CheckOnCamera)
 
         BatiscanControls.wantedCameraStatus = not BatiscanControls.wantedCameraStatus
+        if(BatiscanControls.wantedCameraStatus):
+            self.CameraWidget.TurnOn()
+        else:
+            self.CameraWidget.TurnOff()   
         BatiscanUDP.SendThing(PlaneIDs.cameraUpdate)
 
         Clock.schedule_once(self._CheckOnCamera, 3)
@@ -754,7 +758,8 @@ class BatiscanMenu(Screen):
                 self.CameraWidget.TurnOn()
             else:
                 self.CameraButton.icon = "video-off"
-                self.CameraWidget.TurnOff()  
+                self.CameraWidget.TurnOff()
+        self.CameraButton.disabled = False
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateSurface(self, *args):

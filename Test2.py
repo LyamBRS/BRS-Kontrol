@@ -21,20 +21,175 @@ from kivy.clock import Clock
 # BatiscanActions.SetNewYaw(0.997563)
 # SendAPlaneOnUDP(PlaneIDs.navigationUpdate, getters)
 
-def my_callback(dt):
-    print("=========================================================================")
-    raise Exception("FUCK")
-    print(dt)
+from kivymd.app import MDApp
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.card import MDCard
 
-# call my_callback every 0.5 seconds
-Clock.schedule_once(my_callback, 0.5)
+#region ------------------------------------------------------ Python
+import os
+#endregion
+#region --------------------------------------------------------- BRS
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor, GetPrimaryColor, GetMDCardColor
+from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAxes, SoftwareButtons
+#endregion
+#region -------------------------------------------------------- Kivy
+from kivy.uix.screenmanager import Screen, SlideTransition
+from kivy.clock import Clock
+from kivy.uix.image import Image
+#endregion
+#region ------------------------------------------------------ KivyMD
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDIconButton
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.label import MDLabel
+from kivymd.uix.card import MDCard
+from kivymd.uix.spinner import MDSpinner
+from kivymd.uix.fitimage import FitImage
+    
+#endregion
+#region ------------------------------------------------------ Kontrol
+from Programs.Local.Hardware.RGB import KontrolRGB
+from Local.Drivers.Batiscan.Programs.GUI.joystick import Joystick
+from Local.Drivers.Batiscan.Programs.Communications.bfio import BatiscanValues, BatiscanUpdaters
+from Local.Drivers.Batiscan.Programs.Controls.actions import BatiscanActions
+# from Programs.Local.GUI.Cards import ButtonCard, DeviceDriverCard
+# from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
+#endregion
 
-time.sleep(2)
-# unschedule using Clock.unschedule with the callback
-# NOT RECOMMENDED
-Clock.unschedule(my_callback)
-time.sleep(2)
+# Builder.load_string("""
+# <ExampleApp>:
+    # orientation: "vertical"
+    # Button:
+        # text: ""
+        # on_press: gif.anim_delay = 0.10
+        # on_press: gif._coreimage.anim_reset(True)
 
+        # Image:
+            # id: gif
+            # source: 'life-could-be-a-dream.gif'
+            # center: self.parent.center
+            # size: 500, 500
+            # allow_stretch: True
+            # anim_delay: -1
+            # anim_loop: 1
+# """)
+
+class CameraCardWidget(MDCard):
+    """
+        CameraCardWidget:
+        ================
+        Summary:
+        --------
+        This class is an MDCard spinoff
+        that is made to hold a camera gotten
+        from batiscan's data feed.
+    """
+    streaming:bool = False
+
+    def TurnOff(self, *args):
+        """
+            TurnOff:
+            =======
+            Summary:
+            --------
+            Turns off the camera widget.
+            A video off icon is displayed
+            until you want to turn it on
+            again.
+        """
+        if self.streaming:
+            self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
+            self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
+            self.MiddleWidget.theme_icon_color = "Custom"
+            self.MiddleWidget.icon_color = GetMDCardColor("Light")
+            self.Layout.add_widget(self.MiddleWidget)
+            self.streaming = False
+
+    def TurnOn(self, *args):
+        """
+            TurnOn:
+            =======
+            Summary:
+            --------
+            Turns on the camera widget.
+            A spinner is displayed until video
+            feed can be received.
+        """
+        if not self.streaming:
+            self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
+
+            self.MiddleWidget = MDSpinner(active = True, pos_hint={"center_x" : 0.5, "center_y":0.5})
+            self.MiddleWidget.size_hint = (0.25, 0.25)
+            self.MiddleWidget.palette = [GetAccentColor(), GetPrimaryColor()]
+            self.Layout.add_widget(self.MiddleWidget)
+            self.streaming = True
+
+    def DisplayMonkey(self, *args):
+        self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
+        self.streaming = True
+
+        self.MiddleWidget = Image()
+        self.MiddleWidget.allow_stretch = True
+        self.MiddleWidget.anim_delay = 0.05
+        self.MiddleWidget.keep_ratio = False
+        self.MiddleWidget.source = "sea-monkey.gif"
+        self.MiddleWidget.pos_hint = {"center_x" : 0.5, "center_y" : 0.5}
+        self.MiddleWidget.size_hint = (0.95,0.95)
+        self.Layout.add_widget(self.MiddleWidget)
+
+    def __init__(self, **kwargs):
+        super(CameraCardWidget, self).__init__(**kwargs)
+        self.shadow_softness = 0
+        self.elevation = 0
+        self.shadow_radius = 0
+        self.radius = Rounding.default
+
+        self.Layout = MDFloatLayout()
+
+        self.md_bg_color = GetMDCardColor("Dark")
+        self.bg_color = GetMDCardColor("Dark")
+
+        self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
+        self.MiddleWidget.theme_icon_color = "Custom"
+        self.MiddleWidget.icon_color = GetMDCardColor("Light")
+        self.Layout.add_widget(self.MiddleWidget)
+        self.add_widget(self.Layout)
+        self.streaming = False
+
+
+
+class ExampleApp(MDApp):
+    displaying = False
+    def build(self):
+
+        self.Layout = MDBoxLayout(padding = 50)
+
+        self.Button = MDIconButton(icon = "account", on_release = self.Pressed)
+        self.CameraCard = CameraCardWidget()
+        self.Layout.add_widget(self.CameraCard)
+        self.Layout.add_widget(self.Button)
+        self.CameraCard.DisplayMonkey()
+        return self.Layout
+
+    def Pressed(self, *args):
+        if(self.displaying):
+            print("turning OFF")
+            self.CameraCard.TurnOff()
+            self.displaying = False
+        else:
+            print("Turning ON")
+            self.CameraCard.DisplayMonkey()
+            self.displaying = True
+
+if __name__ == "__main__":
+    ExampleApp().run() 
 
 
 

@@ -30,6 +30,7 @@ from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAx
 LoadingLog.Import("Kivy")
 from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.clock import Clock
+from kivy.uix.image import Image
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -450,6 +451,19 @@ class CameraCardWidget(MDCard):
             self.Layout.add_widget(self.MiddleWidget)
             self.streaming = True
 
+    def DisplayMonkey(self, *args):
+        self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
+        self.streaming = True
+
+        self.MiddleWidget = Image()
+        self.MiddleWidget.allow_stretch = True
+        self.MiddleWidget.anim_delay = 0.05
+        self.MiddleWidget.keep_ratio = False
+        self.MiddleWidget.source = "sea-monkey.gif"
+        self.MiddleWidget.pos_hint = {"center_x" : 0.5, "center_y" : 0.5}
+        self.MiddleWidget.size_hint = (0.95,0.95)
+        self.Layout.add_widget(self.MiddleWidget)
+
     def __init__(self, **kwargs):
         super(CameraCardWidget, self).__init__(**kwargs)
         self.shadow_softness = 0
@@ -759,6 +773,7 @@ class BatiscanMenu(Screen):
             if(BatiscanValues.cameraStatus):
                 self.CameraButton.icon = "video"
                 self.CameraWidget.TurnOn()
+                Clock.schedule_once(self._TurnOnMonkey, 0.5)
             else:
                 self.CameraButton.icon = "video-off"
                 self.CameraWidget.TurnOff()
@@ -895,5 +910,7 @@ class BatiscanMenu(Screen):
         else:
             self.FillBallastButton.disabled = False
             self.EmptyBallastButton.disabled = True
-
+# ------------------------------------------------------------------------
+    def _TurnOnMonkey(self, *args):
+        self.CameraWidget.DisplayMonkey()
 LoadingLog.End("BatiscanMenu.py")

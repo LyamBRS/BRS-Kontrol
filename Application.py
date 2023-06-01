@@ -117,6 +117,7 @@ class Application(MDApp):
         #Window.resizable = True
         #Window.left = -1024
         #Window.top = 600
+        # if(Information.platform)
         #Window.fullscreen = False
         Window.size = (720, 576)
 

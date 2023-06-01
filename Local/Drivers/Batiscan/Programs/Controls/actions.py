@@ -120,10 +120,30 @@ class BatiscanActions:
         BatiscanControls.wantedLeftLight = False
         BatiscanControls.wantedRightLight = False
 
+    def BallastWantedEmpty():
+        BatiscanControls.wantedBallast = False
+
+    def BallastWantedFull():
+        BatiscanControls.wantedBallast = True
+
+    def SurfaceImmediatelyWanted():
+        BatiscanControls.wantedSurface = True
+
+    def CameraStateFlipWanted():
+        if(BatiscanControls.currentCameraStatus):
+            BatiscanControls.wantedCameraStatus = False
+        else:
+            BatiscanControls.wantedCameraStatus = True      
+
     def SetNewYaw(floatValue:float):
         value = (floatValue*127)
         value = BatiscanActions._ClampValueToSignedChar(value)
         BatiscanControls.wantedYaw = int(value)
+
+    def SetNewCameraAngle(floatValue:float):
+        value = (floatValue*127)
+        value = BatiscanActions._ClampValueToSignedChar(value)
+        BatiscanControls.wantedCameraAngle = int(value)
 
     def SetNewRoll(floatValue:float):
         value = (floatValue*127)

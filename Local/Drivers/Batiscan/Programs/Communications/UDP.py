@@ -201,12 +201,122 @@ class BatiscanUDP:
         """
 
         def CurrentButtonValue(name:str) -> bool:
+            """
+                CurrentButtonValue:
+                ===================
+                Summary:
+                --------
+                Allows you to quickly get the
+                real button value. False is returned
+                if the button in question isn't
+                binded.
+
+                Returns:
+                --------
+                - `None` = Software button is not binded or binded but getter is `None`.
+                - `(bool)` = Button is binded and that's their current state.
+            """
             if(Controls._buttons[name]["binded"]):
                 if(Controls._buttons[name]["getter"] != None):
                     newValue = Controls._buttons[name]["getter"]()
                     return newValue
-            return False
+            return None
 
+        def Handle_Button(SoftwareName:str, stateFlippersFunction:BatiscanActions, planeID:PlaneIDs):
+            """
+                Handler_Button:
+                ===============
+                Summary:
+                --------
+                This function's purpose is to
+                handle the sending of a specific
+                plane on UDP if a specific software
+                button is pressed.
+
+                The plane is sent if the button is
+                `True` and was `False` previously.
+                The current value is saved in 
+                `batiscanButtonsActions`
+            """
+            currentButtonState = CurrentButtonValue(SoftwareName)
+            if(currentButtonState != None):
+                if(batiscanButtonsActions[SoftwareName] != currentButtonState): # State of the button changed
+                    batiscanButtonsActions[SoftwareName] = currentButtonState
+                    if(currentButtonState == True):
+                        with udpClass.lock:
+                            stateFlippersFunction()
+                        SendAPlaneOnUDP(planeID, Getters)
+                        time.sleep(0.030)
+
+        def _GetAxis(softwareName:str, associatedButtonName:str = None) -> float:
+            """
+                returns a float value from 0 to 1.
+                returns `None` if the axis is not binded
+                in :ref:`Controls`.
+            """
+            pressed:bool = None
+            if(associatedButtonName != None):
+                pressed = CurrentButtonValue(associatedButtonName)
+
+                # The button is pressed, we bypass the axis reading.
+                if(pressed):
+                    return 1
+
+            if(Controls._axes[softwareName]["binded"] == True):
+                return Controls._axes[softwareName]["getter"]()
+            else:
+                # The axis is not binded, maybe the button was?
+                if(pressed == False):
+                    # Button is binded and released, so 0 is returned
+                    return 0
+                else:
+                    # No button, no axis, no bitches is binded to this axis.
+                    return None
+
+        def Handle_NavigationAxis(softwareNamePositive:str, softwareNameNegative:str, softwareNameButtonPositive:str, softwareNameButtonNegative:str, axisUpdateFunction):
+            """
+                Handle_NavigationAxis:
+                ======================
+                Summary:
+                --------
+                This function handles the setting of a wanted
+                specific submarine axis such as yaw, pitch, roll,
+                camera angle and speed. It needs 2 software axis.
+                One for the positive aspect of that axis and one
+                for the negative aspect of that axis. Optionally,
+                it can also take software buttons which will
+                bypass software axis if their current state is
+                `True`.
+
+                Arguments:
+                ----------
+                Please note that all software buttons and software axes within the following list
+                are strings located either in `SoftwareAxes` or in `SoftwareButtons`. Both of which
+                are listed in BRS_Python_Libraries in `BRS/PnP/controls.py`
+
+                - `softwareNamePositive:str` = name of the software axis that is used to make that axis go in the positive.
+                - `softwareNameNegative:str` = name of the software axis that is used to make that axis go in the negative.
+                - `softwareNameButtonPositive:str` = Optional button that bypasses the positive axis and makes it go full positive when their current state is `True`.
+                - `softwareNameButtonNegative:str` = Optional button that bypasses the negative axis and makes it go full negative when their current state is `True`.
+                - `axisUpdateFunction:str` = Function taken from :ref:`BatiscanActions` that sets a new wantedValue for an axis.
+            """
+            positiveValue:float = None
+            negativeValue:float = None
+
+            positiveValue = _GetAxis(softwareNamePositive, softwareNameButtonPositive)
+            negativeValue = _GetAxis(softwareNameNegative, softwareNameButtonNegative)
+
+            if(positiveValue != None and negativeValue != None):
+                if(positiveValue > negativeValue):
+                    with udpClass.lock:
+                        axisUpdateFunction(positiveValue)
+                        return
+                else:
+                    with udpClass.lock:
+                        axisUpdateFunction(-negativeValue)
+                        return
+            return
+            
         def HandleAddons():
             """
                 HandleAddons:
@@ -219,101 +329,43 @@ class BatiscanUDP:
                 more informations about this
                 one.
             """
-            newOnValue = CurrentButtonValue(SoftwareButtons.on)
-            if(batiscanButtonsActions[SoftwareButtons.on] != newOnValue):
-                batiscanButtonsActions[SoftwareButtons.on] = newOnValue
-                if(newOnValue == True):
-                    with udpClass.lock:
-                        StateFlippers.LightsWantedOn()
-                        kontrolRGB.SetAttributes([0,255,0], RGBModes.static, 1)
-                    SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
-                    time.sleep(0.030)
-
-            newOffValue = CurrentButtonValue(SoftwareButtons.off)
-            if(batiscanButtonsActions[SoftwareButtons.off] != newOffValue):
-                batiscanButtonsActions[SoftwareButtons.off] = newOffValue
-                if(newOffValue == True):
-                    with udpClass.lock:
-                        StateFlippers.LightsWantedOff()
-                        kontrolRGB.SetAttributes([0,0,255], RGBModes.static, 1)
-                    SendAPlaneOnUDP(PlaneIDs.lightsUpdate, Getters)
-                    time.sleep(0.030)
+            Handle_Button(SoftwareButtons.on, StateFlippers.LightsWantedOn, PlaneIDs.lightsUpdate)
+            Handle_Button(SoftwareButtons.off, StateFlippers.LightsWantedOff, PlaneIDs.lightsUpdate)
+            Handle_Button(SoftwareButtons.fill, StateFlippers.BallastWantedFull, PlaneIDs.ballastUpdate)
+            Handle_Button(SoftwareButtons.empty, StateFlippers.BallastWantedEmpty, PlaneIDs.ballastUpdate)
+            Handle_Button(SoftwareButtons.custom_1, StateFlippers.BallastWantedEmpty, PlaneIDs.surface)
+            Handle_Button(SoftwareButtons.custom_2, StateFlippers.CameraStateFlipWanted, PlaneIDs.cameraUpdate)
 
         def HandleAndSendNavigation():
-            ###############################################################
-            forward = None
-            if(Controls._axes[SoftwareAxes.backward]["binded"] == True):
-                forward = Controls._axes[SoftwareAxes.backward]["getter"]()
-            else:
-                forward = None
-
-            backward = None
-            if(Controls._axes[SoftwareAxes.forward]["binded"] == True):
-                backward = Controls._axes[SoftwareAxes.forward]["getter"]()
-            else:
-                backward = None
-
-            if(forward != None and backward != None):
-                if(forward > backward):
-                    with udpClass.lock:
-                        StateFlippers.SetNewSpeed(forward)
-                else:
-                    with udpClass.lock:
-                        StateFlippers.SetNewSpeed(-backward)
-            ##############################################################
-            if(Controls._axes[SoftwareAxes.yaw_right]["binded"] == True):
-                yaw_right = Controls._axes[SoftwareAxes.yaw_right]["getter"]()
-            else:
-                yaw_right = None
-# 
-            if(Controls._axes[SoftwareAxes.yaw_left]["binded"] == True):
-                yaw_left = Controls._axes[SoftwareAxes.yaw_left]["getter"]()
-            else:
-                yaw_left = None
-# 
-            if(yaw_right != None and yaw_left != None):
-                if(yaw_right > yaw_left):
-                    with udpClass.lock:
-                        StateFlippers.SetNewYaw(yaw_right)
-                else:
-                    with udpClass.lock:
-                        StateFlippers.SetNewYaw(-yaw_left)
-            ##############################################################
-            if(Controls._axes[SoftwareAxes.roll_right]["binded"] == True):
-                roll_right = Controls._axes[SoftwareAxes.roll_right]["getter"]()
-            else:
-                roll_right = None
-
-            if(Controls._axes[SoftwareAxes.roll_left]["binded"] == True):
-                roll_left = Controls._axes[SoftwareAxes.roll_left]["getter"]()
-            else:
-                roll_left = None
-
-            if(roll_right != None and roll_left != None):
-                if(roll_right > roll_left):
-                    with udpClass.lock:
-                        StateFlippers.SetNewRoll(roll_right)
-                else:
-                    with udpClass.lock:
-                        StateFlippers.SetNewRoll(-roll_left)
-            ##############################################################
-            if(Controls._axes[SoftwareAxes.pitch_up]["binded"] == True):
-                pitch_up = Controls._axes[SoftwareAxes.pitch_up]["getter"]()
-            else:
-                pitch_up = None
-
-            if(Controls._axes[SoftwareAxes.pitch_down]["binded"] == True):
-                pitch_down = Controls._axes[SoftwareAxes.pitch_down]["getter"]()
-            else:
-                pitch_down = None
-
-            if(pitch_up != None and pitch_down != None):
-                if(pitch_up > pitch_down):
-                    with udpClass.lock:
-                        StateFlippers.SetNewPitch(pitch_up)
-                else:
-                    with udpClass.lock:
-                        StateFlippers.SetNewPitch(-pitch_down)
+            Handle_NavigationAxis(SoftwareAxes.forward, 
+                                    SoftwareAxes.backward, 
+                                    SoftwareButtons.forward, 
+                                    SoftwareButtons.backward, 
+                                    StateFlippers.SetNewSpeed)
+            
+            Handle_NavigationAxis(SoftwareAxes.yaw_right, 
+                                    SoftwareAxes.yaw_left, 
+                                    SoftwareButtons.left, 
+                                    SoftwareButtons.right, 
+                                    StateFlippers.SetNewYaw)
+            
+            Handle_NavigationAxis(SoftwareAxes.roll_right, 
+                                    SoftwareAxes.roll_left, 
+                                    None, 
+                                    None, 
+                                    StateFlippers.SetNewRoll)
+            
+            Handle_NavigationAxis(SoftwareAxes.pitch_up, 
+                                    SoftwareAxes.pitch_down, 
+                                    SoftwareButtons.up, 
+                                    SoftwareButtons.down, 
+                                    StateFlippers.SetNewPitch)
+            
+            Handle_NavigationAxis(SoftwareAxes.up, 
+                                    SoftwareAxes.down,
+                                    None, 
+                                    None, 
+                                    StateFlippers.SetNewCameraAngle)
 
             SendAPlaneOnUDP(PlaneIDs.navigationUpdate, Getters)
             time.sleep(0.030) 

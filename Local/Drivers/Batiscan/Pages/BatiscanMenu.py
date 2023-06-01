@@ -611,6 +611,9 @@ class BatiscanMenu(Screen):
         Debug.Start("BatiscanMenu -> on_enter")
         KontrolRGB.DisplayDefaultColor()
 
+        #FIX-ME: This is needed to start updating on screen values.
+        BatiscanUDP.SendThing(PlaneIDs.lightsUpdate)
+
         #region ---------------------------- Updaters
         BatiscanUpdaters.UpdateLeftLightState = self._UpdateLights
         BatiscanUpdaters.UpdateRightLightState = self._UpdateLights

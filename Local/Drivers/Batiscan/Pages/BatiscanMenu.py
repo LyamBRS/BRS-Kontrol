@@ -772,7 +772,7 @@ class BatiscanMenu(Screen):
 
             if(BatiscanValues.cameraStatus):
                 self.CameraButton.icon = "video"
-                self.CameraWidget.TurnOn()
+                # self.CameraWidget.TurnOn()
                 self.CameraWidget.streaming = True
                 Clock.schedule_once(self._TurnOnMonkey, 0.5)
             else:

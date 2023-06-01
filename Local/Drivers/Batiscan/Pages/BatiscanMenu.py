@@ -726,8 +726,8 @@ class BatiscanMenu(Screen):
             Callback function for when the
             left joystick moves.
         """
-        yaw   = self.LeftJoystickCard.joystick.pad[1]
-        speed = self.LeftJoystickCard.joystick.pad[0]
+        yaw   = self.LeftJoystickCard.joystick.pad[0]
+        speed = self.LeftJoystickCard.joystick.pad[1]
 
         BatiscanActions.SetNewSpeed(speed)
         BatiscanActions.SetNewYaw(yaw)

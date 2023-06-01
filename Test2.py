@@ -13,6 +13,7 @@ from Programs.Local.BFIO.kontrolBFIO import GetUniversalInfoPlane
 from Local.Drivers.Batiscan.Programs.Communications.UDP import SendAPlaneOnUDP, getters, PlaneIDs, Debug, BatiscanActions
 from Local.Drivers.Batiscan.Programs.Controls.controls import BatiscanControls
 Debug.enableConsole = True
+from kivy.clock import Clock
 # sus:float = 0.99
 # BatiscanActions.SetNewSpeed(sus)
 # BatiscanActions.SetNewRoll(0.1)
@@ -20,9 +21,19 @@ Debug.enableConsole = True
 # BatiscanActions.SetNewYaw(0.997563)
 # SendAPlaneOnUDP(PlaneIDs.navigationUpdate, getters)
 
-print(GetMDCardColor("Dark"))
+def my_callback(dt):
+    print("=========================================================================")
+    raise Exception("FUCK")
+    print(dt)
 
+# call my_callback every 0.5 seconds
+Clock.schedule_once(my_callback, 0.5)
 
+time.sleep(2)
+# unschedule using Clock.unschedule with the callback
+# NOT RECOMMENDED
+Clock.unschedule(my_callback)
+time.sleep(2)
 
 
 

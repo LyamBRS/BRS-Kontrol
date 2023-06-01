@@ -137,7 +137,7 @@ def GetUpdateNavigation() -> Plane:
         returns variable necessary to make the plane
         with the same name.
     """
-    return [BatiscanControls.wantedSpeed, BatiscanControls.wantedPitch, BatiscanControls.wantedRoll, BatiscanControls.wantedYaw]
+    return [BatiscanControls.wantedSpeed, BatiscanControls.wantedPitch, BatiscanControls.wantedRoll, BatiscanControls.wantedYaw, BatiscanControls.wantedCameraAngle]
 ################################################
 def GetSetBallast() -> Plane:
     """
@@ -209,7 +209,7 @@ sentVarTypes = {
     PlaneIDs.cameraUpdate       : [VarTypes.Bool, VarTypes.Signed.Char],
     PlaneIDs.allStates          : [],
     PlaneIDs.allSensors         : [],
-    PlaneIDs.navigationUpdate   : [VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char],
+    PlaneIDs.navigationUpdate   : [VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char],
     PlaneIDs.ballastUpdate      : [VarTypes.Bool],
     PlaneIDs.surface            : [],
 }
@@ -236,7 +236,7 @@ receivedVarTypes = {
                                    VarTypes.Signed.Char, # yaw
                                    VarTypes.Signed.Char, # speed
                                    VarTypes.Unsigned.Char], # battery
-    PlaneIDs.navigationUpdate   : [VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char],
+    PlaneIDs.navigationUpdate   : [VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char, VarTypes.Signed.Char],
     PlaneIDs.ballastUpdate      : [VarTypes.Bool],
     PlaneIDs.surface            : [VarTypes.Bool],
 }
@@ -415,11 +415,11 @@ def SetUpdateNavigation(newArrival:NewArrival) -> Execution:
     if(_PlaneIsNotOk(newArrival, PlaneIDs.navigationUpdate)):
         return Execution.Failed
 
-    BatiscanValues.speed    = newArrival.GetParameter(0)
-    BatiscanValues.pitch    = newArrival.GetParameter(1)
-    BatiscanValues.roll     = newArrival.GetParameter(2)
-    BatiscanValues.yaw      = newArrival.GetParameter(3)
-
+    BatiscanValues.speed            = newArrival.GetParameter(0)
+    BatiscanValues.pitch            = newArrival.GetParameter(1)
+    BatiscanValues.roll             = newArrival.GetParameter(2)
+    BatiscanValues.yaw              = newArrival.GetParameter(3)
+    BatiscanValues.cameraAngle      = newArrival.GetParameter(4)
 
     BatiscanUpdaters.UpdateSpeed()
     BatiscanUpdaters.UpdatePitch()

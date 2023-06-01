@@ -29,6 +29,7 @@ from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAx
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.uix.screenmanager import Screen, SlideTransition
+from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
@@ -84,9 +85,17 @@ def WeNeedLeftJoystick() -> bool:
     """
     Debug.Start("WeNeedLeftJoystick")
 
+    forwardIsBinded:bool = Controls._axes[SoftwareAxes.forward]["binded"] or Controls._buttons[SoftwareButtons.forward]["binded"]
+    backwardIsBinded:bool = Controls._axes[SoftwareAxes.backward]["binded"] or Controls._buttons[SoftwareButtons.backward]["binded"]
+    speedIsBinded:bool = forwardIsBinded and backwardIsBinded
+
+    yawLeftIsBinded:bool = Controls._axes[SoftwareAxes.yaw_left]["binded"] or Controls._buttons[SoftwareButtons.left]["binded"]
+    yawRightIsBinded:bool = Controls._axes[SoftwareAxes.yaw_right]["binded"] or Controls._buttons[SoftwareButtons.right]["binded"]
+    turningIsBinded:bool = yawLeftIsBinded and yawRightIsBinded
+
     Debug.Log("Checking Y axis bindings")
-    if(Controls._axes[SoftwareAxes.forward]["binded"] and Controls._axes[SoftwareAxes.backward]["binded"]):
-        if(Controls._axes[SoftwareAxes.yaw_left]["binded"] and Controls._axes[SoftwareAxes.yaw_right]["binded"]):
+    if(speedIsBinded):
+        if(turningIsBinded):
             Debug.Log("Screen joystick is not needed")
             Debug.End()
             return False
@@ -115,12 +124,18 @@ def WeNeedRightJoystick() -> bool:
     """
     Debug.Start("WeNeedRightJoystick")
 
-    Debug.Log("Checking Y axis bindings")
-    if(Controls._axes[SoftwareAxes.roll_left]["binded"] and Controls._axes[SoftwareAxes.roll_right]["binded"]):
-        if(Controls._axes[SoftwareAxes.pitch_up]["binded"] and Controls._axes[SoftwareAxes.pitch_down]["binded"]):
-            Debug.Log("Screen joystick is not needed")
-            Debug.End()
-            return False
+    rollLeftIsBinded:bool = Controls._axes[SoftwareAxes.roll_left]["binded"]
+    rollRightIsBinded:bool = Controls._axes[SoftwareAxes.roll_right]["binded"]
+    rollingIsBinded:bool = rollLeftIsBinded and rollRightIsBinded
+
+    pitchUpisBinded:bool = Controls._axes[SoftwareAxes.pitch_up]["binded"] or Controls._buttons[SoftwareButtons.up]["binded"]
+    pitchDownisBinded:bool = Controls._axes[SoftwareAxes.pitch_down]["binded"] or Controls._buttons[SoftwareButtons.down]["binded"]
+    pitchIsBinded:bool = pitchUpisBinded and pitchDownisBinded
+
+    if(pitchIsBinded and rollingIsBinded):
+        Debug.Log("Screen joystick is not needed")
+        Debug.End()
+        return False
     
     Debug.Log("Screen joystick is needed")
     Debug.End()
@@ -645,8 +660,14 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _CameraPressed(self, *args):
         Debug.Start("_CameraPressed")
+        self.CameraButton.icon = "reload"
+        self.CameraButton.disabled = True
+        Clock.unschedule(self._CheckOnCamera)
+
         BatiscanControls.wantedCameraStatus = not BatiscanControls.wantedCameraStatus
         BatiscanUDP.SendThing(PlaneIDs.cameraUpdate)
+
+        Clock.schedule_once(self._CheckOnCamera, 3)
         Debug.End()
 # ------------------------------------------------------------------------
     def _SurfacePressed(self, *args):
@@ -657,21 +678,39 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _LightPressed(self, *args):
         Debug.Start("_LightPressed")
+        self.LightButton.icon = "reload"
+        self.LightButton.disabled = True
+        Clock.unschedule(self._CheckOnLight)
+
         BatiscanControls.wantedLeftLight = not BatiscanValues.leftLight
         BatiscanControls.wantedRightLight = not BatiscanValues.rightLight
         BatiscanUDP.SendThing(PlaneIDs.lightsUpdate)
+
+        Clock.schedule_once(self._CheckOnLight, 3)
         Debug.End()
 # ------------------------------------------------------------------------
     def _EmptyPressed(self, *args):
         Debug.Start("_EmptyPressed")
+        self.EmptyBallastButton.icon = "reload"
+        self.EmptyBallastButton.disabled = True
+        Clock.unschedule(self._CheckOnBallast)
+
         BatiscanControls.wantedBallast = False
         BatiscanUDP.SendThing(PlaneIDs.ballastUpdate)
+
+        Clock.schedule_once(self._CheckOnBallast, 6)
         Debug.End()
 # ------------------------------------------------------------------------
     def _FillPressed(self, *args):
         Debug.Start("_FillPressed")
+        self.FillBallastButton.icon = "reload"
+        self.FillBallastButton.disabled = True
+        Clock.unschedule(self._CheckOnBallast)
+
         BatiscanControls.wantedBallast = True
         BatiscanUDP.SendThing(PlaneIDs.ballastUpdate)
+
+        Clock.schedule_once(self._CheckOnBallast, 6)
         Debug.End()
 # ------------------------------------------------------------------------
     def _LeftJoystickMoved(self, *args):
@@ -706,7 +745,7 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _UpdateCamera(self, *args):
         Debug.Start("_UpdateCamera")
-
+        Clock.unschedule(self._CheckOnCamera)
         if(BatiscanControls.currentCameraStatus != BatiscanValues.cameraStatus):
             BatiscanControls.currentCameraStatus = BatiscanValues.cameraStatus
 
@@ -724,8 +763,9 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _UpdateLights(self, *args):
         Debug.Start("_UpdateLights")
-
         if(BatiscanControls.currentLeftLight != BatiscanValues.leftLight or BatiscanControls.currentRightLight != BatiscanValues.rightLight):
+            Clock.unschedule(self._CheckOnLight)
+            self.LightButton.disabled = False
             BatiscanControls.currentLeftLight = BatiscanValues.leftLight
             BatiscanControls.currentRightLight = BatiscanValues.rightLight
 
@@ -754,9 +794,98 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _UpdateEmpty(self, *args):
         Debug.Start("_UpdateEmpty")
+        Clock.unschedule(self._CheckOnBallast)
+        self.FillBallastButton.icon = "basket-unfill"
+        if(BatiscanValues.ballast == True):
+            self.FillBallastButton.disabled = True
+            self.EmptyBallastButton.disabled = False
+        else:
+            self.FillBallastButton.disabled = False
+            self.EmptyBallastButton.disabled = True         
         Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateFill(self, *args):
         Debug.Start("_UpdateFill")
+        Clock.unschedule(self._CheckOnBallast)
+        self.FillBallastButton.icon = "basket-fill"
+        if(BatiscanValues.ballast == True):
+            self.FillBallastButton.disabled = True
+            self.EmptyBallastButton.disabled = False
+        else:
+            self.FillBallastButton.disabled = False
+            self.EmptyBallastButton.disabled = True   
         Debug.End()
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+    def _CheckOnLight(self, *args):
+        """
+            _CheckOnLight:
+            ==============
+            Summary:
+            --------
+            Checks if the light icon was updated after
+            1 second of being pressed.
+        """
+        theSame:bool = True
+
+        if(BatiscanValues.leftLight != BatiscanControls.wantedLeftLight):
+            BatiscanControls.wantedLeftLight = BatiscanValues.leftLight
+            theSame = False
+
+        if(BatiscanValues.rightLight != BatiscanControls.wantedRightLight):
+            BatiscanControls.wantedRightLight = BatiscanValues.rightLight
+            theSame = False
+        
+        if(not theSame):
+            BatiscanControls.wantedRightLight = BatiscanValues.rightLight
+            BatiscanControls.wantedLeftLight = BatiscanValues.leftLight
+
+            if(BatiscanValues.leftLight or BatiscanValues.rightLight):
+                self.LightButton.icon = "lightbulb"
+            else:
+                self.LightButton.icon = "lightbulb-outline"
+        self.LightButton.disabled = False
+# ------------------------------------------------------------------------
+    def _CheckOnCamera(self, *args):
+        """
+            _CheckOnCamera:
+            ==============
+            Summary:
+            --------
+            Checks if the light icon was updated after
+            1 second of being pressed.
+        """
+        if(BatiscanValues.cameraStatus != BatiscanControls.wantedCameraStatus):
+            BatiscanControls.wantedCameraStatus = BatiscanValues.cameraStatus
+
+            if(BatiscanValues.cameraStatus):
+                self.CameraButton.icon = "video"
+                self.CameraWidget.TurnOn()
+            else:
+                self.CameraButton.icon = "video-off"
+                self.CameraWidget.TurnOff()
+        self.CameraButton.disabled = False
+# ------------------------------------------------------------------------
+    def _CheckOnBallast(self, *args):
+        """
+            _CheckOnBallast:
+            ==============
+            Summary:
+            --------
+            Checks if the light icon was updated after
+            1 second of being pressed.
+        """
+        if(BatiscanValues.ballast != BatiscanControls.wantedBallast):
+            BatiscanControls.wantedBallast = BatiscanValues.ballast
+
+        self.FillBallastButton.icon = "basket-fill"
+        self.EmptyBallastButton.icon = "basket-unfill"
+
+        if(BatiscanValues.ballast):
+            self.FillBallastButton.disabled = True
+            self.EmptyBallastButton.disabled = False
+        else:
+            self.FillBallastButton.disabled = False
+            self.EmptyBallastButton.disabled = True
+
 LoadingLog.End("BatiscanMenu.py")

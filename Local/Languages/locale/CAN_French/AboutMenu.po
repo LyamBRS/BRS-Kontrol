@@ -1,5 +1,5 @@
-msgid ""
-msgstr ""
+#msgid ""
+#msgstr ""
 "Project-Id-Version: BRS Kontrol - Languages\n"
 "POT-Creation-Date: 2023-06-01 00:22\n"
 "PO-Revision-Date: 2023-06-01 00:22\n"

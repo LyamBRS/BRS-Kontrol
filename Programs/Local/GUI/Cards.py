@@ -171,7 +171,7 @@ class DeviceDriverInstallerCard(BaseButton, Widget):
         Debug.Start("Set_NoWifi")
         self.BottomButton.icon = "reload"
         self.BottomButton.text = _("Retry")
-        self.MiddleIcon.icon = "remove-wifi"
+        self.MiddleIcon.icon = "wifi-remove"
         self.InformationLabel.text = _("No internet connection. Device drivers cannot be installed.")
         self.SearchBox.disabled = True
         self.SearchBox.text = ""

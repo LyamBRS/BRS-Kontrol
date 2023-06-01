@@ -459,7 +459,7 @@ class CameraCardWidget(MDCard):
         self.MiddleWidget.allow_stretch = True
         self.MiddleWidget.anim_delay = 0.05
         self.MiddleWidget.keep_ratio = False
-        self.MiddleWidget.source = "sea-monkey.gif"
+        self.MiddleWidget.source = "Local/Drivers/Batiscan/Pages/sea-monkey.gif"
         self.MiddleWidget.pos_hint = {"center_x" : 0.5, "center_y" : 0.5}
         self.MiddleWidget.size_hint = (0.95,0.95)
         self.Layout.add_widget(self.MiddleWidget)

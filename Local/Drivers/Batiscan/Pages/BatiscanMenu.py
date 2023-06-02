@@ -906,11 +906,7 @@ class BatiscanMenu(Screen):
             Updates the arrow in the middle widget
             that represents
         """
-        if(not self.CameraWidget.streaming):
-            pitch = ConvertBatiscanAnglesToDegrees(BatiscanValues.pitch)
-            yaw = ConvertBatiscanAnglesToDegrees(BatiscanValues.yaw) + 180
-            roll = ConvertBatiscanAnglesToDegrees(BatiscanValues.roll)
-            self.CameraWidget.MiddleWidget.SetNewAngles(-pitch, -roll, yaw)
+        Clock.schedule_once(self._ChangeValues)
 # ------------------------------------------------------------------------
     def _CheckOnLight(self, *args):
         """
@@ -985,4 +981,11 @@ class BatiscanMenu(Screen):
 # ------------------------------------------------------------------------
     def _TurnOnMonkey(self, *args):
         self.CameraWidget.DisplayMonkey()
+# ------------------------------------------------------------------------
+    def _ChangeValues(self, *args):
+        if(not self.CameraWidget.streaming):
+            pitch = ConvertBatiscanAnglesToDegrees(BatiscanValues.pitch)
+            yaw = ConvertBatiscanAnglesToDegrees(BatiscanValues.yaw) + 180
+            roll = ConvertBatiscanAnglesToDegrees(BatiscanValues.roll)
+            self.CameraWidget.MiddleWidget.SetNewAngles(-pitch, -roll, yaw)
 LoadingLog.End("BatiscanMenu.py")

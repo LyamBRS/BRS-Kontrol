@@ -28,7 +28,7 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import ManualGitHub
+from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import ManualGitHub, RepoLinkIsValid, StringToGitLink
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -139,27 +139,59 @@ class DeviceDriverInstallerCard(BaseButton, Widget):
         """
         pass
 
+    def on_valid_repository(self, *args):
+        """
+            on_valid_repository:
+            ====================
+            Summary:
+            --------
+            Callback function executed when
+            the user enters a valid git
+            repository in the search bar.
+            Replace this by your own function.
+        """
+        pass
+
     def DownloadRepository(self, *args):
         """
+            DownloadRepository:
+            ===================
+            Summary:
+            --------
             Function that checks if internet is available.
             Then attempts to download the repository found
             in it's search bar.
         """
-        pass
+        Debug.Start("DownloadRepository")
+        link = StringToGitLink(self.SearchBox.text)
+        if(link == Execution.Failed):
+            Debug.Error(f"Failed to parse {self.SearchBox.text} into a repository.")
+            self.Set_RepositoryNotFound()
+            Debug.End()
+            return
+
+        if(RepoLinkIsValid(link)):
+            Debug.Error(f"{link} is a valid repository.")
+            self.on_valid_repository(link)
+            self.Set_Normal()
+        else:
+            Debug.Error(f"{link} is not a valid repository.")
+            self.Set_RepositoryNotFound()
+        Debug.End()
     #endregion
     #region   -- Private
     # ------------------------------------------------------
     def _RippleHandling(self, object, finished):
         if(finished):
             # Check if WiFi is online
-            result = IsWebsiteOnline()
-            if(not result):
-                remaining = ManualGitHub.GetRequestsLeft()
-                Debug.Log(f"Requests left: {remaining}")
-                if(remaining > 0):
-                    self.Set_Normal()
-                else:
-                    self.Set_NoGitHubRequests()
+            online = IsWebsiteOnline()
+            if(not online):
+                # remaining = ManualGitHub.GetRequestsLeft()
+                # Debug.Log(f"Requests left: {remaining}")
+                # if(remaining > 0):
+                self.DownloadRepository()
+                # else:
+                    # self.Set_NoGitHubRequests()
             else:
                 self.Set_NoWifi()
             pass
@@ -298,8 +330,8 @@ LoadingLog.Class("DeviceDriverCard")
 class DeviceDriverCard(BaseButton, Widget):
     #region   --------------------------- DOCSTRING
     ''' 
-        ButtonCard:
-        ===========
+        DeviceDriverCard:
+        =================
         Summary:
         --------
         This class is used to create a card with button attributes

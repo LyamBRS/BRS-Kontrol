@@ -155,8 +155,8 @@ class LeftBrSpand(AddonFoundations):
         result = LeftBrSpand.VerifyForExecution()
         if(result != Execution.Passed):
             Debug.Error("The addon cannot run on your device.")
-            Debug.Log("Adding addon to application...")
-            LeftBrSpand._ShowNewErrorDialog(_("Self Verification"), _("The LeftBrSpand failed to verify itself for launch."),_("Ok"))
+            # Debug.Log("Adding addon to application...")
+            # LeftBrSpand._ShowNewErrorDialog(_("Self Verification"), _("The LeftBrSpand failed to verify itself for launch."),_("Ok"))
             LeftBrSpand.addonInformation.DockAddonToApplication(False)
             Debug.End()
             return result

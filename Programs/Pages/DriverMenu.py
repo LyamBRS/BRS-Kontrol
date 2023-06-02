@@ -5,6 +5,8 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GetRepoFromLink, DownloadRepositoryAtPath
 LoadingLog.Start("DriverMenu.py")
 #====================================================================#
 # Imports
@@ -32,6 +34,7 @@ LoadingLog.Import("KivyMD")
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.progressbar import MDProgressBar
 # from kivymd.uix.card import MDCard
 # from kivymd.uix.button import MDTextButton
 #endregion
@@ -40,8 +43,9 @@ LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
 from ..Local.GUI.Cards import DeviceDriverCard
 from ..Local.FileHandler.deviceDriver import GetDrivers
-from ..Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
+from ..Pages.PopUps import PopUpStructure, PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 from ..Local.Hardware.RGB import KontrolRGB
+from Programs.Pages.DownloadProgress import DownloadProgressHandler, DownloadProgress_Screens
 #endregion
 #====================================================================#
 # Functions
@@ -370,6 +374,83 @@ def HandleDriverLaunch(driverName, GetErrorMessageFunction) -> Execution:
     message = message + " " + ("Returned value is: ") + str(execution)
     CallPopUps(message)
     Debug.End()
+# ------------------------------------------------------------------
+def DriversDownloaded(*args):
+    """
+        DriversDownloaded:
+        ==================
+        Summary:
+        --------
+        Callback function executed when the download is
+        successful.
+    """
+    PopUps_Screens.SetCaller(DownloadProgress_Screens, "DownloadProgress")
+    PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+    PopUpsHandler.Clear()
+    PopUpsHandler.Add(PopUpTypeEnum.Remark,
+                      Icon="check",
+                      Message=_("Kontrol successfully downloaded the device drivers."))
+    PopUps_Screens.Call()
+# ------------------------------------------------------------------
+def DriversFailedToDownload(*args):
+    """
+        DriversFailedToDownload:
+        ========================
+        Summary:
+        --------
+        Callback function executed when the download is
+        successful.
+    """
+    PopUps_Screens.SetCaller(DownloadProgress_Screens, "DownloadProgress")
+    PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+    PopUpsHandler.Clear()
+    PopUpsHandler.Add(PopUpTypeEnum.FatalError,
+                      Icon="download-off",
+                      Message=_("Kontrol failed to downloaded the specified device drivers."))
+    PopUps_Screens.Call()
+# ------------------------------------------------------------------
+def DownloadDeviceDriver(progressBar:MDProgressBar, DownloadProgressHandler, repositoryLink:str) -> Execution:
+    """
+        DownloadDeviceDriver:
+        =====================
+        Summary:
+        --------
+        This function will download a device driver git
+        repository in Local/Drivers/
+
+        Args:
+        -------
+        - `progressBar` : MDProgressbar updated by download functions running asynchronously. This way your kivy app gets a live update of the download's progression.
+
+        Returns:
+        -------
+        - `Execution.Passed` = Kontrol was successfully downloaded in a new folder
+        - `Execution.Failed` = Kontrol failed to download a new version for X reason.
+        - `Execution.NoConnection` = Kontrol failed to download because internet is not available
+    """
+    Debug.Start("DownloadDeviceDriver")
+
+    currentPath = os.getcwd()
+    driverPath = AppendPath(currentPath, "/Local/Drivers/")
+    Debug.Log(f"Path to drivers: {driverPath}")
+
+    Debug.Log("Creating new folder")
+    directoryName = GetRepoFromLink(repositoryLink)
+    directoryPath = os.path.join(driverPath, directoryName)
+    Debug.Log(f"New folder's path: {directoryPath}")
+
+    try:
+        os.mkdir(directoryPath)
+        Debug.Log("Success: Directory created")
+    except:
+        Debug.Error(f"Failed to create directory with name: {directoryName}")
+        DownloadProgressHandler.FailedDownload()
+        Debug.End()
+        return Execution.Failed
+
+    Debug.Log("Downloading Kontrol in new folder")
+    Debug.End()
+    return DownloadRepositoryAtPath(repositoryLink, directoryPath, progressBar, DownloadProgressHandler)
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -612,6 +693,7 @@ class DriverMenu(Screen):
         #endregion
         #region ---------------------------- Drivers
         DriverInstallerCard = DeviceDriverInstallerCard()
+        DriverInstallerCard.on_valid_repository = self.DownloadDriverPressed
 
         path = AppendPath(os.getcwd(), "/Local/Drivers")
         drivers = GetDrivers()
@@ -690,5 +772,29 @@ class DriverMenu(Screen):
             HandleDriverLaunch(driverName, GetError)
         Debug.End()
 # ------------------------------------------------------------------------
+    def DownloadDriverPressed(link):
+        """
+            DownloadDriverPressed:
+            ======================
+            Summary:
+            --------
+            Callback function executed when a user
+            wants to download a device driver
+            repository. This is a callback called
+            from the device driver github card.
+        """
+        PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+        DownloadProgress_Screens.SetCaller(DriverMenu_Screens, "DriverMenu", _("Downloading device drivers"), DownloadDeviceDriver)
+        DownloadProgressHandler.GoodDownload = DriversDownloaded
+        DownloadProgressHandler.FailedDownload = DriversFailedToDownload
+
+        PopUpsHandler.Clear()
+        PopUpsHandler.Add(Type = PopUpTypeEnum.Question,
+                          Message = _("Do you wish to download the following git repository as a device driver?") + f" {link}",
+                          ButtonAText = _("Download"),
+                          ButtonBText = _("Cancel"),
+                          ButtonAHandler = DownloadProgress_Screens.Call,
+                          ButtonBHandler = DriverMenu_Screens.Call)
 
 LoadingLog.End("DriverMenu.py")

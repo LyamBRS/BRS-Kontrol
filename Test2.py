@@ -189,61 +189,129 @@ print(name)
 # arrivedPlane = NewArrival(plane.passengers, classes)
 # PrintPlane(arrivedPlane)
 
-# from kivy.uix.boxlayout import BoxLayout
-# from kivymd.app import MDApp
-# from kivymd.uix.toolbar import MDTopAppBar
-# from kivymd.uix.button import MDIconButton
-# from kivymd.uix.gridlayout import MDGridLayout
-# 
-# from kivymd.uix.bottomnavigation import MDBottomNavigation, MDBottomNavigationItem
-# from kivy.uix.boxlayout import BoxLayout
-# from kivymd.app import MDApp
-# from kivymd.uix.toolbar import MDTopAppBar
-# from kivymd.uix.button import MDIconButton
-# from kivymd.uix.label import MDLabel
-# from kivy.uix.anchorlayout import AnchorLayout
-# from kivymd.uix.card import MDCard
-# 
-# from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
-# 
-# 
-# class NavigationButton(MDIconButton):
-    # def __init__(self, **kwargs):
-        # super(NavigationButton, self).__init__(**kwargs)
-        # self.name = "Quit"
-        # self.text = "Quit"
-        # self.icon = "android"
-        # self.valign = "center"
-        # self.halign = "center"
-        # self.pos_hint = {"center_x":0.5, "center_y":0.5}
-        # self.size_hint = (1,1)
-        # self.icon_size = self.size[1]
-# 
-# class BottomButtons(MDCard):
-#    def __init__(self, **kwargs):
-        # super(BottomButtons, self).__init__(**kwargs)
-        # self.shadow_softness = Shadow.Smoothness.default
-        # self.elevation = Shadow.Elevation.default
-        # self.shadow_radius = Shadow.Radius.default
-        # self.radius = Rounding.default
-        # self.add_widget(NavigationButton())
-        # self.add_widget(NavigationButton())  
-        # self.add_widget(NavigationButton())  
-        # self.add_widget(NavigationButton())  
-        # self.add_widget(NavigationButton())  
-# 
-# class Test(MDApp):
-    # def build(self):
-        # layout = BoxLayout(orientation="vertical", padding = 10)
-        # layout.size_hint = (1,0.125)
-# 
-        # top_toolbar = BottomButtons()
-# 
+from kivy.uix.boxlayout import BoxLayout
+from kivymd.app import MDApp
+from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.uix.button import MDIconButton
+from kivymd.uix.gridlayout import MDGridLayout
+
+from kivymd.uix.bottomnavigation import MDBottomNavigation, MDBottomNavigationItem
+from kivy.uix.boxlayout import BoxLayout
+from kivymd.app import MDApp
+from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.uix.button import MDIconButton
+from kivymd.uix.label import MDLabel
+from kivy.uix.anchorlayout import AnchorLayout
+from kivymd.uix.card import MDCard
+
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, Rounding
+
+
+class NavigationButton(MDIconButton):
+    def __init__(self, **kwargs):
+        super(NavigationButton, self).__init__(**kwargs)
+        self.name = "Quit"
+        self.text = "Quit"
+        self.icon = "android"
+        self.valign = "center"
+        self.halign = "center"
+        self.pos_hint = {"center_x":0.5, "center_y":0.5}
+        self.size_hint = (1,1)
+        self.icon_size = self.size[1]
+
+class BottomButtons(MDCard):
+   def __init__(self, **kwargs):
+        super(BottomButtons, self).__init__(**kwargs)
+        self.shadow_softness = Shadow.Smoothness.default
+        self.elevation = Shadow.Elevation.default
+        self.shadow_radius = Shadow.Radius.default
+        self.radius = Rounding.default
+        self.add_widget(NavigationButton())
+        self.add_widget(NavigationButton())  
+        self.add_widget(NavigationButton())  
+        self.add_widget(NavigationButton())  
+        self.add_widget(NavigationButton())  
+
+import os
+from Programs.Local.Hardware.RGB import KontrolRGB
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.spinner import MDSpinner
+from kivymd.uix.progressbar import MDProgressBar
+from Programs.Pages.DownloadProgress import DownloadProgress_Screens
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor, GetPrimaryColor
+
+
+class MainLayout(MDFloatLayout):
+    def __init__(self,
+                 **kwargs):
+        super(MainLayout, self).__init__(**kwargs)
+        Debug.Start("DownloadProgress -> on_pre_enter")
+
+        self.padding = 0
+        self.spacing = 0
+        KontrolRGB.FastLoadingAnimation()
+        #region ---- Background
+        path = os.getcwd()
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Login/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Login/Light.png"))
+        #endregion
+
+        #region ---------------------------- Layouts
+        self.Layout = MDBoxLayout(orientation = "vertical",
+                                  padding = 25)
+        #endregion
+
+        #region ---------------------------- Spinner
+        self.spinner = MDSpinner(size_hint = (0.25, 0.25), 
+                                 pos_hint = {"center_x":0.5, "center_y":0.5},
+                                 line_width = 4.5,
+                                 palette = [
+                                     GetAccentColor(),
+                                     GetPrimaryColor()
+                                 ])
+
+        self.downloadIcon = MDIconButton(pos_hint = {"center_x":0.5, "center_y":0.5},
+                                         icon = "cloud-download",
+                                         icon_size = "100")
+        #endregion
+
+        #region ---------------------------- Spinner
+        self.Label = MDLabel(text = DownloadProgress_Screens._downloadName,
+                             pos_hint = {"center_x" : 0.5, "center_y" :0.125},
+                             halign = "center",
+                             font_style = "H4")
+        #endregion
+
+        #region ---------------------------- Progress bar
+        self.progressBar = MDProgressBar(value = 50,
+                                         max = 100,
+                                         type = "determinate",
+                                         size_hint = (1,None),
+                                         pos_hint = {"center_x":0.5, "center_y":0.5})
+        #endregion
+
+        # Clock.schedule_once(self.CheckDownload, 1)
+
+        self.add_widget(background)
+        self.Layout.add_widget(self.spinner)
+        self.Layout.add_widget(self.progressBar)
+        self.add_widget(self.Label)
+        self.add_widget(self.downloadIcon)
+        self.add_widget(self.Layout)
+
+
+class Test(MDApp):
+    def build(self):
+
+
         # layout.add_widget(top_toolbar)
-        # return layout
+        return MainLayout()
 
 
-# Test().run()
+Test().run()
 
 
 

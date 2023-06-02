@@ -89,7 +89,7 @@ class WiFiConnecting_Screens:
     currentInternetAttempt:int = 0
     #endregion
     #region ---- Methods
-    def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0, direction:str="up") -> bool:
+    def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
         """
             Function which sets the screen that this screen should transition to on exit.
             This allows transitional screens to be reused by any screens at any time.
@@ -113,7 +113,7 @@ class WiFiConnecting_Screens:
         WiFiConnecting_Screens._exitDirection = direction
         return False
 
-    def SetCaller(screenClass, screenName:str, ssid:str, password:str, transition=SlideTransition,  duration:float=0, direction:str="down") -> bool:
+    def SetCaller(screenClass, screenName:str, ssid:str, password:str, transition=SlideTransition,  duration:float=0.5, direction:str="down") -> bool:
         """
             SetCaller:
             ==========

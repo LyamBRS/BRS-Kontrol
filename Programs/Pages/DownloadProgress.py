@@ -12,12 +12,16 @@ LoadingLog.Start("DownloadProgress.py")
 #====================================================================#
 #region ------------------------------------------------------ Python
 LoadingLog.Import("Python")
+import os
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor, GetPrimaryColor
 # from Programs.Local.GUI.Cards import DeviceDriverInstallerCard
 #endregion
 #region -------------------------------------------------------- Kivy
@@ -30,6 +34,8 @@ LoadingLog.Import("KivyMD")
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.spinner import MDSpinner
 from kivymd.uix.progressbar import MDProgressBar
+from kivymd.uix.label import MDLabel
+from kivymd.uix.button import MDIconButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -142,11 +148,11 @@ class DownloadProgress_Screens:
     _callerDuration = 0.5
     _exitDuration = 0.5
 
-    _downloadName:str = None
+    _downloadName:str = "Default download name"
     _downloadFunction = None
     #endregion
     #region ---- Methods
-    def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0, direction:str="up") -> bool:
+    def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
         """
             Function which sets the screen that this screen should transition to on exit.
             This allows transitional screens to be reused by any screens at any time.
@@ -170,7 +176,7 @@ class DownloadProgress_Screens:
         DownloadProgress_Screens._exitDirection = direction
         return False
 
-    def SetCaller(screenClass, screenName:str, downloadName:str, downloadFunction, transition=SlideTransition,  duration:float=0, direction:str="down") -> bool:
+    def SetCaller(screenClass, screenName:str, downloadName:str, downloadFunction, transition=SlideTransition,  duration:float=0.5, direction:str="down") -> bool:
         """
             SetCaller:
             ==========
@@ -333,34 +339,45 @@ class DownloadProgress(Screen):
 
         self.padding = 0
         self.spacing = 0
-
+        KontrolRGB.FastLoadingAnimation()
         #region ---- Background
-        import os
-        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
-        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
         path = os.getcwd()
-        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Menus/Dark.png"),
-                                        AppendPath(path, "/Libraries/Backgrounds/Menus/Light.png"))
+        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Login/Dark.png"),
+                                        AppendPath(path, "/Libraries/Backgrounds/Login/Light.png"))
         #endregion
 
         #region ---------------------------- Layouts
-        self.Layout = MDBoxLayout()
-        self.Layout.orientation = "vertical"
+        self.Layout = MDBoxLayout(orientation = "vertical",
+                                  padding = 25)
         #endregion
 
         #region ---------------------------- Spinner
-        self.spinner = MDSpinner()
-        self.spinner.size_hint = (0.25, 0.25)
-        self.spinner.pos_hint = {"center_x":0.5, "center_y":0.5}
+        self.spinner = MDSpinner(size_hint = (0.25, 0.25), 
+                                 pos_hint = {"center_x":0.5, "center_y":0.5},
+                                 line_width = 4.5,
+                                 palette = [
+                                     GetAccentColor(),
+                                     GetPrimaryColor()
+                                 ])
+
+        self.downloadIcon = MDIconButton(pos_hint = {"center_x":0.5, "center_y":0.5},
+                                         icon = "cloud-download",
+                                         icon_size = "100")
+        #endregion
+
+        #region ---------------------------- Spinner
+        self.Label = MDLabel(text = DownloadProgress_Screens._downloadName,
+                             pos_hint = {"center_x" : 0.5, "center_y" :0.125},
+                             halign = "center",
+                             font_style = "H4")
         #endregion
 
         #region ---------------------------- Progress bar
-        self.progressBar = MDProgressBar()
-        self.progressBar.value = 0
-        self.progressBar.max = 100
-        self.progressBar.type = "determinate"
-        self.progressBar.size_hint = (1, None)
-        self.progressBar.pos_hint = {"center_x":0.5, "center_y":0.5}
+        self.progressBar = MDProgressBar(value = 50,
+                                         max = 100,
+                                         type = "determinate",
+                                         size_hint = (1,None),
+                                         pos_hint = {"center_x":0.5, "center_y":0.5})
         #endregion
 
         Clock.schedule_once(self.CheckDownload, 1)
@@ -368,6 +385,8 @@ class DownloadProgress(Screen):
         self.add_widget(background)
         self.Layout.add_widget(self.spinner)
         self.Layout.add_widget(self.progressBar)
+        self.add_widget(self.Label)
+        self.add_widget(self.downloadIcon)
         self.add_widget(self.Layout)
         Debug.End()
 # ------------------------------------------------------------------------
@@ -421,11 +440,13 @@ class DownloadProgress(Screen):
         if(DownloadProgressHandler.downloadResult == Execution.Passed):
             DownloadProgressHandler.GoodDownload()
             DownloadProgressHandler.downloadResult = None
+            Debug.End()
             return
 
         if(DownloadProgressHandler.downloadResult == Execution.Failed):
             DownloadProgressHandler.FailedDownload()
             DownloadProgressHandler.downloadResult = None
+            Debug.End()
             return
 
         Clock.schedule_once(self.CheckDownload, 1)

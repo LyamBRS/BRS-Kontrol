@@ -143,7 +143,7 @@ class DownloadProgress_Screens:
     _exitTransition = SlideTransition
 
     _callerDirection = "up"
-    _exitDirection = "up"
+    _exitDirection = "down"
 
     _callerDuration = 0.5
     _exitDuration = 0.5
@@ -373,7 +373,7 @@ class DownloadProgress(Screen):
         #endregion
 
         #region ---------------------------- Progress bar
-        self.progressBar = MDProgressBar(value = 50,
+        self.progressBar = MDProgressBar(value = 0,
                                          max = 100,
                                          type = "determinate",
                                          size_hint = (1,None),

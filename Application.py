@@ -190,7 +190,7 @@ KontrolRGB.Uninitialize()
 Addons.StopAll()
 WiFiStatusUpdater.StopUpdating()
 
-Debug.Log("KILLING PYTHON PROCESS")
+# Debug.Log("KILLING PYTHON PROCESS")
 # KillPython()
 Shutdown.Kontrol()
 

@@ -234,7 +234,7 @@ class AccountMenu_Screens:
     _exitDuration = 0.5
     #endregion
     #region ---- Methods
-    def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0, direction:str="up") -> bool:
+    def SetExiter(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
         """
             Function which sets the screen that this screen should transition to on exit.
             This allows transitional screens to be reused by any screens at any time.
@@ -258,7 +258,7 @@ class AccountMenu_Screens:
         AccountMenu_Screens._exitDirection = direction
         return False
 
-    def SetCaller(screenClass, screenName:str, transition=SlideTransition, duration:float=0, direction:str="up") -> bool:
+    def SetCaller(screenClass, screenName:str, transition=SlideTransition, duration:float=0.5, direction:str="up") -> bool:
         """
             Function which sets the screen to load if an error occured. This is used to "go back" to whoever attempted
             to call this screen.

@@ -25,6 +25,7 @@ from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow, 
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor, GetPrimaryColor, GetMDCardColor
 from Libraries.BRS_Python_Libraries.BRS.PnP.controls import Controls, SoftwareAxes, SoftwareButtons
+from Libraries.BRS_Python_Libraries.BRS.GUI.ObjectViewer.objectView import ObjViewer
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -141,6 +142,19 @@ def WeNeedRightJoystick() -> bool:
     Debug.Log("Screen joystick is needed")
     Debug.End()
     return True
+
+def ConvertBatiscanAnglesToDegrees(angleToConvert:int) -> int:
+    """
+        Takes a value from -127 to 127 and converts it
+        to degrees. It also accounts for the -60 offset
+
+        First, 60 is added to compensate batiscan's 0 being -60
+        Then, the function adds 127 to the angle.
+        This makes it be from 0 to 254 (minus the offset).
+        Then, the function makes a cross product to transpose the 0-254 to 0-360.
+    """
+    newValue = ((((angleToConvert + 60) + 127) * 360) / 254)
+    return newValue 
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -425,10 +439,20 @@ class CameraCardWidget(MDCard):
             again.
         """
         if self.streaming:
-            self.Layout.remove_widget(self.MiddleWidget) # Removing camera icon.
-            self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
-            self.MiddleWidget.theme_icon_color = "Custom"
-            self.MiddleWidget.icon_color = GetMDCardColor("Light")
+            self.Layout.remove_widget(self.MiddleWidget) # Removing old widget
+
+            path:str = os.getcwd()
+
+            pathToObj = AppendPath(path, "/Local/Drivers/Batiscan/Pages/submarine.obj")
+            pathToGlsl = AppendPath(path, "/Local/Drivers/Batiscan/Pages/submarine.glsl")
+
+            self.MiddleWidget = ObjViewer(pathToOBJ = pathToObj,
+                                          pathToglsl = pathToGlsl,
+                                          updatedManually = True)
+
+            # self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
+            # self.MiddleWidget.theme_icon_color = "Custom"
+            # self.MiddleWidget.icon_color = GetMDCardColor("Light")
             self.Layout.add_widget(self.MiddleWidget)
             self.streaming = False
 
@@ -476,9 +500,19 @@ class CameraCardWidget(MDCard):
         self.md_bg_color = GetMDCardColor("Dark")
         self.bg_color = GetMDCardColor("Dark")
 
-        self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
-        self.MiddleWidget.theme_icon_color = "Custom"
-        self.MiddleWidget.icon_color = GetMDCardColor("Light")
+        # self.MiddleWidget = MDIconButton(icon_color = GetMDCardColor("Light"), pos_hint = {"center_x" : 0.5, "center_y" : 0.5}, size_hint = (0.25,0.25), icon = "video-off", ripple_color = [0,0,0], icon_size = 75)
+        # self.MiddleWidget.theme_icon_color = "Custom"
+        # self.MiddleWidget.icon_color = GetMDCardColor("Light")
+
+        path:str = os.getcwd()
+
+        pathToObj = AppendPath(path, "/Local/Drivers/Batiscan/Pages/submarine.obj")
+        pathToGlsl = AppendPath(path, "/Local/Drivers/Batiscan/Pages/submarine.glsl")
+
+        self.MiddleWidget = ObjViewer(pathToOBJ = pathToObj,
+                                    pathToglsl = pathToGlsl,
+                                    updatedManually = True)
+
         self.Layout.add_widget(self.MiddleWidget)
         self.add_widget(self.Layout)
         self.streaming = False
@@ -628,6 +662,11 @@ class BatiscanMenu(Screen):
         #FIX-ME: This is needed to start updating on screen values.
         BatiscanUDP.SendThing(PlaneIDs.lightsUpdate)
 
+        try:
+            self._UpdateArrowAngles()
+        except:
+            pass
+
         #region ---------------------------- Updaters
         BatiscanUpdaters.UpdateLeftLightState = self._UpdateLights
         BatiscanUpdaters.UpdateRightLightState = self._UpdateLights
@@ -635,6 +674,8 @@ class BatiscanMenu(Screen):
         BatiscanUpdaters.UpdateBattery = self._UpdateBattery
         BatiscanUpdaters.UpdatePressure = self._UpdatePressure
         BatiscanUpdaters.UpdateTemperature = self._UpdateTemperature
+        BatiscanUpdaters.UpdateBallast = self._UpdateFill
+        BatiscanUpdaters.UpdateSubmarineAngles = self._UpdateArrowAngles
         #endregion
 
         Debug.End()
@@ -653,6 +694,8 @@ class BatiscanMenu(Screen):
         BatiscanUpdaters.UpdateBattery = EmptyFunction
         BatiscanUpdaters.UpdatePressure = EmptyFunction
         BatiscanUpdaters.UpdateTemperature = EmptyFunction
+        BatiscanUpdaters.UpdateBallast = EmptyFunction
+        BatiscanUpdaters.UpdateSubmarineAngles = EmptyFunction
 
         Debug.End()
 # ------------------------------------------------------------------------
@@ -819,7 +862,8 @@ class BatiscanMenu(Screen):
     def _UpdateEmpty(self, *args):
         Debug.Start("_UpdateEmpty")
         Clock.unschedule(self._CheckOnBallast)
-        self.FillBallastButton.icon = "basket-unfill"
+        self.EmptyBallastButton.icon = "basket-unfill"
+        self.FillBallastButton.icon = "basket-fill"
         if(BatiscanValues.ballast == True):
             self.FillBallastButton.disabled = True
             self.EmptyBallastButton.disabled = False
@@ -832,6 +876,7 @@ class BatiscanMenu(Screen):
         Debug.Start("_UpdateFill")
         Clock.unschedule(self._CheckOnBallast)
         self.FillBallastButton.icon = "basket-fill"
+        self.EmptyBallastButton.icon = "basket-unfill"
         if(BatiscanValues.ballast == True):
             self.FillBallastButton.disabled = True
             self.EmptyBallastButton.disabled = False
@@ -840,6 +885,20 @@ class BatiscanMenu(Screen):
             self.EmptyBallastButton.disabled = True   
         Debug.End()
 # ------------------------------------------------------------------------
+    def _UpdateArrowAngles(self, *args):
+        """
+            _UpdateArrowAngles:
+            ===================
+            Summary:
+            --------
+            Updates the arrow in the middle widget
+            that represents
+        """
+        if(not self.CameraWidget.streaming):
+            pitch = ConvertBatiscanAnglesToDegrees(BatiscanValues.pitch)
+            yaw = ConvertBatiscanAnglesToDegrees(BatiscanValues.yaw) + 180
+            roll = ConvertBatiscanAnglesToDegrees(BatiscanValues.roll)
+            self.CameraWidget.MiddleWidget.SetNewAngles(pitch, roll, yaw)
 # ------------------------------------------------------------------------
     def _CheckOnLight(self, *args):
         """

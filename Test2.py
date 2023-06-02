@@ -242,74 +242,52 @@ from kivymd.uix.spinner import MDSpinner
 from kivymd.uix.progressbar import MDProgressBar
 from Programs.Pages.DownloadProgress import DownloadProgress_Screens
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor, GetPrimaryColor
-
-
-class MainLayout(MDFloatLayout):
-    def __init__(self,
-                 **kwargs):
-        super(MainLayout, self).__init__(**kwargs)
-        Debug.Start("DownloadProgress -> on_pre_enter")
-
-        self.padding = 0
-        self.spacing = 0
-        KontrolRGB.FastLoadingAnimation()
-        #region ---- Background
-        path = os.getcwd()
-        background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Login/Dark.png"),
-                                        AppendPath(path, "/Libraries/Backgrounds/Login/Light.png"))
-        #endregion
-
-        #region ---------------------------- Layouts
-        self.Layout = MDBoxLayout(orientation = "vertical",
-                                  padding = 25)
-        #endregion
-
-        #region ---------------------------- Spinner
-        self.spinner = MDSpinner(size_hint = (0.25, 0.25), 
-                                 pos_hint = {"center_x":0.5, "center_y":0.5},
-                                 line_width = 4.5,
-                                 palette = [
-                                     GetAccentColor(),
-                                     GetPrimaryColor()
-                                 ])
-
-        self.downloadIcon = MDIconButton(pos_hint = {"center_x":0.5, "center_y":0.5},
-                                         icon = "cloud-download",
-                                         icon_size = "100")
-        #endregion
-
-        #region ---------------------------- Spinner
-        self.Label = MDLabel(text = DownloadProgress_Screens._downloadName,
-                             pos_hint = {"center_x" : 0.5, "center_y" :0.125},
-                             halign = "center",
-                             font_style = "H4")
-        #endregion
-
-        #region ---------------------------- Progress bar
-        self.progressBar = MDProgressBar(value = 50,
-                                         max = 100,
-                                         type = "determinate",
-                                         size_hint = (1,None),
-                                         pos_hint = {"center_x":0.5, "center_y":0.5})
-        #endregion
-
-        # Clock.schedule_once(self.CheckDownload, 1)
-
-        self.add_widget(background)
-        self.Layout.add_widget(self.spinner)
-        self.Layout.add_widget(self.progressBar)
-        self.add_widget(self.Label)
-        self.add_widget(self.downloadIcon)
-        self.add_widget(self.Layout)
-
+from Local.Drivers.Batiscan.Pages.BatiscanMenu import CameraCardWidget
+from Libraries.BRS_Python_Libraries.BRS.GUI.ObjectViewer.objectView import ObjViewer
+from kivymd.uix.slider import MDSlider
+from kivy.app import App
 
 class Test(MDApp):
     def build(self):
+        self.theme_cls.theme_style = "Dark"
+        self.object3D = CameraCardWidget()
 
+        pitch = -60 # Y
+        yaw = -60 # Z
+        roll = -60 # X
 
+        self.sliderPitch = MDSlider(min = -127, max=127, value = pitch, size_hint = (1,0.1))
+        self.sliderRoll = MDSlider(min = -127, max=127, value = yaw, size_hint = (1,0.1))
+        self.sliderYaw = MDSlider(min = -127, max=127, value = roll, size_hint = (1,0.1))
+
+        # self.sliderPitch.step = 127 + 127
+        # self.sliderRoll.step = 127 + 127
+        # self.sliderYaw.step = 127 + 127
+
+        self.sliderPitch.bind(value = self.on_new_value)
+        self.sliderRoll.bind(value = self.on_new_value)
+        self.sliderYaw.bind(value = self.on_new_value)
+
+        MainLayout = MDBoxLayout(padding = 50, orientation = "vertical", spacing = 0)
+        MainLayout.add_widget(self.sliderPitch)
+        MainLayout.add_widget(self.sliderRoll)
+        MainLayout.add_widget(self.sliderYaw)
+        MainLayout.add_widget(self.object3D)
         # layout.add_widget(top_toolbar)
-        return MainLayout()
+        return MainLayout
 
+    def converter(self, value) -> int:
+        newValue = ((((value + 60) + 127) * 360) / 254)
+        return newValue
+
+
+    def on_new_value(self, *args):
+
+        pitch = self.converter(self.sliderPitch.value)
+        roll = self.converter(self.sliderRoll.value)
+        yaw = self.converter(self.sliderYaw.value) + 180
+
+        self.object3D.MiddleWidget.SetNewAngles(pitch, roll, yaw)
 
 Test().run()
 

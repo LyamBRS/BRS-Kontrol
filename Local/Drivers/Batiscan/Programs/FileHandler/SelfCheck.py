@@ -100,7 +100,9 @@ def CheckContent() -> FileIntegrity:
             "DebuggerMenu.py",
             "AboutMenu.py",
             "BatiscanValuesMenu.py",
-            "sea-monkey.gif"
+            "sea-monkey.gif",
+            "submarine.obj",
+            "submarine.glsl"
         ],
 
         # Local folder content

@@ -425,6 +425,7 @@ def SetUpdateNavigation(newArrival:NewArrival) -> Execution:
     BatiscanUpdaters.UpdatePitch()
     BatiscanUpdaters.UpdateRoll()
     BatiscanUpdaters.UpdateYaw()
+    BatiscanUpdaters.UpdateSubmarineAngles()
 
     return Execution.Passed
 ################################################

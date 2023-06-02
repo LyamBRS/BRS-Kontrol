@@ -80,9 +80,9 @@ class BatiscanControls:
     currentTemperatureUnit:str = "C"
     wantedTemperatureUnit:str = "C"
 
-    currentXAxis:int = 0
-    currentYAxis:int = 0
-    currentZAxis:int = 0
+    currentXAxis:int = -60
+    currentYAxis:int = -60
+    currentZAxis:int = -60
     currentPitch:int = 0
     currentRoll:int = 0
     currentYaw:int = 0

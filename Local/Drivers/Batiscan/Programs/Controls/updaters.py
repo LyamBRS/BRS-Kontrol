@@ -94,6 +94,19 @@ class BatiscanUpdaters:
         """
         pass
 
+    def UpdateSubmarineAngles(*args):
+        """
+            UpdateYaw:
+            ============
+            Summary:
+            --------
+            NEEDS TO BE OVERWRITTEN.
+
+            IS USED TO UPDATE YAW, ROLL, PITCH
+            AT ONCE.
+        """
+        pass
+
     def UpdateYaw(*args):
         """
             UpdateYaw:

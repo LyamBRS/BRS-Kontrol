@@ -135,9 +135,9 @@ class BatiscanValues:
 
         BatiscanValues.ballast = False
 
-        BatiscanValues.pitch = 0
-        BatiscanValues.yaw  = 0
-        BatiscanValues.roll = 0
+        BatiscanValues.pitch = -60
+        BatiscanValues.yaw  = -60
+        BatiscanValues.roll = -60
         BatiscanValues.speed = 0
 
         BatiscanValues.rightLight = False

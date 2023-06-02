@@ -4,9 +4,6 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
-from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GetRepoFromLink, DownloadRepositoryAtPath
 LoadingLog.Start("DriverMenu.py")
 #====================================================================#
 # Imports
@@ -19,10 +16,11 @@ import os
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
-# from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-# from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
 from Programs.Local.GUI.Cards import DeviceDriverInstallerCard
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.Network.APIs.GitHub import GetRepoFromLink, DownloadRepositoryAtPath, StringToGitLink
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
@@ -30,13 +28,10 @@ from kivy.uix.screenmanager import Screen, SlideTransition
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-# from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.progressbar import MDProgressBar
-# from kivymd.uix.card import MDCard
-# from kivymd.uix.button import MDTextButton
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
@@ -408,49 +403,6 @@ def DriversFailedToDownload(*args):
                       Icon="download-off",
                       Message=_("Kontrol failed to downloaded the specified device drivers."))
     PopUps_Screens.Call()
-# ------------------------------------------------------------------
-def DownloadDeviceDriver(progressBar:MDProgressBar, DownloadProgressHandler, repositoryLink:str) -> Execution:
-    """
-        DownloadDeviceDriver:
-        =====================
-        Summary:
-        --------
-        This function will download a device driver git
-        repository in Local/Drivers/
-
-        Args:
-        -------
-        - `progressBar` : MDProgressbar updated by download functions running asynchronously. This way your kivy app gets a live update of the download's progression.
-
-        Returns:
-        -------
-        - `Execution.Passed` = Kontrol was successfully downloaded in a new folder
-        - `Execution.Failed` = Kontrol failed to download a new version for X reason.
-        - `Execution.NoConnection` = Kontrol failed to download because internet is not available
-    """
-    Debug.Start("DownloadDeviceDriver")
-
-    currentPath = os.getcwd()
-    driverPath = AppendPath(currentPath, "/Local/Drivers/")
-    Debug.Log(f"Path to drivers: {driverPath}")
-
-    Debug.Log("Creating new folder")
-    directoryName = GetRepoFromLink(repositoryLink)
-    directoryPath = os.path.join(driverPath, directoryName)
-    Debug.Log(f"New folder's path: {directoryPath}")
-
-    try:
-        os.mkdir(directoryPath)
-        Debug.Log("Success: Directory created")
-    except:
-        Debug.Error(f"Failed to create directory with name: {directoryName}")
-        DownloadProgressHandler.FailedDownload()
-        Debug.End()
-        return Execution.Failed
-
-    Debug.Log("Downloading Kontrol in new folder")
-    Debug.End()
-    return DownloadRepositoryAtPath(repositoryLink, directoryPath, progressBar, DownloadProgressHandler)
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -692,13 +644,13 @@ class DriverMenu(Screen):
         self.ToolBar = AppNavigationBar(pageTitle=_("Devices Driver"))
         #endregion
         #region ---------------------------- Drivers
-        DriverInstallerCard = DeviceDriverInstallerCard()
-        DriverInstallerCard.on_valid_repository = self.DownloadDriverPressed
+        self.DriverInstallerCard = DeviceDriverInstallerCard()
+        self.DriverInstallerCard.on_valid_repository = self.DownloadDriverPressed
 
         path = AppendPath(os.getcwd(), "/Local/Drivers")
         drivers = GetDrivers()
 
-        self.driversBox.add_widget(DriverInstallerCard)
+        self.driversBox.add_widget(self.DriverInstallerCard)
         for driver in drivers:
             card = DeviceDriverCard(driverName=driver)
             card.PressedEnd = self.DriverPressed
@@ -771,8 +723,56 @@ class DriverMenu(Screen):
         if(execution == Execution.Passed):
             HandleDriverLaunch(driverName, GetError)
         Debug.End()
+
+# ------------------------------------------------------------------
+    def DownloadDeviceDriver(self, progressBar:MDProgressBar, DownloadProgressHandler:DownloadProgressHandler) -> Execution:
+        """
+            DownloadDeviceDriver:
+            =====================
+            Summary:
+            --------
+            This function will download a device driver git
+            repository in Local/Drivers/
+
+            Args:
+            -------
+            - `progressBar` : MDProgressbar updated by download functions running asynchronously. This way your kivy app gets a live update of the download's progression.
+
+            Returns:
+            -------
+            - `Execution.Passed` = Kontrol was successfully downloaded in a new folder
+            - `Execution.Failed` = Kontrol failed to download a new version for X reason.
+            - `Execution.NoConnection` = Kontrol failed to download because internet is not available
+        """
+        Debug.Start("DownloadDeviceDriver")
+
+        currentPath = os.getcwd()
+        driverPath = AppendPath(currentPath, "/Local/Drivers/")
+        Debug.Log(f"Path to drivers: {driverPath}")
+
+        repositoryLink = StringToGitLink(DownloadProgressHandler.repositoryLink)
+        Debug.Log(f"Link to the repository is: {repositoryLink}. Text in the searchbar is {DownloadProgressHandler.repositoryLink}")
+
+        Debug.Log("Creating new folder")
+        directoryName = GetRepoFromLink(repositoryLink)
+        directoryPath = os.path.join(driverPath, directoryName)
+        Debug.Log(f"New folder's path: {directoryPath}")
+
+        try:
+            os.mkdir(directoryPath)
+            Debug.Log("Success: Directory created")
+        except:
+            Debug.Error(f"Failed to create directory with name: {directoryName}")
+            DownloadProgressHandler.FailedDownload()
+            Debug.End()
+            return Execution.Failed
+
+        Debug.Log("Downloading Kontrol in new folder")
+        Debug.End()
+        return DownloadRepositoryAtPath(repositoryLink, directoryPath, progressBar, DownloadProgressHandler)
+
 # ------------------------------------------------------------------------
-    def DownloadDriverPressed(link):
+    def DownloadDriverPressed(self, *args):
         """
             DownloadDriverPressed:
             ======================
@@ -784,17 +784,23 @@ class DriverMenu(Screen):
             from the device driver github card.
         """
         PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
-        PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
-        DownloadProgress_Screens.SetCaller(DriverMenu_Screens, "DriverMenu", _("Downloading device drivers"), DownloadDeviceDriver)
+        PopUps_Screens.SetExiter(DownloadProgress_Screens, "DownloadProgress")
+        DownloadProgress_Screens.SetCaller(DriverMenu_Screens, "DriverMenu", _("Downloading device drivers"), self.DownloadDeviceDriver)
+        DownloadProgress_Screens.SetExiter(DriverMenu_Screens, "DriverMenu")
+
+
+        DownloadProgressHandler.repositoryLink = StringToGitLink(self.DriverInstallerCard.SearchBox.text)
+
         DownloadProgressHandler.GoodDownload = DriversDownloaded
         DownloadProgressHandler.FailedDownload = DriversFailedToDownload
 
         PopUpsHandler.Clear()
         PopUpsHandler.Add(Type = PopUpTypeEnum.Question,
-                          Message = _("Do you wish to download the following git repository as a device driver?") + f" {link}",
+                          Message = _("Do you wish to download the following git repository as a device driver?") + f" {args[0]}",
                           ButtonAText = _("Download"),
                           ButtonBText = _("Cancel"),
                           ButtonAHandler = DownloadProgress_Screens.Call,
                           ButtonBHandler = DriverMenu_Screens.Call)
+        PopUps_Screens.Call()
 
 LoadingLog.End("DriverMenu.py")

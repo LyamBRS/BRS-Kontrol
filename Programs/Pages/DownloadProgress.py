@@ -4,10 +4,8 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
-from Programs.Local.FileHandler.Profiles import ProfileThemeEnum
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
 from Programs.Local.Updating.LaunchHandling import CreateLaunchNewAppPopUp, CreateTransferDataPopUp
-from Programs.Pages.ProfileMenu import ProfileMenu_Screens
 LoadingLog.Start("DownloadProgress.py")
 #====================================================================#
 # Imports
@@ -20,24 +18,23 @@ LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Programs.Local.GUI.Cards import DeviceDriverInstallerCard
+# from Programs.Local.GUI.Cards import DeviceDriverInstallerCard
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.spinner import MDSpinner
 from kivymd.uix.progressbar import MDProgressBar
 #endregion
 #region ------------------------------------------------------ Kontrol
 LoadingLog.Import("Local")
-from ..Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
-from ..Local.Hardware.RGB import KontrolRGB
+from Programs.Pages.PopUps import PopUpsHandler, PopUps_Screens, PopUpTypeEnum
+from Programs.Local.Hardware.RGB import KontrolRGB
 #endregion
 #====================================================================#
 # thread class
@@ -63,6 +60,8 @@ class DownloadProgressHandler():
         Defaults to `None`
     """
 
+    repositoryLink:str = ""
+
     def GoodDownload() -> Execution:
         """
             DownloadWorked:
@@ -71,6 +70,7 @@ class DownloadProgressHandler():
             replace it with your own function before calling the
             downloadprogress_screens class.
         """
+        from Programs.Pages.ProfileMenu import ProfileMenu_Screens
         PopUpsHandler.Clear()
         PopUpsHandler.Add(Icon="check-decagram",
                       Message=_("The download was successful and has installed successfully."),
@@ -93,6 +93,7 @@ class DownloadProgressHandler():
             replace it with your own function before calling the
             downloadprogress_screens class.
         """
+        from Programs.Pages.ProfileMenu import ProfileMenu_Screens
         PopUpsHandler.Clear()
         PopUpsHandler.Add(Icon="check-decagram",
                         Message=_("The download failed and couldn't complete."),

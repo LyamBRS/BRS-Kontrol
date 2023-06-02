@@ -808,7 +808,7 @@ class BatiscanMenu(Screen):
         BatiscanActions.SetNewRoll(roll)
 # ------------------------------------------------------------------------
     def _UpdateCamera(self, *args):
-        Debug.Start("_UpdateCamera")
+        # Debug.Start("_UpdateCamera")
         Clock.unschedule(self._CheckOnCamera)
         if(BatiscanControls.currentCameraStatus != BatiscanValues.cameraStatus):
             BatiscanControls.currentCameraStatus = BatiscanValues.cameraStatus
@@ -822,14 +822,15 @@ class BatiscanMenu(Screen):
                 self.CameraButton.icon = "video-off"
                 Clock.schedule_once(self.CameraWidget.TurnOff, 0.5)
         self.CameraButton.disabled = False
-        Debug.End()
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateSurface(self, *args):
-        Debug.Start("_UpdateSurface")
-        Debug.End()
+        # Debug.Start("_UpdateSurface")
+        # Debug.End()
+        pass
 # ------------------------------------------------------------------------
     def _UpdateLights(self, *args):
-        Debug.Start("_UpdateLights")
+        # Debug.Start("_UpdateLights")
         if(BatiscanControls.currentLeftLight != BatiscanValues.leftLight or BatiscanControls.currentRightLight != BatiscanValues.rightLight):
             Clock.unschedule(self._CheckOnLight)
             self.LightButton.disabled = False
@@ -841,49 +842,60 @@ class BatiscanMenu(Screen):
             else:
                 self.LightButton.icon = "lightbulb-outline"        
         
-        Debug.End()
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateTemperature(self, *args):
-        Debug.Start("_UpdateTemperature")
-        self.TemperatureLabel.text = str(BatiscanValues.temperature) + BatiscanValues.temperatureUnit
-        Debug.End()
+        # Debug.Start("_UpdateTemperature")
+        if(BatiscanValues.temperature != BatiscanControls.currentTemperature):
+            BatiscanControls.currentTemperature = BatiscanValues.temperature
+            self.TemperatureLabel.text = str(BatiscanValues.temperature) + BatiscanValues.temperatureUnit
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdatePressure(self, *args):
-        Debug.Start("_UpdatePressure")
-        printed = f"{(BatiscanValues.pressure/1000):.2f}"
-        self.PressureLabel.text = printed + " kPa"
-        Debug.End()
+        # Debug.Start("_UpdatePressure")
+        if(BatiscanValues.pressure != BatiscanControls.currentPressure):
+            BatiscanControls.currentPressure = BatiscanValues.pressure
+            printed = f"{(BatiscanValues.pressure/1000):.2f}"
+            self.PressureLabel.text = printed + " kPa"
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateBattery(self, *args):
-        Debug.Start("_UpdateBattery")
-        self.BatteryLabel.text = str(BatiscanValues.battery) + "%"
-        Debug.End()
+        # Debug.Start("_UpdateBattery")
+        if(BatiscanValues.battery != BatiscanControls.currentBattery):
+            BatiscanControls.currentBattery = BatiscanValues.battery
+            self.BatteryLabel.text = str(BatiscanValues.battery) + "%"
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateEmpty(self, *args):
-        Debug.Start("_UpdateEmpty")
-        Clock.unschedule(self._CheckOnBallast)
-        self.EmptyBallastButton.icon = "basket-unfill"
-        self.FillBallastButton.icon = "basket-fill"
-        if(BatiscanValues.ballast == True):
-            self.FillBallastButton.disabled = True
-            self.EmptyBallastButton.disabled = False
-        else:
-            self.FillBallastButton.disabled = False
-            self.EmptyBallastButton.disabled = True         
-        Debug.End()
+        # Debug.Start("_UpdateEmpty")
+
+        if(BatiscanValues.ballast != BatiscanControls.currentBallast):
+            BatiscanControls.currentBallast = BatiscanValues.ballast
+            Clock.unschedule(self._CheckOnBallast)
+            self.EmptyBallastButton.icon = "basket-unfill"
+            self.FillBallastButton.icon = "basket-fill"
+            if(BatiscanValues.ballast == True):
+                self.FillBallastButton.disabled = True
+                self.EmptyBallastButton.disabled = False
+            else:
+                self.FillBallastButton.disabled = False
+                self.EmptyBallastButton.disabled = True         
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateFill(self, *args):
-        Debug.Start("_UpdateFill")
-        Clock.unschedule(self._CheckOnBallast)
-        self.FillBallastButton.icon = "basket-fill"
-        self.EmptyBallastButton.icon = "basket-unfill"
-        if(BatiscanValues.ballast == True):
-            self.FillBallastButton.disabled = True
-            self.EmptyBallastButton.disabled = False
-        else:
-            self.FillBallastButton.disabled = False
-            self.EmptyBallastButton.disabled = True   
-        Debug.End()
+        # Debug.Start("_UpdateFill")
+        if(BatiscanValues.ballast != BatiscanControls.currentBallast):
+            BatiscanControls.currentBallast = BatiscanValues.ballast
+            Clock.unschedule(self._CheckOnBallast)
+            self.EmptyBallastButton.icon = "basket-unfill"
+            self.FillBallastButton.icon = "basket-fill"
+            if(BatiscanValues.ballast == True):
+                self.FillBallastButton.disabled = True
+                self.EmptyBallastButton.disabled = False
+            else:
+                self.FillBallastButton.disabled = False
+                self.EmptyBallastButton.disabled = True   
+        # Debug.End()
 # ------------------------------------------------------------------------
     def _UpdateArrowAngles(self, *args):
         """
@@ -898,7 +910,7 @@ class BatiscanMenu(Screen):
             pitch = ConvertBatiscanAnglesToDegrees(BatiscanValues.pitch)
             yaw = ConvertBatiscanAnglesToDegrees(BatiscanValues.yaw) + 180
             roll = ConvertBatiscanAnglesToDegrees(BatiscanValues.roll)
-            self.CameraWidget.MiddleWidget.SetNewAngles(pitch, roll, yaw)
+            self.CameraWidget.MiddleWidget.SetNewAngles(-pitch, -roll, yaw)
 # ------------------------------------------------------------------------
     def _CheckOnLight(self, *args):
         """

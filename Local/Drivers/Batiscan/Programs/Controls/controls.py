@@ -66,6 +66,10 @@ class BatiscanControls:
     currentCameraAngle:int = 0
     wantedCameraAngle:int = 0
 
+    currentBattery:int = 0
+    currentTemperature:int = 0
+    currentPressure:int = 0
+
     currentMode:str = "N"
     wantedMode:str = "N"
 

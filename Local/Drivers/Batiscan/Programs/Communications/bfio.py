@@ -399,9 +399,10 @@ def SetAllSensor(newArrival:NewArrival) -> Execution:
     BatiscanValues.battery          = newArrival.GetParameter(6)
 
     BatiscanUpdaters.UpdatePressure()
-    BatiscanUpdaters.UpdatePitch()
-    BatiscanUpdaters.UpdateRoll()
-    BatiscanUpdaters.UpdateYaw()
+    # BatiscanUpdaters.UpdatePitch()
+    # BatiscanUpdaters.UpdateRoll()
+    # BatiscanUpdaters.UpdateYaw()
+    BatiscanUpdaters.UpdateSubmarineAngles()
     BatiscanUpdaters.UpdateSpeed()
     BatiscanUpdaters.UpdateBattery()
     BatiscanUpdaters.UpdateTemperature()
@@ -422,9 +423,9 @@ def SetUpdateNavigation(newArrival:NewArrival) -> Execution:
     BatiscanValues.cameraAngle      = newArrival.GetParameter(4)
 
     BatiscanUpdaters.UpdateSpeed()
-    BatiscanUpdaters.UpdatePitch()
-    BatiscanUpdaters.UpdateRoll()
-    BatiscanUpdaters.UpdateYaw()
+    # BatiscanUpdaters.UpdatePitch()
+    # BatiscanUpdaters.UpdateRoll()
+    # BatiscanUpdaters.UpdateYaw()
     BatiscanUpdaters.UpdateSubmarineAngles()
 
     return Execution.Passed

@@ -65,7 +65,6 @@ ButtonFont.size = "32sp"
 LoadingLog.Class("Application")
 class Application(MDApp):
 
-
     def SetDefaultTheme(self):
         """
             SetDefaultTheme:

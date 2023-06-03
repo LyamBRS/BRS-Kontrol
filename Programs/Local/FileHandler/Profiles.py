@@ -89,7 +89,7 @@ profileStructure = {
         ProfileThemeEnum.Duration.value  : 0.5,
     },
     structureEnum.Settings.value :{
-        ProfileSettingEnum.WiFi.value : [],
+        ProfileSettingEnum.WiFi.value : {},
         "TO DO":None
     }
 }
@@ -121,7 +121,7 @@ Temporary = {
         ProfileThemeEnum.Duration.value  : 0.5,
     },
     structureEnum.Settings.value :{
-        ProfileSettingEnum.WiFi.value : [],
+        ProfileSettingEnum.WiFi.value : {},
         "TO DO":None
     }
 }

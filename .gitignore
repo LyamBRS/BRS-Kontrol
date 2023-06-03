@@ -3,6 +3,11 @@
 *.cpython-310.pyc
 *.json
 *.xml
+
+*/*/*/__pycache__/
+*/*/__pycache__/
+*/__pycache__/
+
 !Config.json
 !BFIO.json
 BrSpand/Drivers/

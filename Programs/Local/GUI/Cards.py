@@ -49,6 +49,7 @@ from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.button import MDFillRoundFlatIconButton
 from Libraries.BRS_Python_Libraries.BRS.GUI.Inputs.textfield import VirtualKeyboardTextField
 from kivymd.uix.label import MDLabel
+from kivymd.uix.behaviors import TouchBehavior
 #endregion
 
 LoadingLog.Import("Local")
@@ -327,9 +328,9 @@ class DeviceDriverInstallerCard(BaseButton, Widget):
     pass
 #====================================================================#
 LoadingLog.Class("DeviceDriverCard")
-class DeviceDriverCard(BaseButton, Widget):
+class DeviceDriverCard(BaseButton, TouchBehavior, Widget):
     #region   --------------------------- DOCSTRING
-    ''' 
+    '''
         DeviceDriverCard:
         =================
         Summary:
@@ -346,6 +347,16 @@ class DeviceDriverCard(BaseButton, Widget):
         """
             Function called by the card once the ripple effect
             comes to an end.
+        """
+        pass
+
+    def on_long_touch(self, *args):
+        """
+            on_long_touch:
+            ==============
+            Summary:
+            --------
+            Function to overwrite.
         """
         pass
     #endregion

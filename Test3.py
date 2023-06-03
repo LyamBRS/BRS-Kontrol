@@ -1,38 +1,41 @@
+from kivy.lang import Builder
+
 from kivymd.app import MDApp
-from kivymd.uix.card import MDCard
-from kivy.uix.recycleview import RecycleView
-from kivy.uix.recycleview.views import RecycleDataViewBehavior
-from kivymd.uix.list import ThreeLineListItem
+from kivymd.uix.behaviors import TouchBehavior
+from kivymd.uix.button import MDRaisedButton
 
+KV = '''
+Screen:
 
-class ThreeLineRecycleView(RecycleView):
-    def __init__(self, **kwargs):
-        super(ThreeLineRecycleView, self).__init__(**kwargs)
-        self.viewclass = 'ThreeLineListItem'
-        self.data = [
-            {
-                "text": f"Title {i}",
-                "secondary_text": f"Subtitle {i}",
-                "tertiary_text": f"Description {i}",
-            }
-            for i in range(10)
-        ]
+    MyButton:
+        text: "PRESS ME"
+        pos_hint: {"center_x": .5, "center_y": .5}
+'''
 
+class MyButton(MDRaisedButton, TouchBehavior):
+    def on_long_touch(self, *args):
+        print("<on_long_touch> event")
 
-class CardExample(MDCard):
-    def __init__(self, **kwargs):
-        super(CardExample, self).__init__(**kwargs)
-        self.orientation = "vertical"
-        self.padding = "8dp"
+    def on_double_tap(self, *args):
+        print("<on_double_tap> event")
 
-        self.rv = ThreeLineRecycleView()
-        self.add_widget(self.rv)
+    def on_triple_tap(self, *args):
+        print("<on_triple_tap> event")
 
+    def on_release(self, *args):
+        print("<on_release> event")
 
-class ExampleApp(MDApp):
+    def on_release(self, *args):
+        print("<on_release> event")
+
+    def on_press(self, *args):
+        print("<on_press> event")
+        from Local.Drivers.Batiscan.Programs.Communications.UDP import BatiscanUDP
+        BatiscanUDP._NoConnection()
+
+class MainApp(MDApp):
     def build(self):
-        return CardExample()
+        return Builder.load_string(KV)
 
 
-if __name__ == "__main__":
-    ExampleApp().run()
+MainApp().run()

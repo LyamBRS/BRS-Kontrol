@@ -6,20 +6,22 @@
 # Imports
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
-from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
 LoadingLog.Start("Cache.py")
+
 import os
-from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from datetime import date,datetime
 
+from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
+
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata,FilesFinder, AppendPath
-from kivymd.theming import ThemeManager
+# from kivymd.theming import ThemeManager
 from kivymd.app import MDApp
 from kivymd.icon_definitions import md_icons
-from kivymd.color_definitions import palette,colors
+from kivymd.color_definitions import colors
 
-from .Profiles import CheckIntegrity as CheckProfileIntegrity, ProfileHandler
+from Programs.Local.FileHandler.Profiles import CheckIntegrity as CheckProfileIntegrity, ProfileHandler
 #====================================================================#
 # Global accessibles
 #====================================================================#
@@ -31,7 +33,7 @@ cacheStructure = {
             "Creation":""
         },
         "ExitReason" : None, # Holds the reason the application closed: "User", "Crash", "Low Voltage", "Corrupted"
-        "Version" : 1.0, # Holds the cache version
+        "Version" : 1.1, # Holds the cache version
         "Type" : "Application" # Holds which type of cache this is. "Application" / "Driver" / "BrSpand"
     },
     "Profile":{
@@ -49,24 +51,47 @@ cacheStructure = {
         "TO DO":None
     }
 }
+"""
+    cacheStructure:
+    ===============
+    Summary:
+    --------
+    This is the default JSON structure with which
+    cache are made if none are found when :ref:`Cache.Load()`
+    is called.
+
+    Versions:
+    ---------
+    - `1.0` : First cache iteration.
+"""
 #====================================================================#
 # Global variables imported by other scripts
 #====================================================================#
-Cache: FilesFinder = None
-"""
-    Loaded Cache jsons by the application.
-    Defaults to: `None`.
-"""
+# Cache: FilesFinder = None
+# """
+    # Loaded Cache jsons by the application.
+    # Defaults to: `None`.
+# """
 #====================================================================#
 # Cache class
 #====================================================================#
 class Cache():
     """
-        Handle the cache of the application.
+        Cache:
+        ======
+        Summary:
+        --------
+        Class which contains methods that handle the cache of the
+        application. This allows themes and settings to be kept
+        between power cycles for example.
     """
     #region ---- Members
     loaded:bool = False
     """
+        loaded:
+        =======
+        Summary:
+        --------
         If `True`, the cache file was loaded or created successfully.
         Defaults to: `False`
     """
@@ -74,7 +99,7 @@ class Cache():
     """
         :ref:`FileFinder` class used to load JSONs automatically. Created when calling :ref:Load.
     """
-    
+
     jsonData:JSONdata = None
     """
         Holds the bare, loaded JSONdata.
@@ -84,9 +109,13 @@ class Cache():
     def Load() -> bool:
         """
             Load:
-            ----------
+            =====
+            Summary:
+            --------
             Handles the loading and creation of the application's cache.
             This is the first thing you should call in your application
+            after you loaded the default settings in case the cache
+            fails to create or load.
         """
         Debug.Start("Cache -> Load")
         path = AppendPath(os.getcwd(), "/Local/Cache")
@@ -134,11 +163,13 @@ class Cache():
     def CreateNew() -> bool:
         """
             CreateNew:
-            ----------
+            ==========
+            Summary:
+            --------
             Handles the creation of a new cache file entirely wiping out
             the old one at the location. This specific function will create
             an application, json cache file for BRS Kontrol's generic application.
-    
+
             It will attempt to create it no matter what happens, potentially crashing the application in the event
             where it absolutely cannot be created at all.
 
@@ -165,8 +196,10 @@ class Cache():
     def SaveFile():
         """
             SaveFile:
-            ----------
-            Handles the saving of the current saved cache data. Usually called when the application exits.
+            =========
+            Summary:
+            --------
+            Handles the saving of the current cache data. Usually called when the application exits.
             It will overwrite the currently saved applications' json file.
         """
         Debug.Start("Cache -> SaveFile")
@@ -182,32 +215,51 @@ class Cache():
     def SetDate(dateType:str):
         """
             SetDate:
-            ----------
+            ========
+            Summary:
+            --------
             Function used to save the current time as a specified cache time.
             The possible cache times to save are located in the `cacheStructure`.
             It will get the computer's current time to save it.
+
+            Arguments:
+            ----------
+            - `"Creation"`
+            - `"Exit"`
+            - `"Open"`
         """
         if(dateType=="Creation" or dateType=="Exit" or dateType=="Open"):
             today = datetime.now()
             Cache.jsonData.jsonData["Cache"]["Dates"][dateType] = today.strftime("%B %d %Y, %H:%M:%S")
+            Cache.jsonData.SaveFile()
     #-----------------------------------------------------------------
     def SetExit(dateType:str):
         """
             SetExit:
-            ----------
+            ========
+            Summary:
+            --------
             Function used to save the exit reason.
             The exit reason can be used by experienced users to quickly determine why their
             application last closed.
             It can also be used by the application to display an error screen or things like that.
+
+            Arguments:
+            ----------
+            - `"User"`
+            - `"Low Voltage"`
+            - `"Corrupted"`
         """
-        if(dateType=="User" or dateType=="Low Voltage" or dateType=="Corrupted" or dateType=="Corrupted"):
+        if(dateType=="User" or dateType=="Low Voltage" or dateType=="Corrupted"):
             today = date.today()
             Cache.jsonData.jsonData["Cache"]["ExitReason"] = dateType
     #-----------------------------------------------------------------
     def GetProfileHandlerInfo():
         """
             GetProfileHandlerInfo:
-            ----------
+            ======================
+            Summary:
+            --------
             This function takes a :ref:`FileFinder` class which loaded a profile from
             a JSON file, and loads in into the cache class. It will test the profile using
             `CheckIntegrity` specific to Profiles.
@@ -217,10 +269,10 @@ class Cache():
         if(Cache.loaded and ProfileHandler.initialized):
             Debug.Log("Profile has passed the integrity check")
 
-            Debug.Log("Transfering theme into cache...")
+            Debug.Log("Transferring theme into cache...")
             Cache.jsonData.jsonData["Theme"] = ProfileHandler.rawJson.jsonData["Theme"]
 
-            Debug.Log("Transfering other info into cache...")
+            Debug.Log("Transferring other info into cache...")
             Cache.jsonData.jsonData["Profile"]["Loaded"] = ProfileHandler.rawJson.jsonData["Generic"]
         else:
             Debug.Error("Attempted to set cache info while no cache is loaded or no profiles were loaded")
@@ -229,11 +281,14 @@ class Cache():
     def LoadTheme() -> bool:
         """
             LoadTheme:
-            ----------
+            ==========
+            Summary:
+            --------
             This function loads the theme saved in the cache into the application.
             Be sure you loaded the cache file prior to calling this.
 
             Returns:
+            --------
                 - `True`: Error occured
                 - `False`: No error occured and theme loaded successfully
         """
@@ -266,14 +321,18 @@ class Cache():
     def GetAppInfo() -> bool:
         """
             GetAppInfo:
-            ----------
+            ===========
+            Summary:
+            --------
             This function saves everything that needs to be saved
             inside the cache loaded json. This needs to be called
-            when your application is quiting in order to get the
+            when your application is quitting in order to get the
             very last data into cache for next opening.
 
             This does not save exit time nor exit reason
+
             Returns:
+            --------
                 `bool`: `True`: An error occured. `False`: No error occured
         """
         Debug.Start("Cache -> GetAppInfo")
@@ -298,13 +357,16 @@ class Cache():
     def LoadLanguage() -> bool:
         """
             LoadLanguage:
-            -------------
+            =============
+            Summary:
+            --------
             This function is used to load the language that is saved
             in the application's cache into the AppLanguage class.
             You need to have Cache.loaded set to `True` prior to
             calling this function.
 
             Returns:
+            --------
                 `bool`: `True`: An error occured. `False`: No error occured
         """
         Debug.Start("Cache -> LoadLanguage")
@@ -318,18 +380,24 @@ class Cache():
                 return True
         Debug.End()
         return False
+
     #endregion
 #====================================================================#
 # Functions
 #====================================================================#
 def CheckIntegrity(cacheJson:JSONdata) -> str:
     """
+        CheckIntegrity:
+        ===============
+        Summary:
+        --------
         This function allows you to check the integrity of a loaded
         profile JSON without having to do it manually.
 
         It checks every single values within the given profile `JSONdata`.
-        
+
         Returns: (`str`)
+        -------
             - `"Ahead"` : The profile version is bigger than the wanted profile version.
             - `"Outdated"` : The saved profile version does not match the current application's profile version.
             - `"Blank"` : All the profile's categories are absent.

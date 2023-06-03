@@ -292,6 +292,7 @@ class Application(MDApp):
                 Cache.SetDate("Exit")
                 Cache.SaveFile()
             except:
+                print("[BRS]    CACHE ERRORS")
                 Debug.Warn("Cache failed to save on_stop. This might be normal tho.")
         Debug.End()
 # ------------------------------------------------------------------------

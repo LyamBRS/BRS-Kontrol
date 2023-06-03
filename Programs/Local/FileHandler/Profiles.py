@@ -58,12 +58,15 @@ class ProfileThemeEnum(Enum):
     Primary:str = "Primary"
     Accent:str = "Accent"
     Duration:str = "Duration"
+
+class ProfileSettingEnum(Enum):
+    WiFi:str = "WiFi"
 #====================================================================#
 profileStructure = {
     structureEnum.ProfileConfig.value:{
         ProfileConfigEnum.CanDelete.value : True,  # False, True
         ProfileConfigEnum.Type.value      : "Guest", #"Guest", "Normal", "Temporary"
-        ProfileConfigEnum.Version.value   : 1.3, # the profile version.
+        ProfileConfigEnum.Version.value   : 1.4, # the profile version.
         ProfileConfigEnum.Dates.value:{
             Dates.Creation.value:"",
             Dates.Updated.value:"",
@@ -86,15 +89,16 @@ profileStructure = {
         ProfileThemeEnum.Duration.value  : 0.5,
     },
     structureEnum.Settings.value :{
+        ProfileSettingEnum.WiFi.value : [],
         "TO DO":None
     }
 }
 
-Temporary = { 
+Temporary = {
         structureEnum.ProfileConfig.value:{
         ProfileConfigEnum.CanDelete.value : True,  # False, True
         ProfileConfigEnum.Type.value      : "Guest", #"Guest", "Normal", "Temporary"
-        ProfileConfigEnum.Version.value   : 1.3, # the profile version.
+        ProfileConfigEnum.Version.value   : 1.4, # the profile version.
         ProfileConfigEnum.Dates.value:{
             Dates.Creation.value:"",
             Dates.Updated.value:"",
@@ -117,6 +121,7 @@ Temporary = {
         ProfileThemeEnum.Duration.value  : 0.5,
     },
     structureEnum.Settings.value :{
+        ProfileSettingEnum.WiFi.value : [],
         "TO DO":None
     }
 }
@@ -144,7 +149,7 @@ def CheckIntegrity(profileJson:JSONdata) -> FileIntegrity:
         profile JSON without having to do it manually.
 
         It checks every single values within the given profile `JSONdata`.
-        
+
         Returns: (`FileIntegrity`)
             - `Ahead` : The profile version is bigger than the wanted profile version.
             - `Outdated` : The saved profile version does not match the current application's profile version.
@@ -295,7 +300,7 @@ def CheckUsername(username:str, byPassName:str=None) -> bool:
         value if the username is correct. If `byPassName` is set to
         a string value, it will not cause an error if it already
         exists.
-    
+
         Returns:
             - (`bool`): `False` = Username can be used.
             - (`str`)
@@ -341,7 +346,7 @@ def CheckPassword(password:str) -> bool:
         -------------
         This function checks a password string and returns a boolean
         value if the password is correct.
-    
+
         Returns:
             - (`bool`): `False` = Password can be used.
             - (`str`)
@@ -376,7 +381,7 @@ def CheckBiography(biography:str) -> bool:
         -------------
         This function checks a biography string and returns a boolean
         value if the biography is correct.
-    
+
         Returns:
             - (`bool`): `False` = biography can be used.
             - (`str`)
@@ -443,7 +448,9 @@ class ProfileHandler:
     #region   --------------------------- DOCSTRING
     '''
         ProfileHandler:
-        ---------------
+        ===============
+        Summary:
+        --------
         Holds the profile that was selected in the ProfileMenu.py screen.
         This profile is used throughout the entire application to save
         the user's data and preferences.
@@ -482,6 +489,10 @@ class ProfileHandler:
     #region   -- Public
     def LoadProfile(jsonData:JSONdata) -> bool:
         """
+            LoadProfile:
+            ============
+            Summary:
+            --------
             Function used to initialize the ProfileHandler global class.
             if the function returns `True`, the profile specified was
             successfully loaded into the class.
@@ -526,6 +537,10 @@ class ProfileHandler:
     #------------------------------------
     def UnLoadProfile() -> bool:
         """
+            UnLoadProfile:
+            ==============
+            Summary:
+            --------
             Function used to uninitialize the ProfileHandler global class.
             if the function returns `True`, the profile specified was
             successfully unloaded.
@@ -549,7 +564,9 @@ class ProfileHandler:
     def CreateProfile(profileStructure:list) -> bool:
         """
             CreateProfile:
-            --------------
+            ==============
+            Summary:
+            --------
             This function allows you to create a new profile from
             a :ref:`profileStructure` styled list such as :ref:`Temporary`.
             The created profile will be the latest profile version and
@@ -567,7 +584,7 @@ class ProfileHandler:
         Debug.Log("Creating new JSONdata class")
         Json = JSONdata(profileStructure[structureEnum.Generic.value][ProfileGenericEnum.Username.value], profileDirectory)
         Json.jsonData = profileStructure
-    
+
         if(Json.CreateFile(profileStructure)):
             Debug.Log("New profile successfully created and saved")
 
@@ -585,7 +602,9 @@ class ProfileHandler:
     def SetDate(dateType:Dates):
         """
             SetDate:
-            ----------
+            ========
+            Summary:
+            --------
             Function used to save the current time as a specified profile time.
             The possible profile times to save are located in the :ref:`ProfileConfigEnum`.
             It will get the computer's current time to save it.
@@ -610,7 +629,9 @@ class ProfileHandler:
     def Delete() -> None:
         """
             Delete:
-            -------
+            =======
+            Summary:
+            ---------
             This function will permanently delete the profile that is loaded.
             Will call UnLoadProfile automatically for you.
         """
@@ -641,10 +662,116 @@ class ProfileHandler:
             Debug.Error("Cannot delete a profile that is not initialized")
 
         Debug.End()
+    #------------------------------------
+    def GetSavedSSIDPassword(ssid:str) -> str:
+        """
+            GetSavedSSIDPassword:
+            =====================
+            Summary:
+            --------
+            Function used to extract the last
+            password that the user specified
+            when trying to connect to a specific
+            WiFi network. This only works for
+            profiles with a version higher than
+            `1.3`
+
+            Warning:
+            --------
+            Currently, profile's JSONs don't encode
+            the WiFi password that they save locally.
+            Please be aware that connecting to a WiFi
+            network will save its password as readable
+            text in the profile of whoever connected to it.
+
+            Arguments:
+            ----------
+            - `ssid:str` The WiFi's SSID.
+
+            Returns:
+            --------
+            - `None` = No password is saved in this profile for the specified SSID.
+            - `str` = The saved password for that WiFi's SSID.
+        """
+        Debug.Start("GetSavedSSIDPassword")
+
+        if(not ProfileHandler.initialized):
+            Debug.Error("Profile handler is not initialized.")
+            Debug.End()
+            return None
+
+        try:
+            wifis = ProfileHandler.rawJson.jsonData[structureEnum.Settings.value][ProfileSettingEnum.WiFi.value]
+            if(ssid in wifis):
+                Debug.Log("Password found")
+                return wifis[ssid]
+        except:
+            Debug.Error("Fatal error occured when trying to load saved WiFis")
+            Debug.End()
+            return None
+
+        Debug.End()
+        return None
+    #------------------------------------
+    def SetNewSSIDPassword(ssid:str, password:str) -> str:
+        """
+            SetNewSSIDPassword:
+            =====================
+            Summary:
+            --------
+            Function used to save an ssid
+            password that the user specified
+            when trying to connect to a specific
+            WiFi network. This only works for
+            profiles with a version higher than
+            `1.3`
+
+            Warning:
+            --------
+            Currently, profile's JSONs don't encode
+            the WiFi password that they save locally.
+            Please be aware that connecting to a WiFi
+            network will save its password as readable
+            text in the profile of whoever connected to it.
+
+            Arguments:
+            ----------
+            - `ssid:str` The WiFi's SSID.
+            - `password:str` the password given by the user.
+
+            Returns:
+            --------
+            - `True` = An error occured
+            - `False` = Everything went well.
+        """
+        Debug.Start("SetNewSSIDPassword")
+
+        if(not ProfileHandler.initialized):
+            Debug.Error("Profile handler is not initialized.")
+            Debug.End()
+            return True
+
+        try:
+            wifis:dict = ProfileHandler.rawJson.jsonData[structureEnum.Settings.value][ProfileSettingEnum.WiFi.value]
+            wifis[ssid] = str(password)
+            ProfileHandler.rawJson.jsonData[structureEnum.Settings.value][ProfileSettingEnum.WiFi.value] = wifis
+            ProfileHandler.rawJson.SaveFile()
+            Debug.Log("Successfully saved a new SSID's password.")
+            Debug.End()
+            return False
+        except:
+            Debug.Error("Fatal error occured when trying to load saved WiFis")
+            Debug.End()
+            return True
+
     #endregion
     #region   -- Private
     def LoadCLSTheme() ->bool:
         """
+            LoadCLSTheme:
+            =============
+            Summary:
+            --------
             Loads the CLS theme saved in rawJson, into the application's real theme.
             returns `True` if successful, `False` if not.
         """

@@ -5,6 +5,8 @@
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import ConnectToAWiFiNetwork
+from Programs.Local.FileHandler.Profiles import ProfileHandler
+from Programs.Local.Hardware.RGB import KontrolRGB
 from Programs.Pages.DriverMenu import DriverMenu_Screens
 LoadingLog.Start("WiFiLogin.py")
 #====================================================================#
@@ -424,13 +426,12 @@ class WiFiLogin(Screen):
         """
             Animate all the widgets into view once the screen is fully present.
         """
+        KontrolRGB.DisplayDefaultColor()
 
+        password = ProfileHandler.GetSavedSSIDPassword(self.SSIDTextField.text)
+        if(password != None):
+            self.Password.text = password
 
-        # Start Animation
-        # self.animation.stop_all(self)
-        # self.animation = Animation(progress = 1, duration = 0.5)
-        # self.animation.bind(on_progress = self._Animating)
-        # self.animation.start(self)
         pass
 # ------------------------------------------------------------------------
     def on_leave(self, *args):
@@ -486,6 +487,9 @@ class WiFiLogin(Screen):
 
         password = self.Password.text
         ssid     = self.SSIDTextField.text
+
+        # Save the password into the current profile for next loading.
+        ProfileHandler.SetNewSSIDPassword(ssid, password)
 
         if(Information.platform == "Windows"):
             result = ConnectToAWiFiNetwork(ssid, password)

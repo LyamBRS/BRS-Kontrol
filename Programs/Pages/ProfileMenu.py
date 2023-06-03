@@ -4,8 +4,10 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import FileIntegrity
 from Libraries.BRS_Python_Libraries.BRS.Utilities.addons import Addons
 from Programs.Local.Hardware.RGB import KontrolRGB
+from Programs.Pages.PopUps import PopUpTypeEnum, PopUps_Screens, PopUpsHandler
 from Programs.Pages.Startup import Startup_Screens
 LoadingLog.Start("ProfileMenu.py")
 #====================================================================#
@@ -17,7 +19,7 @@ from kivy.animation import Animation
 # -------------------------------------------------------------------
 from kivymd.uix.label import MDLabel
 from kivymd.uix.scrollview import MDScrollView
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.screenmanager import Screen
 from kivymd.uix.boxlayout import MDBoxLayout
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.references import Shadow
@@ -313,6 +315,18 @@ class ProfileMenu(Screen):
         Debug.Start("ProfilesClicked")
         # ProfileHandler.LoadProfile(card.json)
         # self.Layout.ProfilesLayout.profileBox.remove_widget(card)
+        if(card.Integrity != FileIntegrity.Good):
+            Debug.Log("Clicked on an incorrect profile.")
+            message:str = _("The profile selected appears to have issues with the version of Kontrol that is running. During self check, Kontrol identified that this profile's integrity resulted in the following code") + ": " + str(card.Integrity)
+            PopUps_Screens.SetCaller(ProfileMenu_Screens, "ProfileMenu")
+            PopUps_Screens.SetExiter(ProfileMenu_Screens, "ProfileMenu")
+            PopUpsHandler.Clear()
+            PopUpsHandler.Add(PopUpTypeEnum.FatalError,
+                              Message=message)
+            PopUps_Screens.Call()
+            Debug.End()
+            return
+
         ProfileHandler.LoadProfile(card.json)
         #Slowly make welcome fade off
         self.animation.stop_all(self)

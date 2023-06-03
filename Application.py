@@ -1,15 +1,15 @@
 #====================================================================#
 # File Information
 #====================================================================#
-import os
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
-# from Libraries.BRS_Python_Libraries.BRS.Utilities.pythonKiller import KillPython
 from Programs.Local.Hardware.RGB import KontrolRGB
 LoadingLog.Start("Application.py")
 #===================================================================#
 # Imports
 #===================================================================#
+LoadingLog.Import("Python")
+import os
+
 LoadingLog.Import("Kivy")
 from kivy.core.window import Window
 from kivy.config import Config
@@ -20,6 +20,7 @@ from kivymd.app import MDApp
 # -------------------------------------------------------------------
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.font import Font
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import AppLanguage
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
@@ -34,7 +35,7 @@ from Programs.Pages.Startup import Startup_Screens
 from Programs.Pages.AppLoading import AppLoading_Screens
 from Programs.Pages.PopUps import PopUps_Screens
 from Programs.Local.Updating.LaunchHandling import Shutdown
-
+from Programs.Local.Hardware.RGB import KontrolRGB
 # from Programs.Pages.WiFiLogin import WiFiConnecting_Screens, WiFiLogin_Screens
 #====================================================================#
 # Configuration
@@ -47,9 +48,6 @@ ButtonFont.size = "32sp"
 #====================================================================#
 # Functions
 #====================================================================#
-# To change the kivy default settings
-# we use this module config
-from kivy.config import Config
 
 # 0 being off 1 being on as in true / false
 
@@ -67,36 +65,41 @@ from kivy.config import Config
 LoadingLog.Class("Application")
 class Application(MDApp):
 
-    # theme_cls = ThemeManager()
-    LoadingLog.Method("build")
-    def build(self):
+
+    def SetDefaultTheme(self):
         """
-            This creates the Screen manager, which is stored inside of the global AppManager class.
-            After which, all the screens the application uses are added as widgets to the manager.
-            They each have a name unique to them.
-
-            Last, the current screen is set as one of them.
+            SetDefaultTheme:
+            ================
+            Summary:
+            --------
+            This function sets the default theme
+            that the application will have before
+            cache is loaded in. This function is
+            called in :ref:`build` automatically.
         """
-        if(Information.platform != "Linux"):
-            Debug.enableConsole = True
-        Debug.Start("build")
-
-
-        if(Information.platform == "Linux"):
-            Debug.Log("Turning off cursor")
-            Window.show_cursor = False
-
-        Debug.Log("Turning off aliasing")
-        Config.set("graphics", "multisamples", 0)
-        Config.write()
-
-        Debug.Log("Setting default application's theme.")
+        Debug.Start("SetDefaultTheme")
         self.theme_cls.material_style = 'M3'
         self.theme_cls.primary_palette = "Purple"
         self.theme_cls.accent_palette = "Yellow"
         self.theme_cls.theme_style = "Dark"
-        self.theme_cls.theme_style_switch_animation = True
+        self.theme_cls.theme_style_switch_animation = False
         self.theme_cls.theme_style_switch_animation_duration = 0
+        Debug.End()
+
+    def SetDefaultLanguage(self):
+        """
+            SetDefaultLanguage:
+            ===================
+            Summary:
+            --------
+            This function initializes the
+            :ref:`AppLanguage` class. It defaults
+            the language of the application to
+            US_English until the cache is initialized.
+            This function is called automatically in
+            :ref:`build`
+        """
+        Debug.Start("SetDefaultLanguage")
 
         # Load available languages
         Debug.Log("Initializing AppLanguage. Defaulting to US_English")
@@ -107,44 +110,112 @@ class Application(MDApp):
         Debug.Log("Setting Information")
 
         if(AppLanguage.Current == None):
+            Debug.Warn("Your application cannot use languages")
             Information.CanUse.Languages = False
         else:
             Information.CanUse.Languages = True
+        Debug.End()
 
-        # Set window to 3rd monitor.
-        Debug.Log("Configuring window size and attributes")
-        #Window.borderless = True
-        #Window.resizable = True
-        #Window.left = -1024
-        #Window.top = 600
-        # if(Information.platform)
-        #Window.fullscreen = False
-        Window.size = (720, 576)
+    def SetKivyConfig(self):
+        """
+            SetKivyConfig:
+            ==============
+            Summary:
+            --------
+            This function's purpose is
+            to set the default application
+            kivy settings in the Config before
+            the application is fully loaded in.
+            Such configurations can be wether the
+            mouse is displayed or not.
+        """
+        Debug.Start("SetKivyConfig")
 
-        # Create screen manager
-        Debug.Log("Creating ScreenManager()")
-        AppManager.manager = ScreenManager()
+        if(Information.platform == "Linux"):
+            Debug.Log("Turning off cursor")
+            Window.show_cursor = False
+            Debug.enableConsole = False
+            Debug.Log("Turning off aliasing")
+            Config.set("graphics", "multisamples", 0)
+            Config.write()
+            Debug.End()
+            return
 
-        # Load the cache
-        Debug.Log("Loading the cache.")
+        if(Information.platform == "Windows"):
+            Window.show_cursor = True
+            Debug.End()
+            return
+
+        Debug.End()
+
+    def StartGlobalThreads(self):
+        """
+            StartGlobalThreads:
+            ===================
+            Summary:
+            --------
+            Starts the threads of multiple
+            background processes used to
+            constantly show up to date informations
+            such as if your device can access the
+            internet or if your device can use RGB
+            lights and so on.
+        """
+        Debug.Start("StartGlobalThreads")
+
+        Debug.Log("Starting slow network information updater")
+        WiFiStatusUpdater.StartUpdating()
+
+        Debug.Log("Trying to start RGB class.")
+        KontrolRGB.Initialize()
+
+        Debug.End()
+
+    def LoadSavedCache(self):
+        """
+            LoadSavedCache:
+            ===============
+            Summary:
+            --------
+            Initializes the saved cache
+            of your application. This needs
+            to be called AFTER the following:
+            - :ref:`SetDefaultTheme`
+            - :ref:`SetDefaultLanguage`
+            - :ref:`SetKivyConfig`
+        """
+        Debug.Start("LoadSavedCache")
+
         if(Cache.Load()):
             Debug.Error("Failed to load the application's cache")
         else:
             Debug.Log("CACHE LOAD SUCCESS")
 
-        Debug.Log("Starting slow network information updater")
-        WiFiStatusUpdater.StartUpdating()
+        Debug.End()
 
-        #Temporary pop up test
-        # PopUpsHandler.Add(PopUpTypeEnum.Question, "help", "This is the question pop up. Among us among us", True)
-        # PopUpsHandler.Add(PopUpTypeEnum.FatalError, "alert-octagon", "This is the Fatal Error pop up.", True)
-        # PopUpsHandler.Add(PopUpTypeEnum.Remark, "bug", "This is a debugging pop up. It exist solely because without at least 1 pop up, the application would softlock.", True)
-        # PopUpsHandler.Add(PopUpTypeEnum.Warning, "alert", "Where's my money, bitch?! I ain't gonna keep asking nice. Yo, alright? I want my money and my dope. Come on! What, what! What do you wanna say? Shut up! Shut... up! \nWhat business? The business you put me on, asshole! What, you already forgot? THIS business. Huh? That uh jog your memory, son of a bitch? Hey, you said... you said handle it, so you know what, I handled it. Didn't mean to kill somebody? Well, too late you know cause, dude's dead. Way dead. Oh, and hey, hey. Here's your money. Yeah, forty-six hundred and sixty bucks. Your half. Spend it in good health, you miserable son of bitch. \nI didn't say I killed him. Dude's wife crushed his head with an ATM machine. Crushed his head... with an ATM machine... right in front of me. I mean, crushed it like... Oh my god, the sound... it's still in my ears. You know and the the blood, like everywhere. Like there was so much you would not believe.", True)
+    def ConfigureAndLoadStartScreen(self):
+        """
+            ConfigureAndLoadStartScreen:
+            ============================
+            Summary:
+            --------
+            This function configures the
+            _Screens classes of the following
+            transitional screens:
+            - :ref:`Startup_Screens`
+            - :ref:`AppLoading_Screens`
+            - :ref:`PopUps_Screens`
 
-        Debug.Log("Trying to start RGB class.")
-        KontrolRGB.Initialize()
+            It then calls the Call function of :ref:`Startup_Screens`
+            so that Kontrol can launch. This needs to be the last
+            function in :ref:`build` right before the return statement.
+        """
+        Debug.Start("ConfigureAndLoadStartScreen")
 
-        Debug.Log("Setting transistion screen's callers and exiters.")
+        # Create screen manager
+        Debug.Log("Creating ScreenManager()")
+        AppManager.manager = ScreenManager()
+
         AppLoading_Screens.SetExiter(PopUps_Screens, "PopUps")
         AppLoading_Screens.SetCaller(Startup_Screens, "Startup")
 
@@ -153,10 +224,58 @@ class Application(MDApp):
 
         Startup_Screens.SetExiter(AppLoading_Screens, "AppLoading")
         Startup_Screens.SetCaller(Application, "Application")
-
-        Debug.Log("Calling startup screen")
         Startup_Screens.Call()
-        # WiFiLogin_Screens.Call()
+
+        Debug.End()
+
+    def ConfigureWindowAttributes(self):
+        """
+            ConfigureWindowAttributes:
+            ==========================
+            Summary:
+            --------
+            Sets the default values of
+            Kivy's :ref:`Window` class
+            such as if it's border less,
+            in full screen etc.
+        """
+        Debug.Start("SetWindowInformations")
+
+        #Window.borderless = True
+        #Window.resizable = True
+        #Window.left = -1024
+        #Window.top = 600
+        #Window.fullscreen = False
+        Window.size = (720, 576)
+        Debug.End()
+
+    LoadingLog.Method("build")
+    def build(self):
+        """
+            build:
+            ======
+            Summary:
+            --------
+            This creates the Screen manager, which is stored inside of the global AppManager class.
+            After which, all the screens the application uses are added as widgets to the manager.
+            They each have a name unique to them.
+
+            The build function is execute when the application launches.
+            It creates language handlers, cache handlers or any other handler necessary
+            for Kontrol to function properly.
+        """
+        Debug.enableConsole = False
+        Debug.Start("build")
+
+        self.SetKivyConfig()
+        self.SetDefaultTheme()
+        self.SetDefaultLanguage()
+
+        self.ConfigureWindowAttributes()
+        self.LoadSavedCache()
+        self.StartGlobalThreads()
+        self.ConfigureAndLoadStartScreen()
+
         Debug.End()
         return AppManager.manager
 

@@ -11,7 +11,7 @@ LoadingLog.Start("AppLoading.py")
 #====================================================================#
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.animation import Animation
 from kivy.graphics import PushMatrix, PopMatrix, Rotate
 # -------------------------------------------------------------------

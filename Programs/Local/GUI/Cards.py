@@ -15,6 +15,7 @@ from cgitb import text
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.Network.Web.web import IsWebsiteOnline
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution, FileIntegrity
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import JSONdata
 from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 LoadingLog.Start("Cards.py")
 #====================================================================#
@@ -340,6 +341,19 @@ class DeviceDriverCard(BaseButton, TouchBehavior, Widget):
     #endregion
     #region   --------------------------- MEMBERS
     banner_rect = None
+
+    json:JSONdata = None
+    """
+        json:
+        =====
+        Summary:
+        --------
+        A :ref:`JSONdata` object
+        representing the device driver's
+        Config.json which holds basic
+        information about the device driver
+        that this card is representing.
+    """
     #endregion
     #region   --------------------------- METHODS
     #region   -- Public
@@ -350,15 +364,29 @@ class DeviceDriverCard(BaseButton, TouchBehavior, Widget):
         """
         pass
 
+    def LongPressed(self, name:str):
+        """
+            LongPressed:
+            ============
+            Summary:
+            --------
+            Called by this widget's :ref:`on_long_touch`
+            Overwrite this with a function that uses
+            a string as a parameter.
+        """
+        pass
+
     def on_long_touch(self, *args):
         """
             on_long_touch:
             ==============
             Summary:
             --------
-            Function to overwrite.
+            Internal function that
+            calls :ref:`LongPressed`
+            DO NOT OVERWRITE.
         """
-        pass
+        self.LongPressed(self.name)
     #endregion
     #region   -- Private
     # ------------------------------------------------------
@@ -390,6 +418,7 @@ class DeviceDriverCard(BaseButton, TouchBehavior, Widget):
         #region --------------------------- Initial check ups
         self.padding = 0
         self.spacing = 0
+        self.size = (400,425)
 
         self.bind(_finishing_ripple = self._RippleHandling)
 
@@ -398,12 +427,10 @@ class DeviceDriverCard(BaseButton, TouchBehavior, Widget):
         self.Card.elevation = Shadow.Elevation.default
         self.Card.shadow_softness = Shadow.Smoothness.default
         self.Card.radius = Rounding.Cards.default
-        self.size = (400,425)
         #endregion
 
         #region --------------------------- Widgets
         self.Layout = MDFloatLayout()
-        self.Layout.padding = 25
         self.Layout.size_hint = (1,1)
 
         self.RequirementsLayout = MDBoxLayout()

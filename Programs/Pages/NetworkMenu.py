@@ -423,6 +423,9 @@ class NetworkMenu(Screen):
         Debug.Log("Starting async functions")
         AsyncGetNearbyNetworks(WiFiProgress)
         Clock.schedule_once(self.CheckOnAsyncFunction, 0)
+        Debug.Log("Configurating WiFiLogin Screens.")
+        WiFiLogin_Screens.SetBadExiter(NetworkMenu_Screens, "NetworkMenu")
+        WiFiLogin_Screens.SetGoodExiter(NetworkMenu_Screens, "NetworkMenu")
 
         # if(result != True):
             # Debug.Log("WiFi networks cannot be accessed.")

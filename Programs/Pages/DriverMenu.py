@@ -37,7 +37,7 @@ from kivymd.uix.progressbar import MDProgressBar
 LoadingLog.Import("Local")
 from ..Local.GUI.Navigation import AppNavigationBar
 from ..Local.GUI.Cards import DeviceDriverCard
-from ..Local.FileHandler.deviceDriver import GetDrivers
+from ..Local.FileHandler.deviceDriver import GetDrivers, DeleteDriver
 from ..Pages.PopUps import PopUpStructure, PopUpsHandler, PopUps_Screens, PopUpTypeEnum
 from ..Local.Hardware.RGB import KontrolRGB
 from Programs.Pages.DownloadProgress import DownloadProgressHandler, DownloadProgress_Screens
@@ -599,6 +599,7 @@ class DriverMenu(Screen):
     """
     #region   --------------------------- MEMBERS
     ToolBar:AppNavigationBar = None
+    nameOfDriverToDelete:str = ""
     #endregion
     #region   --------------------------- CONSTRUCTOR
     def __init__(self, **kwargs):
@@ -654,6 +655,7 @@ class DriverMenu(Screen):
         for driver in drivers:
             card = DeviceDriverCard(driverName=driver)
             card.PressedEnd = self.DriverPressed
+            card.LongPressed = self.DeleteDriverPressed
             self.driversBox.add_widget(card)
         #endregion
 
@@ -723,7 +725,6 @@ class DriverMenu(Screen):
         if(execution == Execution.Passed):
             HandleDriverLaunch(driverName, GetError)
         Debug.End()
-
 # ------------------------------------------------------------------
     def DownloadDeviceDriver(self, progressBar:MDProgressBar, DownloadProgressHandler:DownloadProgressHandler) -> Execution:
         """
@@ -770,7 +771,6 @@ class DriverMenu(Screen):
         Debug.Log("Downloading Kontrol in new folder")
         Debug.End()
         return DownloadRepositoryAtPath(repositoryLink, directoryPath, progressBar, DownloadProgressHandler)
-
 # ------------------------------------------------------------------------
     def DownloadDriverPressed(self, *args):
         """
@@ -796,11 +796,47 @@ class DriverMenu(Screen):
 
         PopUpsHandler.Clear()
         PopUpsHandler.Add(Type = PopUpTypeEnum.Question,
-                          Message = _("Do you wish to download the following git repository as a device driver?") + f" {args[0]}",
-                          ButtonAText = _("Download"),
-                          ButtonBText = _("Cancel"),
-                          ButtonAHandler = DownloadProgress_Screens.Call,
-                          ButtonBHandler = DriverMenu_Screens.Call)
+                        Message = _("Do you wish to download the following git repository as a device driver?") + f" {args[0]}",
+                        ButtonAText = _("Download"),
+                        ButtonBText = _("Cancel"),
+                        ButtonAHandler = DownloadProgress_Screens.Call,
+                        ButtonBHandler = DriverMenu_Screens.Call)
         PopUps_Screens.Call()
+# ------------------------------------------------------------------------
+    def DeleteDriverPressed(self, *args):
+        """
+            DeleteDriverPressed:
+            ====================
+            Summary:
+            --------
+            This callback function is executed
+            when a device driver card is pressed
+            until its ripple effect reaches the
+            end of the card. This means that the
+            user wants to delete that specific
+            device driver.
+        """
+        Debug.Start("DeleteDriverPressed")
+
+        PopUps_Screens.SetCaller(DriverMenu_Screens, "DriverMenu")
+        PopUps_Screens.SetExiter(DriverMenu_Screens, "DriverMenu", direction="down")
+        self.nameOfDriverToDelete = args[0]
+
+        PopUpsHandler.Clear()
+        PopUpsHandler.Add(Type = PopUpTypeEnum.Question,
+                          Message = _("Do you wish to delete the following device driver?") + f" {args[0]}",
+                          ButtonAText = _("Delete"),
+                          ButtonBText = _("Cancel"),
+                          ButtonBHandler = DriverMenu_Screens.Call,
+                          ButtonAHandler = self.DeleteDriver)
+        PopUps_Screens.Call()
+        # print(f"Name: {deviceDriverCard.name}")
+
+        print(f"There is {len(args)} arguments.")
+        Debug.End()
+# ------------------------------------------------------------------------
+    def DeleteDriver(self, nameOfDeviceDriver):
+        result = DeleteDriver(self.nameOfDriverToDelete)
+        print(result)
 
 LoadingLog.End("DriverMenu.py")

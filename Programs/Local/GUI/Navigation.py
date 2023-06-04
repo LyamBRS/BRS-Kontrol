@@ -14,6 +14,7 @@
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
 from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.networks import GetWifiIcon
 from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import WiFiStatusUpdater
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Information import Information
 from Programs.Local.FileHandler.Cache import Cache
 from Programs.Local.Updating.LaunchHandling import Shutdown
 LoadingLog.Start("AppLoading.py")
@@ -38,11 +39,12 @@ from kivy.clock import Clock
 #endregion
 #region ------------------------------------------------------ KivyMD
 LoadingLog.Import("KivyMD")
-from kivymd.uix.navigationdrawer import MDNavigationDrawer,MDNavigationDrawerDivider,MDNavigationDrawerHeader,MDNavigationDrawerItem,MDNavigationDrawerLabel,MDNavigationDrawerMenu,MDNavigationLayout
+from kivymd.uix.navigationdrawer import MDNavigationDrawer
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.recycleview import MDRecycleView
 from kivymd.uix.button import MDFillRoundFlatIconButton
+from kivymd.uix.dialog import MDDialog
 #endregion
 # LoadingLog.Import("Local")
 #====================================================================#
@@ -224,11 +226,11 @@ class AppNavigationBar():
                 "icon" : "wifi-cog",
                 "function" : GoTo_Network
             },
-            {
-                "name" : _("Bluetooth"),
-                "icon" : "bluetooth-settings",
-                "function" : GoTo_Bluetooth
-            },
+            # {
+                # "name" : _("Bluetooth"),
+                # "icon" : "bluetooth-settings",
+                # "function" : GoTo_Bluetooth
+            # },
             {
                 "name" : _("Devices"),
                 "icon" : "devices",
@@ -298,7 +300,7 @@ class AppNavigationBar():
         self.ToolBar.headline_text = "Headline"
         self.ToolBar.anchor_title = "left"
         self.ToolBar.left_action_items = [["menu", lambda x: self.NavDrawer.set_state("open"), "Menu", "Overflow"]]
-        self.ToolBar.right_action_items = [["reload", self.Callback, _("Loading")], ["reload", self.Callback, _("Loading")]]
+        self.ToolBar.right_action_items = [["reload", self.DisplayCurrentInternetDialog, _("Loading")], ["reload", self.DisplayCurrentWiFiDialog, _("Loading")]]
 
         self.UpdateNetworkIcons()
 
@@ -320,8 +322,75 @@ class AppNavigationBar():
     #endregion
     #region -------------------------------------------------- Methods
     LoadingLog.Method("Callback")
-    def Callback(self, *args):
-        pass
+    def DisplayCurrentWiFiDialog(self, *args):
+        """
+            DisplayCurrentWiFiDialog:
+            =========================
+            Summary:
+            --------
+            Pops up an MDDialog that tells you
+            informations about the current WiFi.
+        """
+        Debug.Start("DisplayCurrentWiFiDialog")
+
+        if(Information.platform == "Windows"):
+            dialog = MDDialog(
+                title = _("Warning"),
+                text = _("You are running Kontrol on Windows. As of now, Kontrol cannot identify your current network, tell its strength nor change it through its interface.")
+            )
+            dialog.open()
+            Debug.End()
+            return
+
+        networkInfo = WiFiStatusUpdater.GetConnectionStatus()
+        networkName:str = networkInfo[0]
+        hasInternet:bool = networkInfo[1]
+        signalStrength:int = networkInfo[2]
+
+        if(networkName == None or networkName == ""):
+            dialog = MDDialog(
+                title = _("WiFi Disconnected"),
+                text = _("You are not currently connected to a WiFi network.")
+            )
+            dialog.open()
+            return
+
+        dialog = MDDialog(
+            title = _("WiFi Information"),
+            text = _("You are currently connected to") + ": " + networkName + ". " + _("The network strength is currently") + f": {signalStrength}%"
+        )
+        dialog.open()
+
+        Debug.End()
+
+    def DisplayCurrentInternetDialog(self, *args):
+        """
+            DisplayCurrentInternetDialog:
+            =============================
+            Summary:
+            --------
+            Pops up an MDDialog that tells you
+            informations about the current Internet
+            values. It tells you if you have access
+            to the internet.
+        """
+        Debug.Start("DisplayCurrentInternetDialog")
+
+        networkInfo = WiFiStatusUpdater.GetConnectionStatus()
+        hasInternet:bool = networkInfo[1]
+
+        if(hasInternet):
+            dialog = MDDialog(
+                title = _("Internet"),
+                text = _("You currently have access to the internet. Kontrol is able to ping Google.com successfully.")
+            )
+        else:
+            dialog = MDDialog(
+                title = _("Internet"),
+                text = _("You currently do not have access to the internet. It is possible that the current network connected does not provide access to the internet. Kontrol could not ping Google.com.")
+            )
+        dialog.open()
+        Debug.End()
 
     def UpdateNetworkIcons(self, *args):
         """
@@ -364,7 +433,7 @@ class AppNavigationBar():
                 wifiToolTip = _("error")
                 internetToolTip = _("error")
 
-            self.ToolBar.right_action_items = [[internetIcon, self.Callback, internetToolTip], [wifiIcon, self.Callback, wifiToolTip]]
+            self.ToolBar.right_action_items = [[internetIcon, self.DisplayCurrentInternetDialog, internetToolTip], [wifiIcon, self.DisplayCurrentWiFiDialog, wifiToolTip]]
             Clock.schedule_once(self.UpdateNetworkIcons, 5)
         except:
             Debug.Error("TOOLBAR ERROR FAILED TO ADD RIGHT ICON WIDGETS")

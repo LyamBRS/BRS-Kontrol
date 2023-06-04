@@ -283,7 +283,7 @@ class Application(MDApp):
         print("Application built... starting")
 
     LoadingLog.Method("on_stop")
-    def on_pre_stop(self):
+    def on_stop(self):
         Debug.Start("Application -> on_stop")
         if(Cache.loaded):
             try:

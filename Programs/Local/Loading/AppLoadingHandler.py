@@ -1071,6 +1071,7 @@ def LoadApplication(updateFunction, setMaxFunction) -> bool:
         delay=delay+0.5
         Clock.schedule_once(partial(ExecuteStep,updateFunction,step,count),delay)
     Debug.End()
+
 LoadingLog.Function("ExecuteStep")
 def ExecuteStep(updateFunction,step, count:dict, *args):
     Debug.Start("ExecuteStep")

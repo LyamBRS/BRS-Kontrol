@@ -4,10 +4,6 @@
 
 #====================================================================#
 from Libraries.BRS_Python_Libraries.BRS.Debug.LoadingLog import LoadingLog
-from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import GetWiFiNotAvailableCard, WiFiSelectionCard
-from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
-from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
-from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import CanDeviceUseWiFi, GetWiFiNetworks
 from Programs.Pages.PopUps import PopUpTypeEnum, PopUps_Screens, PopUpsHandler
 from Programs.Pages.WiFiLogin import WiFiLogin_Screens
 LoadingLog.Start("NetworkMenu.py")
@@ -17,19 +13,25 @@ LoadingLog.Start("NetworkMenu.py")
 #region ------------------------------------------------------ Python
 LoadingLog.Import("Python")
 import os
+import asyncio
+import threading
 #endregion
 #region --------------------------------------------------------- BRS
 LoadingLog.Import("Libraries")
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, AppendPath
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.GUI.Containers.cards import DriverCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
+from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+from Libraries.BRS_Python_Libraries.BRS.GUI.Status.WiFi import GetWiFiNotAvailableCard, WiFiSelectionCard
+from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.colors import GetAccentColor
+from Libraries.BRS_Python_Libraries.BRS.Utilities.Enums import Execution
+from Libraries.BRS_Python_Libraries.BRS.Network.WiFi.WiFi import CanDeviceUseWiFi, GetWiFiNetworks
 #endregion
 #region -------------------------------------------------------- Kivy
 LoadingLog.Import("Kivy")
 from kivy.clock import Clock
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.animation import Animation
 #endregion
 #region ------------------------------------------------------ KivyMD
@@ -45,8 +47,94 @@ from ..Local.GUI.Navigation import AppNavigationBar
 from ..Local.Hardware.RGB import KontrolRGB
 #endregion
 #====================================================================#
-# Functions
+# WiFi Getting thread.
 #====================================================================#
+class WiFiProgress:
+    canAccessWiFi = None
+    status:str = None
+    wifis:list = []
+
+# ----------------------------------------------------------------
+def AsyncGetNearbyNetworks(ProgressClass:WiFiProgress) -> Execution:
+    """
+        AsyncGetNearbyNetworks:
+        =======================
+        Summary:
+        --------
+        This function runs functions based on your OS in the background
+        that gathers available nearby WiFi networks, parses them and
+        places them in the :ref:`ProgressClass` given as an input
+        parameter. Your application needs to have a continuously called
+        function that checks if the networks are available yet or not.
+
+        Parameters:
+        -----------
+        - `ProgressClass` = A class that contains the following members:
+            - `status` = "Done" or "InProgress" or "Error"
+            - `wifis` = returned list of wifis
+
+        Returns:
+        --------
+        - `Execution.Passed` = Successfully started the async function.
+        - `Execution.Failed` = Something failed during the process.
+        - `Execution.Incompatibility` = Cannot get wifis due compatibility issues access.
+    """
+    Debug.Start("AsyncGetNearbyNetworks")
+    Debug.Log("Starting async process")
+
+    ProgressClass.canAccessWiFi = None
+    ProgressClass.status = "InProgress"
+    ProgressClass.wifis.clear()
+
+    # Call the download_git_repo_async function asynchronously
+    _start_WiFiGetterThread(ProgressClass=ProgressClass)
+
+    Debug.End()
+    return Execution.Passed
+# ----------------------------------------------------------------
+def _start_WiFiGetterThread(ProgressClass:WiFiProgress):
+
+    # Define the function to run in the separate thread
+    def _GetterThread():
+        # Create a new event loop for this thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        # Call the download_git_repo_async function asynchronously with the progress update callback
+        loop.run_until_complete(_GetNearbyWiFis(ProgressClass))
+
+        # Stop the event loop
+        loop.stop()
+        loop.close()
+
+    # Start a new thread for the download function
+    thread = threading.Thread(target=_GetterThread)
+    thread.start()
+# ----------------------------------------------------------------
+async def _GetNearbyWiFis(passedClass:WiFiProgress) -> Execution:
+    try:
+        async def CheckifWeCanGetNetworks(_passedClass):
+            result = CanDeviceUseWiFi()
+            _passedClass.canAccessWiFi = result
+
+        async def GetNearbyNetworks(_passedClass):
+            networks = GetWiFiNetworks()
+            _passedClass.wifis = networks
+
+        await asyncio.create_task( CheckifWeCanGetNetworks(passedClass) )
+        if(passedClass.canAccessWiFi):
+            await asyncio.create_task( GetNearbyNetworks(passedClass) )
+        else:
+            passedClass.status = "Good"
+            passedClass.wifis = Execution.Incompatibility
+            return
+        # Create a new repo object from the local path and return the execution status
+
+        passedClass.status = "Good"
+        return Execution.Passed
+    except Exception as e:
+        passedClass.status = "Error"
+        return Execution.Failed
 #====================================================================#
 # Screen class
 #====================================================================#
@@ -284,9 +372,6 @@ class NetworkMenu(Screen):
         self.spacing = 0
 
         #region ---- Background
-        import os
-        from Libraries.BRS_Python_Libraries.BRS.GUI.Utilities.Application_Themes import GetBackgroundImage
-        from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
         path = os.getcwd()
 
         background = GetBackgroundImage(AppendPath(path, "/Libraries/Backgrounds/Menus/Dark.png"),
@@ -335,88 +420,149 @@ class NetworkMenu(Screen):
         """
         Debug.Start("NetworkMenu -> on_enter")
 
-        Debug.Log("Trying to access WiFi interfaces")
-        result = CanDeviceUseWiFi()
+        Debug.Log("Starting async functions")
+        AsyncGetNearbyNetworks(WiFiProgress)
+        Clock.schedule_once(self.CheckOnAsyncFunction, 0)
 
-        # result = True
-        # networks = [
-            # {
-                # "ssid" : "wifi_name",
-                # "strength" : 50,
-                # "bssid" : "c0:3c:04:2a:62:ec",
-                # "mode" : None,
-            # },
-            # {
-                # "ssid" : "Batiscan",
-                # "strength" : 100,
-                # "bssid" : "aa:bb:cc:dd:ee:ff",
-                # "mode" : None,
-            # }
-        # ]
+        # if(result != True):
+            # Debug.Log("WiFi networks cannot be accessed.")
+            # anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+            # anim.start(self.NoWiFiCard)
+            # KontrolRGB.DisplayMinorProblem()
+        # else:
+            # Debug.Log("Wifi can be accessed")
+            # Debug.Log("Getting WiFi networks")
+            # networks = GetWiFiNetworks()
 
-        if(result != True):
-            Debug.Log("WiFi networks cannot be accessed.")
-            anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
-            anim.start(self.NoWiFiCard)
-            KontrolRGB.DisplayMinorProblem()
-        else:
-            Debug.Log("Wifi can be accessed")
-            Debug.Log("Getting WiFi networks")
-            networks = GetWiFiNetworks()
+            # Debug.Log("Configurating WiFiLogin Screens.")
+            # WiFiLogin_Screens.SetBadExiter(NetworkMenu_Screens, "NetworkMenu")
+            # WiFiLogin_Screens.SetGoodExiter(NetworkMenu_Screens, "NetworkMenu")
 
-            Debug.Log("Configurating WiFiLogin Screens.")
-            WiFiLogin_Screens.SetBadExiter(NetworkMenu_Screens, "NetworkMenu")
-            WiFiLogin_Screens.SetGoodExiter(NetworkMenu_Screens, "NetworkMenu")
+            # if(networks == Execution.Failed):
+                # Debug.Error("Fatal error when getting available networks.")
+                # Debug.Log("WiFi networks cannot be accessed.")
+                # anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                # anim.start(self.NoWiFiCard)
+                # KontrolRGB.DisplayUserError()
+                # Debug.End()
+                # return
 
-            if(networks == Execution.Failed):
-                Debug.Error("Fatal error when getting available networks.")
-                Debug.Log("WiFi networks cannot be accessed.")
-                anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
-                anim.start(self.NoWiFiCard)
-                KontrolRGB.DisplayUserError()
-                Debug.End()
-                return
-            
-            if(networks == Execution.Crashed):
-                Debug.Error("Fatal error when getting available networks.")
-                Debug.Log("WiFi networks cannot be accessed.")
-                anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
-                anim.start(self.NoWiFiCard)
-                KontrolRGB.DisplayUserError()
-                Debug.End()
-                return
-            
-            if(networks == Execution.Incompatibility):
-                Debug.Error("Fatal error when getting available networks.")
-                Debug.Log("WiFi networks cannot be accessed.")
-                anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
-                anim.start(self.NoWiFiCard)
-                KontrolRGB.DisplayUserError()
-                Debug.End()
-                return
+            # if(networks == Execution.Crashed):
+                # Debug.Error("Fatal error when getting available networks.")
+                # Debug.Log("WiFi networks cannot be accessed.")
+                # anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                # anim.start(self.NoWiFiCard)
+                # KontrolRGB.DisplayUserError()
+                # Debug.End()
+                # return
 
-            Debug.Log("Creating WiFi network cards.")
-            for network in networks:
-                WiFiCard = WiFiSelectionCard(network)
-                WiFiCard.PressedEnd = self.GoToWiFiConnectionScreen
-                self.cardBox.add_widget(WiFiCard)
-            
-            KontrolRGB.DisplayDefaultColor()
+            # if(networks == Execution.Incompatibility):
+                # Debug.Error("Fatal error when getting available networks.")
+                # Debug.Log("WiFi networks cannot be accessed.")
+                # anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                # anim.start(self.NoWiFiCard)
+                # KontrolRGB.DisplayUserError()
+                # Debug.End()
+                # return
 
-        Debug.Log("Starting WiFi Updater")
-        Clock.schedule_once(self.UpdateWiFis, 10)
-        self.continueToUpdateWiFis = True
+            # Debug.Log("Creating WiFi network cards.")
+            # for network in networks:
+                # WiFiCard = WiFiSelectionCard(network)
+                # WiFiCard.PressedEnd = self.GoToWiFiConnectionScreen
+                # self.cardBox.add_widget(WiFiCard)
 
-        self.animation2 = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
-        self.animation2.start(self.cardBox)
+            # KontrolRGB.DisplayDefaultColor()
 
-        self.animation = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
-        self.animation.start(self.scroll)
+        # Debug.Log("Starting WiFi Updater")
+        # Clock.schedule_once(self.UpdateWiFis, 10)
+        # self.continueToUpdateWiFis = True
 
-        Debug.Log("Stopping spinner")
-        self.LoadingSpinner.active = False
+        # self.animation2 = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
+        # self.animation2.start(self.cardBox)
+
+        # self.animation = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
+        # self.animation.start(self.scroll)
+
+        # Debug.Log("Stopping spinner")
+        # self.LoadingSpinner.active = False
 
         Debug.End()
+# ------------------------------------------------------------------------
+    def CheckOnAsyncFunction(self, *args):
+        """
+            CheckOnAsyncFunction:
+            =====================
+            Summary:
+            --------
+            Periodic function executed each second
+            that checks if the Async function finished
+            getting nearby WiFi networks.
+        """
+        try:
+            if(WiFiProgress.status != "InProgress"):
+                print(f"WiFiProgress.status = {WiFiProgress.status}")
+                print(f"WiFiProgress.wifis = {WiFiProgress.wifis}")
+                if(WiFiProgress.status == "Error"):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                if(WiFiProgress.wifis == Execution.Failed):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                if(WiFiProgress.wifis == Execution.Crashed):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                if(WiFiProgress.wifis == Execution.Incompatibility):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                if(WiFiProgress.wifis == Execution.NoConnection):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                if(WiFiProgress.wifis == Execution.Unecessary):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                if(WiFiProgress.wifis == Execution.ByPassed):
+                    anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    anim.start(self.NoWiFiCard)
+                    KontrolRGB.DisplayMinorProblem()
+                    return
+
+                for network in WiFiProgress.wifis:
+                    WiFiCard = WiFiSelectionCard(network)
+                    WiFiCard.PressedEnd = self.GoToWiFiConnectionScreen
+                    self.cardBox.add_widget(WiFiCard)
+
+                KontrolRGB.DisplayDefaultColor()
+                self.LoadingSpinner.active = False
+                self.animation2 = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
+                self.animation2.start(self.cardBox)
+
+                self.animation = Animation(pos_hint = {'top': 1, 'left': 0}, t="out_sine", duration = 1)
+                self.animation.start(self.scroll)
+                return
+            else:
+                print("In progress")
+                Clock.schedule_once(self.CheckOnAsyncFunction, 1)
+        except:
+            print("FATAL ERROR")
+            pass
 # ------------------------------------------------------------------------
     def on_pre_leave(self, *args):
         """
@@ -504,3 +650,5 @@ class NetworkMenu(Screen):
 
         Debug.End()
 LoadingLog.End("NetworkMenu.py")
+
+# ------------------------------------------------------------------------

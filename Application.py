@@ -291,6 +291,9 @@ class Application(MDApp):
                 Cache.SetExit("User")
                 Cache.SetDate("Exit")
                 Cache.SaveFile()
+                print("===============================")
+                print("--------- CACHE SAVED ---------")
+                print("===============================")
             except:
                 print("[BRS]    CACHE ERRORS")
                 Debug.Warn("Cache failed to save on_stop. This might be normal tho.")

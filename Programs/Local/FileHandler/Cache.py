@@ -263,6 +263,11 @@ class Cache():
             This function takes a :ref:`FileFinder` class which loaded a profile from
             a JSON file, and loads in into the cache class. It will test the profile using
             `CheckIntegrity` specific to Profiles.
+
+            Returns:
+            --------
+            - `True` = Successfully placed profile info into cache
+            - `False` = Either cache isnt loaded or ProfileHandler.initialized is not true.
         """
         Debug.Start("Cache -> GetProfileHandlerInfo")
         # Check if cache was successfully loaded
@@ -274,9 +279,12 @@ class Cache():
 
             Debug.Log("Transferring other info into cache...")
             Cache.jsonData.jsonData["Profile"]["Loaded"] = ProfileHandler.rawJson.jsonData["Generic"]
+            Debug.End()
+            return True
         else:
             Debug.Error("Attempted to set cache info while no cache is loaded or no profiles were loaded")
-        Debug.End()
+            Debug.End()
+            return False
     #-----------------------------------------------------------------
     def LoadTheme() -> bool:
         """
@@ -337,13 +345,14 @@ class Cache():
         """
         Debug.Start("Cache -> GetAppInfo")
         if(Cache.loaded):
-            Debug.Log("Saving loaded profile's information into cache")
-            Cache.GetProfileHandlerInfo()
 
             Debug.Log("Saving application's current theme...")
             Cache.jsonData.jsonData["Theme"]["Style"] = MDApp.get_running_app().theme_cls.theme_style
             Cache.jsonData.jsonData["Theme"]["Primary"] = MDApp.get_running_app().theme_cls.primary_palette
             Cache.jsonData.jsonData["Theme"]["Accent"] = MDApp.get_running_app().theme_cls.accent_palette
+
+            Debug.Log("Saving loaded profile's information into cache")
+            Cache.GetProfileHandlerInfo()
 
             Debug.Log("Saving Application's current language into cache")
             if(AppLanguage.Current != None):

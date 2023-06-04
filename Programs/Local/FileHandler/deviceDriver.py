@@ -18,6 +18,7 @@ LoadingLog.Start("deviceDriver.py")
 #====================================================================#
 #region ------------------------------------------------------ Python
 import os
+from git import rmtree
 #endregion
 #region --------------------------------------------------------- BRS
 from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import FilesFinder, JSONdata, IsPathValid, CompareKeys, AppendPath
@@ -469,6 +470,48 @@ def GetFunction(functionName:str, driverName:str) -> Execution:
 
     Debug.End()
     return function
+# -------------------------------------------------------------------
+def DeleteDriver(deviceDriver:str) -> Execution:
+    """
+        DeleteDriver:
+        =============
+        Summary:
+        --------
+        This attempts to delete a specific device driver
+        based off its name given as an argument to this
+        function.
+
+        Arguments:
+        ----------
+        - `deviceDriver:str` = name of the device driver to delete. Must be the name of the git repository it got downloaded from.
+
+        Returns:
+        --------
+        - `Execution.Passed` = Driver deleted.
+        - `Execution.Unecessary` = The driver cannot be deleted cuz it doesn't exist.
+        - `Execution.Failed` = Something went wrong and we couldn't delete that driver.
+    """
+    Debug.Start("DeleteDriver")
+
+    installedDrivers = GetDrivers()
+    if(deviceDriver not in installedDrivers):
+        Debug.Log(f"{deviceDriver} isn't a valid, installed device driver.")
+        Debug.End()
+        return Execution.Failed
+
+    path = os.getcwd()
+    pathToDriver = AppendPath(path, f"/Local/Drivers/{deviceDriver}")
+
+    try:
+        os.remove(pathToDriver)
+    except:
+        Debug.Error("failed to os.remove the folder.")
+
+        rmtree(pathToDriver)
+        Debug.Log("Success")
+
+    Debug.End()
+    return Execution.Passed
 #====================================================================#
 # Classes
 #====================================================================#

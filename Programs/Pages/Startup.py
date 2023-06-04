@@ -16,14 +16,14 @@ from kivy.animation import Animation
 from kivy.graphics import PushMatrix, PopMatrix, Rotate
 # -------------------------------------------------------------------
 from kivymd.uix.label import MDLabel
-from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, CardTransition,SlideTransition
+from kivy.uix.screenmanager import Screen,SlideTransition
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.button import MDIconButton
 # -------------------------------------------------------------------
 from Libraries.BRS_Python_Libraries.BRS.Utilities.AppScreenHandler import AppManager
 from Libraries.BRS_Python_Libraries.BRS.Debug.consoleLog import Debug
 from Libraries.BRS_Python_Libraries.BRS.Utilities.LanguageHandler import _
-from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
+# from Libraries.BRS_Python_Libraries.BRS.Utilities.FileHandler import AppendPath
 #====================================================================#
 # Screen Functions
 #====================================================================#
@@ -314,13 +314,13 @@ class Startup(Screen):
             icon_size = str(icon_size) + "sp"
 
         if(MDApp.get_running_app().theme_cls.theme_style == "Dark"):
-            self.B = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_B.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.R = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_R.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.S = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/White_BRS_S.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.B = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.R = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.S = MDIconButton(icon="Libraries/Icons/Logo/White_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
         else:
-            self.B = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/Black_BRS_B.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.R = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/Black_BRS_R.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
-            self.S = MDIconButton(icon=AppendPath("Libraries","/Icons/Logo/Black_BRS_S.png"), font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.B = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_B.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.R = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_R.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
+            self.S = MDIconButton(icon="Libraries/Icons/Logo/Black_BRS_S.png", font_style='Icon', font_size = "100sp", halign = "center", disabled = True, opacity=0)
 
         self.B.icon_size = icon_size
         self.R.icon_size = icon_size

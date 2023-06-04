@@ -972,7 +972,7 @@ class ProfileCreation_Step2(Screen):
                 self.PrimaryLabel.text_color = TextColor
                 self.Next.icon_color = TextColor
                 self.Previous.icon_color = TextColor
-        
+
         SetTemporary(Temporary)
         Debug.End()
 #====================================================================#
@@ -1148,7 +1148,7 @@ class ProfileCreation_Step3(Screen):
         pass
 # ------------------------------------------------------------------------
     def on_enter(self, *args):
-        if(not self.usernameError and not self.passwordError and not self.BiographyError):
+        if(not self.usernameError and not self.passwordError and not self.biographyError):
             KontrolRGB.DisplayDefaultColor()
 # ------------------------------------------------------------------------
     def on_leave(self, *args):

@@ -514,36 +514,42 @@ class NetworkMenu(Screen):
 
                 if(WiFiProgress.wifis == Execution.Failed):
                     anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    self.NoWiFiCard.textDisplayed.text = _("Failed to get wireless WiFi networks. Your device may not support WiFi. Please use Ethernet if available.")
                     anim.start(self.NoWiFiCard)
                     KontrolRGB.DisplayMinorProblem()
                     return
 
                 if(WiFiProgress.wifis == Execution.Crashed):
                     anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    self.NoWiFiCard.textDisplayed.text = _("Crashed while getting wifi networks. Your device may not support WiFi. Please use Ethernet if available.")
                     anim.start(self.NoWiFiCard)
                     KontrolRGB.DisplayMinorProblem()
                     return
 
                 if(WiFiProgress.wifis == Execution.Incompatibility):
                     anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    self.NoWiFiCard.textDisplayed.text = _("An incompatibility occured. Your device may not support WiFi. Please use Ethernet if available.")
                     anim.start(self.NoWiFiCard)
                     KontrolRGB.DisplayMinorProblem()
                     return
 
                 if(WiFiProgress.wifis == Execution.NoConnection):
                     anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    self.NoWiFiCard.textDisplayed.text = _("An error occured with a return code of NoConnection. We're not sure what this means but your device may not support wireless networks.")
                     anim.start(self.NoWiFiCard)
                     KontrolRGB.DisplayMinorProblem()
                     return
 
                 if(WiFiProgress.wifis == Execution.Unecessary):
                     anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    self.NoWiFiCard.textDisplayed.text = _("Kontrol got an Unecessary execution code while attempting to fetch wireless networks nearby.")
                     anim.start(self.NoWiFiCard)
                     KontrolRGB.DisplayMinorProblem()
                     return
 
                 if(WiFiProgress.wifis == Execution.ByPassed):
                     anim = Animation(pos_hint = {"center_x":0.5, "center_y":0.45}, t="in_out_back")
+                    self.NoWiFiCard.textDisplayed.text = _("Kontrol bypassed the fetching of nearby wireless networks. Kontrol may not support wireless network detection or connections on the device you're running the application on.")
                     anim.start(self.NoWiFiCard)
                     KontrolRGB.DisplayMinorProblem()
                     return

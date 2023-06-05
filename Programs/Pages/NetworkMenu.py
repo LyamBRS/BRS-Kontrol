@@ -84,6 +84,7 @@ def AsyncGetNearbyNetworks(ProgressClass:WiFiProgress) -> Execution:
 
     ProgressClass.canAccessWiFi = None
     ProgressClass.status = "InProgress"
+    ProgressClass.wifis = []
     ProgressClass.wifis.clear()
 
     # Call the download_git_repo_async function asynchronously
